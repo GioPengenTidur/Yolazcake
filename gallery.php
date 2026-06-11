@@ -16,7 +16,7 @@ session_start();
 
   <!-- LEFT -->
   <div class="nav-left">
-    <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvrk66Mw6TuaNg3tG6p8G9hJq_wOTUoBmpbb3qtX0t9CN0D6K8ns6HxQUsk_xRrGiRBD__9n78mwhr3RZ7cwM3UINa2Jjzvzx2U1l8S2SP93wZa3ga4xfn1BY446aaj_CJ_6ACQYiN58RQ=w203-h304-k-no">
+    <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvxohuhY52bPDZuekQ33U7e3zGj4STY3XbWIuJFGodKp7_LNIk7cZZH854xdPWD1ZIslCTr69dulDH6xFPnWL6jblC-UQjruHAUO-ewDjjztuwY1hwNCxEqMdQpKJumxj105Vv_jJZFjXo=w203-h304-k-no">
     <h2>YOLAZCAKE</h2>
   </div>
 
@@ -117,7 +117,7 @@ Login
 
     <div class="card fade">
       <div class="card-bg"
-      style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFR4IeKh-0U3sMc-EUUfcP8EpwWGFHLIf7yh1xk1yAVAzQ0JU5TQKeePE2otwORHFzeGWxkmtG8CPSOfOQkivphbY7hcKY74l7msyGPoPIjfG99lBCtqSsOzQ3sjyeQB_0P81ohEinkkXXF=s570-k-no')">
+      style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAH7ipBFsSxhjhnwkXBTuy71HTo-psQHfnyHd8wuvyPGVB0u3ytjpgmiyRRLr0j3urAxueVEGj7xx82_aRv2eAAhj98CkBCVWROyNnScQ1mc7J26O7x7jGuAo8RcZSKuDijU8ScaiGelYymU=w203-h270-k-no')">
       </div>
 
       <h3>Interior Cafe</h3>
@@ -126,7 +126,7 @@ Login
 
     <div class="card fade">
       <div class="card-bg"
-      style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGULyO-bH8yxvqm3EfE71B39vSe7V8Xb8fBIp9IU_1aVfMUeGgS_v9NzNukQD8zM2b1IDyQq-_H52pdhLgq1sbiB6q0J2t0nUL2ATxZVdSensb_6GeBlNZ_Bw0beZsouVCmYf7-ip9jX2o=w203-h270-k-no')">
+      style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAEZtydrykpJbwuRHxQODQm9NXJOVdFZoaA8FDBRxijt_xMOIQsgKV5_HkV9UI_Zr-ksLLyDM9w3H744cZhcnVNsEwwm6CQJrh9BXhc4NmMD8yxb6ajSwi7FwVPirQvB5-hwfYJqrGN88wy9=w203-h270-k-no')">
       </div>
 
       <h3>Display Kue</h3>
@@ -135,7 +135,7 @@ Login
 
     <div class="card fade">
       <div class="card-bg"
-      style="background-image:url('https://lh3.googleusercontent.com/p/AF1QipNmBvfaHIm0maTFr1WgBzWfszGuZ9CtDE2JHUjg=w203-h270-k-no')">
+      style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGmYlPqHV4AIbKMVkdAsz7_dxTdYGggEfu-LfdCKIYkNnwMYb4-1pJ1hAXVTWpgALJha09Yun2loJ_vRn5AONUU2LRTrtw7aAObAnfCRmnaSmOL9C0TjGwrbDul94lAloiEjwckQObpmrM=w203-h270-k-no')">
       </div>
 
       <h3>Coffee Corner</h3>
@@ -144,7 +144,7 @@ Login
 
     <div class="card fade">
       <div class="card-bg"
-      style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFyRTFJVt37RS1l6KvoZhmJdSlG8i-WzMMZAB4PxtxURDK3gl9hqcKBOT0FzNdhkIUVQU8RWZX4fI5zi_bdI5Xp0di4w9kdSVzn3panNK2_2AW2SZ7O7YF6INyWaDusZAefHgpe0WppNMPw=s846-k-no')">
+      style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGe6TtlEB63M_38pWHypN5RgdEpc-MPweIkN612OoMq6jVFNIYvjif89o7cFH8WVJ74_nlMy-qMu-UAyYRhJSOeEUbA9e9kOuLtDKBXbjN6fRPR4QHhMmR3a7XbkkrxnoLjeHNsC6oueVuz=w203-h360-k-no')">
       </div>
 
       <h3>Boutique Lantai 2</h3>

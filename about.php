@@ -16,7 +16,7 @@ session_start();
 
   <!-- LEFT -->
   <div class="nav-left">
-    <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvrk66Mw6TuaNg3tG6p8G9hJq_wOTUoBmpbb3qtX0t9CN0D6K8ns6HxQUsk_xRrGiRBD__9n78mwhr3RZ7cwM3UINa2Jjzvzx2U1l8S2SP93wZa3ga4xfn1BY446aaj_CJ_6ACQYiN58RQ=w203-h304-k-no">
+    <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvxohuhY52bPDZuekQ33U7e3zGj4STY3XbWIuJFGodKp7_LNIk7cZZH854xdPWD1ZIslCTr69dulDH6xFPnWL6jblC-UQjruHAUO-ewDjjztuwY1hwNCxEqMdQpKJumxj105Vv_jJZFjXo=w203-h304-k-no">
     <h2>YOLAZCAKE</h2>
   </div>
 
@@ -145,7 +145,7 @@ Login
 
     <div class="card fade">
       <div class="card-bg"
-      style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvxKT5lSYSqtGXdOEcolvesgLmUOI5LslddKbpvMrujZolC12At5NaoivmDdUFn5UvXuXT9qDCqkXvjfNuLkqCYc4YMPUurAss2BrIJv1UwIFeNyJE0aix_tHo4cd6T3AsDiWIO1jSvMxPl=w203-h252-k-no')">
+      style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAE2DHqZ4jOiItnuiNlWRnDZo78Q1s3k3Iq1tM36PGEsoLPrMJ4-YWYIKOzYP0c_Ch-TkChvjYYbGhRQEiff-RotWcl5T_BWN00uqUiK0mLgNHkuUA02sHkV_eEq61Fgwwe0GwQ3w15AV6AP=w203-h252-k-no')">
       </div>
 
       <h3>Chef Baker</h3>
@@ -154,7 +154,7 @@ Login
 
     <div class="card fade">
       <div class="card-bg"
-      style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvhYwysSMlaYth1DKEgkhviQ6lh1kKQitri0i1SOWzsyvlH6WOnQ0hcpnMdyFNbyzMfr6iJKwUl36Xuks9zee3KAVK4pucZQZQSmAu7jFE5icLeGF0ZV1L5fhGUdP6KlvpfapNH7KSlbF0l=w203-h451-k-no')">
+      style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOtSRZzBy614AF-a_J8QRPPPNYbR8fV4jm7J2XvpVAfxuW7Iw-2fhere7B-90d_e8h4UogyIO4WCLX8uLVErv7NQWMMSTD1u96gtIF_CWuhwiYZYjBCREpmEqSdbCTkw32DJmO4f-zKCWk70=w203-h451-k-no')">
       </div>
 
       <h3>Barista</h3>
@@ -163,7 +163,7 @@ Login
 
     <div class="card fade">
       <div class="card-bg"
-      style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOv7c7BKrobg4hOcBrLVmOkm-mvRw18q1pB2e-xkGSQ6F34AhGeIH9tGr942BsT4llGFdzjtEC2-W6fJvaLb6cuSnQfOhvAmPfF4HYvCHaB-gAOSbdSc74Jo3WyAtaD0Yp04P8U-K0FxbCs=w203-h444-k-no')">
+      style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOtdwA5HQnCg9VmCAzMoeaFZ-oCWCBSNPggxLP0QzKjbE4pVg2R-uk3Ma2mTmeZ0gBtx2M8ejZbaTkuBuBpq5t77GEyhnvxJNI0WjVw_fWAOcTAX8rYcustABOYken3ImlDlMeHgopjYbWI=w203-h444-k-no')">
       </div>
 
       <h3>Fashion Stylist</h3>
