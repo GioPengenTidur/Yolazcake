@@ -24,7 +24,7 @@ session_start();
   <ul class="main-nav">
     <li onclick="window.location.href='index.php'">Home</li>
     <li onclick="window.location.href='produk/menu.php'">Menu</li>
-    <li class="active" onclick="window.location.href='../gallery.php'">Gallery</li>
+    <li class="active" onclick="window.location.href='gallery.php'">Gallery</li>
     <li onclick="window.location.href='about.php'">About</li>
     <li onclick="window.location.href='contact.php'">Contact</li>
   </ul>
