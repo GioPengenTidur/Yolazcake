@@ -16,7 +16,7 @@ session_start();
 
   <!-- LEFT -->
   <div class="nav-left">
-    <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvrk66Mw6TuaNg3tG6p8G9hJq_wOTUoBmpbb3qtX0t9CN0D6K8ns6HxQUsk_xRrGiRBD__9n78mwhr3RZ7cwM3UINa2Jjzvzx2U1l8S2SP93wZa3ga4xfn1BY446aaj_CJ_6ACQYiN58RQ=w203-h304-k-no">
+    <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvxohuhY52bPDZuekQ33U7e3zGj4STY3XbWIuJFGodKp7_LNIk7cZZH854xdPWD1ZIslCTr69dulDH6xFPnWL6jblC-UQjruHAUO-ewDjjztuwY1hwNCxEqMdQpKJumxj105Vv_jJZFjXo=w203-h304-k-no">
     <h2>YOLAZCAKE</h2>
   </div>
 
@@ -135,7 +135,7 @@ Login
 
     <div class="card fade">
       <div class="card-bg"
-      style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSe4AwjgtAeBeNDNTkjvX2RCppfb3NaGWXpY-6JlAiafOOR7RPHdz55qrxED-6cbOSDbJBUkSaJvh57u0ONwlBQ3WLceBcOdESS4xhkT4IUPpvAY1SYvmDQ1egYDWLDkebPFVvP9ScW50v=w203-h360-k-no')">
+      style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAEXu3cICx0XzVk5ifOQLcq8DaRGPwYOUSx6elFyjgJDoYYLJOttOcjNLKbElDZzTk8VJ14uTV5ONvHLE2VUCa4qaZ4fjq_0xt0eBsF46IBS95dXaiLtfjGMEPpGE2UMxT8Phd1rXJ-ZZtJb=w203-h360-k-no')">
       </div>
 
       <h3>Dessert & Minuman</h3>
@@ -164,7 +164,7 @@ Login
 
     <div class="card fade">
       <div class="card-bg"
-      style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')">
+      style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOtWF5HzYzXaM6dBjrab014V7y-PZn8h9KrsgafxgTxu2ADQ2mtyB_d7EyXo_y64YZf3Wp34CU3-w8NgtQtKWltwn4P4NPfMQnFf7oKEVdUeBHu04LS8ziBE_vH63BFpD9hbIIirijIKdBBM=w203-h270-k-no')">
       </div>
 
       <h3>Trio Cake</h3>
@@ -173,7 +173,7 @@ Login
 
     <div class="card fade">
       <div class="card-bg"
-      style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuw_xb_C00uZMq4DtdJ8N72egFCWZf_I2zjj3254lR9dbD1f9hvZdwoQRTJTBCJMXHg9_c9E2jgPN3iSC5iNmcI0V9CxytjMghupFWvZKW091bqicz5LtmOAjC2xSqrNcSxyB5UL4lEc9Zi=w203-h451-k-no')">
+      style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOto90T0TUjEx8jHIUbAYKPBFPnwY7iKuE_6bZwDsrv7_mxSR6i9wFbYVmQQpOYJR5DRK0h1uc9bzV7iCRcqSKLI6cGQNBAZ5Ui4oPSKMgbGE7AsrQ3wyNwhicBRHvh_qv7PEKc-jLw0UKAz=w203-h451-k-no')">
       </div>
 
       <h3>Signature Latte</h3>
@@ -182,7 +182,7 @@ Login
 
     <div class="card fade">
       <div class="card-bg"
-      style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')">
+      style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGg993faAY2Ys8iGoOjKBLZBEwmPBloN1S6YhZ58JBdKNm2EofF0FphUfkiJPPCKTSu9ZzJdSWTxLuS0mgxz_taVN6rPWwf_6K2OnfeGU46JBIhIW-Ot2cSx9ZeW8VXkr1y4MJRnTwALrM=w203-h270-k-no')">
       </div>
 
       <h3>Donat</h3>
@@ -191,7 +191,7 @@ Login
 
     <div class="card fade">
       <div class="card-bg"
-      style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGTNAW5PNuDjb41NNHDB-bXNPs1EtKt7XHXoRW4iD52Wqkdl5vFbOK98l-0P1mAOSbGX1AQ3xUx2V_MWDBb_LIoeGDGh6e4gc_0DRjQV3DXtVCwO5rTsLNrrEE5UjCLiMWHGkb7quY1xwU=w203-h270-k-no')">
+      style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAHwym8Tw4ZZuGMh1dOl8C38jt2mfcaFW9B7vsFI35LrmzLTCCLZd1dMyfH3d8cjcBExEyuq1LsjJOHpncww-G9rjNxhUvnB79iQwQEoRv-h4KtE6fKbJvn0f--0BLP7qUWS-V1RBXkTNDk=w203-h270-k-no')">
       </div>
 
       <h3>Boutique Collection</h3>
