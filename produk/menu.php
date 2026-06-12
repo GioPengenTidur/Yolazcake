@@ -16,7 +16,7 @@ session_start();
 
   <!-- LEFT -->
   <div class="nav-left">
-    <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvoAgx_np916BKRaCfH4lmlCs_x0RKdpCtIdsUB9mdvsZ9qegbRKhaZ3_HDH6aDDL5pElMCtKGM45rf2T-ZQIhJxwOVGP0csrs6fHnan7HiyP_C_2EvfzczGolnSFKn8hCEAfdKgRMCyY4M=w203-h304-k-no">
+    <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvxohuhY52bPDZuekQ33U7e3zGj4STY3XbWIuJFGodKp7_LNIk7cZZH854xdPWD1ZIslCTr69dulDH6xFPnWL6jblC-UQjruHAUO-ewDjjztuwY1hwNCxEqMdQpKJumxj105Vv_jJZFjXo=w203-h304-k-no">
     <h2>YOLAZCAKE</h2>
   </div>
 
