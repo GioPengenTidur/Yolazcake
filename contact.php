@@ -12,10 +12,6 @@ session_start();
 
   <style>
 
-    /* =============================================
-       PREMIUM CONTACT PAGE — scoped styles only
-    ============================================= */
-
     /* --- Hero Banner --- */
     .contact-hero {
       position: relative;
@@ -765,7 +761,7 @@ session_start();
 <!-- NAVBAR (unchanged) -->
 <nav>
   <div class="nav-left">
-    <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvxohuhY52bPDZuekQ33U7e3zGj4STY3XbWIuJFGodKp7_LNIk7cZZH854xdPWD1ZIslCTr69dulDH6xFPnWL6jblC-UQjruHAUO-ewDjjztuwY1hwNCxEqMdQpKJumxj105Vv_jJZFjXo=w203-h304-k-no">
+    <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvrk66Mw6TuaNg3tG6p8G9hJq_wOTUoBmpbb3qtX0t9CN0D6K8ns6HxQUsk_xRrGiRBD__9n78mwhr3RZ7cwM3UINa2Jjzvzx2U1l8S2SP93wZa3ga4xfn1BY446aaj_CJ_6ACQYiN58RQ=w203-h304-k-no">
     <h2>YOLAZCAKE</h2>
   </div>
   <ul class="main-nav">

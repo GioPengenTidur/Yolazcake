@@ -3,25 +3,26 @@
 session_start();
 include "../config/koneksi.php";
 
-$username = $_POST['username'];
-$password = $_POST['password'];
+$username = $_POST['username'] ?? '';
+$password = $_POST['password'] ?? '';
 
-$sql = "SELECT * FROM users
-        WHERE username='$username'
-        AND password='$password'";
+// Gunakan prepared statement untuk keamanan
+$stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
+$stmt->bind_param("ss", $username, $password);
+$stmt->execute();
+$result = $stmt->get_result();
 
-$query = mysqli_query($conn,$sql);
-
-if(mysqli_num_rows($query) > 0){
+if ($result->num_rows > 0) {
 
     $_SESSION['username'] = $username;
-
     header("Location: ../index.php");
     exit();
 
-}else{
+} else {
 
-    echo "Login Gagal";
+    // Redirect kembali ke login dengan pesan error
+    header("Location: login.php?error=1");
+    exit();
 
 }
 
