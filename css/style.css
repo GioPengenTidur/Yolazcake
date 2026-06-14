@@ -9,6 +9,36 @@
   --soft-green:#A8D5BA;
   --lavender:#C8A2C8;
   --teal:#4ECDC4;
+
+  /* ── Unified Premium Hover System ── */
+  /* Semua card menggunakan variabel ini agar konsisten 100% */
+  --card-hover-lift:      translateY(-10px) scale(1.03);
+  --card-hover-lift-mild: translateY(-4px)  scale(1.01);
+
+  /* Glow untuk background terang (cream / pastel) */
+  --card-shadow-light:
+    0 25px 60px rgba(109,76,65,0.25),
+    0 0 30px  rgba(232,160,191,0.50),
+    0 0 60px  rgba(212,175,55,0.25),
+    0 0 90px  rgba(212,175,55,0.10);
+
+  /* Glow untuk background gelap (dark purple / dark brown) */
+  --card-shadow-dark:
+    0 25px 65px rgba(0,0,0,0.40),
+    0 0 35px  rgba(212,175,55,0.42),
+    0 0 70px  rgba(212,175,55,0.20),
+    0 0 110px rgba(212,175,55,0.08);
+
+  /* Glow mild untuk card kecil / teks (testimonial, promo-box) */
+  --card-shadow-mild:
+    0 15px 40px rgba(109,76,65,0.20),
+    0 0 20px  rgba(232,160,191,0.35),
+    0 0 45px  rgba(212,175,55,0.18);
+
+  /* Easing premium — spring ringan */
+  --card-transition:      transform 0.45s cubic-bezier(0.34,1.56,0.64,1),
+                          box-shadow 0.45s ease,
+                          border-color 0.45s ease;
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
@@ -287,8 +317,9 @@ body.dark #contact {
   background: #fdfaf6; 
 
   box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-  transition: all 0.4s ease;
+  transition: var(--card-transition);
   overflow: hidden;
+  will-change: transform;
 }
 
 .card::before{
@@ -336,8 +367,8 @@ body.dark #contact {
 
 
 .card:hover{
-  transform: translateY(-12px) scale(1.02);
-  box-shadow:0 25px 60px rgba(232,160,191,0.2);
+  transform: var(--card-hover-lift);
+  box-shadow: var(--card-shadow-light);
 }
 
 .card:hover::after{
@@ -460,8 +491,18 @@ body.dark #contact {
   font-style:italic;
   margin-bottom:25px;
   line-height:1.7;
+  border: 1px solid transparent;
+  position: relative;
+  will-change: transform;
+  transition: var(--card-transition);
 }
 .testimonial:last-child {margin-bottom:0;}
+
+.testimonial:hover {
+  transform: var(--card-hover-lift-mild);
+  box-shadow: var(--card-shadow-mild);
+  border-color: rgba(212,175,55,0.35);
+}
 
 .footer{
   background:var(--brown);
@@ -1096,11 +1137,16 @@ body.dark #contact {
 
     border:1px solid rgba(255,255,255,.15);
 
-    transition:.3s;
+    will-change: transform;
+    transition: var(--card-transition);
 }
 
 .promo-box:hover{
-    transform:translateY(-5px);
+    transform: var(--card-hover-lift);
+    box-shadow:
+        0 20px 55px rgba(0,0,0,0.25),
+        0 0 25px rgba(245,158,11,0.5),
+        0 0 55px rgba(212,175,55,0.25);
 }
 
 .promo-box h3{
@@ -1164,11 +1210,16 @@ body.dark #contact {
 
     border:1px solid rgba(255,255,255,.15);
 
-    transition:.3s;
+    will-change: transform;
+    transition: var(--card-transition);
 }
 
 .reward-box:hover{
-    transform:translateY(-5px);
+    transform: var(--card-hover-lift);
+    box-shadow:
+        0 20px 55px rgba(0,0,0,0.25),
+        0 0 25px rgba(234,179,8,0.5),
+        0 0 55px rgba(212,175,55,0.25);
 }
 
 /* VISIT HISTORY */
@@ -1201,11 +1252,16 @@ body.dark #contact {
 
     border:1px solid rgba(255,255,255,.15);
 
-    transition:.3s;
+    will-change: transform;
+    transition: var(--card-transition);
 }
 
 .history-item:hover{
-    transform:translateY(-5px);
+    transform: var(--card-hover-lift);
+    box-shadow:
+        0 20px 55px rgba(0,0,0,0.25),
+        0 0 25px rgba(234,179,8,0.5),
+        0 0 55px rgba(212,175,55,0.25);
 }
 
 .history-item strong{
@@ -1322,4 +1378,56 @@ body.dark #contact {
   font-size:0.9em;
 }
 
+}
+
+/* ======================================
+   GLOBAL SMOOTH CARD EFFECT
+   — sistem hover reusable untuk semua card
+====================================== */
+
+.product-card,
+.benefit-card,
+.story-card,
+.headline-card,
+.code-card,
+.steps-card,
+.about-intro-card,
+.cb-item,
+.fashion-item,
+.loc-card,
+.team-card {
+    overflow: hidden;
+    will-change: transform;
+    transition: var(--card-transition);
+}
+
+.product-card:hover,
+.benefit-card:hover,
+.story-card:hover,
+.headline-card:hover,
+.code-card:hover,
+.steps-card:hover,
+.about-intro-card:hover,
+.cb-item:hover,
+.fashion-item:hover,
+.loc-card:hover,
+.team-card:hover {
+    transform: var(--card-hover-lift);
+    box-shadow: var(--card-shadow-light);
+}
+
+.product-card img,
+.cb-item img,
+.fashion-item img,
+.team-card img,
+.story-card img {
+    transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.product-card:hover img,
+.cb-item:hover img,
+.fashion-item:hover img,
+.team-card:hover img,
+.story-card:hover img {
+    transform: scale(1.08);
 }

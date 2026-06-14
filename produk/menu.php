@@ -12,7 +12,7 @@ session_start();
 
   <style>
 
-    /* ===== HERO BANNER masbro ===== */
+    /* ===== PREMIUM HERO BANNER ===== */
     .menu-hero {
       position: relative;
       height: 360px;
@@ -242,8 +242,8 @@ session_start();
       box-shadow: 0 8px 30px rgba(0,0,0,0.09);
       opacity: 0;
       transform: translateY(30px);
-      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
-                  box-shadow 0.45s ease;
+      will-change: transform;
+      transition: var(--card-transition);
       position: relative;
     }
 
@@ -252,12 +252,8 @@ session_start();
     }
 
     .menu-card:hover {
-      transform: translateY(-10px) scale(1.03);
-      box-shadow:
-        0 25px 60px rgba(109,76,65,0.25),
-        0 0 30px rgba(232,160,191,0.5),
-        0 0 60px rgba(212,175,55,0.25),
-        0 0 90px rgba(212,175,55,0.1);
+      transform: var(--card-hover-lift);
+      box-shadow: var(--card-shadow-light);
     }
 
     .menu-card::before {
@@ -409,9 +405,8 @@ session_start();
       border: 1px solid rgba(255,255,255,0.1);
       opacity: 0;
       transform: translateY(30px);
-      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
-                  box-shadow 0.45s ease,
-                  border-color 0.45s ease;
+      will-change: transform;
+      transition: var(--card-transition);
       position: relative;
     }
 
@@ -420,13 +415,9 @@ session_start();
     }
 
     .product-card:hover {
-      transform: translateY(-12px) scale(1.03);
+      transform: var(--card-hover-lift);
       border-color: rgba(212,175,55,0.5);
-      box-shadow:
-        0 24px 65px rgba(0,0,0,0.4),
-        0 0 35px rgba(212,175,55,0.42),
-        0 0 70px rgba(212,175,55,0.2),
-        0 0 110px rgba(212,175,55,0.08);
+      box-shadow: var(--card-shadow-dark);
     }
 
     .product-card::before {
@@ -599,17 +590,13 @@ session_start();
       transform: translateY(40px);
       text-align: center;
       cursor: default;
-      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
-                  box-shadow 0.45s ease;
+      will-change: transform;
+      transition: var(--card-transition);
     }
 
     .promo-card-premium:hover {
-      transform: translateY(-10px) scale(1.02);
-      box-shadow:
-        0 25px 60px rgba(109,76,65,0.22),
-        0 0 30px rgba(212,175,55,0.3),
-        0 0 65px rgba(212,175,55,0.14),
-        0 0 100px rgba(212,175,55,0.06);
+      transform: var(--card-hover-lift);
+      box-shadow: var(--card-shadow-light);
     }
 
     .promo-card-premium.show {

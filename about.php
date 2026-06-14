@@ -223,8 +223,8 @@ session_start();
       overflow: hidden;
       opacity: 0;
       transform: translateY(30px);
-      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
-                  box-shadow 0.45s ease;
+      will-change: transform;
+      transition: var(--card-transition);
     }
 
     .about-intro-card.show {
@@ -232,12 +232,8 @@ session_start();
     }
 
     .about-intro-card:hover {
-      transform: translateY(-10px) scale(1.03);
-      box-shadow:
-        0 20px 55px rgba(109,76,65,0.18),
-        0 0 30px rgba(212,175,55,0.25),
-        0 0 60px rgba(212,175,55,0.12),
-        0 0 90px rgba(212,175,55,0.05);
+      transform: var(--card-hover-lift);
+      box-shadow: var(--card-shadow-light);
     }
 
     .about-intro-card::before {
@@ -331,19 +327,14 @@ session_start();
       opacity: 0;
       transform: translateY(40px);
       cursor: default;
-      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
-                  box-shadow 0.45s ease,
-                  border-color 0.45s ease;
+      will-change: transform;
+      transition: var(--card-transition);
     }
 
     .story-card:hover {
-      transform: translateY(-10px) scale(1.02);
+      transform: var(--card-hover-lift);
       border-color: rgba(212,175,55,0.4);
-      box-shadow:
-        0 25px 65px rgba(0,0,0,0.35),
-        0 0 35px rgba(212,175,55,0.35),
-        0 0 70px rgba(212,175,55,0.18),
-        0 0 110px rgba(212,175,55,0.08);
+      box-shadow: var(--card-shadow-dark);
     }
 
     .story-card.show {
@@ -433,8 +424,8 @@ session_start();
       box-shadow: 0 10px 40px rgba(0,0,0,0.1);
       opacity: 0;
       transform: translateY(40px);
-      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
-                  box-shadow 0.45s ease;
+      will-change: transform;
+      transition: var(--card-transition);
     }
 
     .team-card.show {
@@ -442,12 +433,8 @@ session_start();
     }
 
     .team-card:hover {
-      transform: translateY(-12px) scale(1.03);
-      box-shadow:
-        0 24px 65px rgba(109,76,65,0.22),
-        0 0 35px rgba(212,175,55,0.28),
-        0 0 70px rgba(212,175,55,0.14),
-        0 0 110px rgba(212,175,55,0.06);
+      transform: var(--card-hover-lift);
+      box-shadow: var(--card-shadow-light);
     }
 
 .team-card-photo {
