@@ -242,8 +242,8 @@ session_start();
       box-shadow: 0 8px 30px rgba(0,0,0,0.09);
       opacity: 0;
       transform: translateY(30px);
-      will-change: transform;
-      transition: var(--card-transition);
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.45s ease;
       position: relative;
     }
 
@@ -252,8 +252,12 @@ session_start();
     }
 
     .menu-card:hover {
-      transform: var(--card-hover-lift);
-      box-shadow: var(--card-shadow-light);
+      transform: translateY(-10px) scale(1.03);
+      box-shadow:
+        0 25px 60px rgba(109,76,65,0.25),
+        0 0 30px rgba(232,160,191,0.5),
+        0 0 60px rgba(212,175,55,0.25),
+        0 0 90px rgba(212,175,55,0.1);
     }
 
     .menu-card::before {
@@ -276,7 +280,7 @@ session_start();
       overflow: hidden;
     }
 
-    /* Shimmer hanya pada area foto */
+    /* Shimmer hanya pada area foto (static single image - disabled when carousel active) */
     .menu-card-photo::before {
       content: '';
       position: absolute;
@@ -357,6 +361,153 @@ session_start();
       line-height: 1.6;
     }
 
+    /* ===== MENU CARD CAROUSEL (identik dengan product-card carousel) ===== */
+
+    /* Carousel track untuk menu-card */
+    .menu-card-photo .photo-carousel {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+
+    .menu-card-photo .photo-carousel-slide {
+      min-width: 100%;
+      height: 220px;
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    /* Shimmer overlay untuk menu carousel */
+    .menu-carousel-shimmer {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 55%;
+      height: 100%;
+      background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.55),
+        transparent
+      );
+      transform: skewX(-20deg);
+      transition: left 0.75s ease;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .menu-card:hover .menu-carousel-shimmer {
+      left: 130%;
+    }
+
+    /* Nav arrows untuk menu carousel */
+    .menu-card .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      background: rgba(43, 26, 17, 0.55);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(212,175,55,0.55);
+      color: #D4AF37;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 1em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.25s, box-shadow 0.25s, transform 0.25s;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+      opacity: 0;
+      pointer-events: none;
+      line-height: 1;
+      padding: 0;
+    }
+
+    .menu-card:hover .carousel-btn {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .menu-card .carousel-btn:hover {
+      background: rgba(212,175,55,0.25);
+      box-shadow: 0 0 18px rgba(212,175,55,0.6), 0 0 40px rgba(212,175,55,0.2);
+      transform: translateY(-50%) scale(1.12);
+    }
+
+    .menu-card .carousel-btn.prev { left: 10px; }
+    .menu-card .carousel-btn.next { right: 10px; }
+
+    /* Dots untuk menu carousel */
+    .menu-card .carousel-dots {
+      position: absolute;
+      bottom: 44px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      gap: 5px;
+    }
+
+    .menu-card .carousel-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.45);
+      border: 1px solid rgba(212,175,55,0.5);
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .menu-card .carousel-dot.active {
+      background: #D4AF37;
+      transform: scale(1.45);
+      box-shadow: 0 0 8px rgba(212,175,55,0.8), 0 0 20px rgba(212,175,55,0.4);
+    }
+
+    /* Progress bar untuk menu carousel */
+    .menu-card .carousel-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #D4AF37, #6d3e26, #D4AF37);
+      background-size: 200% 100%;
+      animation: goldSlide 2s linear infinite;
+      z-index: 10;
+      transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Counter badge untuk menu carousel */
+    .menu-card .carousel-counter {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 10;
+      background: rgba(43,26,17,0.65);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(212,175,55,0.4);
+      color: #D4AF37;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68em;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+      letter-spacing: 1px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .menu-card:hover .carousel-counter {
+      opacity: 1;
+    }
+
     /* ===== SECTION #Product — DARK PURPLE (seperti #story di about) ===== */
     #Product {
       padding: 80px 40px;
@@ -405,8 +556,9 @@ session_start();
       border: 1px solid rgba(255,255,255,0.1);
       opacity: 0;
       transform: translateY(30px);
-      will-change: transform;
-      transition: var(--card-transition);
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.45s ease,
+                  border-color 0.45s ease;
       position: relative;
     }
 
@@ -415,9 +567,13 @@ session_start();
     }
 
     .product-card:hover {
-      transform: var(--card-hover-lift);
+      transform: translateY(-12px) scale(1.03);
       border-color: rgba(212,175,55,0.5);
-      box-shadow: var(--card-shadow-dark);
+      box-shadow:
+        0 24px 65px rgba(0,0,0,0.4),
+        0 0 35px rgba(212,175,55,0.42),
+        0 0 70px rgba(212,175,55,0.2),
+        0 0 110px rgba(212,175,55,0.08);
     }
 
     .product-card::before {
@@ -440,8 +596,33 @@ session_start();
       overflow: hidden;
     }
 
-    /* Shimmer hanya pada area foto product */
+    /* Shimmer overlay for product carousel (replaces ::before on card-photo) */
+    .carousel-shimmer {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 55%;
+      height: 100%;
+      background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.4),
+        transparent
+      );
+      transform: skewX(-20deg);
+      transition: left 0.75s ease;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .product-card:hover .carousel-shimmer {
+      left: 130%;
+    }
+
+    /* Shimmer hanya pada area foto product — disabled (using .carousel-shimmer div instead) */
     .product-card-photo::before {
+      display: none;
       content: '';
       position: absolute;
       top: 0;
@@ -540,6 +721,157 @@ session_start();
       letter-spacing: 0.5px;
     }
 
+    /* ===== PRODUCT CARD PHOTO SWIPE CAROUSEL ===== */
+    .product-card-photo {
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Carousel track */
+    .photo-carousel {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+
+    .photo-carousel-slide {
+      min-width: 100%;
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    /* Carousel Nav Arrows */
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      background: rgba(15, 5, 30, 0.55);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(212,175,55,0.55);
+      color: #D4AF37;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 1em;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.25s, box-shadow 0.25s, transform 0.25s;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+      opacity: 0;
+      pointer-events: none;
+      line-height: 1;
+      padding: 0;
+    }
+
+    .product-card:hover .carousel-btn {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .carousel-btn:hover {
+      background: rgba(212,175,55,0.25);
+      box-shadow: 0 0 18px rgba(212,175,55,0.6), 0 0 40px rgba(212,175,55,0.2);
+      transform: translateY(-50%) scale(1.12);
+    }
+
+    .carousel-btn.prev { left: 10px; }
+    .carousel-btn.next { right: 10px; }
+
+    /* Dot indicators */
+    .carousel-dots {
+      position: absolute;
+      bottom: 44px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      gap: 5px;
+    }
+
+    .carousel-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.45);
+      border: 1px solid rgba(212,175,55,0.5);
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .carousel-dot.active {
+      background: #D4AF37;
+      transform: scale(1.45);
+      box-shadow: 0 0 8px rgba(212,175,55,0.8), 0 0 20px rgba(212,175,55,0.4);
+    }
+
+    /* Progress bar */
+    .carousel-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #D4AF37, #ee2a7b, #D4AF37);
+      background-size: 200% 100%;
+      animation: goldSlide 2s linear infinite;
+      z-index: 10;
+      transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Slide counter badge */
+    .carousel-counter {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 10;
+      background: rgba(15,5,30,0.65);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(212,175,55,0.4);
+      color: #D4AF37;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68em;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+      letter-spacing: 1px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .product-card:hover .carousel-counter {
+      opacity: 1;
+    }
+
+    /* Touch swipe hint animation on first load */
+    @keyframes swipeHint {
+      0%   { transform: translateX(0); opacity: 0.6; }
+      30%  { transform: translateX(-10px); opacity: 1; }
+      60%  { transform: translateX(0); opacity: 0.6; }
+      100% { transform: translateX(0); opacity: 0; }
+    }
+
+    .swipe-hint {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 12;
+      color: rgba(255,255,255,0.9);
+      font-size: 1.3em;
+      pointer-events: none;
+      animation: swipeHint 2s ease-out forwards;
+      animation-delay: 1.2s;
+      opacity: 0;
+      text-shadow: 0 0 12px rgba(212,175,55,0.8);
+    }
+
     /* Floating particles */
     .particle {
       position: absolute;
@@ -590,13 +922,17 @@ session_start();
       transform: translateY(40px);
       text-align: center;
       cursor: default;
-      will-change: transform;
-      transition: var(--card-transition);
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.45s ease;
     }
 
     .promo-card-premium:hover {
-      transform: var(--card-hover-lift);
-      box-shadow: var(--card-shadow-light);
+      transform: translateY(-10px) scale(1.02);
+      box-shadow:
+        0 25px 60px rgba(109,76,65,0.22),
+        0 0 30px rgba(212,175,55,0.3),
+        0 0 65px rgba(212,175,55,0.14),
+        0 0 100px rgba(212,175,55,0.06);
     }
 
     .promo-card-premium.show {
@@ -787,9 +1123,24 @@ session_start();
 
   <div class="menu-grid">
 
-    <div class="menu-card fade">
-      <div class="menu-card-photo"
-        style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAEgqBd6NWb-UkCt8EaP0d1IZd1uvxczXtXKLqfRDBq92UVlXrN7tU3acmu48PE8dVq0U1smQuLn2flGuhSv8SBGDmMDQ4HDzPt0inOcEPrHgnuDXY7D_wn_tuiP-mcCPSzYHXrsy13Bbp1g=w203-h152-k-no')">
+    <div class="menu-card fade" data-menu-carousel="0">
+      <div class="menu-card-photo">
+        <div class="photo-carousel" id="menu-carousel-0">
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAEgqBd6NWb-UkCt8EaP0d1IZd1uvxczXtXKLqfRDBq92UVlXrN7tU3acmu48PE8dVq0U1smQuLn2flGuhSv8SBGDmMDQ4HDzPt0inOcEPrHgnuDXY7D_wn_tuiP-mcCPSzYHXrsy13Bbp1g=w203-h152-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')"></div>
+        </div>
+        <div class="menu-carousel-shimmer"></div>
+        <button class="carousel-btn prev" onclick="menuCarouselMove(0,-1,event)">‹</button>
+        <button class="carousel-btn next" onclick="menuCarouselMove(0,1,event)">›</button>
+        <div class="carousel-dots" id="menu-dots-0">
+          <div class="carousel-dot active" onclick="menuCarouselGo(0,0,event)"></div>
+          <div class="carousel-dot" onclick="menuCarouselGo(0,1,event)"></div>
+          <div class="carousel-dot" onclick="menuCarouselGo(0,2,event)"></div>
+        </div>
+        <div class="carousel-counter" id="menu-counter-0">1 / 3</div>
+        <div class="carousel-progress" id="menu-progress-0" style="width:33.33%"></div>
+        <div class="swipe-hint">👆 Geser</div>
         <span class="menu-card-badge">✦ Homemade</span>
       </div>
       <div class="menu-card-body">
@@ -798,9 +1149,24 @@ session_start();
       </div>
     </div>
 
-    <div class="menu-card fade">
-      <div class="menu-card-photo"
-        style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGWRsx9I5aMBRYOOIDyWkQMcl9RgKnp_CD8Y4owK9qdPvMwPDSU6uWjs8zKKq107WLpgmVmTYOpaxMgSrhRpl-MCPZGyAYPgpltFO7hVh4tSM0DQa9uk4KWs-CsI5GZN3ftRsdhsHNp2_F6=w203-h270-k-no')">
+    <div class="menu-card fade" data-menu-carousel="1">
+      <div class="menu-card-photo">
+        <div class="photo-carousel" id="menu-carousel-1">
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGWRsx9I5aMBRYOOIDyWkQMcl9RgKnp_CD8Y4owK9qdPvMwPDSU6uWjs8zKKq107WLpgmVmTYOpaxMgSrhRpl-MCPZGyAYPgpltFO7hVh4tSM0DQa9uk4KWs-CsI5GZN3ftRsdhsHNp2_F6=w203-h270-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuw_xb_C00uZMq4DtdJ8N72egFCWZf_I2zjj3254lR9dbD1f9hvZdwoQRTJTBCJMXHg9_c9E2jgPN3iSC5iNmcI0V9CxytjMghupFWvZKW091bqicz5LtmOAjC2xSqrNcSxyB5UL4lEc9Zi=w203-h451-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSe4AwjgtAeBeNDNTkjvX2RCppfb3NaGWXpY-6JlAiafOOR7RPHdz55qrxED-6cbOSDbJBUkSaJvh57u0ONwlBQ3WLceBcOdESS4xhkT4IUPpvAY1SYvmDQ1egYDWLDkebPFVvP9ScW50v=w203-h360-k-no')"></div>
+        </div>
+        <div class="menu-carousel-shimmer"></div>
+        <button class="carousel-btn prev" onclick="menuCarouselMove(1,-1,event)">‹</button>
+        <button class="carousel-btn next" onclick="menuCarouselMove(1,1,event)">›</button>
+        <div class="carousel-dots" id="menu-dots-1">
+          <div class="carousel-dot active" onclick="menuCarouselGo(1,0,event)"></div>
+          <div class="carousel-dot" onclick="menuCarouselGo(1,1,event)"></div>
+          <div class="carousel-dot" onclick="menuCarouselGo(1,2,event)"></div>
+        </div>
+        <div class="carousel-counter" id="menu-counter-1">1 / 3</div>
+        <div class="carousel-progress" id="menu-progress-1" style="width:33.33%"></div>
+        <div class="swipe-hint">👆 Geser</div>
         <span class="menu-card-badge">✦ Specialty</span>
       </div>
       <div class="menu-card-body">
@@ -809,9 +1175,24 @@ session_start();
       </div>
     </div>
 
-    <div class="menu-card fade">
-      <div class="menu-card-photo"
-        style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSe4AwjgtAeBeNDNTkjvX2RCppfb3NaGWXpY-6JlAiafOOR7RPHdz55qrxED-6cbOSDbJBUkSaJvh57u0ONwlBQ3WLceBcOdESS4xhkT4IUPpvAY1SYvmDQ1egYDWLDkebPFVvP9ScW50v=w203-h360-k-no')">
+    <div class="menu-card fade" data-menu-carousel="2">
+      <div class="menu-card-photo">
+        <div class="photo-carousel" id="menu-carousel-2">
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSe4AwjgtAeBeNDNTkjvX2RCppfb3NaGWXpY-6JlAiafOOR7RPHdz55qrxED-6cbOSDbJBUkSaJvh57u0ONwlBQ3WLceBcOdESS4xhkT4IUPpvAY1SYvmDQ1egYDWLDkebPFVvP9ScW50v=w203-h360-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuw_xb_C00uZMq4DtdJ8N72egFCWZf_I2zjj3254lR9dbD1f9hvZdwoQRTJTBCJMXHg9_c9E2jgPN3iSC5iNmcI0V9CxytjMghupFWvZKW091bqicz5LtmOAjC2xSqrNcSxyB5UL4lEc9Zi=w203-h451-k-no')"></div>
+        </div>
+        <div class="menu-carousel-shimmer"></div>
+        <button class="carousel-btn prev" onclick="menuCarouselMove(2,-1,event)">‹</button>
+        <button class="carousel-btn next" onclick="menuCarouselMove(2,1,event)">›</button>
+        <div class="carousel-dots" id="menu-dots-2">
+          <div class="carousel-dot active" onclick="menuCarouselGo(2,0,event)"></div>
+          <div class="carousel-dot" onclick="menuCarouselGo(2,1,event)"></div>
+          <div class="carousel-dot" onclick="menuCarouselGo(2,2,event)"></div>
+        </div>
+        <div class="carousel-counter" id="menu-counter-2">1 / 3</div>
+        <div class="carousel-progress" id="menu-progress-2" style="width:33.33%"></div>
+        <div class="swipe-hint">👆 Geser</div>
         <span class="menu-card-badge">✦ Signature</span>
       </div>
       <div class="menu-card-body">
@@ -820,9 +1201,24 @@ session_start();
       </div>
     </div>
 
-    <div class="menu-card fade">
-      <div class="menu-card-photo"
-        style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGe6TtlEB63M_38pWHypN5RgdEpc-MPweIkN612OoMq6jVFNIYvjif89o7cFH8WVJ74_nlMy-qMu-UAyYRhJSOeEUbA9e9kOuLtDKBXbjN6fRPR4QHhMmR3a7XbkkrxnoLjeHNsC6oueVuz=w203-h360-k-no')">
+    <div class="menu-card fade" data-menu-carousel="3">
+      <div class="menu-card-photo">
+        <div class="photo-carousel" id="menu-carousel-3">
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGe6TtlEB63M_38pWHypN5RgdEpc-MPweIkN612OoMq6jVFNIYvjif89o7cFH8WVJ74_nlMy-qMu-UAyYRhJSOeEUbA9e9kOuLtDKBXbjN6fRPR4QHhMmR3a7XbkkrxnoLjeHNsC6oueVuz=w203-h360-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGTNAW5PNuDjb41NNHDB-bXNPs1EtKt7XHXoRW4iD52Wqkdl5vFbOK98l-0P1mAOSbGX1AQ3xUx2V_MWDBb_LIoeGDGh6e4gc_0DRjQV3DXtVCwO5rTsLNrrEE5UjCLiMWHGkb7quY1xwU=w203-h270-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSe4AwjgtAeBeNDNTkjvX2RCppfb3NaGWXpY-6JlAiafOOR7RPHdz55qrxED-6cbOSDbJBUkSaJvh57u0ONwlBQ3WLceBcOdESS4xhkT4IUPpvAY1SYvmDQ1egYDWLDkebPFVvP9ScW50v=w203-h360-k-no')"></div>
+        </div>
+        <div class="menu-carousel-shimmer"></div>
+        <button class="carousel-btn prev" onclick="menuCarouselMove(3,-1,event)">‹</button>
+        <button class="carousel-btn next" onclick="menuCarouselMove(3,1,event)">›</button>
+        <div class="carousel-dots" id="menu-dots-3">
+          <div class="carousel-dot active" onclick="menuCarouselGo(3,0,event)"></div>
+          <div class="carousel-dot" onclick="menuCarouselGo(3,1,event)"></div>
+          <div class="carousel-dot" onclick="menuCarouselGo(3,2,event)"></div>
+        </div>
+        <div class="carousel-counter" id="menu-counter-3">1 / 3</div>
+        <div class="carousel-progress" id="menu-progress-3" style="width:33.33%"></div>
+        <div class="swipe-hint">👆 Geser</div>
         <span class="menu-card-badge">✦ Boutique</span>
       </div>
       <div class="menu-card-body">
@@ -849,9 +1245,33 @@ session_start();
 
   <div class="product-grid">
 
-    <div class="product-card fade">
-      <div class="product-card-photo"
-        style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')">
+    <!-- CARD 1: Trio Cake -->
+    <div class="product-card fade" data-carousel="0">
+      <div class="product-card-photo">
+        <!-- Carousel Track -->
+        <div class="photo-carousel" id="carousel-0">
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuw_xb_C00uZMq4DtdJ8N72egFCWZf_I2zjj3254lR9dbD1f9hvZdwoQRTJTBCJMXHg9_c9E2jgPN3iSC5iNmcI0V9CxytjMghupFWvZKW091bqicz5LtmOAjC2xSqrNcSxyB5UL4lEc9Zi=w203-h451-k-no')"></div>
+        </div>
+        <!-- Shimmer overlay (keeps original effect) -->
+        <div class="carousel-shimmer"></div>
+        <!-- Nav buttons -->
+        <button class="carousel-btn prev" onclick="carouselMove(0,-1,event)">‹</button>
+        <button class="carousel-btn next" onclick="carouselMove(0,1,event)">›</button>
+        <!-- Dots -->
+        <div class="carousel-dots" id="dots-0">
+          <div class="carousel-dot active" onclick="carouselGo(0,0,event)"></div>
+          <div class="carousel-dot" onclick="carouselGo(0,1,event)"></div>
+          <div class="carousel-dot" onclick="carouselGo(0,2,event)"></div>
+        </div>
+        <!-- Counter -->
+        <div class="carousel-counter" id="counter-0">1 / 3</div>
+        <!-- Progress bar -->
+        <div class="carousel-progress" id="progress-0" style="width:33.33%"></div>
+        <!-- Swipe hint -->
+        <div class="swipe-hint">👆 Geser</div>
+        <!-- Badge -->
         <span class="product-card-badge">✦ Best Seller</span>
       </div>
       <div class="product-card-body">
@@ -865,9 +1285,25 @@ session_start();
       </div>
     </div>
 
-    <div class="product-card fade">
-      <div class="product-card-photo"
-        style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuw_xb_C00uZMq4DtdJ8N72egFCWZf_I2zjj3254lR9dbD1f9hvZdwoQRTJTBCJMXHg9_c9E2jgPN3iSC5iNmcI0V9CxytjMghupFWvZKW091bqicz5LtmOAjC2xSqrNcSxyB5UL4lEc9Zi=w203-h451-k-no')">
+    <!-- CARD 2: Signature Latte -->
+    <div class="product-card fade" data-carousel="1">
+      <div class="product-card-photo">
+        <div class="photo-carousel" id="carousel-1">
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuw_xb_C00uZMq4DtdJ8N72egFCWZf_I2zjj3254lR9dbD1f9hvZdwoQRTJTBCJMXHg9_c9E2jgPN3iSC5iNmcI0V9CxytjMghupFWvZKW091bqicz5LtmOAjC2xSqrNcSxyB5UL4lEc9Zi=w203-h451-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGWRsx9I5aMBRYOOIDyWkQMcl9RgKnp_CD8Y4owK9qdPvMwPDSU6uWjs8zKKq107WLpgmVmTYOpaxMgSrhRpl-MCPZGyAYPgpltFO7hVh4tSM0DQa9uk4KWs-CsI5GZN3ftRsdhsHNp2_F6=w203-h270-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSe4AwjgtAeBeNDNTkjvX2RCppfb3NaGWXpY-6JlAiafOOR7RPHdz55qrxED-6cbOSDbJBUkSaJvh57u0ONwlBQ3WLceBcOdESS4xhkT4IUPpvAY1SYvmDQ1egYDWLDkebPFVvP9ScW50v=w203-h360-k-no')"></div>
+        </div>
+        <div class="carousel-shimmer"></div>
+        <button class="carousel-btn prev" onclick="carouselMove(1,-1,event)">‹</button>
+        <button class="carousel-btn next" onclick="carouselMove(1,1,event)">›</button>
+        <div class="carousel-dots" id="dots-1">
+          <div class="carousel-dot active" onclick="carouselGo(1,0,event)"></div>
+          <div class="carousel-dot" onclick="carouselGo(1,1,event)"></div>
+          <div class="carousel-dot" onclick="carouselGo(1,2,event)"></div>
+        </div>
+        <div class="carousel-counter" id="counter-1">1 / 3</div>
+        <div class="carousel-progress" id="progress-1" style="width:33.33%"></div>
+        <div class="swipe-hint">👆 Geser</div>
         <span class="product-card-badge">✦ Signature</span>
       </div>
       <div class="product-card-body">
@@ -881,9 +1317,25 @@ session_start();
       </div>
     </div>
 
-    <div class="product-card fade">
-      <div class="product-card-photo"
-        style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')">
+    <!-- CARD 3: Donat Premium -->
+    <div class="product-card fade" data-carousel="2">
+      <div class="product-card-photo">
+        <div class="photo-carousel" id="carousel-2">
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAEgqBd6NWb-UkCt8EaP0d1IZd1uvxczXtXKLqfRDBq92UVlXrN7tU3acmu48PE8dVq0U1smQuLn2flGuhSv8SBGDmMDQ4HDzPt0inOcEPrHgnuDXY7D_wn_tuiP-mcCPSzYHXrsy13Bbp1g=w203-h152-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')"></div>
+        </div>
+        <div class="carousel-shimmer"></div>
+        <button class="carousel-btn prev" onclick="carouselMove(2,-1,event)">‹</button>
+        <button class="carousel-btn next" onclick="carouselMove(2,1,event)">›</button>
+        <div class="carousel-dots" id="dots-2">
+          <div class="carousel-dot active" onclick="carouselGo(2,0,event)"></div>
+          <div class="carousel-dot" onclick="carouselGo(2,1,event)"></div>
+          <div class="carousel-dot" onclick="carouselGo(2,2,event)"></div>
+        </div>
+        <div class="carousel-counter" id="counter-2">1 / 3</div>
+        <div class="carousel-progress" id="progress-2" style="width:33.33%"></div>
+        <div class="swipe-hint">👆 Geser</div>
         <span class="product-card-badge">✦ Homemade</span>
       </div>
       <div class="product-card-body">
@@ -897,9 +1349,25 @@ session_start();
       </div>
     </div>
 
-    <div class="product-card fade">
-      <div class="product-card-photo"
-        style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGTNAW5PNuDjb41NNHDB-bXNPs1EtKt7XHXoRW4iD52Wqkdl5vFbOK98l-0P1mAOSbGX1AQ3xUx2V_MWDBb_LIoeGDGh6e4gc_0DRjQV3DXtVCwO5rTsLNrrEE5UjCLiMWHGkb7quY1xwU=w203-h270-k-no')">
+    <!-- CARD 4: Boutique Collection -->
+    <div class="product-card fade" data-carousel="3">
+      <div class="product-card-photo">
+        <div class="photo-carousel" id="carousel-3">
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGTNAW5PNuDjb41NNHDB-bXNPs1EtKt7XHXoRW4iD52Wqkdl5vFbOK98l-0P1mAOSbGX1AQ3xUx2V_MWDBb_LIoeGDGh6e4gc_0DRjQV3DXtVCwO5rTsLNrrEE5UjCLiMWHGkb7quY1xwU=w203-h270-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGe6TtlEB63M_38pWHypN5RgdEpc-MPweIkN612OoMq6jVFNIYvjif89o7cFH8WVJ74_nlMy-qMu-UAyYRhJSOeEUbA9e9kOuLtDKBXbjN6fRPR4QHhMmR3a7XbkkrxnoLjeHNsC6oueVuz=w203-h360-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSe4AwjgtAeBeNDNTkjvX2RCppfb3NaGWXpY-6JlAiafOOR7RPHdz55qrxED-6cbOSDbJBUkSaJvh57u0ONwlBQ3WLceBcOdESS4xhkT4IUPpvAY1SYvmDQ1egYDWLDkebPFVvP9ScW50v=w203-h360-k-no')"></div>
+        </div>
+        <div class="carousel-shimmer"></div>
+        <button class="carousel-btn prev" onclick="carouselMove(3,-1,event)">‹</button>
+        <button class="carousel-btn next" onclick="carouselMove(3,1,event)">›</button>
+        <div class="carousel-dots" id="dots-3">
+          <div class="carousel-dot active" onclick="carouselGo(3,0,event)"></div>
+          <div class="carousel-dot" onclick="carouselGo(3,1,event)"></div>
+          <div class="carousel-dot" onclick="carouselGo(3,2,event)"></div>
+        </div>
+        <div class="carousel-counter" id="counter-3">1 / 3</div>
+        <div class="carousel-progress" id="progress-3" style="width:33.33%"></div>
+        <div class="swipe-hint">👆 Geser</div>
         <span class="product-card-badge">✦ Style</span>
       </div>
       <div class="product-card-body">
@@ -1018,7 +1486,160 @@ session_start();
 
     targets.forEach(t => io.observe(t));
   })();
+  /* ===== PRODUCT CARD PHOTO CAROUSEL ===== */
+  (function(){
+    const state = {}; // { [id]: { current, total, autoTimer } }
 
-</script>
-</body>
-</html>
+    function init(){
+      document.querySelectorAll('[data-carousel]').forEach(card => {
+        const id = parseInt(card.dataset.carousel);
+        const track = document.getElementById('carousel-' + id);
+        if(!track) return;
+        const slides = track.querySelectorAll('.photo-carousel-slide');
+        state[id] = { current: 0, total: slides.length };
+        // Touch/swipe support
+        let startX = 0, isDragging = false;
+        const photoEl = track.parentElement;
+        photoEl.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isDragging = true; }, { passive: true });
+        photoEl.addEventListener('touchend', e => {
+          if(!isDragging) return;
+          const dx = e.changedTouches[0].clientX - startX;
+          if(Math.abs(dx) > 40) carouselMove(id, dx < 0 ? 1 : -1);
+          isDragging = false;
+        });
+        // Start auto-slide
+        startAuto(id);
+        card.addEventListener('mouseenter', () => stopAuto(id));
+        card.addEventListener('mouseleave', () => startAuto(id));
+      });
+    }
+
+    function startAuto(id){
+      stopAuto(id);
+      state[id].autoTimer = setInterval(() => carouselMove(id, 1), 3200);
+    }
+    function stopAuto(id){
+      if(state[id] && state[id].autoTimer) clearInterval(state[id].autoTimer);
+    }
+
+    window.carouselMove = function(id, dir, e){
+      if(e){ e.stopPropagation(); e.preventDefault(); }
+      if(!state[id]) return;
+      const s = state[id];
+      s.current = (s.current + dir + s.total) % s.total;
+      updateCarousel(id);
+    };
+
+    window.carouselGo = function(id, idx, e){
+      if(e){ e.stopPropagation(); e.preventDefault(); }
+      if(!state[id]) return;
+      state[id].current = idx;
+      updateCarousel(id);
+    };
+
+    function updateCarousel(id){
+      const s = state[id];
+      const track = document.getElementById('carousel-' + id);
+      if(!track) return;
+      track.style.transform = `translateX(-${s.current * 100}%)`;
+      // Update dots
+      const dotsEl = document.getElementById('dots-' + id);
+      if(dotsEl){
+        dotsEl.querySelectorAll('.carousel-dot').forEach((d, i) => {
+          d.classList.toggle('active', i === s.current);
+        });
+      }
+      // Update counter
+      const counter = document.getElementById('counter-' + id);
+      if(counter) counter.textContent = (s.current + 1) + ' / ' + s.total;
+      // Update progress bar
+      const progress = document.getElementById('progress-' + id);
+      if(progress) progress.style.width = ((s.current + 1) / s.total * 100) + '%';
+    }
+
+    // Init after DOM ready
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+
+  /* ===== MENU HIGHLIGHTS CAROUSEL (identik dengan product-card carousel) ===== */
+  (function(){
+    const mState = {};
+
+    function menuInit(){
+      document.querySelectorAll('[data-menu-carousel]').forEach(card => {
+        const id = parseInt(card.dataset.menuCarousel);
+        const track = document.getElementById('menu-carousel-' + id);
+        if(!track) return;
+        const slides = track.querySelectorAll('.photo-carousel-slide');
+        mState[id] = { current: 0, total: slides.length };
+        // Touch/swipe support
+        let startX = 0, isDragging = false;
+        const photoEl = card.querySelector('.menu-card-photo');
+        photoEl.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isDragging = true; }, { passive: true });
+        photoEl.addEventListener('touchend', e => {
+          if(!isDragging) return;
+          const dx = e.changedTouches[0].clientX - startX;
+          if(Math.abs(dx) > 40) menuCarouselMove(id, dx < 0 ? 1 : -1);
+          isDragging = false;
+        });
+        // Auto-slide
+        menuStartAuto(id);
+        card.addEventListener('mouseenter', () => menuStopAuto(id));
+        card.addEventListener('mouseleave', () => menuStartAuto(id));
+      });
+    }
+
+    function menuStartAuto(id){
+      menuStopAuto(id);
+      mState[id].autoTimer = setInterval(() => menuCarouselMove(id, 1), 3200);
+    }
+    function menuStopAuto(id){
+      if(mState[id] && mState[id].autoTimer) clearInterval(mState[id].autoTimer);
+    }
+
+    window.menuCarouselMove = function(id, dir, e){
+      if(e){ e.stopPropagation(); e.preventDefault(); }
+      if(!mState[id]) return;
+      const s = mState[id];
+      s.current = (s.current + dir + s.total) % s.total;
+      menuUpdateCarousel(id);
+    };
+
+    window.menuCarouselGo = function(id, idx, e){
+      if(e){ e.stopPropagation(); e.preventDefault(); }
+      if(!mState[id]) return;
+      mState[id].current = idx;
+      menuUpdateCarousel(id);
+    };
+
+    function menuUpdateCarousel(id){
+      const s = mState[id];
+      const track = document.getElementById('menu-carousel-' + id);
+      if(!track) return;
+      track.style.transform = `translateX(-${s.current * 100}%)`;
+      const dotsEl = document.getElementById('menu-dots-' + id);
+      if(dotsEl){
+        dotsEl.querySelectorAll('.carousel-dot').forEach((d, i) => {
+          d.classList.toggle('active', i === s.current);
+        });
+      }
+      const counter = document.getElementById('menu-counter-' + id);
+      if(counter) counter.textContent = (s.current + 1) + ' / ' + s.total;
+      const progress = document.getElementById('menu-progress-' + id);
+      if(progress) progress.style.width = ((s.current + 1) / s.total * 100) + '%';
+    }
+
+    if(document.readyState === 'loading'){
+      document.addEventListener('DOMContentLoaded', menuInit);
+    } else {
+      menuInit();
+    }
+  })();
+
+
+
+

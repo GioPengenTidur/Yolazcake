@@ -12,6 +12,10 @@ session_start();
 
   <style>
 
+    /* =============================================
+       PREMIUM CONTACT PAGE — scoped styles only
+    ============================================= */
+
     /* --- Hero Banner --- */
     .contact-hero {
       position: relative;

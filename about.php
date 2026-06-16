@@ -223,8 +223,8 @@ session_start();
       overflow: hidden;
       opacity: 0;
       transform: translateY(30px);
-      will-change: transform;
-      transition: var(--card-transition);
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.45s ease;
     }
 
     .about-intro-card.show {
@@ -232,8 +232,12 @@ session_start();
     }
 
     .about-intro-card:hover {
-      transform: var(--card-hover-lift);
-      box-shadow: var(--card-shadow-light);
+      transform: translateY(-10px) scale(1.03);
+      box-shadow:
+        0 20px 55px rgba(109,76,65,0.18),
+        0 0 30px rgba(212,175,55,0.25),
+        0 0 60px rgba(212,175,55,0.12),
+        0 0 90px rgba(212,175,55,0.05);
     }
 
     .about-intro-card::before {
@@ -327,14 +331,19 @@ session_start();
       opacity: 0;
       transform: translateY(40px);
       cursor: default;
-      will-change: transform;
-      transition: var(--card-transition);
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.45s ease,
+                  border-color 0.45s ease;
     }
 
     .story-card:hover {
-      transform: var(--card-hover-lift);
+      transform: translateY(-10px) scale(1.02);
       border-color: rgba(212,175,55,0.4);
-      box-shadow: var(--card-shadow-dark);
+      box-shadow:
+        0 25px 65px rgba(0,0,0,0.35),
+        0 0 35px rgba(212,175,55,0.35),
+        0 0 70px rgba(212,175,55,0.18),
+        0 0 110px rgba(212,175,55,0.08);
     }
 
     .story-card.show {
@@ -388,6 +397,13 @@ session_start();
       letter-spacing: 1px;
       padding: 8px 16px;
       border-radius: 999px;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    }
+
+    .story-badge:hover {
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      border-color: rgba(212,175,55,0.3);
     }
 
     /* ---- #team section ---- */
@@ -424,8 +440,8 @@ session_start();
       box-shadow: 0 10px 40px rgba(0,0,0,0.1);
       opacity: 0;
       transform: translateY(40px);
-      will-change: transform;
-      transition: var(--card-transition);
+      transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  box-shadow 0.45s ease;
     }
 
     .team-card.show {
@@ -433,8 +449,12 @@ session_start();
     }
 
     .team-card:hover {
-      transform: var(--card-hover-lift);
-      box-shadow: var(--card-shadow-light);
+      transform: translateY(-12px) scale(1.03);
+      box-shadow:
+        0 24px 65px rgba(109,76,65,0.22),
+        0 0 35px rgba(212,175,55,0.28),
+        0 0 70px rgba(212,175,55,0.14),
+        0 0 110px rgba(212,175,55,0.06);
     }
 
 .team-card-photo {
@@ -521,6 +541,13 @@ session_start();
       padding: 4px 12px;
       border-radius: 999px;
       letter-spacing: 0.5px;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    }
+
+    .team-tag:hover {
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      border-color: rgba(212,175,55,0.3);
     }
 
     /* ---- Floating particles ---- */

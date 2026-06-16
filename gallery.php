@@ -11,6 +11,11 @@ session_start();
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
 
+    /* ============================================================
+       GALLERY PREMIUM — Upgrade Layer
+       (Tidak mengubah style.css, semua override di sini)
+    ============================================================ */
+
     /* ---- HERO BANNER ---- */
     .gallery-hero {
       position: relative;
@@ -1027,6 +1032,9 @@ session_start();
     if(e.key === 'ArrowLeft')  prevPhoto();
     if(e.key === 'ArrowRight') nextPhoto();
   });
+
+  /* ---- INTERSECTION OBSERVER (reuse style.js .fade → .show) ---- */
+  /* style.js already handles .fade → .show; photo-card uses the same class */
 
 </script>
 

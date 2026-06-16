@@ -11,6 +11,7 @@ session_start();
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  /* ─── CSS VARIABLES ─── */
   :root {
     --bg: linear-gradient(160deg, #1e0e3a 0%, #2d1560 50%, #1a0a2e 100%);
     --nav-bg: rgba(30,14,58,0.85);
@@ -619,7 +620,7 @@ session_start();
     <button class="login-btn" onclick="window.location.href='auth/login.php'">Login</button>
     <?php endif; ?>
     <div class="hamburger" onclick="toggleMenu()" id="hamburger">☰</div>
-    <div class="dark-btn" id="darkBtn" onclick="toggleDark()">🌙</div>
+    <div class="dark-btn" onclick="toggleDark()">🌙</div>
   </div>
 
   <div class="dropdown" id="dropdown">

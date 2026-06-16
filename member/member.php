@@ -714,7 +714,7 @@ if(!isset($_SESSION['username'])){
 
   <div class="nav-right">
     <div class="hamburger" onclick="toggleMenu()" id="hamburger">☰</div>
-    <div class="dark-btn" id="darkBtn" onclick="toggleDark()">🌙</div>
+    <div class="dark-btn" id="darkBtn" onclick="toggleDark()">☀️</div>
   </div>
 
   <!-- DROPDOWN dengan animasi slideDown sama seperti halaman menu -->
