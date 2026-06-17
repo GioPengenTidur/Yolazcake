@@ -442,6 +442,19 @@ session_start();
       transform: translateY(40px);
       transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
                   box-shadow 0.45s ease;
+      position: relative;
+    }
+
+    /* Gold sliding bar on top — sama seperti menu-card */
+    .team-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #D4AF37, #6d3e26, #D4AF37);
+      background-size: 200% 100%;
+      animation: goldSlide 3s linear infinite;
+      z-index: 5;
     }
 
     .team-card.show {
@@ -449,12 +462,12 @@ session_start();
     }
 
     .team-card:hover {
-      transform: translateY(-12px) scale(1.03);
+      transform: translateY(-10px) scale(1.03);
       box-shadow:
-        0 24px 65px rgba(109,76,65,0.22),
-        0 0 35px rgba(212,175,55,0.28),
-        0 0 70px rgba(212,175,55,0.14),
-        0 0 110px rgba(212,175,55,0.06);
+        0 25px 60px rgba(109,76,65,0.25),
+        0 0 30px rgba(232,160,191,0.5),
+        0 0 60px rgba(212,175,55,0.25),
+        0 0 90px rgba(212,175,55,0.1);
     }
 
 .team-card-photo {
@@ -465,6 +478,30 @@ session_start();
     position: relative;
     overflow: hidden;
 }
+
+    /* Shimmer sweep — sama seperti menu-card-photo::before */
+    .team-card-photo::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 55%;
+      height: 100%;
+      background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.55),
+        transparent
+      );
+      transform: skewX(-20deg);
+      transition: left 0.75s ease;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .team-card:hover .team-card-photo::before {
+      left: 130%;
+    }
 
     .team-card-photo::after {
       content: '';
