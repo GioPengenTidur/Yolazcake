@@ -1,16 +1,19 @@
 <?php
 include '../config/koneksi.php';
 
-$id = $_GET['id'];
+$id_pemesanan = $_GET['id'] ?? 0;
 
 $pemesanan = mysqli_query($conn,"
-SELECT p.*,m.nama
-FROM pemesanan p
-JOIN member m ON p.id_member=m.id_member
-WHERE p.id_pemesanan='$id'
+SELECT *
+FROM pemesanan
+WHERE id_pemesanan='$id_pemesanan'
 ");
 
 $data = mysqli_fetch_assoc($pemesanan);
+
+if(!$data){
+    die("Data pemesanan tidak ditemukan");
+}
 ?>
 
 <!DOCTYPE html>
@@ -25,8 +28,13 @@ $data = mysqli_fetch_assoc($pemesanan);
 <table border="1" cellpadding="10">
 
 <tr>
-<td>Member</td>
-<td><?= $data['nama']; ?></td>
+<td>Nama Pemesan</td>
+<td><?= $data['nama_pemesan']; ?></td>
+</tr>
+
+<tr>
+<td>No HP</td>
+<td><?= $data['no_hp']; ?></td>
 </tr>
 
 <tr>
@@ -36,14 +44,22 @@ $data = mysqli_fetch_assoc($pemesanan);
 
 <tr>
 <td>Total Harga</td>
-<td>
-Rp <?= number_format($data['total_harga'],0,',','.'); ?>
-</td>
+<td>Rp <?= number_format($data['total_harga'],0,',','.'); ?></td>
 </tr>
 
 <tr>
-<td>Status</td>
-<td><?= $data['status']; ?></td>
+<td>Metode Pembayaran</td>
+<td><?= $data['metode_pembayaran']; ?></td>
+</tr>
+
+<tr>
+<td>Status Pembayaran</td>
+<td><?= $data['status_pembayaran']; ?></td>
+</tr>
+
+<tr>
+<td>Status Pesanan</td>
+<td><?= $data['status_pesanan']; ?></td>
 </tr>
 
 </table>

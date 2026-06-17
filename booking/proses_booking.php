@@ -71,14 +71,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     '$catatan'
                 )";
 
-    if (mysqli_query($conn, $query)) {
-        echo "<script>
-                alert('Booking berhasil dibuat!');
+   if (mysqli_query($conn, $query)) {
+
+    $id_booking = mysqli_insert_id($conn);
+
+    echo "<script>
+            if(confirm('Booking berhasil! Ingin pesan makanan sekarang?')){
+                window.location.href='../pemesanan/menu.php?id_booking=$id_booking';
+            }else{
                 window.location.href='booking.php';
-              </script>";
-    } else {
-        echo "Error: " . mysqli_error($conn);
-    }
+            }
+          </script>";
+
+} else {
+    echo "Error: " . mysqli_error($conn);
+}
 
 } else {
     header("Location: booking.php");
