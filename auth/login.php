@@ -471,7 +471,7 @@ if(isset($_SESSION['username'])){
       </form>
 
       <div class="login-footer">
-        Belum punya akun? <a href="#">Hubungi Admin</a>
+        Belum punya akun? <a href="#">Silahkan Buat Akun</a>
       </div>
 
     </div>
