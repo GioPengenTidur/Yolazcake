@@ -1127,13 +1127,8 @@ session_start();
       <div class="menu-card-photo">
         <div class="photo-carousel" id="menu-carousel-0">
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAEgqBd6NWb-UkCt8EaP0d1IZd1uvxczXtXKLqfRDBq92UVlXrN7tU3acmu48PE8dVq0U1smQuLn2flGuhSv8SBGDmMDQ4HDzPt0inOcEPrHgnuDXY7D_wn_tuiP-mcCPSzYHXrsy13Bbp1g=w203-h152-k-no')"></div>
-<<<<<<< HEAD
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOubERi8Sc4lkvIVUftwiCJTWjLsqQV0t1gKFeOGX3RR-J8fQ-O0Xbn_wwW90oGBhNJM1Npil6INnNhBdXX7DpKdh7ssMlRxc63E0-RwtM2bOQ1Y3nmMa0wg6UKSd1BMSPnT7YetvuRSruQt=w203-h162-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOszWL1DbeSRill2mmxhkh0V7OGE-dwEMKzzFibhUcd2cNAlqHBEcpYxC3q9Ea2qNvyqmSsywIeAM_StM5XzvgMthUjsOD755Yh7kRaL5miDXs6Pn60NaoYrXnRzFUP1mswUdNzxWNZGeyWc=w203-h162-k-no')"></div>
-=======
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('')"></div>
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')"></div>
->>>>>>> 93ecccce4c46b0c141df42ea23a2cc1216193b2f
         </div>
         <div class="menu-carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="menuCarouselMove(0,-1,event)">‹</button>
