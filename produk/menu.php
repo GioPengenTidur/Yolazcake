@@ -1180,7 +1180,7 @@ session_start();
         <div class="photo-carousel" id="menu-carousel-2">
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSe4AwjgtAeBeNDNTkjvX2RCppfb3NaGWXpY-6JlAiafOOR7RPHdz55qrxED-6cbOSDbJBUkSaJvh57u0ONwlBQ3WLceBcOdESS4xhkT4IUPpvAY1SYvmDQ1egYDWLDkebPFVvP9ScW50v=w203-h360-k-no')"></div>
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAEzTbmJp_n907weBfK7-snau76hQWTQ46gi-dGnz5Pd-NUaQncan0PDfLqFlY-7qlYKBsgYvDO6dhzW6gg-QY40pw0uenHQqqbr4m_Zf-iUB3EQzZVWRnLqF42ICfGVtgz4kNjmINXjY1CQ=w203-h270-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuw_xb_C00uZMq4DtdJ8N72egFCWZf_I2zjj3254lR9dbD1f9hvZdwoQRTJTBCJMXHg9_c9E2jgPN3iSC5iNmcI0V9CxytjMghupFWvZKW091bqicz5LtmOAjC2xSqrNcSxyB5UL4lEc9Zi=w203-h451-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs6QMGddmqw7TI1YPaWEl2j7Z_mn4DYsX1_cg3Ac4aZYpSvVTt88xia5MPJDZUUjnQ_Of9Fo56CucBdIUmt5KSiAYEnxbHRt81UOgqivs4Xu7G0hdK0qlWzCcLuGJ0X28yrf4kzNxNVn2Y=w203-h360-k-no')"></div>
         </div>
         <div class="menu-carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="menuCarouselMove(2,-1,event)">‹</button>
@@ -1250,13 +1250,8 @@ session_start();
       <div class="product-card-photo">
         <!-- Carousel Track -->
         <div class="photo-carousel" id="carousel-0">
-<<<<<<< HEAD
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOslTirOGoLGRniyXfupSKvO3RoKxnn2QhMDjip1hFHEbqoRoDlXmKU6iXqNzh_b5sDZhzn1JSf6w0Y7xDpWXoBQARVqGxNV7vUf8PRs9rn3UOR1dXU2JfC2DmAbqxKl6j0FDgbgNj8_Q7g=w203-h162-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3..com/gps-cs/-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
-=======
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')"></div>
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
->>>>>>> 93ecccce4c46b0c141df42ea23a2cc1216193b2f
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuw_xb_C00uZMq4DtdJ8N72egFCWZf_I2zjj3254lR9dbD1f9hvZdwoQRTJTBCJMXHg9_c9E2jgPN3iSC5iNmcI0V9CxytjMghupFWvZKW091bqicz5LtmOAjC2xSqrNcSxyB5UL4lEc9Zi=w203-h451-k-no')"></div>
         </div>
         <!-- Shimmer overlay (keeps original effect) -->
