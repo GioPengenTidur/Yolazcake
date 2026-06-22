@@ -75,9 +75,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $id_booking = mysqli_insert_id($conn);
 
+    session_start();
+$_SESSION['id_booking'] = $id_booking;
+$_SESSION['nama_pemesan'] = $nama_pemesan;
+$_SESSION['no_hp'] = $no_hp;
+
     echo "<script>
             if(confirm('Booking berhasil! Ingin pesan makanan sekarang?')){
-                window.location.href='../pemesanan/menu.php?id_booking=$id_booking';
+                window.location.href='../pemesanan/menuu.php?id_booking=$id_booking';
             }else{
                 window.location.href='booking.php';
             }

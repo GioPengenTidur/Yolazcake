@@ -1,9 +1,15 @@
 <?php
 session_start();
 
-$_SESSION['nama_pemesan'] = $_POST['nama_pemesan'];
-$_SESSION['no_hp'] = $_POST['no_hp'];
-$_SESSION['id_booking'] = $_POST['id_booking'] ?? null;
+if(isset($_POST['nama_pemesan'])){
+    $_SESSION['nama_pemesan'] = $_POST['nama_pemesan'];
+}
+
+if(isset($_POST['no_hp'])){
+    $_SESSION['no_hp'] = $_POST['no_hp'];
+}
+
+$_SESSION['id_booking'] = $_POST['id_booking'] ?? ($_SESSION['id_booking'] ?? null);
 ?>
 
 <!DOCTYPE html>
@@ -17,7 +23,7 @@ $_SESSION['id_booking'] = $_POST['id_booking'] ?? null;
 
 <p>Silakan scan QRIS berikut</p>
 
-<img src="../assets/img/qris.jpg" width="300">
+<img src="../assets/img/image.png" width="300">
 
 <br><br>
 
