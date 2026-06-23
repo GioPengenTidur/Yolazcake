@@ -1635,8 +1635,8 @@ session_start();
         <!-- Carousel Track -->
         <div class="photo-carousel" id="carousel-0">
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuxCUo0up6Q0GQpiNH5OomuAvlomLxr3dOCbBk5w9-dL2aqzyn8FRs4wwR-mhCr-i88DmwYB1WWsd22zzhZPDim1Ta2Ct9eMQWk4Z4EyOsqCIvlg7zKSlelRmaoY96Fdu8ScBjUAWYDX4I=w203-h162-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuw_xb_C00uZMq4DtdJ8N72egFCWZf_I2zjj3254lR9dbD1f9hvZdwoQRTJTBCJMXHg9_c9E2jgPN3iSC5iNmcI0V9CxytjMghupFWvZKW091bqicz5LtmOAjC2xSqrNcSxyB5UL4lEc9Zi=w203-h451-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuwUlU7zqi76wnjPR9SV_PEd9Ags1QUAjU7YYXT-kIY0DEEAGMHgnrsidCxMbxxv9ox06gAu82UEQKKi97T4ED6IT4uAsXbwRa5naNvzicO84rx2rhjA7seDqxhDuqY8t5pPLjz1HnxvkIH=w203-h162-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOu0tvIHjA08GMmsxA26Am7E2ol4YQy3Zzh6kwbBRTVzBTngeDo7fuv5IRlIUaB8cMmQInjmNnA-WFJzkkCr6mwMGdQDnQWYiv19EbzmLg4US55WH-hbZcq0xrUZl0hsIUoZT7lR2WmM7Zkq=w203-h162-k-no')"></div>
         </div>
         <!-- Shimmer overlay (keeps original effect) -->
         <div class="carousel-shimmer"></div>
