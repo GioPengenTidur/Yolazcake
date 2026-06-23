@@ -1389,7 +1389,7 @@ session_start();
         <div class="photo-carousel" id="carousel-2">
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAEgqBd6NWb-UkCt8EaP0d1IZd1uvxczXtXKLqfRDBq92UVlXrN7tU3acmu48PE8dVq0U1smQuLn2flGuhSv8SBGDmMDQ4HDzPt0inOcEPrHgnuDXY7D_wn_tuiP-mcCPSzYHXrsy13Bbp1g=w203-h152-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOu12fuPcQReVeVSdpVrsX5nCqLmpkMe-gM5su8e_wFkWI3HVoAbAf8q0S96G9sS7o7-qCS-T6O-lY6-Cfi63UhWOYiHx6z6fa4oChhI7aMQMOkuu0GwjRgTkI8hmwqiRCbzOr2yyd8PtDnC=w203-h304-k-no')"></div>
         </div>
         <div class="carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="carouselMove(2,-1,event)">‹</button>
