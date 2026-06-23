@@ -1387,7 +1387,7 @@ session_start();
     <div class="product-card fade" data-carousel="2">
       <div class="product-card-photo">
         <div class="photo-carousel" id="carousel-2">
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOsdvyRWu2iZfoeMvUEE_P3LFgpQkb71dxub7cukc0upDWTR_w9duzwxCGA-Ek1_x4yb39iCdlsmEeIb6QSHDUHi0-kA3r_AV0fECq-Ul44ZIaPclm23Q9DmhoMLybbfZeJ3e8ZxoqM57T9f=w203-h447-k-no')"></div>
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAEgqBd6NWb-UkCt8EaP0d1IZd1uvxczXtXKLqfRDBq92UVlXrN7tU3acmu48PE8dVq0U1smQuLn2flGuhSv8SBGDmMDQ4HDzPt0inOcEPrHgnuDXY7D_wn_tuiP-mcCPSzYHXrsy13Bbp1g=w203-h152-k-no')"></div>
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOu12fuPcQReVeVSdpVrsX5nCqLmpkMe-gM5su8e_wFkWI3HVoAbAf8q0S96G9sS7o7-qCS-T6O-lY6-Cfi63UhWOYiHx6z6fa4oChhI7aMQMOkuu0GwjRgTkI8hmwqiRCbzOr2yyd8PtDnC=w203-h304-k-no')"></div>
         </div>
