@@ -1707,7 +1707,7 @@ session_start();
         <div class="photo-carousel" id="carousel-2">
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOtD0qGuJzLHPnhdTK_b65-MA2TDhLEOvvaPn7fetBKuGhMMeUCl5tDECqZLWAH7NXI7HhmwlYgVPSoUIkcMDCU0QMmQczrcldg_Q3hrC_2hTIjcjAbF8IVPWF9cYUf_ecr5lXKDlu7Q_W8y=w203-h447-k-no')"></div>
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs5GYdRmZ1GeGVKWWSNgBBEF2jDlEYSweaRfExiuLAXJmJsUmCFZ-60OJfDhGS_yho1_H5y8GmHANZM1ER-iAxseTgxEU08yiI3jEkQKQZ0B_jm6AZntjspsFWn18cgxekziTHciEeeEFs=w203-h449-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvOVJ4CfpHQOKGI_TRwppTsB6PjqYVDmJk7ijJbVZClrdcMDBG7R36Q26KoPPRhMngq-chHi4AR7MhBgklGKusKacDc1tOkVHz2J46cxQFVoE0xCFqCm1K0bgFY5EAwrs28_bwvxy-29Q9N=w203-h304-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Donut_Strawberry.jpeg')"></div>
         </div>
         <div class="carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="carouselMove(2,-1,event)">‹</button>
