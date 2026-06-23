@@ -1510,11 +1510,7 @@ session_start();
     <div class="menu-card fade" data-menu-carousel="0">
       <div class="menu-card-photo">
         <div class="photo-carousel" id="menu-carousel-0">
-<<<<<<< HEAD
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOsjgsDIERU-B3GnR1ruk75ki6a80miDlZVCmDY3O8PrkANPzWPny2z_gk-SelfTGI2H-yaNY87aKn5ACU1ldWnWeau5Fg-T_MWBFwUu92wVsGsA7K3tvLkMDgP7o2p8orx1ylzhaqhG4H9e=w203-h360-k-no')"></div>
-=======
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAEgqBd6NWb-UkCt8EaP0d1IZd1uvxczXtXKLqfRDBq92UVlXrN7tU3acmu48PE8dVq0U1smQuLn2flGuhSv8SBGDmMDQ4HDzPt0inOcEPrHgnuDXY7D_wn_tuiP-mcCPSzYHXrsy13Bbp1g=w203-h152-k-no')"></div>
->>>>>>> 3a364a88d9d265d0a9801a11dd30b861a6da8c3b
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')"></div>
         </div>
@@ -1773,11 +1769,6 @@ session_start();
 
 </section>
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
->>>>>>> 3a364a88d9d265d0a9801a11dd30b861a6da8c3b
 <!-- ========== BOOKING SECTION ========== -->
 <section class="booking-section" id="booking">
 
@@ -1875,10 +1866,6 @@ session_start();
   </div>
 </section>
 
-<<<<<<< HEAD
-=======
->>>>>>> de7a5dd (UPDATE)
->>>>>>> 3a364a88d9d265d0a9801a11dd30b861a6da8c3b
 <!-- ========== PROMO SPESIAL ========== -->
 <section id="promo">
 
