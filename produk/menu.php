@@ -1054,6 +1054,390 @@ session_start();
       .menu-grid, .product-grid { grid-template-columns: 1fr; }
     }
 
+/* ===== PREMIUM BOOKING SECTION ===== */
+.booking-section {
+  padding: 90px 40px;
+  background: linear-gradient(160deg, #1e0e3a 0%, #2d1560 50%, #1a0a2e 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.booking-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 10% 20%, rgba(212,175,55,0.14) 0%, transparent 55%),
+    radial-gradient(ellipse at 90% 80%, rgba(232,160,191,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 50%, rgba(109,62,150,0.15) 0%, transparent 70%);
+  pointer-events: none;
+  animation: bookingAura 10s ease-in-out infinite alternate;
+}
+
+@keyframes bookingAura {
+  0%   { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+.booking-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.booking-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.booking-left { color: #fff; }
+
+.booking-left .eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72em;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: #D4AF37;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 16px;
+  opacity: 0;
+  animation: fadeSlideDown 0.8s forwards 0.2s;
+}
+
+.booking-left h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.7em;
+  font-weight: 700;
+  line-height: 1.15;
+  margin: 0 0 20px;
+  background: linear-gradient(135deg, #fff 30%, #D4AF37 65%, #FFE4B5 85%, #fff);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmerText 4s ease-in-out infinite, fadeSlideDown 0.9s forwards 0.4s;
+  opacity: 0;
+}
+
+.booking-left p {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.97em;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.85;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeSlideDown 0.9s forwards 0.6s;
+}
+
+.booking-features {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 36px;
+  opacity: 0;
+  animation: fadeSlideDown 0.9s forwards 0.8s;
+}
+
+.booking-feature-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88em;
+  color: rgba(255,255,255,0.82);
+}
+
+.booking-feature-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(212,175,55,0.22), rgba(212,175,55,0.08));
+  border: 1px solid rgba(212,175,55,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1em;
+  flex-shrink: 0;
+  box-shadow: 0 0 12px rgba(212,175,55,0.2);
+}
+
+.booking-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeSlideDown 0.9s forwards 1s;
+}
+
+.booking-btn-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95em;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #2b1a11;
+  background: linear-gradient(135deg, #D4AF37 0%, #f5d060 50%, #D4AF37 100%);
+  background-size: 200% 100%;
+  padding: 16px 40px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-position 0.5s ease;
+  box-shadow: 0 8px 30px rgba(212,175,55,0.45);
+  position: relative;
+  overflow: hidden;
+}
+
+.booking-btn-main::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.booking-btn-main:hover::before { transform: translateX(100%); }
+
+.booking-btn-main:hover {
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 16px 45px rgba(212,175,55,0.6), 0 0 30px rgba(212,175,55,0.25);
+  background-position: 100% 0;
+}
+
+.booking-btn-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88em;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 14px 24px;
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  background: rgba(255,255,255,0.06);
+  transition: all 0.3s ease;
+}
+
+.booking-btn-wa:hover {
+  color: #fff;
+  border-color: rgba(212,175,55,0.6);
+  background: rgba(212,175,55,0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(212,175,55,0.2);
+}
+
+.booking-right {
+  position: relative;
+  opacity: 0;
+  animation: fadeSlideUp 1s cubic-bezier(.22,.68,0,1.2) forwards 0.5s;
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.booking-card-visual {
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(212,175,55,0.25);
+  border-radius: 28px;
+  padding: 36px;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.35),
+    0 0 40px rgba(212,175,55,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+  transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.45s ease, border-color 0.45s ease;
+}
+
+.booking-card-visual:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(212,175,55,0.5);
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.45),
+    0 0 50px rgba(212,175,55,0.2),
+    0 0 100px rgba(212,175,55,0.08);
+}
+
+.booking-card-visual::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #D4AF37, #ee2a7b, #D4AF37);
+  background-size: 200% 100%;
+  animation: goldSlide 4s linear infinite;
+}
+
+.booking-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.booking-card-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1em;
+  font-weight: 700;
+  color: #D4AF37;
+  letter-spacing: 1px;
+}
+
+.booking-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(52,211,153,0.15);
+  border: 1px solid rgba(52,211,153,0.4);
+  color: #6ee7b7;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72em;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+  letter-spacing: 1px;
+}
+
+.booking-status-dot {
+  width: 7px;
+  height: 7px;
+  background: #34d399;
+  border-radius: 50%;
+  animation: pulseDot 2s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.5); opacity: 0.6; }
+}
+
+.booking-divider-gold {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(212,175,55,0.5), transparent);
+  margin-bottom: 24px;
+}
+
+.booking-form-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.booking-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.booking-field {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 12px 16px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.booking-field:hover {
+  border-color: rgba(212,175,55,0.4);
+  box-shadow: 0 0 16px rgba(212,175,55,0.12);
+}
+
+.booking-field-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.65em;
+  color: rgba(212,175,55,0.8);
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.booking-field-value {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.88em;
+  color: rgba(255,255,255,0.85);
+  font-weight: 500;
+}
+
+.booking-table-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.booking-table-chip {
+  background: rgba(212,175,55,0.14);
+  border: 1px solid rgba(212,175,55,0.35);
+  color: #D4AF37;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72em;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.25s, box-shadow 0.25s, transform 0.2s;
+}
+
+.booking-table-chip:hover,
+.booking-table-chip.selected {
+  background: rgba(212,175,55,0.28);
+  box-shadow: 0 0 14px rgba(212,175,55,0.35);
+  transform: scale(1.06);
+}
+
+.booking-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0 0;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.booking-summary-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8em;
+  color: rgba(255,255,255,0.55);
+}
+
+.booking-summary-value {
+  font-family: 'Playfair Display', serif;
+  font-size: 1em;
+  color: #D4AF37;
+  font-weight: 600;
+}
+
+@media (max-width: 900px) {
+  .booking-inner { grid-template-columns: 1fr; gap: 40px; }
+  .booking-left h2 { font-size: 2em; }
+}
+
+@media (max-width: 768px) {
+  .booking-section { padding: 60px 20px; }
+  .booking-form-row { grid-template-columns: 1fr; }
+}
+
   </style>
 </head>
 <body>
@@ -1385,6 +1769,106 @@ session_start();
 
 </section>
 
+<<<<<<< HEAD
+=======
+<!-- ========== BOOKING SECTION ========== -->
+<section class="booking-section" id="booking">
+
+  <div class="booking-particles" id="bookingParticles"></div>
+
+  <div class="booking-inner">
+
+    <!-- KIRI: teks & CTA -->
+    <div class="booking-left">
+      <span class="eyebrow">✦ Table Reservation</span>
+      <h2>Reserve Your<br>Favorite Table</h2>
+      <p>
+        Nikmati pengalaman tak terlupakan bersama keluarga dan sahabat.
+        Reservasi meja lebih awal agar momen spesial Anda di YOLAZCAKE
+        selalu terjamin dan nyaman.
+      </p>
+
+      <div class="booking-features">
+        <div class="booking-feature-item">
+          <div class="booking-feature-icon">🍰</div>
+          <span>Sajian cake &amp; dessert premium langsung di meja Anda</span>
+        </div>
+        <div class="booking-feature-item">
+          <div class="booking-feature-icon">☕</div>
+          <span>Specialty coffee diseduh saat reservasi dikonfirmasi</span>
+        </div>
+        <div class="booking-feature-item">
+          <div class="booking-feature-icon">🎉</div>
+          <span>Cocok untuk gathering, ulang tahun &amp; acara spesial</span>
+        </div>
+        <div class="booking-feature-item">
+          <div class="booking-feature-icon">📍</div>
+          <span>Tersedia indoor &amp; outdoor — pemandangan kota Sintang</span>
+        </div>
+      </div>
+
+      <div class="booking-cta-row">
+        <a href="../booking/booking.php" class="booking-btn-main">
+          📅 Booking Sekarang
+        </a>
+        <a href="https://wa.me/6281578157888" class="booking-btn-wa" target="_blank">
+          💬 Tanya via WA
+        </a>
+      </div>
+    </div>
+
+    <!-- KANAN: card visual preview -->
+    <div class="booking-right">
+      <div class="booking-card-visual">
+
+        <div class="booking-card-top">
+          <span class="booking-card-logo">✦ YOLAZCAKE</span>
+          <span class="booking-status-badge">
+            <span class="booking-status-dot"></span>
+            Tersedia Hari Ini
+          </span>
+        </div>
+
+        <div class="booking-divider-gold"></div>
+
+        <div class="booking-form-preview">
+          <div class="booking-form-row">
+            <div class="booking-field">
+              <div class="booking-field-label">Tanggal</div>
+              <div class="booking-field-value" id="bookingDateDisplay">—</div>
+            </div>
+            <div class="booking-field">
+              <div class="booking-field-label">Jam</div>
+              <div class="booking-field-value">10:00 – 21:00</div>
+            </div>
+          </div>
+          <div class="booking-field">
+            <div class="booking-field-label">Jumlah Tamu</div>
+            <div class="booking-field-value">1 – 20 orang</div>
+          </div>
+          <div class="booking-field">
+            <div class="booking-field-label">Pilih Meja</div>
+            <div class="booking-table-chips">
+              <span class="booking-table-chip selected">Window Seat</span>
+              <span class="booking-table-chip">Indoor VIP</span>
+              <span class="booking-table-chip">Outdoor</span>
+              <span class="booking-table-chip">Rooftop</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="booking-summary-row">
+          <span class="booking-summary-label">Konfirmasi via WhatsApp</span>
+          <span class="booking-summary-value">0815-7815-7888</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+>>>>>>> de7a5dd (UPDATE)
 <!-- ========== PROMO SPESIAL ========== -->
 <section id="promo">
 
@@ -1640,6 +2124,57 @@ session_start();
     }
   })();
 
+  /* ===== BOOKING SECTION ===== */
+(function(){
+  function initBookingParticles(){
+    const container = document.getElementById('bookingParticles');
+    if(!container) return;
+    const colors = ['rgba(212,175,55,0.45)','rgba(232,160,191,0.35)','rgba(255,255,255,0.18)','rgba(150,100,220,0.3)'];
+    for(let i = 0; i < 22; i++){
+      const p = document.createElement('div');
+      p.classList.add('particle');
+      const size = Math.random() * 6 + 2;
+      p.style.cssText = `
+        width:${size}px; height:${size}px;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        left:${Math.random()*100}%;
+        animation-duration:${10 + Math.random()*12}s;
+        animation-delay:${Math.random()*9}s;
+      `;
+      container.appendChild(p);
+    }
+  }
 
+  function setBookingDate(){
+    const el = document.getElementById('bookingDateDisplay');
+    if(!el) return;
+    const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    const d = new Date();
+    el.textContent = days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+  }
 
+  function initChips(){
+    document.querySelectorAll('.booking-table-chip').forEach(chip => {
+      chip.addEventListener('click', function(){
+        document.querySelectorAll('.booking-table-chip').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+      });
+    });
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', () => {
+      initBookingParticles();
+      setBookingDate();
+      initChips();
+    });
+  } else {
+    initBookingParticles();
+    setBookingDate();
+    initChips();
+  }
+})();
+
+</script>
 
