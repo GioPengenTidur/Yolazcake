@@ -1511,7 +1511,7 @@ session_start();
       <div class="menu-card-photo">
         <div class="photo-carousel" id="menu-carousel-0">
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOsjgsDIERU-B3GnR1ruk75ki6a80miDlZVCmDY3O8PrkANPzWPny2z_gk-SelfTGI2H-yaNY87aKn5ACU1ldWnWeau5Fg-T_MWBFwUu92wVsGsA7K3tvLkMDgP7o2p8orx1ylzhaqhG4H9e=w203-h360-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAEbkpckvvHUA_4h4CuJY4sKI-emzoQlva4jl3vUxAbdW60m94ZBtr9bVFeYV9767vqNjTkCQIBUgYSWdVHiSYeJtmZTwNT0C66Zpu60334ZG4Y6h1UfYm296U56BX1v6-9nmlnTFnhIwcDd=w203-h152-k-no')"></div>
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')"></div>
         </div>
         <div class="menu-carousel-shimmer"></div>
@@ -1634,7 +1634,7 @@ session_start();
       <div class="product-card-photo">
         <!-- Carousel Track -->
         <div class="photo-carousel" id="carousel-0">
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuxCUo0up6Q0GQpiNH5OomuAvlomLxr3dOCbBk5w9-dL2aqzyn8FRs4wwR-mhCr-i88DmwYB1WWsd22zzhZPDim1Ta2Ct9eMQWk4Z4EyOsqCIvlg7zKSlelRmaoY96Fdu8ScBjUAWYDX4I=w203-h162-k-no')"></div>
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
           <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuw_xb_C00uZMq4DtdJ8N72egFCWZf_I2zjj3254lR9dbD1f9hvZdwoQRTJTBCJMXHg9_c9E2jgPN3iSC5iNmcI0V9CxytjMghupFWvZKW091bqicz5LtmOAjC2xSqrNcSxyB5UL4lEc9Zi=w203-h451-k-no')"></div>
         </div>
@@ -1705,9 +1705,9 @@ session_start();
     <div class="product-card fade" data-carousel="2">
       <div class="product-card-photo">
         <div class="photo-carousel" id="carousel-2">
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAEgqBd6NWb-UkCt8EaP0d1IZd1uvxczXtXKLqfRDBq92UVlXrN7tU3acmu48PE8dVq0U1smQuLn2flGuhSv8SBGDmMDQ4HDzPt0inOcEPrHgnuDXY7D_wn_tuiP-mcCPSzYHXrsy13Bbp1g=w203-h152-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOtD0qGuJzLHPnhdTK_b65-MA2TDhLEOvvaPn7fetBKuGhMMeUCl5tDECqZLWAH7NXI7HhmwlYgVPSoUIkcMDCU0QMmQczrcldg_Q3hrC_2hTIjcjAbF8IVPWF9cYUf_ecr5lXKDlu7Q_W8y=w203-h447-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs5GYdRmZ1GeGVKWWSNgBBEF2jDlEYSweaRfExiuLAXJmJsUmCFZ-60OJfDhGS_yho1_H5y8GmHANZM1ER-iAxseTgxEU08yiI3jEkQKQZ0B_jm6AZntjspsFWn18cgxekziTHciEeeEFs=w203-h449-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvOVJ4CfpHQOKGI_TRwppTsB6PjqYVDmJk7ijJbVZClrdcMDBG7R36Q26KoPPRhMngq-chHi4AR7MhBgklGKusKacDc1tOkVHz2J46cxQFVoE0xCFqCm1K0bgFY5EAwrs28_bwvxy-29Q9N=w203-h304-k-no')"></div>
         </div>
         <div class="carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="carouselMove(2,-1,event)">‹</button>
