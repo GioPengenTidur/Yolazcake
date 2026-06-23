@@ -808,7 +808,7 @@ session_start();
     <div class="team-card fade">
       <div class="team-card-photo"
         style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOucfUTam7ASvzsStRbW8XeI-f-X1Dd9y_zWrnUCbkUFMRVKL4djHMSyiFEbvQqjNMpx0g6hNL5tQWPXqLLL8V83LN9k9fGfv9Q75YdfEcmjnVxTehvbJDfjJAAemEq1jtxWqoxNc4grQFyF=w203-h252-k-no')">
-        <div class="team-card-photo-overlay">e
+        <div class="team-card-photo-overlay">
           <span class="team-photo-badge">✦ Pastry Expert</span>
         </div>
       </div>
