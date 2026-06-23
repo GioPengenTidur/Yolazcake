@@ -16,7 +16,7 @@ $_SESSION['id_booking'] = $_POST['id_booking'] ?? null;
     body{
         font-family:'Segoe UI', system-ui, sans-serif;
         
-        background-color: #FAF8F5;
+        background-color: #2d1560;
         color: #6D4C41;
     }
 
@@ -24,6 +24,7 @@ $_SESSION['id_booking'] = $_POST['id_booking'] ?? null;
         place-self: center;
         place-items: center;
     }
+    
     h2{
         font-family: 'Playfair Display', Georgia, serif;
         font-size:2em;
