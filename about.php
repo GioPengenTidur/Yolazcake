@@ -806,7 +806,7 @@ session_start();
 
     <div class="team-card fade">
       <div class="team-card-photo"
-        style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOucfUTam7ASvzsStRbW8XeI-f-X1Dd9y_zWrnUCbkUFMRVKL4djHMSyiFEbvQqjNMpx0g6hNL5tQWPXqLLL8V83LN9k9fGfv9Q75YdfEcmjnVxTehvbJDfjJAAemEq1jtxWqoxNc4grQFyF=w203-h252-k-no')">
+        style="background-image:url('assets/img/produk/Chef_Baker.jpeg')">
         <div class="team-card-photo-overlay">
           <span class="team-photo-badge">✦ Pastry Expert</span>
         </div>
@@ -824,7 +824,7 @@ session_start();
 
     <div class="team-card fade">
       <div class="team-card-photo"
-        style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOtQkCxGdAOa8nDcy2OwXN0q45_dN-ySVnIZsmtCic-P6LN4AWQ6urT-NWgy_LoAu5-YH0ruNYJlPZ2fTlRU3bnkXBKrriSsIPeJwjB5kEOSBloC29SeLY2VGxsfXSc21iqW8sBwPsxqo2fp=w203-h451-k-no')">
+        style="background-image:url('assets/img/produk/Barista.jpeg')">
         <div class="team-card-photo-overlay">
           <span class="team-photo-badge">✦ Coffee Artisan</span>
         </div>
@@ -842,7 +842,7 @@ session_start();
 
     <div class="team-card fade">
       <div class="team-card-photo"
-        style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOv7c7BKrobg4hOcBrLVmOkm-mvRw18q1pB2e-xkGSQ6F34AhGeIH9tGr942BsT4llGFdzjtEC2-W6fJvaLb6cuSnQfOhvAmPfF4HYvCHaB-gAOSbdSc74Jo3WyAtaD0Yp04P8U-K0FxbCs=w203-h444-k-no')">
+        style="background-image:url('assets/img/produk/Fashion_Stylist.jpeg')">
         <div class="team-card-photo-overlay">
           <span class="team-photo-badge">✦ Style Curator</span>
         </div>

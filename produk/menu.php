@@ -1577,9 +1577,9 @@ session_start();
     <div class="menu-card fade" data-menu-carousel="0">
       <div class="menu-card-photo">
         <div class="photo-carousel" id="menu-carousel-0">
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAEgqBd6NWb-UkCt8EaP0d1IZd1uvxczXtXKLqfRDBq92UVlXrN7tU3acmu48PE8dVq0U1smQuLn2flGuhSv8SBGDmMDQ4HDzPt0inOcEPrHgnuDXY7D_wn_tuiP-mcCPSzYHXrsy13Bbp1g=w203-h152-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Doughnut.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Tiramisu_Doughnut.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Matcha_Doughnut.jpeg')"></div>
         </div>
         <div class="menu-carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="menuCarouselMove(0,-1,event)">‹</button>
@@ -1603,9 +1603,9 @@ session_start();
     <div class="menu-card fade" data-menu-carousel="1">
       <div class="menu-card-photo">
         <div class="photo-carousel" id="menu-carousel-1">
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGWRsx9I5aMBRYOOIDyWkQMcl9RgKnp_CD8Y4owK9qdPvMwPDSU6uWjs8zKKq107WLpgmVmTYOpaxMgSrhRpl-MCPZGyAYPgpltFO7hVh4tSM0DQa9uk4KWs-CsI5GZN3ftRsdhsHNp2_F6=w203-h270-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuw_xb_C00uZMq4DtdJ8N72egFCWZf_I2zjj3254lR9dbD1f9hvZdwoQRTJTBCJMXHg9_c9E2jgPN3iSC5iNmcI0V9CxytjMghupFWvZKW091bqicz5LtmOAjC2xSqrNcSxyB5UL4lEc9Zi=w203-h451-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSe4AwjgtAeBeNDNTkjvX2RCppfb3NaGWXpY-6JlAiafOOR7RPHdz55qrxED-6cbOSDbJBUkSaJvh57u0ONwlBQ3WLceBcOdESS4xhkT4IUPpvAY1SYvmDQ1egYDWLDkebPFVvP9ScW50v=w203-h360-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Iced Palm Sugar Coffee Latte.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Coffee_Latte.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Coffee_Latte_2.jpeg')"></div>
         </div>
         <div class="menu-carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="menuCarouselMove(1,-1,event)">‹</button>
@@ -1629,9 +1629,9 @@ session_start();
     <div class="menu-card fade" data-menu-carousel="2">
       <div class="menu-card-photo">
         <div class="photo-carousel" id="menu-carousel-2">
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSe4AwjgtAeBeNDNTkjvX2RCppfb3NaGWXpY-6JlAiafOOR7RPHdz55qrxED-6cbOSDbJBUkSaJvh57u0ONwlBQ3WLceBcOdESS4xhkT4IUPpvAY1SYvmDQ1egYDWLDkebPFVvP9ScW50v=w203-h360-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuw_xb_C00uZMq4DtdJ8N72egFCWZf_I2zjj3254lR9dbD1f9hvZdwoQRTJTBCJMXHg9_c9E2jgPN3iSC5iNmcI0V9CxytjMghupFWvZKW091bqicz5LtmOAjC2xSqrNcSxyB5UL4lEc9Zi=w203-h451-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Iced_Chocolate.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Matcha_Latte.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Lychee_Iced_Tea.jpeg')"></div>
         </div>
         <div class="menu-carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="menuCarouselMove(2,-1,event)">‹</button>
@@ -1655,9 +1655,9 @@ session_start();
     <div class="menu-card fade" data-menu-carousel="3">
       <div class="menu-card-photo">
         <div class="photo-carousel" id="menu-carousel-3">
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGe6TtlEB63M_38pWHypN5RgdEpc-MPweIkN612OoMq6jVFNIYvjif89o7cFH8WVJ74_nlMy-qMu-UAyYRhJSOeEUbA9e9kOuLtDKBXbjN6fRPR4QHhMmR3a7XbkkrxnoLjeHNsC6oueVuz=w203-h360-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGTNAW5PNuDjb41NNHDB-bXNPs1EtKt7XHXoRW4iD52Wqkdl5vFbOK98l-0P1mAOSbGX1AQ3xUx2V_MWDBb_LIoeGDGh6e4gc_0DRjQV3DXtVCwO5rTsLNrrEE5UjCLiMWHGkb7quY1xwU=w203-h270-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSe4AwjgtAeBeNDNTkjvX2RCppfb3NaGWXpY-6JlAiafOOR7RPHdz55qrxED-6cbOSDbJBUkSaJvh57u0ONwlBQ3WLceBcOdESS4xhkT4IUPpvAY1SYvmDQ1egYDWLDkebPFVvP9ScW50v=w203-h360-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Boutique_Lantai_2.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Boutique_Lantai_2_1.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Boutique_Lantai_2_2.jpeg')"></div>
         </div>
         <div class="menu-carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="menuCarouselMove(3,-1,event)">‹</button>
@@ -1701,9 +1701,9 @@ session_start();
       <div class="product-card-photo">
         <!-- Carousel Track -->
         <div class="photo-carousel" id="carousel-0">
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuw_xb_C00uZMq4DtdJ8N72egFCWZf_I2zjj3254lR9dbD1f9hvZdwoQRTJTBCJMXHg9_c9E2jgPN3iSC5iNmcI0V9CxytjMghupFWvZKW091bqicz5LtmOAjC2xSqrNcSxyB5UL4lEc9Zi=w203-h451-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Chocolate_Indulgence.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Klepon_Cake.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Red_Velvet_Cake.jpeg')"></div>
         </div>
         <!-- Shimmer overlay (keeps original effect) -->
         <div class="carousel-shimmer"></div>
@@ -1740,9 +1740,9 @@ session_start();
     <div class="product-card fade" data-carousel="1">
       <div class="product-card-photo">
         <div class="photo-carousel" id="carousel-1">
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOuw_xb_C00uZMq4DtdJ8N72egFCWZf_I2zjj3254lR9dbD1f9hvZdwoQRTJTBCJMXHg9_c9E2jgPN3iSC5iNmcI0V9CxytjMghupFWvZKW091bqicz5LtmOAjC2xSqrNcSxyB5UL4lEc9Zi=w203-h451-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGWRsx9I5aMBRYOOIDyWkQMcl9RgKnp_CD8Y4owK9qdPvMwPDSU6uWjs8zKKq107WLpgmVmTYOpaxMgSrhRpl-MCPZGyAYPgpltFO7hVh4tSM0DQa9uk4KWs-CsI5GZN3ftRsdhsHNp2_F6=w203-h270-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSe4AwjgtAeBeNDNTkjvX2RCppfb3NaGWXpY-6JlAiafOOR7RPHdz55qrxED-6cbOSDbJBUkSaJvh57u0ONwlBQ3WLceBcOdESS4xhkT4IUPpvAY1SYvmDQ1egYDWLDkebPFVvP9ScW50v=w203-h360-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Iced_Palm_Sugar_Coffee_Latte.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Iced_Brown_Sugar_Coffee_Latte.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Matcha_Latte.jpeg')"></div>
         </div>
         <div class="carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="carouselMove(1,-1,event)">‹</button>
@@ -1772,9 +1772,9 @@ session_start();
     <div class="product-card fade" data-carousel="2">
       <div class="product-card-photo">
         <div class="photo-carousel" id="carousel-2">
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOvtRJSm48PI33kYPz5Dh6vwwL1nw8MHAvAtHoqJq6nJ-b5lCobai9y7qAZs_5moRepj__aGqPFPZjPDJngkwq2RQR3XghBp_JcKoPZ3F9KcM5towlHZDV4oHBRXlAshgkvcHnDXH89bbEQG=w203-h360-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAEgqBd6NWb-UkCt8EaP0d1IZd1uvxczXtXKLqfRDBq92UVlXrN7tU3acmu48PE8dVq0U1smQuLn2flGuhSv8SBGDmMDQ4HDzPt0inOcEPrHgnuDXY7D_wn_tuiP-mcCPSzYHXrsy13Bbp1g=w203-h152-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOs97VK3bhHWSSJjZ_Kd54xMSn1NZlWoPK-2Im2c0FVR99bVRrzveW42i0UFxCbkq0O3JU2TT8WMLodIXTSbpcUd8mlWKn1vRCq_rTSLcWm94awWdlDvV38l7y57TdyAJVGgFmxZc22MK1Sf=w203-h270-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Strawberry_Doughnut.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Classic_Chocolate_Doughnut.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Red_Velvet_Doughnut.jpeg')"></div>
         </div>
         <div class="carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="carouselMove(2,-1,event)">‹</button>
@@ -1804,9 +1804,9 @@ session_start();
     <div class="product-card fade" data-carousel="3">
       <div class="product-card-photo">
         <div class="photo-carousel" id="carousel-3">
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGTNAW5PNuDjb41NNHDB-bXNPs1EtKt7XHXoRW4iD52Wqkdl5vFbOK98l-0P1mAOSbGX1AQ3xUx2V_MWDBb_LIoeGDGh6e4gc_0DRjQV3DXtVCwO5rTsLNrrEE5UjCLiMWHGkb7quY1xwU=w203-h270-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAGe6TtlEB63M_38pWHypN5RgdEpc-MPweIkN612OoMq6jVFNIYvjif89o7cFH8WVJ74_nlMy-qMu-UAyYRhJSOeEUbA9e9kOuLtDKBXbjN6fRPR4QHhMmR3a7XbkkrxnoLjeHNsC6oueVuz=w203-h360-k-no')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('https://lh3.googleusercontent.com/gps-cs-s/APNQkAFSe4AwjgtAeBeNDNTkjvX2RCppfb3NaGWXpY-6JlAiafOOR7RPHdz55qrxED-6cbOSDbJBUkSaJvh57u0ONwlBQ3WLceBcOdESS4xhkT4IUPpvAY1SYvmDQ1egYDWLDkebPFVvP9ScW50v=w203-h360-k-no')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Boutique_Collection.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Baju.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Celana.jpeg')"></div>
         </div>
         <div class="carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="carouselMove(3,-1,event)">‹</button>
