@@ -135,7 +135,6 @@ session_start();
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ===== SECTION LABEL (sama persis seperti about) ===== */
     .section-label {
       display: flex;
       flex-direction: column;
@@ -197,6 +196,73 @@ session_start();
     @keyframes cardReveal {
       to { opacity: 1; transform: translateY(0); }
     }
+
+    /* ===== PREMIUM BOOKING SECTION ===== */
+.booking-premium{
+  margin: 60px auto 0;
+  max-width: 1100px;
+  padding: 45px;
+  border-radius: 30px;
+  background:
+    linear-gradient(135deg, rgba(43,26,17,.96), rgba(90,54,28,.95));
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0,0,0,.18);
+}
+
+.booking-premium::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at top right,
+    rgba(212,175,55,.18), transparent 35%);
+}
+
+.booking-premium-content{
+  position: relative;
+  z-index:2;
+  text-align:center;
+  color:#fff;
+}
+
+.booking-premium .eyebrow{
+  color:#D4AF37;
+  letter-spacing:5px;
+  text-transform:uppercase;
+  font-size:.75rem;
+  font-family:'Inter',sans-serif;
+}
+
+.booking-premium h2{
+  font-family:'Playfair Display',serif;
+  font-size:2.6rem;
+  margin:15px 0;
+  color:#fff;
+}
+
+.booking-premium p{
+  max-width:700px;
+  margin:0 auto 30px;
+  color:rgba(255,255,255,.78);
+  line-height:1.8;
+}
+
+.booking-btn{
+  display:inline-block;
+  padding:14px 36px;
+  border-radius:50px;
+  text-decoration:none;
+  background:linear-gradient(135deg,#D4AF37,#F5D57A);
+  color:#2b1a11;
+  font-weight:600;
+  transition:.3s;
+}
+
+.booking-btn:hover{
+  transform:translateY(-4px);
+  box-shadow:0 15px 35px rgba(212,175,55,.35);
+}
 
     /* ===== SECTION #menu — HIGHLIGHTS ===== */
     #menu {
@@ -1445,9 +1511,10 @@ session_start();
 <!-- NAVBAR -->
 <nav>
   <div class="nav-left">
-    <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvrk66Mw6TuaNg3tG6p8G9hJq_wOTUoBmpbb3qtX0t9CN0D6K8ns6HxQUsk_xRrGiRBD__9n78mwhr3RZ7cwM3UINa2Jjzvzx2U1l8S2SP93wZa3ga4xfn1BY446aaj_CJ_6ACQYiN58RQ=w203-h304-k-no">
+    <img src="assets/img/Yolazcake.png" alt="YOLAZCAKE Logo">
     <h2>YOLAZCAKE</h2>
   </div>
+  
   <ul class="main-nav">
     <li onclick="window.location.href='../index.php'">Home</li>
     <li class="active" onclick="window.location.href='menu.php'">Menu</li>
@@ -1769,8 +1836,6 @@ session_start();
 
 </section>
 
-<<<<<<< HEAD
-=======
 <!-- ========== BOOKING SECTION ========== -->
 <section class="booking-section" id="booking">
 
@@ -1868,7 +1933,6 @@ session_start();
   </div>
 </section>
 
->>>>>>> de7a5dd (UPDATE)
 <!-- ========== PROMO SPESIAL ========== -->
 <section id="promo">
 

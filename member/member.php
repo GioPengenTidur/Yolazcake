@@ -706,7 +706,7 @@ if(!isset($_SESSION['username'])){
 <!-- NAVBAR -->
 <nav>
   <div class="nav-left">
-    <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvrk66Mw6TuaNg3tG6p8G9hJq_wOTUoBmpbb3qtX0t9CN0D6K8ns6HxQUsk_xRrGiRBD__9n78mwhr3RZ7cwM3UINa2Jjzvzx2U1l8S2SP93wZa3ga4xfn1BY446aaj_CJ_6ACQYiN58RQ=w203-h304-k-no" alt="logo">
+   <img src="assets/img/Yolazcake.png" alt="YOLAZCAKE Logo">
     <h2>YOLAZCAKE</h2>
   </div>
 

@@ -476,80 +476,10 @@ $ada_booking = isset($_SESSION['id_booking']) && $_SESSION['id_booking'];
     }
   </style>
 </head>
-
-<style>
-
-    body{
-        place-content: center;
-        
-    }
-
-    h2{
-        font-family: 'Playfair Display', Georgia, serif;
-        font-size:2em;
-        color: #6D4C41;
-        place-self: center;
-    }
-
-    button{
-        place-self: center;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 1.25rem 2.5rem;
-        border-radius: 9999px;
-        border: none;
-        background-color: #6d4c41;
-        color: white;
-        font-size: 0.875rem;
-        font-weight: 500;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        text-decoration: none;
-        box-shadow: 0 12px 40px rgba(92, 64, 51, 0.2);
-        transition: all var(--transition-normal);
-        position: relative;
-        overflow: hidden;
-    }
-
-    #formCheckout{
-        place-self: center;
-        place-content: center;
-    }
-
-    form{
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-        place-content: center;
-        color: #6D4C41;
-        gap: 1px;
-    }
-
-    input{
-        padding: 50px;
-        margin: 1px;
-    }
-
-</style>
-
 <body>
 
 <div id="particles"></div>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<div id="formCheckout">
-    <form action="qris.php" method="POST">
-
-        <label>Nama Pemesan</label><br>
-        <input type="text" name="nama_pemesan" required><br><br>
-
-        <label>No HP</label><br>
-        <input type="text" name="no_hp" required><br><br>
-=======
-<h3>Detail Pesanan</h3>
-=======
 <!-- ═══════════════ HERO ═══════════════ -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
@@ -561,7 +491,6 @@ $ada_booking = isset($_SESSION['id_booking']) && $_SESSION['id_booking'];
     </div>
   </div>
 </div>
->>>>>>> de7a5dd (UPDATE)
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb">
@@ -726,22 +655,6 @@ $ada_booking = isset($_SESSION['id_booking']) && $_SESSION['id_booking'];
             <input type="hidden" name="id_booking" value="">
             <?php endif; ?>
 
-<<<<<<< HEAD
-<?php } ?>
->>>>>>> c4c85f022b51778d6bad8baab6e446c624b08bae
-
-        <button type="submit">
-            Lanjut Pembayaran
-        </button>
-
-        <input type="hidden"
-        name="id_booking"
-        value="<?= $_SESSION['id_booking'] ?? '' ?>">
-
-    </form>
-</div>
-
-=======
             <!-- METODE PEMBAYARAN -->
             <div class="form-group">
               <label class="form-label">✦ Metode Pembayaran</label>
@@ -836,7 +749,6 @@ $ada_booking = isset($_SESSION['id_booking']) && $_SESSION['id_booking'];
     btn.style.pointerEvents='none';
   });
 </script>
->>>>>>> de7a5dd (UPDATE)
 
 </body>
 </html>
