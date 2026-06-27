@@ -455,9 +455,106 @@ unset($_SESSION['keranjang']);
       .actions{flex-direction:column;}
       .btn-premium{justify-content:center;}
     }
+
+    /* ══════════════════ LOADING OVERLAY ══════════════════ */
+    @keyframes loaderRotate{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+    @keyframes loaderRotateRev{0%{transform:rotate(360deg);}100%{transform:rotate(0deg);}}
+    @keyframes loaderCakeBounce{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-8px) scale(1.06);}}
+    @keyframes loaderDots{0%,20%{opacity:0;}50%{opacity:1;}100%{opacity:0;}}
+    @keyframes loaderTextShimmer{0%{background-position:100% 0;}100%{background-position:-100% 0;}}
+    @keyframes overlayFadeOut{0%{opacity:1;visibility:visible;}100%{opacity:0;visibility:hidden;}}
+    @keyframes loaderFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);}}
+
+    #loadingOverlay{
+      position:fixed;inset:0;z-index:99999;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      background:linear-gradient(160deg,#1e0e3a 0%,#2d1560 50%,#1a0a2e 100%);
+      transition:opacity .7s ease, visibility .7s ease;
+    }
+    #loadingOverlay::before{
+      content:'';position:absolute;inset:0;
+      background:
+        radial-gradient(ellipse at 25% 30%,rgba(212,175,55,.14) 0%,transparent 55%),
+        radial-gradient(ellipse at 78% 68%,rgba(232,160,191,.12) 0%,transparent 55%);
+      animation:heroAurora 6s ease-in-out infinite alternate;
+    }
+    #loadingOverlay.hide{animation:overlayFadeOut .7s ease forwards;pointer-events:none;}
+
+    .loader-stage{
+      position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;
+      animation:loaderFloat 3.2s ease-in-out infinite;
+    }
+    .loader-rings{position:relative;width:130px;height:130px;margin-bottom:34px;}
+    .loader-ring{
+      position:absolute;inset:0;border-radius:50%;
+      border:3px solid transparent;
+    }
+    .loader-ring.r1{
+      border-top-color:#D4AF37;border-right-color:rgba(212,175,55,.25);
+      animation:loaderRotate 1.4s linear infinite;
+    }
+    .loader-ring.r2{
+      inset:14px;
+      border-bottom-color:#ee2a7b;border-left-color:rgba(238,42,123,.25);
+      animation:loaderRotateRev 1.8s linear infinite;
+    }
+    .loader-ring.r3{
+      inset:28px;
+      border-top-color:#6efabc;border-right-color:rgba(110,250,188,.2);
+      animation:loaderRotate 1.1s linear infinite;
+    }
+    .loader-cake{
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+      font-size:2.4em;
+      animation:loaderCakeBounce 1.6s ease-in-out infinite;
+      filter:drop-shadow(0 0 14px rgba(212,175,55,.5));
+    }
+    .loader-title{
+      font-family:'Playfair Display',serif;font-size:1.5em;font-weight:700;letter-spacing:1px;
+      background:linear-gradient(135deg,#fff 30%,#D4AF37 60%,#FFE4B5 80%,#fff);
+      background-size:200% 100%;
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      animation:loaderTextShimmer 3s ease-in-out infinite;
+      margin-bottom:10px;
+    }
+    .loader-status{
+      font-size:.85em;color:rgba(255,255,255,.55);letter-spacing:.5px;
+      display:flex;align-items:center;gap:4px;margin-bottom:26px;
+    }
+    .loader-status .dot{animation:loaderDots 1.4s ease-in-out infinite;}
+    .loader-status .dot:nth-child(2){animation-delay:.2s;}
+    .loader-status .dot:nth-child(3){animation-delay:.4s;}
+    .loader-bar-track{
+      width:220px;height:5px;border-radius:999px;overflow:hidden;
+      background:rgba(255,255,255,.08);border:1px solid rgba(212,175,55,.2);
+    }
+    .loader-bar-fill{
+      height:100%;width:0%;border-radius:999px;
+      background:linear-gradient(90deg,#D4AF37,#ee2a7b,#6efabc,#D4AF37);
+      background-size:300% 100%;
+      animation:goldSlide 2.5s linear infinite;
+      transition:width 2.4s cubic-bezier(.4,.1,.2,1);
+    }
   </style>
 </head>
 <body>
+
+<!-- ═══════════════ LOADING OVERLAY ═══════════════ -->
+<div id="loadingOverlay">
+  <div class="loader-stage">
+    <div class="loader-rings">
+      <div class="loader-ring r1"></div>
+      <div class="loader-ring r2"></div>
+      <div class="loader-ring r3"></div>
+      <div class="loader-cake">🎂</div>
+    </div>
+    <div class="loader-title">YOLAZCAKE</div>
+    <div class="loader-status">
+      Memproses pesanan Anda<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+    </div>
+    <div class="loader-bar-track"><div class="loader-bar-fill" id="loaderBar"></div></div>
+  </div>
+</div>
 
 <div id="particles"></div>
 <div id="confetti-container"></div>
@@ -685,6 +782,44 @@ unset($_SESSION['keranjang']);
   setTimeout(launchConfetti, 2200);
   /* Tembak gelombang kedua */
   setTimeout(launchConfetti, 4500);
+
+  /* ═══ LOADING OVERLAY CONTROLLER ═══ */
+  (function(){
+    const overlay = document.getElementById('loadingOverlay');
+    const bar      = document.getElementById('loaderBar');
+    const statusEl = document.querySelector('#loadingOverlay .loader-status');
+
+    const steps = [
+      'Memvalidasi pesanan',
+      'Menyimpan data ke sistem',
+      'Mengonfirmasi pembayaran',
+      'Menyiapkan konfirmasi'
+    ];
+    let i = 0;
+    function setStep(text){
+      statusEl.innerHTML = text + '<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>';
+    }
+
+    // isi progress bar bertahap
+    requestAnimationFrame(()=> bar.style.width = '100%');
+
+    const stepInterval = setInterval(()=>{
+      i++;
+      if (i < steps.length){
+        setStep(steps[i]);
+      } else {
+        clearInterval(stepInterval);
+      }
+    }, 600);
+
+    // tutup overlay setelah "selesai memproses"
+    window.addEventListener('load', function(){
+      setTimeout(()=>{
+        overlay.classList.add('hide');
+        setTimeout(()=> overlay.remove(), 750);
+      }, 2500);
+    });
+  })();
 </script>
 
 </body>

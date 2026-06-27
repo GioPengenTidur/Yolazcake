@@ -12,11 +12,10 @@ session_start();
   <style>
 
     /* ============================================================
-       GALLERY PREMIUM — Upgrade Layer
-       (Tidak mengubah style.css, semua override di sini)
+       GALLERY PREMIUM — Full redesign matching menu.php aesthetic
     ============================================================ */
 
-    /* ---- HERO BANNER ---- */
+    /* ---- HERO BANNER (same as before, unchanged) ---- */
     .gallery-hero {
       position: relative;
       height: 360px;
@@ -29,7 +28,6 @@ session_start();
       background: linear-gradient(135deg, #2b1a11 0%, #4a2c1a 40%, #6d3e26 70%, #3a1f0e 100%);
     }
 
-    /* floating orbs */
     .gallery-hero::before {
       content: '';
       position: absolute;
@@ -46,27 +44,25 @@ session_start();
       100% { transform: scale(1.08) translateY(-12px); }
     }
 
-    /* particle sparkles */
     .gallery-hero .sparkle-wrap {
       position: absolute;
       inset: 0;
       pointer-events: none;
     }
+
     .sparkle {
       position: absolute;
       border-radius: 50%;
       background: rgba(255,215,0,0.75);
       animation: sparklePulse 3s ease-in-out infinite;
     }
+
     @keyframes sparklePulse {
       0%, 100% { opacity: 0; transform: scale(0.4); }
       50%       { opacity: 1; transform: scale(1); }
     }
 
-    .gallery-hero-content {
-      position: relative;
-      z-index: 2;
-    }
+    .gallery-hero-content { position: relative; z-index: 2; }
 
     .gallery-hero-eyebrow {
       font-family: 'Inter', sans-serif;
@@ -111,48 +107,52 @@ session_start();
       animation: fadeInDown 0.9s forwards 0.9s;
     }
 
-    /* scroll-down arrow */
     .scroll-hint {
       position: absolute;
-      bottom: 22px;
-      left: 50%;
-      transform: translateX(-50%);
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      width: fit-content;
       z-index: 3;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
       opacity: 0;
       animation: fadeInDown 1s forwards 1.5s;
     }
-    
+    .scroll-hint-arrows {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+    }
     .scroll-hint span {
       display: block;
-      width: 10px;
-      height: 10px;
-      border-right: 2px solid rgba(255,215,0,0.8);
-      border-bottom: 2px solid rgba(255,215,0,0.8);
+      width: 9px;
+      height: 9px;
+      border-right: 2px solid rgba(255,215,0,0.85);
+      border-bottom: 2px solid rgba(255,215,0,0.85);
       transform: rotate(45deg);
       animation: scrollBounce 1.4s infinite;
     }
-    .scroll-hint span:nth-child(2) { animation-delay: 0.2s; }
-    .scroll-hint span:nth-child(3) { animation-delay: 0.4s; }
+    .scroll-hint span:nth-child(2) { animation-delay: 0.18s; }
+    .scroll-hint span:nth-child(3) { animation-delay: 0.36s; }
     @keyframes scrollBounce {
-      0%, 100% { opacity: 0.3; transform: rotate(45deg) translateY(-4px); }
-      50%       { opacity: 1;   transform: rotate(45deg) translateY(4px); }
+      0%, 100% { opacity: 0.25; transform: rotate(45deg) translateY(-3px); }
+      50%       { opacity: 1;   transform: rotate(45deg) translateY(3px); }
     }
 
     @keyframes shimmerText {
       0%   { background-position: 100% 0; }
       100% { background-position: -100% 0; }
     }
-
     @keyframes fadeInDown {
       from { opacity: 0; transform: translateY(-25px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ---- Hero Divider (sama seperti about) ---- */
     .gallery-hero-divider {
       position: relative;
       z-index: 2;
@@ -165,18 +165,15 @@ session_start();
       opacity: 0;
       animation: fadeInDown 0.9s forwards 1.1s;
     }
-
     .gallery-hero-divider span {
       display: block;
       width: 80px;
       height: 1px;
       background: linear-gradient(to right, transparent, #D4AF37);
     }
-
     .gallery-hero-divider span:last-child {
       background: linear-gradient(to left, transparent, #D4AF37);
     }
-
     .gallery-hero-divider .hero-diamond {
       color: #D4AF37;
       font-size: 0.75em;
@@ -186,121 +183,251 @@ session_start();
       background: none;
     }
 
-    /* ---- FILTER TABS ---- */
-    .gallery-filter {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      padding: 40px 20px 10px;
-    }
-
-    .filter-btn {
-      padding: 10px 24px;
-      border-radius: 50px;
-      border: 2px solid transparent;
-      background: rgba(255,255,255,0.7);
-      color: var(--brown);
-      font-weight: 600;
-      font-size: 0.9em;
-      cursor: pointer;
-      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-      backdrop-filter: blur(8px);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    /* ============================================================
+       UNIFIED GALLERY SECTION — premium light with live effects
+    ============================================================ */
+    #gallery-section {
+      background: linear-gradient(160deg, #EEF6FF 0%, #DFF0FF 55%, #EBF0FF 100%);
       position: relative;
       overflow: hidden;
+      padding-bottom: 80px;
     }
 
-    .filter-btn::after {
+    /* Animated floating glass orbs for premium feel */
+    #gallery-section .orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(0px);
+    }
+    #gallery-section .orb-1 {
+      width: 340px; height: 340px;
+      top: -80px; right: -60px;
+      background: radial-gradient(circle, rgba(212,175,55,0.13) 0%, rgba(232,160,191,0.07) 50%, transparent 70%);
+      animation: orbDrift1 12s ease-in-out infinite alternate;
+    }
+    #gallery-section .orb-2 {
+      width: 260px; height: 260px;
+      bottom: 60px; left: -40px;
+      background: radial-gradient(circle, rgba(232,160,191,0.15) 0%, rgba(200,162,200,0.07) 50%, transparent 70%);
+      animation: orbDrift2 15s ease-in-out infinite alternate;
+    }
+    #gallery-section .orb-3 {
+      width: 180px; height: 180px;
+      top: 40%; left: 38%;
+      background: radial-gradient(circle, rgba(212,175,55,0.10) 0%, transparent 65%);
+      animation: orbDrift3 10s ease-in-out infinite alternate;
+    }
+    @keyframes orbDrift1 {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-30px, 40px) scale(1.12); }
+    }
+    @keyframes orbDrift2 {
+      0%   { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(25px, -35px) scale(1.08); }
+    }
+    @keyframes orbDrift3 {
+      0%   { transform: translate(0, 0) scale(0.9); opacity: 0.6; }
+      100% { transform: translate(-20px, 20px) scale(1.1); opacity: 1; }
+    }
+
+    /* Subtle dot mesh texture */
+    #gallery-section::before {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, var(--pink), var(--gold));
-      opacity: 0;
-      transition: opacity 0.3s;
-      border-radius: 50px;
-      z-index: -1;
+      background-image: radial-gradient(circle, rgba(109,76,65,0.055) 1px, transparent 1px);
+      background-size: 28px 28px;
+      z-index: 0;
+      pointer-events: none;
     }
 
-    .filter-btn:hover,
-    .filter-btn.active {
-      color: #fff;
-      border-color: transparent;
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 0 8px 25px rgba(232,160,191,0.4);
-    }
-
-    .filter-btn:hover::after,
-    .filter-btn.active::after {
-      opacity: 1;
-    }
-
-    .body.dark .filter-btn {
-      background: rgba(40,40,40,0.8);
-      color: #eee;
-    }
-
-    /* ---- PREMIUM GALLERY GRID ---- */
-    #gallery {
-      padding: 30px 40px 80px;
-      background: linear-gradient(160deg, #F9E6FF 0%, #F3F0FF 50%, #FFF3E0 100%);
-      position: relative;
-    }
-
-    #gallery::before {
-      content: '';
+    /* Gold shimmer stripe across top of section */
+    #gallery-section .section-shine {
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 3px;
-      background: linear-gradient(90deg, var(--pink), var(--gold), var(--lavender), var(--pink));
+      background: linear-gradient(90deg, transparent, rgba(212,175,55,0.5), rgba(232,160,191,0.6), rgba(200,162,200,0.5), rgba(212,175,55,0.5), transparent);
       background-size: 300% 100%;
-      animation: shimmerLine 4s linear infinite;
+      animation: shineSlide 5s linear infinite;
+      z-index: 1;
+    }
+    @keyframes shineSlide {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
 
-    @keyframes shimmerLine {
-      0%   { background-position: 0% 0; }
-      100% { background-position: 300% 0; }
+    /* ---- COMPACT HEADER + TABS COMBO ---- */
+    .gallery-tabs-header {
+      position: relative;
+      z-index: 2;
+      padding: 36px 40px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
     }
 
-    #gallery h2 {
-      text-align: center;
-      font-size: clamp(1.8em, 3.5vw, 2.8em);
-      font-weight: 800;
-      margin-bottom: 10px;
-      background: linear-gradient(135deg, var(--brown), var(--pink), var(--gold));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .gallery-tabs-header .eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: #D4AF37;
+      margin-bottom: 8px;
     }
 
-    .gallery-subtitle {
-      text-align: center;
-      color: #888;
-      margin-bottom: 40px;
-      font-size: 0.95em;
-      letter-spacing: 1px;
+    .gallery-tabs-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.7em, 3vw, 2.5em);
+      font-weight: 700;
+      color: var(--brown);
+      margin-bottom: 0;
+      line-height: 1.15;
     }
 
-    /* Masonry-style grid */
-    .gallery-grid {
-      columns: 3 280px;
-      column-gap: 24px;
+    .gallery-tabs-header .subtitle-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 10px 0 0;
+      color: #aaa;
+      font-size: 0.82em;
+      letter-spacing: 1.5px;
+    }
+    .gallery-tabs-header .subtitle-row::before,
+    .gallery-tabs-header .subtitle-row::after {
+      content: '';
+      display: block;
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, #D4AF37);
+    }
+    .gallery-tabs-header .subtitle-row::after {
+      background: linear-gradient(to left, transparent, #D4AF37);
     }
 
-    /* ---- PHOTO CARD ---- */
+    /* ---- FILTER TABS — redesigned compact with count pill ---- */
+    .gallery-filter {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 22px 20px 32px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Glass-card tab strip container */
+    .gallery-filter-inner {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+      background: rgba(255,255,255,0.55);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 60px;
+      padding: 6px 8px;
+      box-shadow:
+        0 4px 24px rgba(109,76,65,0.08),
+        0 1px 4px rgba(212,175,55,0.12),
+        inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    .filter-btn {
+      padding: 9px 22px;
+      border-radius: 50px;
+      border: none;
+      background: transparent;
+      color: var(--brown);
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.86em;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+
+    /* Count badge per tab */
+    .filter-btn .tab-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      font-size: 0.72em;
+      font-weight: 700;
+      border-radius: 50%;
+      background: rgba(109,76,65,0.1);
+      color: var(--brown);
+      transition: all 0.3s;
+    }
+
+    .filter-btn:hover {
+      background: rgba(212,175,55,0.12);
+      transform: translateY(-1px);
+    }
+
+    .filter-btn.active {
+      background: linear-gradient(135deg, var(--pink), var(--gold));
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(232,160,191,0.4);
+      transform: translateY(-1px);
+    }
+    .filter-btn.active .tab-count {
+      background: rgba(255,255,255,0.25);
+      color: #fff;
+    }
+
+    /* Dark mode tabs */
+    body.dark .gallery-filter-inner {
+      background: rgba(30,20,15,0.7);
+      border-color: rgba(212,175,55,0.15);
+    }
+    body.dark .filter-btn { color: #ddd; }
+    body.dark .filter-btn:hover { background: rgba(212,175,55,0.1); }
+    body.dark .filter-btn .tab-count { background: rgba(255,255,255,0.08); color: #ddd; }
+
+    /* ---- ABSTRACT COLLAGE MOSAIC GRID ---- */
+    .gallery-mosaic {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: 90px;
+      gap: 12px;
+      padding: 0 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Card size variants — varied for true collage rhythm */
+    .photo-card               { grid-column: span 4; grid-row: span 3; }
+    .photo-card.tall          { grid-column: span 3; grid-row: span 4; }
+    .photo-card.wide          { grid-column: span 6; grid-row: span 3; }
+    .photo-card.wide-tall     { grid-column: span 5; grid-row: span 4; }
+    .photo-card.small         { grid-column: span 3; grid-row: span 3; }
+    .photo-card.hero-wide     { grid-column: span 7; grid-row: span 3; }
+    .photo-card.sq            { grid-column: span 4; grid-row: span 3; }
+
+    /* ---- PHOTO CARD base ---- */
     .photo-card {
       position: relative;
       border-radius: 20px;
       overflow: hidden;
-      margin-bottom: 24px;
-      break-inside: avoid;
       cursor: zoom-in;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.10);
       transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
                   box-shadow 0.45s ease;
-      /* fade-in starts invisible */
       opacity: 0;
-      transform: translateY(50px) scale(0.96);
+      transform: translateY(40px) scale(0.97);
     }
 
     .photo-card.show {
@@ -309,52 +436,36 @@ session_start();
     }
 
     .photo-card:hover {
-      transform: translateY(-10px) scale(1.03);
+      transform: translateY(-8px) scale(1.025);
       box-shadow:
-        0 25px 60px rgba(109,76,65,0.25),
-        0 0 30px rgba(232,160,191,0.5),
-        0 0 60px rgba(212,175,55,0.25),
-        0 0 90px rgba(212,175,55,0.1);
-      z-index: 5;
+        0 22px 55px rgba(109,76,65,0.22),
+        0 0 30px rgba(232,160,191,0.45),
+        0 0 55px rgba(212,175,55,0.2);
+      z-index: 10;
     }
 
-    /* shimmer sweep on card */
+    /* shimmer sweep */
     .photo-card::after {
       content: '';
       position: absolute;
-      top: 0;
-      left: -100%;
-      width: 55%;
-      height: 100%;
-      background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(255,255,255,0.55),
-        transparent
-      );
+      top: 0; left: -100%;
+      width: 55%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.5), transparent);
       transform: skewX(-20deg);
-      transition: 0.8s ease;
+      transition: 0.75s ease;
       pointer-events: none;
+      z-index: 3;
     }
+    .photo-card:hover::after { left: 130%; }
 
-    .photo-card:hover::after {
-      left: 130%;
-    }
-
-    /* golden border shimmer */
+    /* golden border on hover */
     .photo-card::before {
       content: '';
       position: absolute;
       inset: 0;
       border-radius: 20px;
       padding: 2px;
-      background: linear-gradient(
-        135deg,
-        rgba(232,160,191,0.8),
-        rgba(212,175,55,0.8),
-        rgba(200,162,200,0.8),
-        rgba(232,160,191,0.8)
-      );
+      background: linear-gradient(135deg, rgba(232,160,191,0.9), rgba(212,175,55,0.9), rgba(200,162,200,0.9), rgba(232,160,191,0.9));
       background-size: 300% 300%;
       -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
@@ -365,10 +476,7 @@ session_start();
       z-index: 4;
       pointer-events: none;
     }
-
-    .photo-card:hover::before {
-      opacity: 1;
-    }
+    .photo-card:hover::before { opacity: 1; }
 
     @keyframes borderSpin {
       0%   { background-position: 0%   50%; }
@@ -378,39 +486,68 @@ session_start();
 
     .photo-card img {
       width: 100%;
+      height: 100%;
+      object-fit: cover;
       display: block;
       transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
+    .photo-card:hover img { transform: scale(1.08); }
 
-    /* zoom on hover */
-    .photo-card:hover img {
-      transform: scale(1.08);
+    /* Abstract overlay texture for premium collage feel */
+    .photo-card .card-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(232,160,191,0.08) 0%, transparent 50%),
+        linear-gradient(to bottom, transparent 55%, rgba(43,26,17,0.75) 100%);
+      z-index: 1;
+      transition: opacity 0.4s;
     }
 
-    .photo-card .card-label {
+    /* Category badge */
+    .card-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 5;
+      background: rgba(212,175,55,0.88);
+      color: #2b1a11;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.62em;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 999px;
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: opacity 0.35s, transform 0.35s;
+    }
+    .photo-card:hover .card-badge {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card-label {
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      background: linear-gradient(to top, rgba(40,20,10,0.85) 0%, transparent 100%);
       padding: 50px 18px 18px;
       transform: translateY(100%);
       transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
       z-index: 3;
     }
-
-    .photo-card:hover .card-label {
-      transform: translateY(0);
-    }
-
+    .photo-card:hover .card-label { transform: translateY(0); }
     .card-label h3 {
       color: #fff;
-      font-size: 1.05em;
+      font-family: 'Playfair Display', serif;
+      font-size: 1em;
       font-weight: 700;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
-
     .card-label p {
       color: rgba(255,255,255,0.75);
-      font-size: 0.82em;
+      font-size: 0.78em;
     }
 
     /* ---- LIGHTBOX ---- */
@@ -425,19 +562,13 @@ session_start();
       opacity: 0;
       transition: opacity 0.4s;
     }
-
-    .lightbox.active {
-      opacity: 1;
-      pointer-events: all;
-    }
-
+    .lightbox.active { opacity: 1; pointer-events: all; }
     .lightbox-overlay {
       position: absolute;
       inset: 0;
       background: rgba(10,5,2,0.92);
       backdrop-filter: blur(10px);
     }
-
     .lightbox-content {
       position: relative;
       z-index: 2;
@@ -445,25 +576,17 @@ session_start();
       max-height: 88vh;
       border-radius: 18px;
       overflow: hidden;
-      box-shadow:
-        0 0 0 2px rgba(212,175,55,0.5),
-        0 30px 80px rgba(0,0,0,0.6);
+      box-shadow: 0 0 0 2px rgba(212,175,55,0.5), 0 30px 80px rgba(0,0,0,0.6);
       transform: scale(0.7);
       transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-
-    .lightbox.active .lightbox-content {
-      transform: scale(1);
-    }
-
+    .lightbox.active .lightbox-content { transform: scale(1); }
     .lightbox-content img {
       max-width: 88vw;
       max-height: 88vh;
       display: block;
       object-fit: contain;
     }
-
-    /* shimmer sweep on lightbox open */
     .lightbox-content::after {
       content: '';
       position: absolute;
@@ -473,27 +596,22 @@ session_start();
       transform: skewX(-15deg);
       pointer-events: none;
     }
-
     .lightbox.active .lightbox-content::after {
       animation: lightboxShimmer 0.8s forwards 0.2s;
     }
-
     @keyframes lightboxShimmer {
       0%   { left: -100%; }
       100% { left: 130%; }
     }
-
     .lightbox-close {
       position: absolute;
-      top: 16px;
-      right: 18px;
+      top: 16px; right: 18px;
       z-index: 10;
       background: rgba(255,255,255,0.15);
       border: none;
       color: #fff;
       font-size: 1.5em;
-      width: 44px;
-      height: 44px;
+      width: 44px; height: 44px;
       border-radius: 50%;
       cursor: pointer;
       display: flex;
@@ -502,12 +620,7 @@ session_start();
       backdrop-filter: blur(6px);
       transition: background 0.3s, transform 0.3s;
     }
-
-    .lightbox-close:hover {
-      background: rgba(232,160,191,0.5);
-      transform: rotate(90deg) scale(1.1);
-    }
-
+    .lightbox-close:hover { background: rgba(232,160,191,0.5); transform: rotate(90deg) scale(1.1); }
     .lightbox-caption {
       position: absolute;
       bottom: 0; left: 0; right: 0;
@@ -517,19 +630,8 @@ session_start();
       color: #fff;
       z-index: 3;
     }
-
-    .lightbox-caption h3 {
-      font-size: 1.1em;
-      font-weight: 700;
-    }
-
-    .lightbox-caption p {
-      font-size: 0.85em;
-      color: rgba(255,255,255,0.7);
-      margin-top: 4px;
-    }
-
-    /* lightbox nav arrows */
+    .lightbox-caption h3 { font-size: 1.1em; font-weight: 700; }
+    .lightbox-caption p { font-size: 0.85em; color: rgba(255,255,255,0.7); margin-top: 4px; }
     .lightbox-arrow {
       position: absolute;
       top: 50%;
@@ -539,8 +641,7 @@ session_start();
       border: none;
       color: #fff;
       font-size: 1.8em;
-      width: 52px;
-      height: 52px;
+      width: 52px; height: 52px;
       border-radius: 50%;
       cursor: pointer;
       backdrop-filter: blur(6px);
@@ -549,23 +650,17 @@ session_start();
       justify-content: center;
       transition: background 0.3s, transform 0.3s;
     }
-
-    .lightbox-arrow:hover {
-      background: rgba(212,175,55,0.4);
-      transform: translateY(-50%) scale(1.12);
-    }
-
+    .lightbox-arrow:hover { background: rgba(212,175,55,0.4); transform: translateY(-50%) scale(1.12); }
     .lightbox-arrow.prev { left: 20px; }
     .lightbox-arrow.next { right: 20px; }
 
-    /* ---- RATING SECTION UPGRADE ---- */
+    /* ---- RATING SECTION ---- */
     #Rating {
       padding: 80px 40px;
       background: linear-gradient(135deg, #1a0f0a 0%, #2c1a0e 60%, #3a2518 100%);
       position: relative;
       overflow: hidden;
     }
-
     #Rating::before {
       content: '';
       position: absolute;
@@ -575,7 +670,6 @@ session_start();
         radial-gradient(circle at 85% 30%, rgba(212,175,55,0.18) 0%, transparent 50%);
       pointer-events: none;
     }
-
     #Rating h2 {
       text-align: center;
       color: #fff;
@@ -585,7 +679,6 @@ session_start();
       position: relative;
       z-index: 1;
     }
-
     #Rating h2::after {
       content: '';
       display: block;
@@ -595,7 +688,6 @@ session_start();
       margin: 12px auto 0;
       border-radius: 99px;
     }
-
     #Ulasan {
       max-width: 850px;
       margin: 0 auto;
@@ -603,7 +695,6 @@ session_start();
       z-index: 1;
       text-align: center;
     }
-
     #Stars {
       font-size: clamp(3em, 8vw, 5.5em);
       font-weight: 900;
@@ -611,7 +702,6 @@ session_start();
       line-height: 1;
       margin-bottom: 8px;
     }
-
     .rating-stars {
       color: #FFD700;
       font-size: 1.1em;
@@ -623,38 +713,18 @@ session_start();
       display: inline-block;
       animation: starPulse 2.5s ease-in-out infinite;
     }
-
     @keyframes starPulse {
       0%, 100% { text-shadow: 0 0 10px rgba(255,215,0,0.9), 0 0 25px rgba(255,215,0,0.6); }
       50%       { text-shadow: 0 0 20px rgba(255,215,0,1),   0 0 50px rgba(255,215,0,0.9), 0 0 80px rgba(255,215,0,0.5); }
     }
-
-    #JumlahUlasan {
-      color: rgba(255,255,255,0.55);
-      font-size: 0.9em;
-      margin-bottom: 6px;
-    }
-
-    #JamBuka {
-      color: rgba(255,255,255,0.65);
-      font-size: 0.9em;
-      margin-bottom: 50px;
-    }
-
+    #JumlahUlasan { color: rgba(255,255,255,0.55); font-size: 0.9em; margin-bottom: 6px; }
+    #JamBuka { color: rgba(255,255,255,0.65); font-size: 0.9em; margin-bottom: 50px; }
     #Testimoni {
       background: rgba(255,255,255,0.06) !important;
       border: 1px solid rgba(255,255,255,0.1);
       backdrop-filter: blur(10px);
     }
-
-    #Testimoni h3 {
-      color: var(--gold);
-      text-align: center;
-      margin-bottom: 28px;
-      font-size: 1.2em;
-      letter-spacing: 0.5px;
-    }
-
+    #Testimoni h3 { color: var(--gold); text-align: center; margin-bottom: 28px; font-size: 1.2em; letter-spacing: 0.5px; }
     .testimonial {
       background: rgba(255,255,255,0.07) !important;
       border: 1px solid rgba(255,255,255,0.08);
@@ -667,59 +737,82 @@ session_start();
       position: relative;
       transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
     }
-
     .testimonial::before {
       content: '"';
       position: absolute;
-      top: -12px;
-      left: 20px;
+      top: -12px; left: 20px;
       font-size: 4em;
       color: var(--gold);
       opacity: 0.35;
       font-style: normal;
       line-height: 1;
     }
-
     .testimonial:hover {
       transform: translateY(-4px) scale(1.01);
       box-shadow: 0 15px 40px rgba(0,0,0,0.3);
       border-color: rgba(212,175,55,0.3);
     }
+    #Ref { color: var(--gold); text-align: center; margin-top: 28px; font-size: 0.85em; letter-spacing: 2px; opacity: 0.75; }
 
-    #Ref {
-      color: var(--gold);
-      text-align: center;
-      margin-top: 28px;
-      font-size: 0.85em;
-      letter-spacing: 2px;
-      opacity: 0.75;
-    }
-
-    /* ---- DARK MODE overrides ---- */
-    body.dark #gallery {
+    /* ---- DARK MODE ---- */
+    body.dark #gallery-section {
       background: linear-gradient(160deg, #1a1020 0%, #120f1a 50%, #1a1208 100%) !important;
     }
-
-    body.dark .photo-card {
-      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    body.dark #gallery-section::before {
+      background-image: radial-gradient(circle, rgba(212,175,55,0.04) 1px, transparent 1px);
     }
-
-    body.dark .filter-btn {
-      background: rgba(40,30,30,0.85);
-      color: #eee;
-    }
+    body.dark .gallery-tabs-header h2 { color: #f0e8d0; }
+    body.dark .gallery-tabs-header .eyebrow { color: rgba(212,175,55,0.8); }
+    body.dark .gallery-tabs-header .subtitle-row { color: #777; }
+    body.dark .photo-card { box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
 
     /* ---- RESPONSIVE ---- */
-    @media (max-width: 768px) {
-      .gallery-grid { columns: 2 180px; column-gap: 14px; }
-      .photo-card   { margin-bottom: 14px; }
-      #gallery      { padding: 20px 18px 60px; }
-      #Rating       { padding: 60px 20px; }
-      .gallery-hero { height: 300px; }
+    @media (max-width: 1100px) {
+      .gallery-mosaic {
+        grid-template-columns: repeat(6, 1fr);
+        grid-auto-rows: 100px;
+        padding: 0 24px;
+        gap: 10px;
+      }
+      .photo-card            { grid-column: span 3; grid-row: span 3; }
+      .photo-card.tall       { grid-column: span 2; grid-row: span 4; }
+      .photo-card.wide       { grid-column: span 6; grid-row: span 3; }
+      .photo-card.wide-tall  { grid-column: span 4; grid-row: span 4; }
+      .photo-card.small      { grid-column: span 2; grid-row: span 3; }
+      .photo-card.hero-wide  { grid-column: span 6; grid-row: span 3; }
+      .photo-card.sq         { grid-column: span 3; grid-row: span 3; }
     }
 
-    @media (max-width: 480px) {
-      .gallery-grid { columns: 1; }
+    @media (max-width: 700px) {
+      .gallery-mosaic {
+        grid-template-columns: repeat(4, 1fr);
+        grid-auto-rows: 100px;
+        gap: 8px;
+        padding: 0 16px;
+      }
+      .photo-card,
+      .photo-card.tall,
+      .photo-card.sq,
+      .photo-card.small     { grid-column: span 2; grid-row: span 2; }
+      .photo-card.wide,
+      .photo-card.wide-tall,
+      .photo-card.hero-wide { grid-column: span 4; grid-row: span 2; }
+      #gallery-section { padding-bottom: 50px; }
+      #Rating { padding: 60px 20px; }
+      .gallery-hero { height: 300px; }
+      .gallery-tabs-header { padding: 28px 16px 0; }
+      .gallery-filter-inner {
+        border-radius: 20px;
+        padding: 8px;
+        gap: 4px;
+      }
+      .filter-btn { padding: 8px 14px; font-size: 0.8em; }
+      .filter-btn .tab-count { display: none; }
+    }
+
+    @keyframes cardReveal {
+      from { opacity: 0; transform: translateY(30px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
     }
 
   </style>
@@ -728,14 +821,10 @@ session_start();
 
 <!-- NAVBAR -->
 <nav>
-
-  <!-- LEFT -->
   <div class="nav-left">
     <img src="assets/img/Yolazcake.png" alt="YOLAZCAKE Logo">
     <h2>YOLAZCAKE</h2>
   </div>
-
-  <!-- CENTER -->
   <ul class="main-nav">
     <li onclick="window.location.href='index.php'">Home</li>
     <li onclick="window.location.href='produk/menu.php'">Menu</li>
@@ -743,10 +832,7 @@ session_start();
     <li onclick="window.location.href='about.php'">About</li>
     <li onclick="window.location.href='contact.php'">Contact</li>
   </ul>
-
-  <!-- RIGHT -->
   <div class="nav-right">
-
 <?php if(isset($_SESSION['username'])){ ?>
 <div class="account-dropdown">
 <button class="account-btn">
@@ -760,24 +846,19 @@ session_start();
 <?php } else { ?>
 <button class="login-btn" onclick="window.location.href='auth/login.php'">Login</button>
 <?php } ?>
-
 <div class="hamburger" onclick="toggleMenu()" id="hamburger">☰</div>
 <div class="dark-btn" onclick="toggleDark()">🌙</div>
-
   </div>
-
-  <!-- DROPDOWN -->
   <div class="dropdown" id="dropdown">
     <p onclick="window.location.href='about.php#story'">Back Story</p>
     <p onclick="window.location.href='produk/menu.php#Product'">Featured Product</p>
     <p onclick="window.location.href='produk/menu.php#promo'">Promo</p>
     <p onclick="window.location.href='gallery.php#Rating'">Rating</p>
-    <p onclick="window.location.href='gallery.php#gallery'">Gallery</p>
+    <p onclick="window.location.href='gallery.php#gallery-section'">Gallery</p>
     <p onclick="window.location.href='about.php#team'">Team</p>
     <p onclick="window.location.href='contact.php#location'">Location</p>
     <p onclick="window.location.href='contact.php#contact'">Contact & Sosmed</p>
   </div>
-
 </nav>
 
 <!-- HERO BANNER -->
@@ -785,7 +866,7 @@ session_start();
   <div class="sparkle-wrap" id="sparkleWrap"></div>
   <div class="gallery-hero-content">
     <p class="gallery-hero-eyebrow">✦ Koleksi Visual Kami ✦</p>
-    <h1>Galeri YOLAZCAKE</h1>
+    <h1>Galeri <span>YOLAZCAKE</span></h1>
     <p style="font-family:'Inter',sans-serif;color:rgba(255,255,255,0.75);margin-top:14px;font-size:1em;opacity:0;animation:fadeInDown 0.9s forwards 0.9s;">Setiap sudut menyimpan cerita rasa &amp; keindahan 📸</p>
     <div class="gallery-hero-divider">
       <span></span>
@@ -793,120 +874,175 @@ session_start();
       <span></span>
     </div>
   </div>
-</div>
-
-<!-- FILTER TABS -->
-<div class="gallery-filter" id="galleryFilter">
-  <button class="filter-btn active" data-filter="all">Semua</button>
-  <button class="filter-btn" data-filter="interior">Interior</button>
-  <button class="filter-btn" data-filter="kue">Kue & Pastry</button>
-  <button class="filter-btn" data-filter="coffee">Coffee</button>
-  <button class="filter-btn" data-filter="boutique">Boutique</button>
-</div>
-
-<!-- GALLERY -->
-<section id="gallery">
-
-  <h2>Galeri YOLAZCAKE</h2>
-  <p class="gallery-subtitle">— Sintang, Kalimantan Barat —</p>
-
-  <div class="gallery-grid" id="galleryGrid">
-
-    <div class="photo-card fade" data-category="interior"
-         data-title="Interior Cafe" data-desc="Pemandangan di dalam cafe">
-      <img
-        src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAFR4IeKh-0U3sMc-EUUfcP8EpwWGFHLIf7yh1xk1yAVAzQ0JU5TQKeePE2otwORHFzeGWxkmtG8CPSOfOQkivphbY7hcKY74l7msyGPoPIjfG99lBCtqSsOzQ3sjyeQB_0P81ohEinkkXXF=s570-k-no"
-        alt="Interior Cafe"
-        loading="lazy">
-      <div class="card-label">
-        <h3>Interior Cafe</h3>
-        <p>Pemandangan di dalam cafe</p>
-      </div>
+  <div class="scroll-hint">
+    <div class="scroll-hint-arrows">
+      <span></span><span></span><span></span>
     </div>
-
-    <div class="photo-card fade" data-category="kue"
-         data-title="Display Kue" data-desc="Pameran kue yang baru keluar dari oven">
-      <img
-        src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAGULyO-bH8yxvqm3EfE71B39vSe7V8Xb8fBIp9IU_1aVfMUeGgS_v9NzNukQD8zM2b1IDyQq-_H52pdhLgq1sbiB6q0J2t0nUL2ATxZVdSensb_6GeBlNZ_Bw0beZsouVCmYf7-ip9jX2o=w203-h270-k-no"
-        alt="Display Kue"
-        loading="lazy">
-      <div class="card-label">
-        <h3>Display Kue</h3>
-        <p>Pameran kue yang baru keluar dari oven</p>
-      </div>
-    </div>
-
-    <div class="photo-card fade" data-category="coffee"
-         data-title="Coffee Corner" data-desc="Tempat pembuatan coffee">
-      <img
-        src="https://lh3.googleusercontent.com/p/AF1QipNmBvfaHIm0maTFr1WgBzWfszGuZ9CtDE2JHUjg=w203-h270-k-no"
-        alt="Coffee Corner"
-        loading="lazy">
-      <div class="card-label">
-        <h3>Coffee Corner</h3>
-        <p>Tempat pembuatan coffee</p>
-      </div>
-    </div>
-
-    <div class="photo-card fade" data-category="boutique"
-         data-title="Boutique Lantai 2" data-desc="Pakaian wanita modern & aesthetic">
-      <img
-        src="https://lh3.googleusercontent.com/gps-cs-s/APNQkAFyRTFJVt37RS1l6KvoZhmJdSlG8i-WzMMZAB4PxtxURDK3gl9hqcKBOT0FzNdhkIUVQU8RWZX4fI5zi_bdI5Xp0di4w9kdSVzn3panNK2_2AW2SZ7O7YF6INyWaDusZAefHgpe0WppNMPw=s846-k-no"
-        alt="Boutique Lantai 2"
-        loading="lazy">
-      <div class="card-label">
-        <h3>Boutique Lantai 2</h3>
-        <p>Pakaian wanita modern & aesthetic</p>
-      </div>
-    </div>
-
   </div>
+</div>
+
+<!-- ============================================================
+     UNIFIED GALLERY SECTION — filter tabs + mosaic = one block
+============================================================ -->
+<section id="gallery-section">
+
+  <!-- Floating ambient orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <!-- Gold shimmer stripe -->
+  <div class="section-shine"></div>
+
+  <!-- Compact header + tabs in one tight block -->
+  <div class="gallery-tabs-header fade">
+    <p class="eyebrow">✦ Koleksi Visual ✦</p>
+    <h2>Galeri YOLAZCAKE</h2>
+    <div class="subtitle-row">Sintang, Kalimantan Barat</div>
+  </div>
+
+  <!-- Filter tabs — glass pill strip -->
+  <div class="gallery-filter" id="galleryFilter">
+    <div class="gallery-filter-inner">
+      <button class="filter-btn active" data-filter="all">Semua <span class="tab-count">12</span></button>
+      <button class="filter-btn" data-filter="interior">Interior <span class="tab-count">5</span></button>
+      <button class="filter-btn" data-filter="kue">Kue &amp; Pastry <span class="tab-count">3</span></button>
+      <button class="filter-btn" data-filter="coffee">Coffee <span class="tab-count">3</span></button>
+      <button class="filter-btn" data-filter="boutique">Boutique <span class="tab-count">3</span></button>
+    </div>
+  </div>
+
+  <!-- Abstract Mosaic Collage Grid -->
+  <div class="gallery-mosaic" id="galleryGrid">
+
+    <!-- Row 1: hero-wide + tall -->
+    <div class="photo-card wide-tall fade" data-category="interior"
+         data-title="Ruang Utama Cafe" data-desc="Atmosfer hangat di jantung YOLAZCAKE">
+      <img src="assets/img/image.png" alt="Ruang Utama Cafe" loading="lazy">
+      <div class="card-overlay"></div>
+      <div class="card-badge">Interior</div>
+      <div class="card-label"><h3>Ruang Utama Cafe</h3><p>Atmosfer hangat YOLAZCAKE</p></div>
+    </div>
+
+    <div class="photo-card tall fade" data-category="kue"
+         data-title="Display Kue Premium" data-desc="Deretan kue artisan segar dari oven">
+      <img src="assets/img/image.png" alt="Display Kue" loading="lazy">
+      <div class="card-overlay"></div>
+      <div class="card-badge">Kue & Pastry</div>
+      <div class="card-label"><h3>Display Kue Premium</h3><p>Artisan, segar dari oven</p></div>
+    </div>
+
+    <div class="photo-card sq fade" data-category="coffee"
+         data-title="Coffee Corner" data-desc="Keahlian barista terbaik kami">
+      <img src="assets/img/image.png" alt="Coffee Corner" loading="lazy">
+      <div class="card-overlay"></div>
+      <div class="card-badge">Coffee</div>
+      <div class="card-label"><h3>Coffee Corner</h3><p>Keahlian barista terbaik</p></div>
+    </div>
+
+    <!-- Row 2: small + wide-tall + small -->
+    <div class="photo-card small fade" data-category="boutique"
+         data-title="Boutique Collection" data-desc="Fashion wanita modern & aesthetic">
+      <img src="assets/img/image.png" alt="Boutique" loading="lazy">
+      <div class="card-overlay"></div>
+      <div class="card-badge">Boutique</div>
+      <div class="card-label"><h3>Boutique Lantai 2</h3><p>Fashion modern & aesthetic</p></div>
+    </div>
+
+    <div class="photo-card small fade" data-category="interior"
+         data-title="Sudut Cozy" data-desc="Spot favorit pelanggan setia">
+      <img src="assets/img/image.png" alt="Sudut Cozy" loading="lazy">
+      <div class="card-overlay"></div>
+      <div class="card-badge">Interior</div>
+      <div class="card-label"><h3>Sudut Cozy</h3><p>Spot favorit pelanggan</p></div>
+    </div>
+
+    <div class="photo-card wide fade" data-category="kue"
+         data-title="Pastry Artisan" data-desc="Kreasi kue dengan bahan premium pilihan">
+      <img src="assets/img/image.png" alt="Pastry Artisan" loading="lazy">
+      <div class="card-overlay"></div>
+      <div class="card-badge">Kue & Pastry</div>
+      <div class="card-label"><h3>Pastry Artisan</h3><p>Bahan premium pilihan</p></div>
+    </div>
+
+    <div class="photo-card small fade" data-category="coffee"
+         data-title="Espresso Bar" data-desc="Single origin, slow brew">
+      <img src="assets/img/image.png" alt="Espresso Bar" loading="lazy">
+      <div class="card-overlay"></div>
+      <div class="card-badge">Coffee</div>
+      <div class="card-label"><h3>Espresso Bar</h3><p>Single origin, slow brew</p></div>
+    </div>
+
+    <!-- Row 3: tall + sq + sq -->
+    <div class="photo-card tall fade" data-category="interior"
+         data-title="Lounge Area" data-desc="Tempat bersantai yang elegan">
+      <img src="assets/img/image.png" alt="Lounge Area" loading="lazy">
+      <div class="card-overlay"></div>
+      <div class="card-badge">Interior</div>
+      <div class="card-label"><h3>Lounge Area</h3><p>Elegan & nyaman</p></div>
+    </div>
+
+    <div class="photo-card sq fade" data-category="boutique"
+         data-title="Koleksi Terbaru" data-desc="Ready-to-wear pilihan musim ini">
+      <img src="assets/img/image.png" alt="Koleksi Boutique" loading="lazy">
+      <div class="card-overlay"></div>
+      <div class="card-badge">Boutique</div>
+      <div class="card-label"><h3>Koleksi Terbaru</h3><p>Ready-to-wear musim ini</p></div>
+    </div>
+
+    <div class="photo-card sq fade" data-category="kue"
+         data-title="Matcha Cake" data-desc="Kue matcha signature YOLAZCAKE">
+      <img src="assets/img/image.png" alt="Matcha Cake" loading="lazy">
+      <div class="card-overlay"></div>
+      <div class="card-badge">Kue & Pastry</div>
+      <div class="card-label"><h3>Matcha Cake</h3><p>Signature YOLAZCAKE</p></div>
+    </div>
+
+    <!-- Row 4: wide + sq + sq -->
+    <div class="photo-card wide fade" data-category="coffee"
+         data-title="Latte Art" data-desc="Seni kopi dari tangan barista kami">
+      <img src="assets/img/image.png" alt="Latte Art" loading="lazy">
+      <div class="card-overlay"></div>
+      <div class="card-badge">Coffee</div>
+      <div class="card-label"><h3>Latte Art</h3><p>Seni dari tangan barista kami</p></div>
+    </div>
+
+    <div class="photo-card sq fade" data-category="interior"
+         data-title="Jendela Cafe" data-desc="Pemandangan kota dari meja favorit">
+      <img src="assets/img/image.png" alt="Jendela Cafe" loading="lazy">
+      <div class="card-overlay"></div>
+      <div class="card-badge">Interior</div>
+      <div class="card-label"><h3>Jendela Cafe</h3><p>Meja dengan pemandangan terbaik</p></div>
+    </div>
+
+    <div class="photo-card sq fade" data-category="boutique"
+         data-title="Fashion Corner" data-desc="Aesthetic & modern di lantai dua">
+      <img src="assets/img/image.png" alt="Fashion Corner" loading="lazy">
+      <div class="card-overlay"></div>
+      <div class="card-badge">Boutique</div>
+      <div class="card-label"><h3>Fashion Corner</h3><p>Aesthetic di lantai dua</p></div>
+    </div>
+
+  </div><!-- /gallery-mosaic -->
 
 </section>
 
 <!-- RATING -->
 <section id="Rating">
-
-  <h2>Rating & Testimoni</h2>
-
+  <h2>Rating &amp; Testimoni</h2>
   <div id="Ulasan">
-
-    <h3 id="Stars">
-      4,8 <span class="rating-stars">★★★★★</span>
-    </h3>
-
+    <h3 id="Stars">4,8 <span class="rating-stars">★★★★★</span></h3>
     <p id="JumlahUlasan">(26 ulasan)</p>
-
     <p><strong style="color:var(--gold)">Toko Roti • Rp 25.000 – 50.000</strong></p>
-
     <p id="JamBuka">Buka setiap hari • Tutup pukul 22.00 WIB</p>
-
     <div class="card fade" id="Testimoni">
-
       <h3>Apa kata pelanggan kami?</h3>
-
-      <div class="testimonial fade">
-        "Kuenya mantap banget, harganya murah meriah, dan matcha-nya enak!"
-      </div>
-
-      <div class="testimonial fade">
-        "Tempatnya cozy banget! Kuenya enak, kopinya mantap, dan bisa langsung belanja baju di atas. Recomended!"
-      </div>
-
-      <div class="testimonial fade">
-        "Dessertnya selalu fresh. Boutique-nya juga aesthetic, cocok buat cewek-cewek yang suka foto-foto."
-      </div>
-
-      <div class="testimonial fade">
-        "Satu-satunya tempat di Sintang yang bisa makan enak sambil belanja fashion. Pelayanannya ramah!"
-      </div>
-
+      <div class="testimonial fade">"Kuenya mantap banget, harganya murah meriah, dan matcha-nya enak!"</div>
+      <div class="testimonial fade">"Tempatnya cozy banget! Kuenya enak, kopinya mantap, dan bisa langsung belanja baju di atas. Recomended!"</div>
+      <div class="testimonial fade">"Dessertnya selalu fresh. Boutique-nya juga aesthetic, cocok buat cewek-cewek yang suka foto-foto."</div>
+      <div class="testimonial fade">"Satu-satunya tempat di Sintang yang bisa makan enak sambil belanja fashion. Pelayanannya ramah!"</div>
       <p id="Ref">— Dari Google Review</p>
-
     </div>
-
   </div>
-
 </section>
 
 <!-- FOOTER -->
@@ -954,24 +1090,28 @@ session_start();
   })();
 
   /* ---- FILTER TABS ---- */
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const photoCards = document.querySelectorAll('.photo-card');
+  const filterBtns  = document.querySelectorAll('.filter-btn');
+  const photoCards  = document.querySelectorAll('.photo-card');
 
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       filterBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       const filter = btn.dataset.filter;
+      let delay = 0;
       photoCards.forEach(card => {
         const show = filter === 'all' || card.dataset.category === filter;
         card.style.transition = 'opacity 0.4s, transform 0.4s';
         if(show){
-          card.style.opacity = '1';
-          card.style.transform = 'scale(1)';
-          card.style.pointerEvents = '';
+          setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = '';
+            card.style.pointerEvents = '';
+          }, delay);
+          delay += 60;
         } else {
           card.style.opacity = '0';
-          card.style.transform = 'scale(0.9)';
+          card.style.transform = 'scale(0.88)';
           card.style.pointerEvents = 'none';
         }
       });
@@ -998,11 +1138,9 @@ session_start();
     const card = visibleCards[idx];
     if(!card) return;
     const img   = card.querySelector('img');
-    const title = card.dataset.title;
-    const desc  = card.dataset.desc;
-    document.getElementById('lightboxImg').src   = img.src;
-    document.getElementById('lightboxTitle').textContent = title;
-    document.getElementById('lightboxDesc').textContent  = desc;
+    document.getElementById('lightboxImg').src            = img.src;
+    document.getElementById('lightboxTitle').textContent  = card.dataset.title;
+    document.getElementById('lightboxDesc').textContent   = card.dataset.desc;
     currentIndex = idx;
   }
 
@@ -1012,20 +1150,15 @@ session_start();
   }
 
   function prevPhoto(){
-    const newIdx = (currentIndex - 1 + visibleCards.length) % visibleCards.length;
-    showPhoto(newIdx);
+    showPhoto((currentIndex - 1 + visibleCards.length) % visibleCards.length);
   }
 
   function nextPhoto(){
-    const newIdx = (currentIndex + 1) % visibleCards.length;
-    showPhoto(newIdx);
+    showPhoto((currentIndex + 1) % visibleCards.length);
   }
 
-  photoCards.forEach(card => {
-    card.addEventListener('click', () => openLightbox(card));
-  });
+  photoCards.forEach(card => card.addEventListener('click', () => openLightbox(card)));
 
-  /* keyboard navigation */
   document.addEventListener('keydown', e => {
     if(!document.getElementById('lightbox').classList.contains('active')) return;
     if(e.key === 'Escape')     closeLightbox();
@@ -1033,10 +1166,20 @@ session_start();
     if(e.key === 'ArrowRight') nextPhoto();
   });
 
-  /* ---- INTERSECTION OBSERVER (reuse style.js .fade → .show) ---- */
-  /* style.js already handles .fade → .show; photo-card uses the same class */
+  /* ---- SCROLL REVEAL (same as style.js .fade → .show) ---- */
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if(entry.isIntersecting){
+        setTimeout(() => {
+          entry.target.classList.add('show');
+        }, i * 80);
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.photo-card').forEach(card => revealObserver.observe(card));
 
 </script>
-
 </body>
 </html>
