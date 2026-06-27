@@ -8,6 +8,7 @@ session_start();
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menu - YOLAZCAKE Sintang</title>
   <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <style>
@@ -1532,7 +1533,7 @@ session_start();
       </div>
     </div>
 <?php } else { ?>
-    <button class="login-btn" onclick="window.location.href='auth/login.php'">Login</button>
+    <button class="login-btn" onclick="window.location.href='../auth/login.php'">Login</button>
 <?php } ?>
     <div class="hamburger" onclick="toggleMenu()" id="hamburger">☰</div>
     <div class="dark-btn" onclick="toggleDark()">🌙</div>
