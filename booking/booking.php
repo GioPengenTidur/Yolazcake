@@ -1,3 +1,8 @@
+<?php
+require_once '../config/koneksi.php';
+// Ambil meja yang masih Tersedia
+$meja_list = mysqli_query($conn, "SELECT * FROM meja WHERE status='Tersedia' ORDER BY nomor_meja ASC");
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -337,9 +342,21 @@
           </div>
         </div>
         <div class="field">
-          <label>&nbsp;</label>
-          <div style="font-size:.78em;color:rgba(255,255,255,.4);padding-top:14px;">
-            ✦ Sertakan jumlah orang agar kami siapkan meja yang sesuai
+          <label>Pilih Meja (Opsional)</label>
+          <div class="field-icon-wrap">
+            <span class="field-icon">🪑</span>
+            <select name="id_meja" style="width:100%;padding:14px 14px 14px 44px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:12px;color:#fff;font-size:.95em;appearance:none;cursor:pointer;">
+              <option value="" style="background:#1a0a2e;">-- Pilih meja (opsional) --</option>
+              <?php if($meja_list && mysqli_num_rows($meja_list) > 0): ?>
+                <?php while($m = mysqli_fetch_assoc($meja_list)): ?>
+                  <option value="<?= $m['id_meja'] ?>" style="background:#1a0a2e;">
+                    Meja <?= htmlspecialchars($m['nomor_meja']) ?> (Kapasitas: <?= $m['kapasitas'] ?> orang)
+                  </option>
+                <?php endwhile; ?>
+              <?php else: ?>
+                <option value="" disabled style="background:#1a0a2e;">Belum ada meja tersedia</option>
+              <?php endif; ?>
+            </select>
           </div>
         </div>
       </div>

@@ -1,14 +1,29 @@
 <?php
+session_start();
+if(!isset($_SESSION['username'])){
+    header("Location: ../auth/login.php");
+    exit();
+}
+if(($_SESSION['role'] ?? '') !== 'admin'){
+    header("Location: ../dashboard.php");
+    exit();
+}
 require_once '../config/koneksi.php';
 
-$query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
+$query = mysqli_query($conn, "SELECT * FROM users ORDER BY id DESC");
+
+$total_query  = mysqli_query($conn, "SELECT COUNT(*) AS t, SUM(role='admin') AS a, SUM(role='kasir') AS k FROM users");
+$stats        = mysqli_fetch_assoc($total_query);
+$total_user   = $stats['t'] ?? 0;
+$total_admin  = $stats['a'] ?? 0;
+$total_kasir  = $stats['k'] ?? 0;
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Data Booking – YOLAZCAKE</title>
+  <title>Kelola Akun – YOLAZCAKE</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -107,14 +122,13 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
     .page-wrapper {
       position:relative; z-index:1;
       padding: 36px 28px 80px;
-      max-width: 1280px;
+      max-width: 1100px;
       margin: 0 auto;
     }
 
     /* top bar */
     .top-bar {
       display:flex; justify-content:space-between; align-items:center;
-      flex-wrap: wrap; gap: 14px;
       margin-bottom:28px;
       opacity:0; animation:cardReveal 0.7s forwards 0.7s;
     }
@@ -124,28 +138,37 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
       text-transform:uppercase; color:#D4AF37;
     }
 
-    .btn-back {
+    .btn-tambah {
       display:inline-flex; align-items:center; gap:8px;
-      padding:10px 22px;
-      background:rgba(212,175,55,0.1);
-      border:1px solid rgba(212,175,55,0.3);
-      color:#D4AF37; font-family:'Inter',sans-serif;
-      font-size:0.82em; font-weight:600; letter-spacing:1px;
-      border-radius:999px; text-decoration:none;
-      transition:transform 0.25s, box-shadow 0.3s, background 0.3s;
+      padding:12px 26px;
+      background:linear-gradient(135deg, #D4AF37 0%, #b8860b 50%, #D4AF37 100%);
+      background-size:200% 100%;
+      animation:goldSlide 3s linear infinite;
+      color:#1e0e3a; font-family:'Inter',sans-serif;
+      font-size:0.82em; font-weight:700; letter-spacing:1.5px; text-transform:uppercase;
+      border:none; border-radius:999px; cursor:pointer; text-decoration:none;
+      box-shadow:0 6px 22px rgba(212,175,55,0.35), 0 0 30px rgba(212,175,55,0.18);
+      transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.35s;
+      position:relative; overflow:hidden;
     }
 
-    .btn-back:hover {
-      transform:translateX(-3px);
-      background:rgba(212,175,55,0.2);
-      box-shadow:0 6px 20px rgba(212,175,55,0.25);
+    .btn-tambah::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent);
+      transform:translateX(-100%); transition:transform 0.5s;
+    }
+
+    .btn-tambah:hover::before { transform:translateX(100%); }
+    .btn-tambah:hover {
+      transform:translateY(-3px) scale(1.04);
+      box-shadow:0 12px 36px rgba(212,175,55,0.5), 0 0 50px rgba(212,175,55,0.28);
     }
 
     @keyframes goldSlide { 0%{background-position:0% 0;} 100%{background-position:200% 0;} }
 
     /* stats bar */
     .stats-row {
-      display:grid; grid-template-columns:repeat(4,1fr); gap:16px;
+      display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
       margin-bottom:28px;
       opacity:0; animation:cardReveal 0.7s forwards 0.85s;
     }
@@ -156,14 +179,12 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
       border:1px solid rgba(255,255,255,0.1);
       border-radius:18px; padding:20px 22px;
       display:flex; align-items:center; gap:14px;
-      transition:border-color 0.35s, box-shadow 0.35s, transform 0.3s;
-      cursor: default;
+      transition:border-color 0.35s, box-shadow 0.35s;
     }
 
     .stat-card:hover {
       border-color:rgba(212,175,55,0.35);
       box-shadow:0 0 24px rgba(212,175,55,0.2);
-      transform: translateY(-3px);
     }
 
     .stat-card::before {
@@ -197,9 +218,7 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
 
     @keyframes cardReveal { to{opacity:1;transform:translateY(0);} }
 
-    .table-scroll { width:100%; overflow-x:auto; }
-
-    table { width:100%; border-collapse:collapse; min-width: 920px; }
+    table { width:100%; border-collapse:collapse; }
 
     thead tr {
       background:rgba(212,175,55,0.12);
@@ -207,11 +226,10 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
     }
 
     thead th {
-      padding:16px 18px;
-      font-size:0.68em; font-weight:700; letter-spacing:2px;
+      padding:16px 20px;
+      font-size:0.7em; font-weight:700; letter-spacing:2.5px;
       text-transform:uppercase; color:rgba(212,175,55,0.9);
       text-align:left;
-      white-space: nowrap;
     }
 
     tbody tr {
@@ -223,8 +241,8 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
     tbody tr:hover { background:rgba(212,175,55,0.06); }
 
     tbody td {
-      padding:15px 18px;
-      font-size:0.88em; color:rgba(255,255,255,0.8);
+      padding:15px 20px;
+      font-size:0.9em; color:rgba(255,255,255,0.8);
       vertical-align:middle;
     }
 
@@ -235,43 +253,29 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
 
     .td-nama { font-weight:600; color:#fff; }
 
-    .td-catatan {
-      color:rgba(255,255,255,0.55); font-size:0.85em; max-width: 220px;
-      white-space: normal;
+    .you-tag {
+      display:inline-block; margin-left:8px;
+      font-size:0.68em; font-weight:700; letter-spacing:0.5px;
+      color:rgba(255,255,255,0.45);
+      border:1px solid rgba(255,255,255,0.18);
+      border-radius:999px; padding:2px 8px;
     }
 
-    .badge-orang {
+    /* role badge */
+    .role-badge {
       display:inline-flex; align-items:center; gap:5px;
-      background:rgba(99,102,241,0.15);
-      border:1px solid rgba(99,102,241,0.35);
-      border-radius:999px; padding:4px 12px;
-      font-size:0.82em; color:#a5b4fc; font-weight:600;
+      border-radius:999px; padding:5px 13px;
+      font-size:0.78em; font-weight:700; letter-spacing:0.5px;
     }
-
-    /* status badges */
-    .status-badge {
-      display:inline-flex; align-items:center; gap:6px;
-      padding:6px 14px; border-radius:999px;
-      font-size:0.74em; font-weight:700; letter-spacing:0.5px;
-      white-space: nowrap;
+    .role-admin {
+      background:rgba(212,175,55,0.16);
+      border:1px solid rgba(212,175,55,0.4);
+      color:#D4AF37;
     }
-
-    .status-pending {
-      background: rgba(212,175,55,0.15);
-      border: 1px solid rgba(212,175,55,0.4);
-      color: #D4AF37;
-    }
-
-    .status-dikonfirmasi {
-      background: rgba(99,250,180,0.15);
-      border: 1px solid rgba(99,250,180,0.4);
-      color: #6efabc;
-    }
-
-    .status-dibatalkan {
-      background: rgba(239,68,68,0.14);
-      border: 1px solid rgba(239,68,68,0.35);
-      color: #fca5a5;
+    .role-kasir {
+      background:rgba(99,102,241,0.16);
+      border:1px solid rgba(99,102,241,0.4);
+      color:#a5b4fc;
     }
 
     /* action buttons */
@@ -282,23 +286,19 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
       padding:7px 14px; border-radius:8px;
       font-size:0.75em; font-weight:600; letter-spacing:0.5px;
       text-decoration:none; border:1px solid transparent;
+      cursor:pointer; background:none;
+      font-family:'Inter',sans-serif;
       transition:transform 0.2s, box-shadow 0.25s, background 0.25s;
-      cursor: pointer;
     }
 
     .btn-act:hover { transform:translateY(-2px); }
+    .btn-act:disabled { opacity:0.35; cursor:not-allowed; transform:none; }
 
-    .btn-konfirmasi {
-      background:rgba(99,250,180,0.16); border-color:rgba(99,250,180,0.4);
-      color:#6efabc;
-    }
-    .btn-konfirmasi:hover { background:rgba(99,250,180,0.3); box-shadow:0 4px 16px rgba(99,250,180,0.25); }
-
-    .btn-batalkan {
-      background:rgba(212,175,55,0.16); border-color:rgba(212,175,55,0.4);
+    .btn-edit {
+      background:rgba(212,175,55,0.18); border-color:rgba(212,175,55,0.4);
       color:#D4AF37;
     }
-    .btn-batalkan:hover { background:rgba(212,175,55,0.3); box-shadow:0 4px 16px rgba(212,175,55,0.3); }
+    .btn-edit:hover { background:rgba(212,175,55,0.32); box-shadow:0 4px 16px rgba(212,175,55,0.3); }
 
     .btn-hapus {
       background:rgba(239,68,68,0.14); border-color:rgba(239,68,68,0.35);
@@ -306,7 +306,18 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
     }
     .btn-hapus:hover { background:rgba(239,68,68,0.28); box-shadow:0 4px 16px rgba(239,68,68,0.25); }
 
-    .td-dash { color: rgba(255,255,255,0.3); font-size: 0.85em; }
+    /* flash message */
+    .flash-msg {
+      margin-bottom:20px; padding:14px 20px; border-radius:14px;
+      font-size:0.88em; font-weight:500;
+      opacity:0; animation:cardReveal 0.6s forwards 0.55s;
+    }
+    .flash-ok {
+      background:rgba(212,175,55,0.14); border:1px solid rgba(212,175,55,0.35); color:#FFE4B5;
+    }
+    .flash-err {
+      background:rgba(239,68,68,0.14); border:1px solid rgba(239,68,68,0.35); color:#fca5a5;
+    }
 
     /* empty state */
     .empty-state {
@@ -324,11 +335,21 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
       100% { transform:translateY(-100px) scale(1); opacity:0; }
     }
 
+    .back-link {
+      display:inline-flex; align-items:center; gap:6px;
+      color:rgba(212,175,55,0.85); text-decoration:none;
+      font-size:0.82em; font-weight:600; letter-spacing:0.5px;
+      margin-bottom:18px;
+      transition:color 0.25s, transform 0.25s;
+      opacity:0; animation:cardReveal 0.6s forwards 0.55s;
+    }
+    .back-link:hover { color:#FFE4B5; transform:translateX(-4px); }
+
     @media(max-width:768px){
-      .stats-row { grid-template-columns:repeat(2,1fr); }
+      .stats-row { grid-template-columns:1fr; }
       .hero-inner h1 { font-size:2em; }
       .page-wrapper { padding:24px 16px 60px; }
-      .action-cell { flex-direction:column; }
+      .action-cell { flex-direction:column; align-items:flex-start; }
     }
   </style>
 </head>
@@ -340,8 +361,8 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
     <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
-    <h1>Data Booking</h1>
-    <p class="hero-sub">Kelola reservasi meja pelanggan YOLAZCAKE</p>
+    <h1>Kelola Akun</h1>
+    <p class="hero-sub">Atur akun staff: ubah peran atau hapus akun</p>
     <div class="hero-divider">
       <span></span><span class="diamond">✦ ✦ ✦</span><span></span>
     </div>
@@ -350,73 +371,69 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
 
 <div class="page-wrapper">
 
+  <a href="../dashboard.php" class="back-link">&#8592; Kembali ke Dashboard</a>
+
   <!-- top bar -->
   <div class="top-bar">
-    <span class="section-eyebrow">✦ Daftar Booking</span>
-    <a href="../index.php" class="btn-back">🏠 Kembali ke Website</a>
+    <span class="section-eyebrow">✦ Daftar Akun</span>
   </div>
 
+  <?php if(isset($_GET['ok'])): ?>
+    <div class="flash-msg flash-ok">
+      <?php
+        $msgs = [
+          'role'   => '✓ Peran akun berhasil diubah.',
+          'hapus'  => '✓ Akun berhasil dihapus.',
+        ];
+        echo $msgs[$_GET['ok']] ?? '✓ Berhasil.';
+      ?>
+    </div>
+  <?php elseif(isset($_GET['err'])): ?>
+    <div class="flash-msg flash-err">
+      <?php
+        $errs = [
+          'self'      => '✕ Tidak bisa mengubah / menghapus akun yang sedang kamu pakai sendiri.',
+          'last_admin'=> '✕ Tidak bisa menghapus / menurunkan admin terakhir. Minimal harus ada 1 admin.',
+          'notfound'  => '✕ Akun tidak ditemukan.',
+        ];
+        echo $errs[$_GET['err']] ?? '✕ Terjadi kesalahan.';
+      ?>
+    </div>
+  <?php endif; ?>
+
   <!-- stats -->
-  <?php
-    $stat_query = mysqli_query($conn, "
-      SELECT
-        COUNT(*) AS total,
-        SUM(status='Pending') AS total_pending,
-        SUM(status='Dikonfirmasi') AS total_konfirmasi,
-        SUM(status='Dibatalkan') AS total_batal
-      FROM booking
-    ");
-    $stats = mysqli_fetch_assoc($stat_query);
-    $total_booking     = $stats['total'] ?? 0;
-    $total_pending     = $stats['total_pending'] ?? 0;
-    $total_konfirmasi  = $stats['total_konfirmasi'] ?? 0;
-    $total_batal       = $stats['total_batal'] ?? 0;
-  ?>
   <div class="stats-row">
     <div class="stat-card">
-      <span class="stat-icon">📋</span>
+      <span class="stat-icon">👤</span>
       <div>
-        <div class="stat-val"><?= $total_booking; ?></div>
-        <div class="stat-lbl">Total Booking</div>
+        <div class="stat-val"><?= $total_user; ?></div>
+        <div class="stat-lbl">Total Akun</div>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">⏳</span>
+      <span class="stat-icon">👑</span>
       <div>
-        <div class="stat-val"><?= $total_pending; ?></div>
-        <div class="stat-lbl">Menunggu Konfirmasi</div>
+        <div class="stat-val"><?= $total_admin; ?></div>
+        <div class="stat-lbl">Admin</div>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">✅</span>
+      <span class="stat-icon">🧑‍🍳</span>
       <div>
-        <div class="stat-val"><?= $total_konfirmasi; ?></div>
-        <div class="stat-lbl">Dikonfirmasi</div>
-      </div>
-    </div>
-    <div class="stat-card">
-      <span class="stat-icon">🚫</span>
-      <div>
-        <div class="stat-val"><?= $total_batal; ?></div>
-        <div class="stat-lbl">Dibatalkan</div>
+        <div class="stat-val"><?= $total_kasir; ?></div>
+        <div class="stat-lbl">Kasir</div>
       </div>
     </div>
   </div>
 
   <!-- table -->
   <div class="table-card">
-    <div class="table-scroll">
     <table>
       <thead>
         <tr>
           <th style="text-align:center;">No</th>
-          <th>Nama Pemesan</th>
-          <th>No. HP</th>
-          <th>Tanggal</th>
-          <th>Jam</th>
-          <th>Orang</th>
-          <th>Catatan</th>
-          <th>Status</th>
+          <th>Username</th>
+          <th>Peran</th>
           <th>Aksi</th>
         </tr>
       </thead>
@@ -426,57 +443,51 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
         $rows = mysqli_num_rows($query);
         if($rows > 0):
           while($data = mysqli_fetch_assoc($query)):
-
-            $status = $data['status'];
-            $statusClass = 'status-pending';
-            $statusIcon  = '⏳';
-            if($status === 'Dikonfirmasi'){ $statusClass = 'status-dikonfirmasi'; $statusIcon = '✅'; }
-            elseif($status === 'Dibatalkan'){ $statusClass = 'status-dibatalkan'; $statusIcon = '🚫'; }
+            $is_me = (isset($_SESSION['username']) && $_SESSION['username'] === $data['username']);
         ?>
         <tr>
           <td class="td-no"><?= $no++; ?></td>
-          <td class="td-nama"><?= htmlspecialchars($data['nama_pemesan']); ?></td>
-          <td style="color:rgba(255,255,255,0.6);"><?= htmlspecialchars($data['no_hp']); ?></td>
-          <td style="color:rgba(255,255,255,0.6);"><?= htmlspecialchars($data['tanggal_booking']); ?></td>
-          <td style="color:rgba(255,255,255,0.6);"><?= htmlspecialchars($data['jam_booking']); ?></td>
-          <td><span class="badge-orang">👥 <?= htmlspecialchars($data['jumlah_orang']); ?></span></td>
-          <td class="td-catatan"><?= $data['catatan'] !== '' ? htmlspecialchars($data['catatan']) : '<span class="td-dash">—</span>'; ?></td>
+          <td class="td-nama">
+            <?= htmlspecialchars($data['username']); ?>
+            <?php if($is_me): ?><span class="you-tag">Kamu</span><?php endif; ?>
+          </td>
           <td>
-            <span class="status-badge <?= $statusClass; ?>"><?= $statusIcon; ?> <?= htmlspecialchars($status); ?></span>
+            <?php if($data['role'] === 'admin'): ?>
+              <span class="role-badge role-admin">👑 Admin</span>
+            <?php else: ?>
+              <span class="role-badge role-kasir">🧑‍🍳 Kasir</span>
+            <?php endif; ?>
           </td>
           <td>
             <div class="action-cell">
-              <?php if ($status == 'Pending') : ?>
-                <a href="ubah_status.php?id=<?= $data['id_booking']; ?>&status=Dikonfirmasi"
-                   class="btn-act btn-konfirmasi"
-                   onclick="return confirm('Konfirmasi booking ini?')">✅ Konfirmasi</a>
-
-                <a href="ubah_status.php?id=<?= $data['id_booking']; ?>&status=Dibatalkan"
-                   class="btn-act btn-batalkan"
-                   onclick="return confirm('Batalkan booking ini?')">🚫 Batalkan</a>
-
-                <a href="hapus_booking.php?id=<?= $data['id_booking']; ?>"
-                   class="btn-act btn-hapus"
-                   onclick="return confirm('Yakin ingin menghapus data booking ini?')">🗑️ Hapus</a>
-              <?php else : ?>
-                <span class="td-dash">—</span>
+              <?php if($data['role'] === 'admin'): ?>
+                <a href="ubah_role.php?id=<?= $data['id']; ?>&role=kasir"
+                   class="btn-act btn-edit"
+                   onclick="return confirm('Turunkan <?= htmlspecialchars($data['username']); ?> jadi Kasir?')">⬇️ Jadikan Kasir</a>
+              <?php else: ?>
+                <a href="ubah_role.php?id=<?= $data['id']; ?>&role=admin"
+                   class="btn-act btn-edit"
+                   onclick="return confirm('Jadikan <?= htmlspecialchars($data['username']); ?> sebagai Admin?')">⬆️ Jadikan Admin</a>
               <?php endif; ?>
+
+              <a href="hapus_user.php?id=<?= $data['id']; ?>"
+                 class="btn-act btn-hapus"
+                 onclick="return confirm('Yakin ingin menghapus akun <?= htmlspecialchars($data['username']); ?>?')">🗑️ Hapus</a>
             </div>
           </td>
         </tr>
         <?php endwhile; else: ?>
         <tr>
-          <td colspan="9">
+          <td colspan="4">
             <div class="empty-state">
-              <div class="es-icon">📋</div>
-              <p>Belum ada data booking</p>
+              <div class="es-icon">👤</div>
+              <p>Belum ada akun</p>
             </div>
           </td>
         </tr>
         <?php endif; ?>
       </tbody>
     </table>
-    </div>
   </div>
 
 </div>
@@ -505,6 +516,5 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
     }
   })();
 </script>
-
 </body>
 </html>

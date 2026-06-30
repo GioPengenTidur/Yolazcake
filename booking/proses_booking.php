@@ -679,7 +679,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <div class="btn-row">
-      <a href="booking.php" class="btn-prem btn-ghost">← Kembali</a>
+      <a href="../index.php" class="btn-prem btn-ghost">🏠 Kembali ke Beranda</a>
       <a href="../pemesanan/menuu.php?id_booking=<?= $id_booking ?>" class="btn-prem btn-gold">🍰 Pesan Makanan</a>
     </div>
 

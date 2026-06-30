@@ -1,5 +1,16 @@
 <?php
 session_start();
+require_once 'config/koneksi.php';
+
+// Ambil semua foto dari DB
+$galeri_query = mysqli_query($conn, "SELECT * FROM galeri ORDER BY created_at DESC");
+$galeri_all   = [];
+$counts       = ['all'=>0,'interior'=>0,'kue'=>0,'coffee'=>0,'boutique'=>0];
+while ($gr = mysqli_fetch_assoc($galeri_query)) {
+    $galeri_all[] = $gr;
+    $counts['all']++;
+    if (isset($counts[$gr['kategori']])) $counts[$gr['kategori']]++;
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -840,7 +851,7 @@ session_start();
 👤 <?php echo htmlspecialchars($_SESSION['username']); ?> ▼
 </button>
 <div class="account-menu">
-<a href="member/member.php">Member</a>
+<a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'dashboard.php' : 'member/member.php'; ?>"><?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'Dashboard' : 'Member'; ?></a>
 <a href="auth/logout.php">Logout</a>
 </div>
 </div>
@@ -901,127 +912,50 @@ session_start();
     <div class="subtitle-row">Sintang, Kalimantan Barat</div>
   </div>
 
-  <!-- Filter tabs — glass pill strip -->
+  <!-- Filter tabs — glass pill strip (count dari DB) -->
   <div class="gallery-filter" id="galleryFilter">
     <div class="gallery-filter-inner">
-      <button class="filter-btn active" data-filter="all">Semua <span class="tab-count">12</span></button>
-      <button class="filter-btn" data-filter="interior">Interior <span class="tab-count">5</span></button>
-      <button class="filter-btn" data-filter="kue">Kue &amp; Pastry <span class="tab-count">3</span></button>
-      <button class="filter-btn" data-filter="coffee">Coffee <span class="tab-count">3</span></button>
-      <button class="filter-btn" data-filter="boutique">Boutique <span class="tab-count">3</span></button>
+      <button class="filter-btn active" data-filter="all">Semua <span class="tab-count"><?= $counts['all'] ?></span></button>
+      <button class="filter-btn" data-filter="interior">Interior <span class="tab-count"><?= $counts['interior'] ?></span></button>
+      <button class="filter-btn" data-filter="kue">Kue &amp; Pastry <span class="tab-count"><?= $counts['kue'] ?></span></button>
+      <button class="filter-btn" data-filter="coffee">Coffee <span class="tab-count"><?= $counts['coffee'] ?></span></button>
+      <button class="filter-btn" data-filter="boutique">Boutique <span class="tab-count"><?= $counts['boutique'] ?></span></button>
     </div>
   </div>
 
-  <!-- Abstract Mosaic Collage Grid -->
+  <!-- Galeri dari Database -->
   <div class="gallery-mosaic" id="galleryGrid">
 
-    <!-- Row 1: hero-wide + tall -->
-    <div class="photo-card wide-tall fade" data-category="interior"
-         data-title="Ruang Utama Cafe" data-desc="Atmosfer hangat di jantung YOLAZCAKE">
-      <img src="assets/img/image.png" alt="Ruang Utama Cafe" loading="lazy">
-      <div class="card-overlay"></div>
-      <div class="card-badge">Interior</div>
-      <div class="card-label"><h3>Ruang Utama Cafe</h3><p>Atmosfer hangat YOLAZCAKE</p></div>
+    <?php if (empty($galeri_all)): ?>
+    <div style="grid-column:1/-1;text-align:center;padding:80px 20px;color:rgba(255,255,255,.4);">
+      <div style="font-size:3em;margin-bottom:12px;">🖼️</div>
+      <p>Belum ada foto di galeri. Tambahkan melalui panel admin.</p>
+      <?php if(isset($_SESSION['username'])): ?>
+      <a href="galeri/tambah_galeri.php" style="display:inline-block;margin-top:16px;padding:10px 24px;background:rgba(212,175,55,.2);border:1px solid rgba(212,175,55,.4);color:#D4AF37;border-radius:999px;text-decoration:none;font-size:.9em;">+ Tambah Foto</a>
+      <?php endif; ?>
     </div>
-
-    <div class="photo-card tall fade" data-category="kue"
-         data-title="Display Kue Premium" data-desc="Deretan kue artisan segar dari oven">
-      <img src="assets/img/image.png" alt="Display Kue" loading="lazy">
+    <?php else: ?>
+    <?php
+      $size_classes = ['wide-tall','tall','sq','small','wide','sq','small','tall','sq','sq','wide','sq'];
+      foreach ($galeri_all as $i => $g):
+        $sz = $size_classes[$i % count($size_classes)];
+        $img_src = 'assets/img/galeri/' . htmlspecialchars($g['foto']);
+        $fallback = 'assets/img/image.png';
+    ?>
+    <div class="photo-card <?= $sz ?> fade" data-category="<?= htmlspecialchars($g['kategori']) ?>"
+         data-title="<?= htmlspecialchars($g['judul']) ?>"
+         data-desc="<?= htmlspecialchars($g['deskripsi'] ?? '') ?>">
+      <img src="<?= $img_src ?>" alt="<?= htmlspecialchars($g['judul']) ?>" loading="lazy"
+           onerror="this.src='<?= $fallback ?>'">
       <div class="card-overlay"></div>
-      <div class="card-badge">Kue & Pastry</div>
-      <div class="card-label"><h3>Display Kue Premium</h3><p>Artisan, segar dari oven</p></div>
+      <div class="card-badge"><?= ucfirst(htmlspecialchars($g['kategori'])) ?></div>
+      <div class="card-label">
+        <h3><?= htmlspecialchars($g['judul']) ?></h3>
+        <p><?= htmlspecialchars($g['deskripsi'] ?? '') ?></p>
+      </div>
     </div>
-
-    <div class="photo-card sq fade" data-category="coffee"
-         data-title="Coffee Corner" data-desc="Keahlian barista terbaik kami">
-      <img src="assets/img/image.png" alt="Coffee Corner" loading="lazy">
-      <div class="card-overlay"></div>
-      <div class="card-badge">Coffee</div>
-      <div class="card-label"><h3>Coffee Corner</h3><p>Keahlian barista terbaik</p></div>
-    </div>
-
-    <!-- Row 2: small + wide-tall + small -->
-    <div class="photo-card small fade" data-category="boutique"
-         data-title="Boutique Collection" data-desc="Fashion wanita modern & aesthetic">
-      <img src="assets/img/image.png" alt="Boutique" loading="lazy">
-      <div class="card-overlay"></div>
-      <div class="card-badge">Boutique</div>
-      <div class="card-label"><h3>Boutique Lantai 2</h3><p>Fashion modern & aesthetic</p></div>
-    </div>
-
-    <div class="photo-card small fade" data-category="interior"
-         data-title="Sudut Cozy" data-desc="Spot favorit pelanggan setia">
-      <img src="assets/img/image.png" alt="Sudut Cozy" loading="lazy">
-      <div class="card-overlay"></div>
-      <div class="card-badge">Interior</div>
-      <div class="card-label"><h3>Sudut Cozy</h3><p>Spot favorit pelanggan</p></div>
-    </div>
-
-    <div class="photo-card wide fade" data-category="kue"
-         data-title="Pastry Artisan" data-desc="Kreasi kue dengan bahan premium pilihan">
-      <img src="assets/img/image.png" alt="Pastry Artisan" loading="lazy">
-      <div class="card-overlay"></div>
-      <div class="card-badge">Kue & Pastry</div>
-      <div class="card-label"><h3>Pastry Artisan</h3><p>Bahan premium pilihan</p></div>
-    </div>
-
-    <div class="photo-card small fade" data-category="coffee"
-         data-title="Espresso Bar" data-desc="Single origin, slow brew">
-      <img src="assets/img/image.png" alt="Espresso Bar" loading="lazy">
-      <div class="card-overlay"></div>
-      <div class="card-badge">Coffee</div>
-      <div class="card-label"><h3>Espresso Bar</h3><p>Single origin, slow brew</p></div>
-    </div>
-
-    <!-- Row 3: tall + sq + sq -->
-    <div class="photo-card tall fade" data-category="interior"
-         data-title="Lounge Area" data-desc="Tempat bersantai yang elegan">
-      <img src="assets/img/image.png" alt="Lounge Area" loading="lazy">
-      <div class="card-overlay"></div>
-      <div class="card-badge">Interior</div>
-      <div class="card-label"><h3>Lounge Area</h3><p>Elegan & nyaman</p></div>
-    </div>
-
-    <div class="photo-card sq fade" data-category="boutique"
-         data-title="Koleksi Terbaru" data-desc="Ready-to-wear pilihan musim ini">
-      <img src="assets/img/image.png" alt="Koleksi Boutique" loading="lazy">
-      <div class="card-overlay"></div>
-      <div class="card-badge">Boutique</div>
-      <div class="card-label"><h3>Koleksi Terbaru</h3><p>Ready-to-wear musim ini</p></div>
-    </div>
-
-    <div class="photo-card sq fade" data-category="kue"
-         data-title="Matcha Cake" data-desc="Kue matcha signature YOLAZCAKE">
-      <img src="assets/img/image.png" alt="Matcha Cake" loading="lazy">
-      <div class="card-overlay"></div>
-      <div class="card-badge">Kue & Pastry</div>
-      <div class="card-label"><h3>Matcha Cake</h3><p>Signature YOLAZCAKE</p></div>
-    </div>
-
-    <!-- Row 4: wide + sq + sq -->
-    <div class="photo-card wide fade" data-category="coffee"
-         data-title="Latte Art" data-desc="Seni kopi dari tangan barista kami">
-      <img src="assets/img/image.png" alt="Latte Art" loading="lazy">
-      <div class="card-overlay"></div>
-      <div class="card-badge">Coffee</div>
-      <div class="card-label"><h3>Latte Art</h3><p>Seni dari tangan barista kami</p></div>
-    </div>
-
-    <div class="photo-card sq fade" data-category="interior"
-         data-title="Jendela Cafe" data-desc="Pemandangan kota dari meja favorit">
-      <img src="assets/img/image.png" alt="Jendela Cafe" loading="lazy">
-      <div class="card-overlay"></div>
-      <div class="card-badge">Interior</div>
-      <div class="card-label"><h3>Jendela Cafe</h3><p>Meja dengan pemandangan terbaik</p></div>
-    </div>
-
-    <div class="photo-card sq fade" data-category="boutique"
-         data-title="Fashion Corner" data-desc="Aesthetic & modern di lantai dua">
-      <img src="assets/img/image.png" alt="Fashion Corner" loading="lazy">
-      <div class="card-overlay"></div>
-      <div class="card-badge">Boutique</div>
-      <div class="card-label"><h3>Fashion Corner</h3><p>Aesthetic di lantai dua</p></div>
-    </div>
+    <?php endforeach; ?>
+    <?php endif; ?>
 
   </div><!-- /gallery-mosaic -->
 
@@ -1182,5 +1116,8 @@ session_start();
   document.querySelectorAll('.photo-card').forEach(card => revealObserver.observe(card));
 
 </script>
+
+<?php include 'status_fab.php'; ?>
+
 </body>
 </html>

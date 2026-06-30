@@ -3,26 +3,30 @@
 session_start();
 include "../config/koneksi.php";
 
-$username = $_POST['username'] ?? '';
+$username = trim($_POST['username'] ?? '');
 $password = $_POST['password'] ?? '';
 
-// Gunakan prepared statement untuk keamanan
-$stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
-$stmt->bind_param("ss", $username, $password);
+// Ambil user berdasarkan username saja, password dicek manual di bawah
+// supaya tetap kompatibel dengan akun lama (password polos) maupun
+// akun baru dari halaman daftar (password sudah di-hash).
+$stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+$stmt->bind_param("s", $username);
 $stmt->execute();
 $result = $stmt->get_result();
 
+$valid = false;
+$user  = null;
+
 if ($result->num_rows > 0) {
     $user = $result->fetch_assoc();
-    $_SESSION['username'] = $username;
-    $_SESSION['role']     = $user['role'] ?? 'kasir';
+    $valid = password_verify($password, $user['password']) || $password === $user['password'];
+}
 
-    // Admin → dashboard, kasir → index
-    if ($_SESSION['role'] === 'admin') {
-        header("Location: ../dashboard.php");
-    } else {
-        header("Location: ../index.php");
-    }
+if ($valid) {
+
+    $_SESSION['username'] = $username;
+    $_SESSION['role'] = $user['role'] ?? 'kasir';
+    header("Location: ../index.php");
     exit();
 
 } else {

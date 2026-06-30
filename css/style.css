@@ -601,6 +601,43 @@ body.dark #contact {
 .dark-btn{
   cursor:pointer;
   font-size:1.2em;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:1px solid rgba(212,175,55,0.35);
+  background:rgba(212,175,55,0.08);
+  transition:all 0.35s ease;
+}
+
+.dark-btn:hover{
+  background:rgba(212,175,55,0.18);
+  border-color:#D4AF37;
+  transform:rotate(15deg) scale(1.08);
+  box-shadow:0 0 14px rgba(212,175,55,0.45);
+}
+
+.dark-btn svg{
+  width:20px;
+  height:20px;
+  color:#D4AF37;
+  filter:drop-shadow(0 0 3px rgba(212,175,55,0.5));
+  transition:opacity 0.35s ease, transform 0.45s ease;
+}
+
+.dark-btn .icon-moon{ display:none; }
+
+body.dark .dark-btn .icon-sun{ display:none; }
+body.dark .dark-btn .icon-moon{
+  display:block;
+  animation:darkBtnPop 0.4s ease;
+}
+
+@keyframes darkBtnPop{
+  from{ transform:scale(0.6) rotate(-25deg); opacity:0; }
+  to{ transform:scale(1) rotate(0deg); opacity:1; }
 }
 
 /* DROPDOWN */
@@ -633,6 +670,28 @@ body.dark #contact {
   background:#2a2a2a;
 }
 
+/* DARK MODE — LOGO GLOW */
+.dark .nav-left img{
+  border: 2px solid var(--gold);
+  box-shadow:
+    0 0 10px rgba(212,175,55,0.7),
+    0 0 22px rgba(212,175,55,0.4);
+  animation: logoGlowPulse 3s ease-in-out infinite;
+}
+
+@keyframes logoGlowPulse{
+  0%, 100%{
+    box-shadow:
+      0 0 10px rgba(212,175,55,0.7),
+      0 0 22px rgba(212,175,55,0.4);
+  }
+  50%{
+    box-shadow:
+      0 0 16px rgba(212,175,55,0.9),
+      0 0 32px rgba(212,175,55,0.6);
+  }
+}
+
 /* LEFT */
 .nav-left{
   display:flex;
@@ -645,6 +704,8 @@ body.dark #contact {
   height:40px;
   border-radius:50%;
   object-fit:cover;
+  border:2px solid transparent;
+  transition: border 0.4s ease, box-shadow 0.4s ease, filter 0.4s ease;
 }
 
 .nav-left h2{

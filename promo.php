@@ -1,5 +1,35 @@
 <?php
 session_start();
+require_once 'config/koneksi.php';
+
+// Ambil kode promo dari GET atau tampilkan promo aktif pertama
+$kode_req = isset($_GET['kode']) ? strtoupper(trim($_GET['kode'])) : '';
+
+if ($kode_req) {
+    $kode_esc = mysqli_real_escape_string($conn, $kode_req);
+    $promo = mysqli_fetch_assoc(mysqli_query($conn,
+        "SELECT * FROM promo WHERE kode_promo='$kode_esc' AND status='Aktif' LIMIT 1"));
+} else {
+    // Tampilkan promo aktif pertama yang masih berlaku
+    $today = date('Y-m-d');
+    $promo = mysqli_fetch_assoc(mysqli_query($conn,
+        "SELECT * FROM promo WHERE status='Aktif'
+         AND (tanggal_selesai IS NULL OR tanggal_selesai >= '$today')
+         ORDER BY id_promo DESC LIMIT 1"));
+}
+
+// Fallback jika tidak ada promo
+if (!$promo) {
+    $promo = [
+        'kode_promo'     => 'YOLA25',
+        'judul'          => 'Promo Spesial YOLAZCAKE',
+        'deskripsi'      => 'Dapatkan diskon eksklusif dari YOLAZCAKE Sintang.',
+        'diskon_persen'  => 25,
+        'min_belanja'    => 150000,
+        'poin_bonus'     => 50,
+        'tanggal_selesai'=> null,
+    ];
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -105,6 +135,12 @@ session_start();
   .hamburger:hover, .dark-btn:hover {
     background:rgba(212,175,55,0.2); color:#D4AF37; border-color:rgba(212,175,55,0.3);
   }
+
+  .dark-btn { display:flex; align-items:center; justify-content:center; }
+  .dark-btn svg { width:19px; height:19px; color:#D4AF37; filter:drop-shadow(0 0 3px rgba(212,175,55,0.5)); }
+  .dark-btn .icon-sun { display:none; }
+  body.light .dark-btn .icon-sun { display:block; }
+  body.light .dark-btn .icon-moon { display:none; }
 
   .hamburger.active {
     transform:rotate(180deg) scale(1.15);
@@ -612,7 +648,7 @@ session_start();
     <div class="account-dropdown">
       <button class="account-btn">👤 <?php echo htmlspecialchars($_SESSION['username']); ?> ▼</button>
       <div class="account-menu">
-        <a href="member/member.php">Member Area</a>
+        <a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'dashboard.php' : 'member/member.php'; ?>"><?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'Dashboard' : 'Member Area'; ?></a>
         <a href="auth/logout.php">Logout</a>
       </div>
     </div>
@@ -620,7 +656,7 @@ session_start();
     <button class="login-btn" onclick="window.location.href='auth/login.php'">Login</button>
     <?php endif; ?>
     <div class="hamburger" onclick="toggleMenu()" id="hamburger">☰</div>
-    <div class="dark-btn" onclick="toggleDark()">🌙</div>
+    <div class="dark-btn" id="darkBtn" onclick="toggleDark()" title="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="4.5"></line><line x1="12" y1="19.5" x2="12" y2="22"></line><line x1="4.2" y1="4.2" x2="5.9" y2="5.9"></line><line x1="18.1" y1="18.1" x2="19.8" y2="19.8"></line><line x1="2" y1="12" x2="4.5" y2="12"></line><line x1="19.5" y1="12" x2="22" y2="12"></line><line x1="4.2" y1="19.8" x2="5.9" y2="18.1"></line><line x1="18.1" y1="5.9" x2="19.8" y2="4.2"></line></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 14.4a9 9 0 0 1-11.24-11.24 1 1 0 0 0-1.3-1.22A10.07 10.07 0 0 0 2 12.1 10 10 0 0 0 12 22a10.07 10.07 0 0 0 9.06-6.3 1 1 0 0 0-1.22-1.3z"></path><circle cx="18.5" cy="5.5" r="1.1"></circle><circle cx="20.5" cy="9" r="0.6"></circle></svg></div>
   </div>
 
   <div class="dropdown" id="dropdown">
@@ -665,33 +701,33 @@ session_start();
   <!-- PROMO CODE CARD -->
   <div class="code-card">
     <div class="code-label">✦ Kode Promo Eksklusif Anda ✦</div>
-    <div class="promo-code-display" id="promoCode" onclick="copyCode()" title="Klik untuk salin">YOLA25</div>
+    <div class="promo-code-display" id="promoCode" onclick="copyCode()" title="Klik untuk salin"><?= htmlspecialchars($promo['kode_promo']) ?></div>
     <div class="copy-hint">⬆ Klik kode untuk menyalin</div>
     <div class="code-copied" id="codeCopied">✅ Kode tersalin!</div>
     <div class="code-meta">
-      <div class="meta-pill">💰 Diskon <span>25%</span></div>
-      <div class="meta-pill">🛒 Min. belanja <span>Rp150.000</span></div>
-      <div class="meta-pill">📅 Berlaku <span>Akhir Pekan</span></div>
-      <div class="meta-pill">📍 Hanya di <span>Kasir</span></div>
+      <div class="meta-pill">💰 Diskon <span><?= $promo['diskon_persen'] ?>%</span></div>
+      <div class="meta-pill">🛒 Min. belanja <span>Rp<?= number_format($promo['min_belanja'],0,',','.') ?></span></div>
+      <div class="meta-pill">📅 Berlaku <span><?= $promo['tanggal_selesai'] ? 'S/d '.date('d M Y',strtotime($promo['tanggal_selesai'])) : 'Tanpa batas' ?></span></div>
+      <div class="meta-pill">⭐ Poin Bonus <span>+<?= $promo['poin_bonus'] ?></span></div>
     </div>
   </div>
 
   <!-- BENEFIT CARDS -->
   <div class="benefits-row">
     <div class="benefit-card">
-      <div class="benefit-icon">🎂</div>
-      <div class="benefit-title">Berlaku Untuk</div>
-      <div class="benefit-val">Semua Produk Bakery</div>
+      <div class="benefit-icon">🏷️</div>
+      <div class="benefit-title">Judul Promo</div>
+      <div class="benefit-val"><?= htmlspecialchars($promo['judul']) ?></div>
     </div>
     <div class="benefit-card">
-      <div class="benefit-icon">☕</div>
-      <div class="benefit-title">Gratis Minuman</div>
-      <div class="benefit-val">Setiap Pembelian Cake</div>
+      <div class="benefit-icon">💸</div>
+      <div class="benefit-title">Diskon</div>
+      <div class="benefit-val"><?= $promo['diskon_persen'] ?>% dari total belanja</div>
     </div>
     <div class="benefit-card">
       <div class="benefit-icon">⭐</div>
       <div class="benefit-title">Poin Bonus</div>
-      <div class="benefit-val">+50 Poin Member</div>
+      <div class="benefit-val">+<?= $promo['poin_bonus'] ?> Poin Member</div>
     </div>
   </div>
 
@@ -703,28 +739,28 @@ session_start();
         <div class="step-num">1</div>
         <div class="step-text">
           <h4>Pilih Produk Favorit</h4>
-          <p>Kunjungi YOLAZCAKE dan pilih produk bakery, cake, atau minuman favoritmu dengan total minimal Rp150.000.</p>
+          <p>Kunjungi YOLAZCAKE dan pilih produk favoritmu dengan total minimal Rp<?= number_format($promo['min_belanja'],0,',','.') ?>.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-num">2</div>
         <div class="step-text">
           <h4>Tunjukkan Kode ke Kasir</h4>
-          <p>Tunjukkan kode <strong style="color:#D4AF37;">YOLA25</strong> kepada kasir sebelum pembayaran dilakukan.</p>
+          <p>Tunjukkan kode <strong style="color:#D4AF37;"><?= htmlspecialchars($promo['kode_promo']) ?></strong> kepada kasir sebelum pembayaran dilakukan.</p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-num">3</div>
         <div class="step-text">
           <h4>Diskon Langsung Terapkan</h4>
-          <p>Kasir akan langsung memotong 25% dari total belanjamu. Promo hanya berlaku di akhir pekan (Sabtu–Minggu).</p>
+          <p>Kasir akan langsung memotong <?= $promo['diskon_persen'] ?>% dari total belanjamu.<?= $promo['deskripsi'] ? ' '.$promo['deskripsi'] : '' ?></p>
         </div>
       </div>
       <div class="step-item">
         <div class="step-num">4</div>
         <div class="step-text">
           <h4>Kumpulkan Poin Member</h4>
-          <p>Setiap transaksi menggunakan kode promo ini akan menambah 50 poin ke akun member kamu secara otomatis.</p>
+          <p>Setiap transaksi menggunakan kode promo ini akan menambah <?= $promo['poin_bonus'] ?> poin ke akun member kamu secara otomatis.</p>
         </div>
       </div>
     </div>
@@ -844,7 +880,6 @@ session_start();
   /* ── Dark / Light Mode ── */
   function toggleDark(){
     const isLight=document.body.classList.toggle('light');
-    document.getElementById('darkBtn').textContent=isLight?'☀️':'🌙';
     localStorage.setItem('promoTheme',isLight?'light':'dark');
   }
 
@@ -852,7 +887,6 @@ session_start();
     const saved=localStorage.getItem('promoTheme');
     if(saved==='light'){
       document.body.classList.add('light');
-      document.getElementById('darkBtn').textContent='☀️';
     }
   })();
 </script>

@@ -1,5 +1,31 @@
 <?php
 session_start();
+require_once 'config/koneksi.php';
+
+$msg_kontak  = '';
+$err_kontak  = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
+    $nama    = mysqli_real_escape_string($conn, trim($_POST['nama']));
+    $email   = mysqli_real_escape_string($conn, trim($_POST['email']));
+    $no_hp   = mysqli_real_escape_string($conn, trim($_POST['no_hp']));
+    $subjek  = mysqli_real_escape_string($conn, trim($_POST['subjek']));
+    $pesan   = mysqli_real_escape_string($conn, trim($_POST['pesan']));
+
+    if (!$nama || !$pesan) {
+        $err_kontak = 'Nama dan pesan wajib diisi!';
+    } else {
+        $ok = mysqli_query($conn,
+            "INSERT INTO kontak (nama, email, no_hp, subjek, pesan)
+             VALUES ('$nama','$email','$no_hp','$subjek','$pesan')"
+        );
+        if ($ok) {
+            $msg_kontak = 'Pesan berhasil dikirim! Kami akan segera menghubungi Anda.';
+        } else {
+            $err_kontak = 'Gagal menyimpan pesan. Silakan coba lagi.';
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -781,7 +807,7 @@ session_start();
     <div class="account-dropdown">
       <button class="account-btn">👤 <?php echo htmlspecialchars($_SESSION['username']); ?> ▼</button>
       <div class="account-menu">
-        <a href="member/member.php">Member</a>
+        <a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'dashboard.php' : 'member/member.php'; ?>"><?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'Dashboard' : 'Member'; ?></a>
         <a href="auth/logout.php">Logout</a>
       </div>
     </div>
@@ -927,36 +953,67 @@ session_start();
       </div>
     </div>
 
-    <!-- WA FORM PREMIUM -->
+    <!-- CONTACT FORM — simpan ke database -->
     <div class="wa-premium-card fade">
       <div class="wa-card-header">
-        <div class="wa-icon-badge">💬</div>
+        <div class="wa-icon-badge">✉️</div>
         <div class="wa-card-header-text">
-          <h3>Hubungi via WhatsApp</h3>
-          <p>Kami biasanya membalas dalam beberapa menit ⚡</p>
+          <h3>Kirim Pesan ke Kami</h3>
+          <p>Pesan Anda akan langsung kami terima dan balas ⚡</p>
         </div>
       </div>
       <div class="wa-form-body">
 
-        <div class="form-field">
-          <label>Nama Lengkap</label>
-          <input type="text" id="wa_nama" placeholder="Contoh: Siti Rahayu" required>
+        <?php if ($msg_kontak): ?>
+        <div style="background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.35);color:#6ee7b7;padding:14px 18px;border-radius:12px;margin-bottom:18px;font-size:.9em;">
+          ✅ <?= htmlspecialchars($msg_kontak) ?>
         </div>
+        <?php endif; ?>
 
-        <div class="form-field">
-          <label>Nomor WhatsApp</label>
-          <input type="tel" id="wa_nomor" placeholder="08xxxxxxxxxx" required>
+        <?php if ($err_kontak): ?>
+        <div style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#fca5a5;padding:14px 18px;border-radius:12px;margin-bottom:18px;font-size:.9em;">
+          ⚠️ <?= htmlspecialchars($err_kontak) ?>
         </div>
+        <?php endif; ?>
 
-        <div class="form-field">
-          <label>Pesan / Reservasi</label>
-          <textarea id="wa_pesan" placeholder="Halo YOLAZCAKE, saya ingin memesan..." required></textarea>
-        </div>
+        <form method="POST" action="contact.php">
+          <div class="form-field">
+            <label>Nama Lengkap <span style="color:#fca5a5;">*</span></label>
+            <input type="text" name="nama" placeholder="Contoh: Siti Rahayu" required>
+          </div>
 
-        <button class="wa-send-btn" onclick="sendWhatsApp()">
-          <span>💬</span>
-          <span>Kirim ke WhatsApp</span>
-        </button>
+          <div class="form-field">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="email@contoh.com">
+          </div>
+
+          <div class="form-field">
+            <label>Nomor WhatsApp</label>
+            <input type="tel" name="no_hp" placeholder="08xxxxxxxxxx" id="wa_nomor">
+          </div>
+
+          <div class="form-field">
+            <label>Subjek</label>
+            <input type="text" name="subjek" placeholder="Contoh: Tanya menu, Reservasi, dll">
+          </div>
+
+          <div class="form-field">
+            <label>Pesan <span style="color:#fca5a5;">*</span></label>
+            <textarea name="pesan" id="wa_pesan" placeholder="Halo YOLAZCAKE, saya ingin..." required></textarea>
+          </div>
+
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button type="submit" name="kirim_kontak" class="wa-send-btn" style="flex:1;">
+              <span>✉️</span>
+              <span>Kirim Pesan</span>
+            </button>
+            <button type="button" class="wa-send-btn" onclick="sendWhatsApp()"
+              style="flex:1;background:linear-gradient(135deg,#25D366,#128C7E);">
+              <span>💬</span>
+              <span>Via WhatsApp</span>
+            </button>
+          </div>
+        </form>
 
       </div>
     </div>
@@ -1035,5 +1092,8 @@ session_start();
   }
 
 </script>
+
+<?php include 'status_fab.php'; ?>
+
 </body>
 </html>

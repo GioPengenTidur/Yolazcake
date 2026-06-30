@@ -45,8 +45,8 @@ session_start();
 
 <div class="account-menu">
 
-<a href="member/member.php">
-Member
+<a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'dashboard.php' : 'member/member.php'; ?>">
+<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'Dashboard' : 'Member'; ?>
 </a>
 
 <a href="auth/logout.php">
@@ -1014,6 +1014,8 @@ Login
 
 <script src="js/style.js"></script>
 <script src="js/landing.js"></script>
+
+<?php include 'status_fab.php'; ?>
 
 </body>
 </html>

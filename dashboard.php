@@ -409,13 +409,23 @@ body::before{
   font-size:.9em;
 }
 
-/* decorative number */
+/* decorative number / logo watermark */
 .dash-hero-deco{
   position:absolute;right:48px;top:50%;transform:translateY(-50%);
   font-family:'Playfair Display',serif;
   font-size:9em;font-weight:700;line-height:1;
   background:linear-gradient(135deg,rgba(212,175,55,.12),rgba(212,175,55,.03));
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  pointer-events:none;user-select:none;
+  z-index:1;
+}
+
+/* versi gambar (logo/desain sendiri, background transparan) */
+.dash-hero-deco-img{
+  position:absolute;right:48px;top:50%;transform:translateY(-50%);
+  max-height:450px;width:auto;
+  opacity:.35;
+  filter:drop-shadow(0 0 30px rgba(212,175,55,.25));
   pointer-events:none;user-select:none;
   z-index:1;
 }
@@ -838,6 +848,7 @@ body::before{
   .activity-grid{grid-template-columns:1fr;}
   .mgmt-grid{grid-template-columns:1fr;}
   .dash-hero-deco{display:none;}
+  .dash-hero-deco-img{display:none;}
 }
 @media(max-width:768px){
   :root{--sidebar-w:260px;}
@@ -919,6 +930,32 @@ body::before{
       <a class="sb-link" href="member/data_member.php">
         <span class="sb-link-icon">👥</span> Member
       </a>
+      <a class="sb-link" href="meja/data_meja.php">
+        <span class="sb-link-icon">🪑</span> Meja
+      </a>
+      <a class="sb-link" href="kategori/data_kategori.php">
+        <span class="sb-link-icon">🏷️</span> Kategori Produk
+      </a>
+      <a class="sb-link" href="riwayat_poin/riwayat_poin.php">
+        <span class="sb-link-icon">⭐</span> Riwayat Poin
+      </a>
+      <a class="sb-link" href="kontak/data_kontak.php">
+        <span class="sb-link-icon">✉️</span> Pesan Kontak
+      </a>
+      <a class="sb-link" href="galeri/data_galeri.php">
+        <span class="sb-link-icon">🖼️</span> Galeri
+      </a>
+      <a class="sb-link" href="promo/data_promo.php">
+        <span class="sb-link-icon">🎟️</span> Promo
+      </a>
+
+      <?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
+      <!-- ADMIN -->
+      <div class="sb-section-label">Admin</div>
+      <a class="sb-link" href="user/data_user.php">
+        <span class="sb-link-icon">🔐</span> Kelola Akun
+      </a>
+      <?php endif; ?>
 
       <!-- TAMBAH DATA -->
       <div class="sb-section-label">Tambah Data</div>
@@ -928,6 +965,14 @@ body::before{
       </a>
       <a class="sb-link add-link" href="member/tambah_member.php">
         <span class="sb-link-icon">➕</span> Tambah Member
+        <span class="sb-link-new">Baru</span>
+      </a>
+      <a class="sb-link add-link" href="meja/tambah_meja.php">
+        <span class="sb-link-icon">➕</span> Tambah Meja
+        <span class="sb-link-new">Baru</span>
+      </a>
+      <a class="sb-link add-link" href="galeri/tambah_galeri.php">
+        <span class="sb-link-icon">➕</span> Tambah Foto Galeri
         <span class="sb-link-new">Baru</span>
       </a>
 
@@ -979,7 +1024,22 @@ body::before{
             <span>✦ Sintang, Kalimantan Barat</span>
           </div>
         </div>
-        <div class="dash-hero-deco">YZ</div>
+        <?php
+          // Logo/desain custom diletakkan di assets/img/logo/.
+          // Tidak perlu nama file tertentu — otomatis pakai gambar pertama
+          // (jpg/jpeg/png/webp) yang ditemukan di folder ini.
+          $deco_logo = null;
+          $logo_files = glob(__DIR__ . '/assets/img/logo/*.{png,jpg,jpeg,webp,PNG,JPG,JPEG,WEBP}', GLOB_BRACE);
+          if (!empty($logo_files)) {
+            sort($logo_files);
+            $deco_logo = 'assets/img/logo/' . basename($logo_files[0]);
+          }
+          if ($deco_logo):
+        ?>
+          <img src="<?= $deco_logo ?>" alt="" class="dash-hero-deco-img">
+        <?php else: ?>
+          <div class="dash-hero-deco">YZ</div>
+        <?php endif; ?>
       </div>
 
       <!-- ─── STATS ─── -->

@@ -667,7 +667,7 @@ session_start();
     <div class="account-dropdown">
       <button class="account-btn">👤 <?php echo htmlspecialchars($_SESSION['username']); ?> ▼</button>
       <div class="account-menu">
-        <a href="member/member.php">Member</a>
+        <a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'dashboard.php' : 'member/member.php'; ?>"><?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'Dashboard' : 'Member'; ?></a>
         <a href="auth/logout.php">Logout</a>
       </div>
     </div>
@@ -935,6 +935,9 @@ session_start();
   })();
 
 </script>
+
+<?php include 'status_fab.php'; ?>
+
 </body>
 </html>
 
