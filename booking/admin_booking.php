@@ -353,7 +353,7 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
   <!-- top bar -->
   <div class="top-bar">
     <span class="section-eyebrow">✦ Daftar Booking</span>
-    <a href="../index.php" class="btn-back">🏠 Kembali ke Website</a>
+    <a href="../dashboard.php" class="btn-back">🏠 Kembali ke Dashboard</a>
   </div>
 
   <!-- stats -->
