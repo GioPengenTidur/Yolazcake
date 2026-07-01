@@ -2,9 +2,13 @@
 include '../config/koneksi.php';
 
 $id = $_GET['id'];
+$stmt = $conn->prepare("SELECT * FROM produk WHERE id_produk = ?");
 
-$data = mysqli_query($conn, "SELECT * FROM produk WHERE id_produk='$id'");
-$produk = mysqli_fetch_assoc($data);
+$stmt->bind_param("i", $id);
+
+$stmt->execute();
+$result = $stmt->get_result();
+$produk = $result->fetch_assoc();
 
 if(isset($_POST['update'])){
 

@@ -12,7 +12,8 @@ session_start();
 
     body{
         place-content: center;
-        
+        background-color: #2d1560;
+        font-family: 'Inter', sans-serif;
     }
 
     h2{
@@ -46,6 +47,9 @@ session_start();
     #formCheckout{
         place-self: center;
         place-content: center;
+        background-color: rgba(255, 255, 255, .06);
+        border-radius: 50px;
+        padding: 50px;
     }
 
     form{
@@ -53,13 +57,18 @@ session_start();
         justify-content: center;
         flex-direction: column;
         place-content: center;
-        color: #6D4C41;
+        color: rgba(255, 255, 255, .5);
         gap: 1px;
     }
 
     input{
-        padding: 50px;
-        margin: 1px;
+        width: 100%;
+    }
+
+    button{
+        border-radius: 50px;
+        background-color: yellow;
+        color: black;
     }
 
 </style>
@@ -73,10 +82,10 @@ session_start();
     <form action="qris.php" method="POST">
 
         <label>Nama Pemesan</label><br>
-        <input type="text" name="nama_pemesan" required><br><br>
+        <input type="text" name="nama_pemesan" required><br>
 
         <label>No HP</label><br>
-        <input type="text" name="no_hp" required><br><br>
+        <input type="text" name="no_hp" required><br>
 =======
 <h3>Detail Pesanan</h3>
 
@@ -143,7 +152,7 @@ foreach($_SESSION['keranjang'] as $id_produk => $jumlah){
 <?php } ?>
 >>>>>>> c4c85f022b51778d6bad8baab6e446c624b08bae
 
-        <button type="submit">
+        <button type="submit" class="btn-premium btn-save">
             Lanjut Pembayaran
         </button>
 

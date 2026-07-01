@@ -48,72 +48,107 @@ if(isset($_GET['aksi'])){
 <head>
     <title>Keranjang</title>
 </head>
+
+<style>
+    body{
+        background-color: #2d1560;
+    }
+
+    h2{
+        place-self: center;
+        color: #6D4C41;
+    }
+
+    #keranjang{
+        place-self: center;
+        place-content: center;
+        color: rgba(255, 255, 255, .5);
+        
+    }
+
+    #pilihUlang{
+        background-color: rgba(255, 255, 255, .06);
+        border-radius: 50px;
+        padding: 10px;
+        place-self: center;
+    }
+
+    #checkout{
+        background-color: rgba(255, 255, 255, .06);
+        border-radius: 50px;
+        padding: 10px;
+        place-self: center;
+    }
+    
+</style>
+
 <body>
 
 <h2>Keranjang Belanja</h2>
 
-<?php
+<div id="keranjang">
+    <?php
 
-$total = 0;
+    $total = 0;
 
-if(!empty($_SESSION['keranjang'])){
+    if(!empty($_SESSION['keranjang'])){
 
-    foreach($_SESSION['keranjang'] as $id_produk => $jumlah){
+        foreach($_SESSION['keranjang'] as $id_produk => $jumlah){
 
-        $q = mysqli_query($conn,
-            "SELECT * FROM produk WHERE id_produk='$id_produk'");
+            $q = mysqli_query($conn,
+                "SELECT * FROM produk WHERE id_produk='$id_produk'");
 
-        $p = mysqli_fetch_assoc($q);
+            $p = mysqli_fetch_assoc($q);
 
-        $subtotal = $p['harga'] * $jumlah;
-        $total += $subtotal;
+            $subtotal = $p['harga'] * $jumlah;
+            $total += $subtotal;
 
-        echo "
-        <p>
+            echo "
+            <p>
 
-        <b>{$p['nama_produk']}</b><br><br>
+            <b>{$p['nama_produk']}</b><br><br>
 
-        <a href='keranjang.php?aksi=kurang&id=$id_produk'>➖</a>
+            <a href='keranjang.php?aksi=kurang&id=$id_produk'>➖</a>
 
-        <b> $jumlah </b>
+            <b> $jumlah </b>
 
-        <a href='keranjang.php?aksi=tambah&id=$id_produk'>➕</a>
+            <a href='keranjang.php?aksi=tambah&id=$id_produk'>➕</a>
 
-        <br><br>
+            <br><br>
 
-        Rp ".number_format($p['harga'])."
-        x $jumlah
+            Rp ".number_format($p['harga'])."
+            x $jumlah
 
-        = Rp ".number_format($subtotal)."
+            = Rp ".number_format($subtotal)."
 
-        <br><br>
+            <br><br>
 
-        <a href='keranjang.php?hapus=$id_produk'
-        onclick=\"return confirm('Hapus menu ini?')\">
-        ❌ Hapus
-        </a>
+            <a href='keranjang.php?hapus=$id_produk'
+            onclick=\"return confirm('Hapus menu ini?')\">
+            ❌ Hapus
+            </a>
 
-        </p>
+            </p>
 
-        <hr>
-        ";
+            <hr>
+            ";
+        }
+
+        echo "<h3>Total : Rp ".number_format($total)."</h3>";
+
+    }else{
+        echo "Keranjang kosong";
     }
 
-    echo "<h3>Total : Rp ".number_format($total)."</h3>";
+    ?>
 
-}else{
-    echo "Keranjang kosong";
-}
+    <br><br>
 
-?>
+    <a href="menuu.php" id="pilihUlang">Pilih Makanan Lagi</a>
 
-<br><br>
+    <br><br>
 
-<a href="menuu.php">Pilih Makanan Lagi</a>
-
-<br><br>
-
-<a href="checkout.php">Checkout</a>
-
+    <a href="checkout.php" id="checkout">Checkout</a>
+</div>
 </body>
 </html>
