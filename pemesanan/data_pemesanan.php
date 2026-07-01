@@ -346,6 +346,15 @@ if(!$query){ die(mysqli_error($conn)); }
       box-shadow:0 6px 20px rgba(255,80,80,.3);
     }
 
+    .btn-edit{
+      background:linear-gradient(135deg,rgba(212,175,55,.25),rgba(212,175,55,.12));
+      border:1px solid rgba(212,175,55,.4);color:#D4AF37;
+    }
+    .btn-edit:hover{
+      background:linear-gradient(135deg,rgba(212,175,55,.35),rgba(212,175,55,.2));
+      box-shadow:0 6px 20px rgba(212,175,55,.3);
+    }
+
     .aksi-cell{display:flex;gap:8px;flex-wrap:wrap;}
 
     /* ── EMPTY STATE ── */
@@ -509,6 +518,7 @@ if(!$query){ die(mysqli_error($conn)); }
           <td>
             <div class="aksi-cell">
               <a class="btn-aksi btn-detail" href="detail_pemesanan.php?id=<?= $data['id_pemesanan'] ?>">🔍 Detail</a>
+              <a class="btn-aksi btn-edit" href="edit_pemesanan.php?id=<?= $data['id_pemesanan'] ?>">✏️ Edit</a>
               <a class="btn-aksi btn-hapus" href="hapus_pemesanan.php?id=<?= $data['id_pemesanan'] ?>" onclick="return confirm('Yakin ingin hapus pesanan ini?')">🗑️ Hapus</a>
             </div>
           </td>

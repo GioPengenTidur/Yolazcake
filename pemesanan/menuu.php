@@ -739,42 +739,6 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
     }
   </style>
 </head>
-
-<style>
-    body{
-        background-color: #2d1560;
-        font-family: 'Inter', sans-serif;
-    }
-
-    h2{
-        font-family: 'Playfair Display', Georgia, serif;
-        font-size:2em;
-        color: #6D4C41;
-    }
-
-    div{
-        background-color: rgba(255, 255, 255, .06);
-        border-radius: 50px;
-        padding: 50px;
-        color: rgba(255, 255, 255, .5);
-    }
-
-    input{
-        background: rgba(255, 255, 255, .07);
-        border-radius: 50px;
-        color: rgba(255, 255, 255, .5);
-        border: 1px solid;
-    }
-
-    button{
-        background: rgba(255, 255, 255, .07);
-        border-radius: 50px;
-        color: rgba(255, 255, 255, .5);
-        border: 1px solid;
-    }
-
-</style>
-
 <body>
 
 <div id="particles"></div>

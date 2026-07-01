@@ -2,13 +2,11 @@
 include '../config/koneksi.php';
 
 $id = $_GET['id'];
-$stmt = $conn->prepare("DELETE FROM member WHERE id_member= ?");
 
-$stmt->bind_param("i", $id);
-
-$stmt->execute();
-$result = $stmt->get_result();
-$member = $result->fetch_assoc();
+mysqli_query(
+    $conn,
+    "DELETE FROM member WHERE id_member='$id'"
+);
 
 echo "
 <script>
