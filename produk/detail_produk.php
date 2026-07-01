@@ -2,13 +2,13 @@
 include '../config/koneksi.php';
 
 $id = $_GET['id'];
+$stmt = $conn->prepare("SELECT * FROM produk WHERE id_produk = ?");
 
-$query = mysqli_query(
-    $conn,
-    "SELECT * FROM produk WHERE id_produk='$id'"
-);
+$stmt->bind_param("i", $id);
 
-$produk = mysqli_fetch_assoc($query);
+$stmt->execute();
+$result = $stmt->get_result();
+$produk = $result->fetch_assoc();
 ?>
 
 <!DOCTYPE html>
