@@ -2343,3 +2343,7 @@ body.dark .feature-item {
     min-height: 450px;
   }
 }
+
+/* Catatan: CSS tombol floating status sekarang ada di status_fab.php
+   (self-contained), supaya bisa dipakai di semua halaman tanpa
+   tergantung landing.css. Lihat file status_fab.php. */

@@ -370,6 +370,20 @@ if(isset($_SESSION['username'])){
     }
     .error-msg.show { display: block; }
 
+    /* ── Success message ── */
+    .success-msg {
+      display: none;
+      background: rgba(212,175,55,0.15);
+      border: 1px solid rgba(212,175,55,0.4);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.85em;
+      color: #FFE4B5;
+      text-align: center;
+      animation: fadeUp 0.4s ease;
+    }
+    .success-msg.show { display: block; }
+
     /* ── Footer link ── */
     .login-footer {
       margin-top: 24px;
@@ -430,6 +444,11 @@ if(isset($_SESSION['username'])){
         <div class="gold-divider"><span class="diamond">✦ ✦ ✦</span></div>
       </div>
 
+      <!-- Success feedback (after registering) -->
+      <div class="success-msg" id="successMsg">
+        ✓ Akun berhasil dibuat. Silakan masuk.
+      </div>
+
       <!-- Error feedback -->
       <div class="error-msg" id="errorMsg">
         ⚠ Username atau password tidak sesuai.
@@ -471,7 +490,7 @@ if(isset($_SESSION['username'])){
       </form>
 
       <div class="login-footer">
-        Belum punya akun? <a href="#">Silahkan Buat Akun</a>
+        Belum punya akun? <a href="register.php">Buat Akun</a>
       </div>
 
     </div>
@@ -535,6 +554,11 @@ if(isset($_SESSION['username'])){
     /* ── PHP error flag ── */
     <?php if(isset($_GET['error']) && $_GET['error'] == 1): ?>
     document.getElementById('errorMsg').classList.add('show');
+    <?php endif; ?>
+
+    /* ── PHP success flag (baru daftar akun) ── */
+    <?php if(isset($_GET['registered']) && $_GET['registered'] == 1): ?>
+    document.getElementById('successMsg').classList.add('show');
     <?php endif; ?>
   </script>
 </body>

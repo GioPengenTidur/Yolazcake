@@ -8,6 +8,7 @@ session_start();
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About - YOLAZCAKE Sintang</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 
   <style>
@@ -652,8 +653,7 @@ session_start();
 <!-- NAVBAR -->
 <nav>
   <div class="nav-left">
-    <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvrk66Mw6TuaNg3tG6p8G9hJq_wOTUoBmpbb3qtX0t9CN0D6K8ns6HxQUsk_xRrGiRBD__9n78mwhr3RZ7cwM3UINa2Jjzvzx2U1l8S2SP93wZa3ga4xfn1BY446aaj_CJ_6ACQYiN58RQ=w203-h304-k-no">
-    <h2>YOLAZCAKE</h2>
+    <img src="assets/img/Yolazcake.png" alt="YOLAZCAKE Logo">
   </div>
   <ul class="main-nav">
     <li onclick="window.location.href='index.php'">Home</li>
@@ -667,7 +667,7 @@ session_start();
     <div class="account-dropdown">
       <button class="account-btn">👤 <?php echo htmlspecialchars($_SESSION['username']); ?> ▼</button>
       <div class="account-menu">
-        <a href="member/member.php">Member</a>
+        <a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'dashboard.php' : 'member/member.php'; ?>"><?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'Dashboard' : 'Member'; ?></a>
         <a href="auth/logout.php">Logout</a>
       </div>
     </div>
@@ -807,7 +807,7 @@ session_start();
 
     <div class="team-card fade">
       <div class="team-card-photo"
-        style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOucfUTam7ASvzsStRbW8XeI-f-X1Dd9y_zWrnUCbkUFMRVKL4djHMSyiFEbvQqjNMpx0g6hNL5tQWPXqLLL8V83LN9k9fGfv9Q75YdfEcmjnVxTehvbJDfjJAAemEq1jtxWqoxNc4grQFyF=w203-h252-k-no')">
+        style="background-image:url('assets/img/produk/Chef_Baker.jpeg')">
         <div class="team-card-photo-overlay">
           <span class="team-photo-badge">✦ Pastry Expert</span>
         </div>
@@ -825,7 +825,7 @@ session_start();
 
     <div class="team-card fade">
       <div class="team-card-photo"
-        style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOtQkCxGdAOa8nDcy2OwXN0q45_dN-ySVnIZsmtCic-P6LN4AWQ6urT-NWgy_LoAu5-YH0ruNYJlPZ2fTlRU3bnkXBKrriSsIPeJwjB5kEOSBloC29SeLY2VGxsfXSc21iqW8sBwPsxqo2fp=w203-h451-k-no')">
+        style="background-image:url('assets/img/produk/Barista.jpeg')">
         <div class="team-card-photo-overlay">
           <span class="team-photo-badge">✦ Coffee Artisan</span>
         </div>
@@ -843,7 +843,7 @@ session_start();
 
     <div class="team-card fade">
       <div class="team-card-photo"
-        style="background-image:url('https://lh3.googleusercontent.com/gps-cs/ACgwaOv7c7BKrobg4hOcBrLVmOkm-mvRw18q1pB2e-xkGSQ6F34AhGeIH9tGr942BsT4llGFdzjtEC2-W6fJvaLb6cuSnQfOhvAmPfF4HYvCHaB-gAOSbdSc74Jo3WyAtaD0Yp04P8U-K0FxbCs=w203-h444-k-no')">
+        style="background-image:url('assets/img/produk/Fashion_Stylist.jpeg')">
         <div class="team-card-photo-overlay">
           <span class="team-photo-badge">✦ Style Curator</span>
         </div>
@@ -935,6 +935,9 @@ session_start();
   })();
 
 </script>
+
+<?php include 'status_fab.php'; ?>
+
 </body>
 </html>
 

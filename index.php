@@ -12,13 +12,14 @@ session_start();
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/landing.css">
+<link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
 
 <nav>
   <!-- LEFT: LOGO + NAMA -->
   <div class="nav-left">
-    <img src="https://lh3.googleusercontent.com/gps-cs/ACgwaOvrk66Mw6TuaNg3tG6p8G9hJq_wOTUoBmpbb3qtX0t9CN0D6K8ns6HxQUsk_xRrGiRBD__9n78mwhr3RZ7cwM3UINa2Jjzvzx2U1l8S2SP93wZa3ga4xfn1BY446aaj_CJ_6ACQYiN58RQ=w203-h304-k-no" alt="YOLAZCAKE Logo">
+    <img src="assets/img/Yolazcake.png" alt="YOLAZCAKE Logo">
     <h2>YOLAZCAKE</h2>
   </div>
 
@@ -44,8 +45,8 @@ session_start();
 
 <div class="account-menu">
 
-<a href="member/member.php">
-Member
+<a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'dashboard.php' : 'member/member.php'; ?>">
+<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'Dashboard' : 'Member'; ?>
 </a>
 
 <a href="auth/logout.php">
@@ -178,7 +179,7 @@ Login
             <p class="badge-label">Happy Guests</p>
           </div>
           <div class="trust-badge fade-up" style="animation-delay: 1.2s;">
-            <p class="badge-value">8</p>
+            <p class="badge-value">2</p>
             <p class="badge-label">Years of Excellence</p>
           </div>
         </div>
@@ -231,6 +232,11 @@ Login
 
 <!-- ==================== STATISTICS SECTION ==================== -->
 <section class="statistics-section">
+  <!-- Sparkle dots like menu.php -->
+  <span class="stat-sparkle" style="width:6px;height:6px;left:10%;top:20%;background:rgba(212,175,55,0.6);position:absolute;border-radius:50%;animation:floatDot 7s linear infinite;"></span>
+  <span class="stat-sparkle" style="width:4px;height:4px;left:25%;top:60%;background:rgba(232,160,191,0.5);position:absolute;border-radius:50%;animation:floatDot 5s linear infinite 1s;"></span>
+  <span class="stat-sparkle" style="width:5px;height:5px;left:60%;top:30%;background:rgba(212,175,55,0.5);position:absolute;border-radius:50%;animation:floatDot 8s linear infinite 2s;"></span>
+  <span class="stat-sparkle" style="width:3px;height:3px;left:80%;top:70%;background:rgba(255,228,181,0.6);position:absolute;border-radius:50%;animation:floatDot 6s linear infinite 0.5s;"></span>
   <div class="stats-bg-pattern"></div>
   <div class="stats-container">
     <div class="stats-grid">
@@ -293,6 +299,8 @@ Login
 
 <!-- ==================== BEST SELLERS SECTION ==================== -->
 <section class="best-sellers-section" id="menu-section">
+  <!-- Floating particles like menu.php #Product -->
+  <div id="bestSellersParticles" style="position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;"></div>
   <div class="section-container">
     <div class="section-header fade-up">
       <span class="section-badge">Our Collection</span>
@@ -309,13 +317,7 @@ Login
           <img src="https://images.unsplash.com/photo-1586788680434-30d324b2d46f?w=400&h=500&fit=crop" 
                alt="Signature Red Velvet">
           <span class="product-badge">Best Seller</span>
-          <button class="quick-add" aria-label="Add to cart">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-              <line x1="3" x2="21" y1="6" y2="6"/>
-              <path d="M16 10a4 4 0 0 1-8 0"/>
-            </svg>
-          </button>
+          <button class="quick-add" aria-label="Lihat Detail">View Detail</button>
         </div>
         <div class="product-info">
           <div class="product-rating">
@@ -335,13 +337,7 @@ Login
           <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&h=500&fit=crop" 
                alt="Croissant Almond">
           <span class="product-badge badge-popular">Popular</span>
-          <button class="quick-add" aria-label="Add to cart">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-              <line x1="3" x2="21" y1="6" y2="6"/>
-              <path d="M16 10a4 4 0 0 1-8 0"/>
-            </svg>
-          </button>
+          <button class="quick-add" aria-label="Lihat Detail">View Detail</button>
         </div>
         <div class="product-info">
           <div class="product-rating">
@@ -361,13 +357,7 @@ Login
           <img src="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&h=500&fit=crop" 
                alt="Tiramisu Classic">
           <span class="product-badge badge-chef">Chef's Choice</span>
-          <button class="quick-add" aria-label="Add to cart">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-              <line x1="3" x2="21" y1="6" y2="6"/>
-              <path d="M16 10a4 4 0 0 1-8 0"/>
-            </svg>
-          </button>
+          <button class="quick-add" aria-label="Lihat Detail">View Detail</button>
         </div>
         <div class="product-info">
           <div class="product-rating">
@@ -387,13 +377,7 @@ Login
           <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=500&fit=crop" 
                alt="Chocolate Truffle">
           <span class="product-badge badge-premium">Premium</span>
-          <button class="quick-add" aria-label="Add to cart">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-              <line x1="3" x2="21" y1="6" y2="6"/>
-              <path d="M16 10a4 4 0 0 1-8 0"/>
-            </svg>
-          </button>
+          <button class="quick-add" aria-label="Lihat Detail">View Detail</button>
         </div>
         <div class="product-info">
           <div class="product-rating">
@@ -650,6 +634,11 @@ Login
 
 <!-- ==================== TESTIMONIALS SECTION ==================== -->
 <section class="testimonials-section">
+  <!-- Sparkle dots like menu.php -->
+  <span style="width:5px;height:5px;left:5%;top:25%;background:rgba(212,175,55,0.5);position:absolute;border-radius:50%;animation:floatDot 7s linear infinite;pointer-events:none;z-index:1;"></span>
+  <span style="width:3px;height:3px;left:15%;top:65%;background:rgba(255,228,181,0.4);position:absolute;border-radius:50%;animation:floatDot 5s linear infinite 2s;pointer-events:none;z-index:1;"></span>
+  <span style="width:6px;height:6px;left:75%;top:20%;background:rgba(212,175,55,0.4);position:absolute;border-radius:50%;animation:floatDot 9s linear infinite 1s;pointer-events:none;z-index:1;"></span>
+  <span style="width:4px;height:4px;left:90%;top:55%;background:rgba(232,160,191,0.5);position:absolute;border-radius:50%;animation:floatDot 6s linear infinite 0.5s;pointer-events:none;z-index:1;"></span>
   <div class="testimonials-bg">
     <div class="testimonials-orb orb-left"></div>
     <div class="testimonials-orb orb-right"></div>
@@ -777,9 +766,10 @@ Login
 
     <div class="testimonials-nav">
       <button class="nav-btn prev-btn" onclick="prevTestimonial()" aria-label="Previous testimonial">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="15 18 9 12 15 6"/>
         </svg>
+        <span>Prev</span>
       </button>
 
       <div class="testimonials-dots">
@@ -790,7 +780,8 @@ Login
       </div>
 
       <button class="nav-btn next-btn" onclick="nextTestimonial()" aria-label="Next testimonial">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <span>Next</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="9 18 15 12 9 6"/>
         </svg>
       </button>
@@ -1023,6 +1014,8 @@ Login
 
 <script src="js/style.js"></script>
 <script src="js/landing.js"></script>
+
+<?php include 'status_fab.php'; ?>
 
 </body>
 </html>
