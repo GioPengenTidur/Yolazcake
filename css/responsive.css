@@ -1,0 +1,534 @@
+/* ============================================================
+   RESPONSIVE.CSS — YOLAZCAKE
+   Kompatibel: HP kecil (<480px), HP besar (481–767px),
+               Tablet (768–1023px), Desktop (≥1024px)
+   Load SETELAH style.css dan landing.css
+   ============================================================ */
+
+/* ============================================================
+   1. UTILITY — Sembunyikan hamburger di desktop
+   ============================================================ */
+@media (min-width: 1024px) {
+  .hamburger { display: none !important; }
+}
+
+/* ============================================================
+   2. TABLET  (768px – 1023px)
+   ============================================================ */
+@media (max-width: 1023px) and (min-width: 768px) {
+
+  /* NAV */
+  nav {
+    padding: 10px 20px;
+  }
+  .main-nav {
+    display: none !important;
+  }
+  .hamburger {
+    display: block !important;
+  }
+  .nav-left h2 {
+    font-size: 1em;
+  }
+
+  /* DROPDOWN — tablet tampil lebih lebar */
+  .dropdown {
+    width: 220px;
+    right: 15px;
+  }
+
+  /* HERO */
+  .hero-content-wrapper {
+    flex-direction: column !important;
+    padding-top: 7rem !important;
+    gap: 2rem;
+  }
+  .hero-images {
+    display: none !important;
+  }
+  .hero-title {
+    font-size: 2.8rem !important;
+    text-align: center;
+  }
+  .hero-description {
+    text-align: center;
+    max-width: 100% !important;
+  }
+  .hero-buttons {
+    justify-content: center !important;
+  }
+  .hero-content {
+    align-items: center !important;
+    text-align: center;
+  }
+
+  /* STATISTIK */
+  .statistics-grid,
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* PRODUCT GRID */
+  .products-grid,
+  .cb-grid,
+  .boutique-grid,
+  .menu-grid,
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.25rem !important;
+  }
+
+  /* TESTIMONIALS */
+  .testimonials-carousel {
+    min-height: 380px !important;
+  }
+
+  /* ABOUT PREVIEW */
+  .about-preview-wrapper,
+  .about-content-wrapper {
+    flex-direction: column !important;
+    gap: 2rem;
+  }
+  .about-image-container,
+  .about-text-container {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* CONTACT / FORM */
+  .contact-wrapper,
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem;
+  }
+  .contact-form input,
+  .contact-form textarea,
+  .contact-form select {
+    font-size: 1rem !important;
+  }
+
+  /* SECTION padding */
+  .best-sellers-section,
+  .coffee-bakery-section,
+  .boutique-section,
+  .testimonials-section,
+  .gallery-section,
+  .about-preview-section {
+    padding: 4rem 0 !important;
+  }
+
+  /* GRID generic */
+  .grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+  }
+
+  /* CARDS */
+  .card img,
+  .card-bg {
+    height: 160px !important;
+  }
+
+  /* SECTION CONTAINER */
+  .section-container {
+    padding: 0 1.5rem !important;
+  }
+
+  /* BOOKING FORM */
+  .booking-grid,
+  .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem;
+  }
+
+  /* TABLE — scroll horizontal */
+  .table-wrapper,
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  table {
+    min-width: 600px;
+  }
+}
+
+/* ============================================================
+   3. HP BESAR  (481px – 767px)
+   ============================================================ */
+@media (max-width: 767px) and (min-width: 481px) {
+
+  /* NAV */
+  nav {
+    padding: 10px 16px;
+    width: 95%;
+  }
+  .main-nav { display: none !important; }
+  .hamburger { display: block !important; }
+  .nav-left h2 { font-size: 1em; }
+  .nav-left img { width: 34px; height: 34px; }
+
+  /* HERO */
+  .hero-content-wrapper {
+    padding-top: 7rem !important;
+    flex-direction: column !important;
+  }
+  .hero-images { display: none !important; }
+  .hero-title {
+    font-size: 2.2rem !important;
+    text-align: center;
+  }
+  .hero-description {
+    font-size: 1rem !important;
+    text-align: center;
+  }
+  .hero-buttons {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+  }
+  .hero-content {
+    align-items: center !important;
+    text-align: center;
+  }
+
+  /* STATISTIK */
+  .statistics-grid,
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+  }
+  .stat-value, .stat-suffix { font-size: 2rem !important; }
+  .stat-label { font-size: 0.8rem !important; }
+
+  /* PRODUCT / MENU GRID */
+  .products-grid,
+  .cb-grid,
+  .boutique-grid,
+  .menu-grid,
+  .gallery-grid,
+  .grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem !important;
+  }
+
+  /* CARD */
+  .card { padding: 16px !important; }
+  .card img,
+  .card-bg { height: 140px !important; }
+  .card h3 { font-size: 1em !important; }
+  .card p { font-size: 0.85em !important; }
+
+  /* ABOUT */
+  .about-preview-wrapper,
+  .about-content-wrapper {
+    flex-direction: column !important;
+  }
+  .about-image-container,
+  .about-text-container {
+    width: 100% !important;
+  }
+
+  /* CONTACT */
+  .contact-wrapper,
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* FORM */
+  .booking-grid,
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* SECTION PADDING */
+  section { padding: 60px 16px !important; }
+  .section-container { padding: 0 1rem !important; }
+
+  /* TITLE SIZE */
+  .section-title, section h2 { font-size: 1.8rem !important; }
+  .hero-badge { font-size: 0.7rem !important; }
+
+  /* TABLE */
+  .table-wrapper,
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  table { min-width: 560px; }
+  th, td { font-size: 0.82rem !important; padding: 8px 10px !important; }
+
+  /* BUTTON */
+  .btn, .login-btn, .back-home {
+    padding: 10px 20px !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* DROPDOWN */
+  .dropdown { width: 200px; right: 10px; }
+}
+
+/* ============================================================
+   4. HP KECIL  (≤ 480px)
+   ============================================================ */
+@media (max-width: 480px) {
+
+  /* NAV */
+  nav {
+    padding: 8px 12px;
+    width: 96%;
+  }
+  .main-nav { display: none !important; }
+  .hamburger { display: block !important; font-size: 1.4em !important; }
+  .nav-left img { width: 30px; height: 30px; }
+  .nav-left h2 { font-size: 0.9em; }
+  .login-btn { padding: 6px 12px !important; font-size: 0.8rem !important; }
+  .dropdown { width: 180px; right: 8px; }
+
+  /* HERO */
+  .hero-section { min-height: auto !important; }
+  .hero-content-wrapper {
+    padding-top: 6rem !important;
+    flex-direction: column !important;
+    padding-bottom: 3rem !important;
+  }
+  .hero-images { display: none !important; }
+  .hero-title {
+    font-size: 1.8rem !important;
+    line-height: 1.2 !important;
+    text-align: center;
+  }
+  .hero-badge { font-size: 0.65rem !important; }
+  .hero-description {
+    font-size: 0.9rem !important;
+    text-align: center;
+    padding: 0 8px !important;
+  }
+  .hero-buttons {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0.6rem !important;
+    width: 100%;
+  }
+  .hero-buttons a,
+  .hero-buttons button {
+    width: 100% !important;
+    text-align: center;
+    justify-content: center;
+  }
+  .hero-content {
+    align-items: center !important;
+    text-align: center;
+    width: 100% !important;
+  }
+
+  /* SCROLL INDICATOR */
+  .scroll-indicator { display: none !important; }
+
+  /* STATISTIK — 1 kolom di HP sangat kecil */
+  .statistics-grid,
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important;
+  }
+  .stat-suffix, .stat-value { font-size: 1.8rem !important; }
+  .stat-label { font-size: 0.72rem !important; }
+
+  /* PRODUCT / MENU GRID — 1 kolom */
+  .products-grid,
+  .cb-grid,
+  .boutique-grid,
+  .menu-grid,
+  .gallery-grid,
+  .grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* CARD */
+  .card { padding: 14px !important; }
+  .card img, .card-bg { height: 180px !important; }
+  .card h3 { font-size: 1em !important; }
+  .card p { font-size: 0.85em !important; }
+
+  /* SECTION */
+  section { padding: 50px 14px !important; }
+  .section-container { padding: 0 0.875rem !important; }
+  .section-title, section h2 { font-size: 1.6rem !important; }
+  .section-description { font-size: 0.95rem !important; }
+  .section-header { margin-bottom: 2rem !important; }
+
+  /* ABOUT */
+  .about-preview-wrapper,
+  .about-content-wrapper {
+    flex-direction: column !important;
+    gap: 1.5rem;
+  }
+  .about-image-container,
+  .about-text-container {
+    width: 100% !important;
+  }
+  /* Sembunyikan badge floating di about */
+  .about-badge { display: none !important; }
+
+  /* CONTACT */
+  .contact-wrapper,
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem;
+  }
+  .contact-form input,
+  .contact-form textarea,
+  .contact-form select {
+    font-size: 1rem !important;
+    padding: 10px 12px !important;
+  }
+
+  /* TESTIMONIALS */
+  .testimonials-carousel { min-height: 400px !important; }
+  .testimonial-card { padding: 1.5rem 1rem !important; }
+  .testimonial-quote { font-size: 1rem !important; }
+
+  /* FORM */
+  .booking-grid,
+  .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+  }
+  input, textarea, select {
+    font-size: 1rem !important; /* Cegah zoom otomatis iOS */
+  }
+
+  /* TABLE — scroll horizontal */
+  .table-wrapper,
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  table { min-width: 500px; }
+  th, td { font-size: 0.78rem !important; padding: 7px 9px !important; }
+
+  /* BUTTON */
+  .btn, .login-btn, .back-home, .cta-btn {
+    padding: 10px 18px !important;
+    font-size: 0.88rem !important;
+    width: auto;
+  }
+
+  /* PARALLAX TEXT */
+  .parallax-text {
+    font-size: 1.4em !important;
+    padding: 0 12px !important;
+  }
+
+  /* LOGO WRAP */
+  .logo-wrap { width: 100px !important; height: 100px !important; }
+
+  /* GALLERY */
+  .gallery-hero { height: 240px !important; }
+  .gallery-hero h1 { font-size: 1.8rem !important; }
+
+  /* ABOUT HERO */
+  .about-hero { height: 240px !important; }
+  .about-hero h1 { font-size: 1.8rem !important; }
+
+  /* PROMO / CONTACT HERO */
+  .promo-hero,
+  .contact-hero { height: 220px !important; }
+  .promo-hero h1,
+  .contact-hero h1 { font-size: 1.7rem !important; }
+
+  /* PRODUCT DETAIL */
+  .detail-wrapper,
+  .detail-grid {
+    flex-direction: column !important;
+    grid-template-columns: 1fr !important;
+  }
+  .detail-image { width: 100% !important; max-height: 260px; object-fit: cover; }
+
+  /* MENU FILTER TABS — horizontal scroll */
+  .filter-tabs,
+  .category-tabs {
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px;
+    display: flex !important;
+    gap: 8px !important;
+  }
+  .filter-tab,
+  .category-tab {
+    flex-shrink: 0;
+    font-size: 0.8rem !important;
+    padding: 6px 14px !important;
+  }
+
+  /* PROMO / PROMOTION CARDS */
+  .promo-grid,
+  .promotion-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+  }
+
+  /* MEMBER TABLE */
+  .member-table th,
+  .member-table td {
+    font-size: 0.75rem !important;
+    padding: 6px 8px !important;
+  }
+}
+
+/* ============================================================
+   5. UNIVERSAL FIXES — berlaku semua ukuran layar
+   ============================================================ */
+
+/* Cegah konten melebihi lebar layar */
+* { box-sizing: border-box; }
+body { overflow-x: hidden !important; }
+img { max-width: 100%; height: auto; }
+
+/* Input font ≥ 16px — cegah zoom otomatis iOS Safari */
+@media (max-width: 767px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="date"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Table selalu bisa di-scroll horizontal */
+@media (max-width: 1023px) {
+  .table-responsive,
+  .table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Hamburger — tampil default hidden, ditampilkan lewat JS */
+.hamburger {
+  display: block;
+}
+@media (min-width: 1024px) {
+  .hamburger { display: none !important; }
+  .main-nav { display: flex !important; }
+}
+
+/* Smooth tap highlight untuk mobile */
+@media (max-width: 1023px) {
+  .main-nav li,
+  .hamburger,
+  .btn,
+  .login-btn,
+  .dark-btn,
+  .filter-tab,
+  .category-tab {
+    -webkit-tap-highlight-color: rgba(201, 169, 97, 0.2);
+  }
+}
