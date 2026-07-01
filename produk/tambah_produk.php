@@ -29,10 +29,16 @@ if(isset($_POST['simpan'])){
     ");
 
     if($query){
-        echo "<script>
-                alert('Produk berhasil ditambahkan!');
-                window.location='data_produk.php';
-              </script>";
+        include 'success_overlay.php';
+        tampilkan_sukses([
+            'proses_judul' => 'Menyimpan Produk…',
+            'proses_sub'   => 'Sedang menambahkan produk baru ke katalog',
+            'sukses_judul' => 'Produk Berhasil Ditambahkan!',
+            'sukses_sub'   => '"'.htmlspecialchars($nama_produk).'" kini telah tersedia di katalog',
+            'redirect'     => 'data_produk.php',
+            'tombol_label' => 'Lanjutkan ke Data Produk',
+        ]);
+        exit;
     } else {
         echo mysqli_error($conn);
     }
