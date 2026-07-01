@@ -2,13 +2,13 @@
 include '../config/koneksi.php';
 
 $id = $_GET['id'];
+$stmt = $conn->prepare("SELECT * FROM member WHERE id_member= ?");
 
-$query = mysqli_query(
-    $conn,
-    "SELECT * FROM member WHERE id_member='$id'"
-);
+$stmt->bind_param("i", $id);
 
-$member = mysqli_fetch_assoc($query);
+$stmt->execute();
+$result = $stmt->get_result();
+$member = $result->fetch_assoc();
 
 if(isset($_POST['update'])){
 

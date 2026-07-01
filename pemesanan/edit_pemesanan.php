@@ -2,9 +2,13 @@
 include '../config/koneksi.php';
 
 $id = $_GET['id'] ?? 0;
+$stmt = $conn->prepare("SELECT * FROM pemesanan WHERE id_pemesanan= ?");
 
-$query = mysqli_query($conn,"SELECT * FROM pemesanan WHERE id_pemesanan='$id'");
-$data  = mysqli_fetch_assoc($query);
+$stmt->bind_param("i", $id);
+
+$stmt->execute();
+$result = $stmt->get_result();
+$member = $result->fetch_assoc();
 
 if(!$data){
     die("Data pemesanan tidak ditemukan");

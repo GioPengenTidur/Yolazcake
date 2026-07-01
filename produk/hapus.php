@@ -3,13 +3,14 @@ include '../config/koneksi.php';
 include 'success_overlay.php';
 
 $id = $_GET['id'];
+$stmt = $conn->prepare("SELECT * FROM produk WHERE id_produk = ?");
 
-$data = mysqli_query(
-    $conn,
-    "SELECT * FROM produk WHERE id_produk='$id'"
-);
+$stmt->bind_param("i", $id);
 
-$produk = mysqli_fetch_assoc($data);
+$stmt->execute();
+$result = $stmt->get_result();
+$produk = $result->fetch_assoc();
+
 $nama_produk = $produk['nama_produk'] ?? 'Produk';
 
 if(file_exists("../assets/img/produk/".$produk['foto'])){

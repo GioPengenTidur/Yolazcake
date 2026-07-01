@@ -2,9 +2,13 @@
 include '../config/koneksi.php';
 
 $id = $_GET['id'] ?? 0;
+$stmt = $conn->prepare("SELECT * FROM member WHERE id_member= ?");
 
-$query = mysqli_query($conn,"SELECT * FROM member WHERE id_member='$id'");
-$member = mysqli_fetch_assoc($query);
+$stmt->bind_param("i", $id);
+
+$stmt->execute();
+$result = $stmt->get_result();
+$member = $result->fetch_assoc();
 
 if(!$member){
     die("Data member tidak ditemukan");
