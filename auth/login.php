@@ -246,10 +246,18 @@ if(isset($_SESSION['username'])){
       margin-bottom: 8px;
     }
 
-    .field-group .field-icon {
+    /* Wrapper khusus untuk input + icon-icon di dalamnya, supaya
+       posisi icon selalu mengikuti tinggi INPUT saja — tidak ikut
+       melar saat ada hint tambahan di bawah input. */
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap .field-icon {
       position: absolute;
       left: 16px;
-      bottom: 13px;
+      top: 50%;
+      transform: translateY(-50%);
       font-size: 1.1em;
       color: rgba(212,175,55,0.55);
       pointer-events: none;
@@ -269,6 +277,12 @@ if(isset($_SESSION['username'])){
       transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
     }
 
+    /* Extra right padding on password field so text doesn't collide with the eye toggle */
+    .field-group input[type="password"],
+    .field-group input.pwd-field {
+      padding-right: 46px;
+    }
+
     .field-group input::placeholder {
       color: rgba(255,255,255,0.3);
     }
@@ -283,8 +297,84 @@ if(isset($_SESSION['username'])){
     }
 
     .field-group input:focus + .field-icon,
-    .field-group:focus-within .field-icon {
+    .input-wrap:focus-within .field-icon {
       color: rgba(212,175,55,0.9);
+    }
+
+    /* ── Eye toggle (password visibility) ──
+       Not active by default: input stays type="password" until the user clicks. */
+    .toggle-eye {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.05em;
+      opacity: 0.5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: opacity 0.25s, background 0.25s, transform 0.15s;
+    }
+    .toggle-eye:hover {
+      opacity: 0.85;
+      background: rgba(255,255,255,0.06);
+    }
+    .toggle-eye:active {
+      transform: translateY(-50%) scale(0.9);
+    }
+    .toggle-eye.active {
+      opacity: 1;
+      color: #D4AF37;
+    }
+
+    /* ── Indikator "password sesuai" (centang animasi) ── */
+    .field-hint {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 0.78em;
+      color: rgba(255,255,255,0.35);
+      transition: color 0.25s;
+    }
+    .field-hint.ok { display: flex; color: #9be8a4; }
+    .chk-icon {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .chk-icon::after {
+      content: '';
+      width: 7px; height: 4px;
+      border-left: 2px solid transparent;
+      border-bottom: 2px solid transparent;
+      transform: rotate(-45deg) translateY(-1px);
+      transition: border-color 0.2s;
+    }
+    .field-hint.ok .chk-icon {
+      border-color: #9be8a4;
+      background: rgba(155,232,164,0.15);
+      animation: checkPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .field-hint.ok .chk-icon::after {
+      border-color: #9be8a4;
+    }
+    @keyframes checkPop {
+      0%   { transform: scale(0.6); }
+      60%  { transform: scale(1.15); }
+      100% { transform: scale(1); }
     }
 
     /* ── Submit button ── */
@@ -307,10 +397,16 @@ if(isset($_SESSION['username'])){
       transition:
         transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
         box-shadow 0.35s ease,
-        background-position 0.5s ease;
+        background-position 0.5s ease,
+        opacity 0.3s ease;
       box-shadow:
         0 6px 20px rgba(212,175,55,0.35),
         0 0 30px rgba(212,175,55,0.2);
+    }
+
+    .btn-login:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
     }
 
     /* Shine sweep on hover */
@@ -423,6 +519,124 @@ if(isset($_SESSION['username'])){
       color: #D4AF37;
       transform: translateX(-4px);
     }
+
+    /* ══════════════════ Status overlay (proses → hasil) ══════════════════ */
+    .status-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(20,10,5,0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .status-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .status-box {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 42px 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      min-width: 240px;
+      transform: scale(0.85);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .status-overlay.show .status-box {
+      transform: scale(1);
+    }
+
+    /* Spinner (proses) */
+    .spinner {
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      border: 4px solid rgba(212,175,55,0.2);
+      border-top-color: #D4AF37;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Hasil (sukses / gagal) */
+    .result-icon {
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .result-icon.success {
+      display: flex;
+      background: rgba(155,232,164,0.15);
+      border: 2px solid #9be8a4;
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .result-icon.success svg { width: 26px; height: 26px; }
+    .result-icon.success path {
+      stroke: #9be8a4;
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 30;
+      stroke-dashoffset: 30;
+      animation: drawCheck 0.4s ease forwards 0.15s;
+    }
+    @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+    .result-icon.fail {
+      display: flex;
+      background: rgba(238,42,123,0.15);
+      border: 2px solid #ff8ab5;
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), shake 0.5s ease 0.1s;
+    }
+    .result-icon.fail::before,
+    .result-icon.fail::after {
+      content: '';
+      position: absolute;
+      width: 22px; height: 3px;
+      background: #ff8ab5;
+      border-radius: 2px;
+    }
+    .result-icon.fail::before { transform: rotate(45deg); }
+    .result-icon.fail::after  { transform: rotate(-45deg); }
+
+    @keyframes popIn {
+      0%   { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1);   opacity: 1; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    .status-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15em;
+      font-weight: 600;
+      color: #fff;
+      text-align: center;
+    }
+    .status-sub {
+      font-size: 0.82em;
+      color: rgba(255,255,255,0.55);
+      text-align: center;
+      margin-top: -8px;
+    }
   </style>
 </head>
 <body>
@@ -458,28 +672,37 @@ if(isset($_SESSION['username'])){
 
         <div class="field-group">
           <label for="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            name="username"
-            placeholder="Masukkan username Anda"
-            autocomplete="username"
-            required
-          >
-          <span class="field-icon">👤</span>
+          <div class="input-wrap">
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Masukkan username Anda"
+              autocomplete="username"
+              required
+            >
+            <span class="field-icon">👤</span>
+          </div>
         </div>
 
         <div class="field-group">
           <label for="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Masukkan password Anda"
-            autocomplete="current-password"
-            required
-          >
-          <span class="field-icon">🔒</span>
+          <div class="input-wrap">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Masukkan password Anda"
+              autocomplete="current-password"
+              required
+            >
+            <span class="field-icon">🔒</span>
+            <button type="button" class="toggle-eye" id="togglePassword" tabindex="-1" aria-label="Tampilkan password">👁️</button>
+          </div>
+
+          <div class="field-hint" id="passwordFilledHint">
+            <span class="chk-icon"></span><span class="hint-text">Password terisi</span>
+          </div>
         </div>
 
         <button type="submit" class="btn-login" id="btnLogin">
@@ -493,6 +716,16 @@ if(isset($_SESSION['username'])){
         Belum punya akun? <a href="register.php">Buat Akun</a>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Status overlay: proses -> selesai -> hasil -->
+  <div class="status-overlay" id="statusOverlay">
+    <div class="status-box">
+      <div class="spinner" id="statusSpinner"></div>
+      <div class="result-icon" id="statusResultIcon"></div>
+      <div class="status-text" id="statusText">Memproses...</div>
+      <div class="status-sub" id="statusSub"></div>
     </div>
   </div>
 
@@ -519,10 +752,30 @@ if(isset($_SESSION['username'])){
       }
     })();
 
-    /* ── Zoom on button when both fields filled ── */
+    /* ── Elements ── */
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
-    const btnLogin      = document.getElementById('btnLogin');
+    const btnLogin       = document.getElementById('btnLogin');
+    const loginForm      = document.getElementById('loginForm');
+    const errorMsg       = document.getElementById('errorMsg');
+
+    /* ── Eye toggle: password tersembunyi secara default,
+           hanya aktif (terlihat) saat tombol mata diklik ── */
+    function setupEyeToggle(btnId, inputId) {
+      const btn = document.getElementById(btnId);
+      const input = document.getElementById(inputId);
+      btn.addEventListener('click', () => {
+        const willShow = input.type === 'password';
+        input.type = willShow ? 'text' : 'password';
+        btn.textContent = willShow ? '🙈' : '👁️';
+        btn.classList.toggle('active', willShow);
+        btn.setAttribute('aria-label', willShow ? 'Sembunyikan password' : 'Tampilkan password');
+      });
+    }
+    setupEyeToggle('togglePassword', 'password');
+
+    /* ── Zoom on button when both fields filled + indikator password terisi ── */
+    const passwordFilledHint = document.getElementById('passwordFilledHint');
 
     function checkFields() {
       const filled = usernameInput.value.trim() !== '' && passwordInput.value.trim() !== '';
@@ -531,29 +784,101 @@ if(isset($_SESSION['username'])){
       } else {
         btnLogin.classList.remove('active');
       }
-    }
 
+      // Indikator centang saat password sudah diisi
+      passwordFilledHint.classList.toggle('ok', passwordInput.value.length > 0);
+    }
     usernameInput.addEventListener('input', checkFields);
     passwordInput.addEventListener('input', checkFields);
 
-    /* ── Re-trigger zoom on submit ── */
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    /* ── Status overlay controls ── */
+    const overlay      = document.getElementById('statusOverlay');
+    const spinnerEl     = document.getElementById('statusSpinner');
+    const resultIconEl  = document.getElementById('statusResultIcon');
+    const statusTextEl  = document.getElementById('statusText');
+    const statusSubEl   = document.getElementById('statusSub');
+
+    function showProcessing(text, sub) {
+      spinnerEl.style.display = 'block';
+      resultIconEl.className = 'result-icon';
+      resultIconEl.innerHTML = '';
+      statusTextEl.textContent = text || 'Memproses...';
+      statusSubEl.textContent = sub || 'Mohon tunggu sebentar';
+      overlay.classList.add('show');
+    }
+
+    function showResult(success, text, sub) {
+      spinnerEl.style.display = 'none';
+      resultIconEl.className = 'result-icon ' + (success ? 'success' : 'fail');
+      resultIconEl.innerHTML = success
+        ? '<svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 7"/></svg>'
+        : '';
+      statusTextEl.textContent = text;
+      statusSubEl.textContent = sub || '';
+    }
+
+    function hideOverlay() {
+      overlay.classList.remove('show');
+    }
+
+    /* ── Submit login via AJAX supaya bisa animasi proses -> hasil ── */
+    loginForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
       const u = usernameInput.value.trim();
-      const p = passwordInput.value.trim();
+      const p = passwordInput.value;
+
       if (!u || !p) {
-        e.preventDefault();
-        document.getElementById('errorMsg').classList.add('show');
+        errorMsg.classList.add('show');
         return;
       }
-      // Zoom effect before submit
+      errorMsg.classList.remove('show');
+
+      // Zoom effect saat submit
       btnLogin.classList.remove('active');
       void btnLogin.offsetWidth; // reflow
       btnLogin.classList.add('active');
+      btnLogin.disabled = true;
+
+      showProcessing('Memproses...', 'Sedang memeriksa akun Anda');
+
+      try {
+        const res = await fetch('proses_login.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: new URLSearchParams({ username: u, password: p })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          showResult(true, 'Berhasil Masuk!', 'Mengalihkan ke halaman...');
+          setTimeout(() => {
+            window.location.href = data.redirect || '../index.php';
+          }, 1200);
+        } else {
+          showResult(false, 'Login Gagal', data.message || 'Username atau password salah.');
+          setTimeout(() => {
+            hideOverlay();
+            btnLogin.disabled = false;
+            errorMsg.textContent = '⚠ ' + (data.message || 'Username atau password tidak sesuai.');
+            errorMsg.classList.add('show');
+          }, 1500);
+        }
+      } catch (err) {
+        showResult(false, 'Terjadi Kesalahan', 'Gagal terhubung ke server. Coba lagi.');
+        setTimeout(() => {
+          hideOverlay();
+          btnLogin.disabled = false;
+        }, 1500);
+      }
     });
 
     /* ── PHP error flag ── */
     <?php if(isset($_GET['error']) && $_GET['error'] == 1): ?>
-    document.getElementById('errorMsg').classList.add('show');
+    errorMsg.classList.add('show');
     <?php endif; ?>
 
     /* ── PHP success flag (baru daftar akun) ── */

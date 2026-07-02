@@ -6,6 +6,29 @@ include "../config/koneksi.php";
 $username = trim($_POST['username'] ?? '');
 $password = $_POST['password'] ?? '';
 
+// Deteksi apakah request datang dari AJAX (fetch) atau submit form biasa
+$is_ajax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
+
+function respond($is_ajax, $success, $message, $redirect = null) {
+    if ($is_ajax) {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success'  => $success,
+            'message'  => $message,
+            'redirect' => $redirect,
+        ]);
+        exit();
+    }
+
+    // Fallback lama (tanpa JS): tetap redirect seperti sebelumnya
+    if ($success) {
+        header("Location: $redirect");
+    } else {
+        header("Location: login.php?error=1");
+    }
+    exit();
+}
+
 // Ambil user berdasarkan username saja, password dicek manual di bawah
 // supaya tetap kompatibel dengan akun lama (password polos) maupun
 // akun baru dari halaman daftar (password sudah di-hash).
@@ -26,15 +49,10 @@ if ($valid) {
 
     $_SESSION['username'] = $username;
     $_SESSION['role'] = $user['role'] ?? 'kasir';
-    header("Location: ../index.php");
-    exit();
+    respond($is_ajax, true, 'Login berhasil.', '../index.php');
 
 } else {
 
-    // Redirect kembali ke login dengan pesan error
-    header("Location: login.php?error=1");
-    exit();
+    respond($is_ajax, false, 'Username atau password tidak sesuai.');
 
 }
-
-?>

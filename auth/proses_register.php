@@ -6,25 +6,43 @@ $username         = trim($_POST['username'] ?? '');
 $password         = $_POST['password'] ?? '';
 $confirm_password = $_POST['confirm_password'] ?? '';
 
-function back_to_register($error, $username = '') {
-    $qs = 'error=' . urlencode($error);
-    if ($username !== '') {
-        $qs .= '&username=' . urlencode($username);
+// Deteksi apakah request datang dari AJAX (fetch) atau submit form biasa
+$is_ajax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
+
+function respond_register($is_ajax, $success, $message, $redirect = null, $error_code = '', $username = '') {
+    if ($is_ajax) {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success'  => $success,
+            'message'  => $message,
+            'redirect' => $redirect,
+        ]);
+        exit();
     }
-    header("Location: register.php?$qs");
+
+    // Fallback lama (tanpa JS): tetap redirect seperti sebelumnya
+    if ($success) {
+        header("Location: $redirect");
+    } else {
+        $qs = 'error=' . urlencode($error_code);
+        if ($username !== '') {
+            $qs .= '&username=' . urlencode($username);
+        }
+        header("Location: register.php?$qs");
+    }
     exit();
 }
 
 if ($username === '' || $password === '' || $confirm_password === '') {
-    back_to_register('empty', $username);
+    respond_register($is_ajax, false, 'Semua kolom wajib diisi.', null, 'empty', $username);
 }
 
 if (strlen($password) < 6) {
-    back_to_register('short', $username);
+    respond_register($is_ajax, false, 'Password minimal 6 karakter.', null, 'short', $username);
 }
 
 if ($password !== $confirm_password) {
-    back_to_register('mismatch', $username);
+    respond_register($is_ajax, false, 'Konfirmasi password tidak sama.', null, 'mismatch', $username);
 }
 
 // Cek username sudah dipakai atau belum
@@ -34,7 +52,7 @@ $cek->execute();
 $cek->store_result();
 
 if ($cek->num_rows > 0) {
-    back_to_register('taken', $username);
+    respond_register($is_ajax, false, 'Username sudah dipakai, coba yang lain.', null, 'taken', $username);
 }
 $cek->close();
 
@@ -47,8 +65,7 @@ $stmt = $conn->prepare("INSERT INTO users (username, password, role) VALUES (?, 
 $stmt->bind_param("sss", $username, $hashed, $role);
 
 if ($stmt->execute()) {
-    header("Location: login.php?registered=1");
-    exit();
+    respond_register($is_ajax, true, 'Akun berhasil dibuat.', 'login.php?registered=1');
 } else {
-    back_to_register('taken', $username);
+    respond_register($is_ajax, false, 'Terjadi kesalahan, coba lagi.', null, 'taken', $username);
 }
