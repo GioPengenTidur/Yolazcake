@@ -6,8 +6,19 @@ include '../config/koneksi.php';
 // Handle hapus
 if(isset($_GET['hapus'])){
     $id=(int)$_GET['hapus'];
+    $k = mysqli_fetch_assoc(mysqli_query($conn,"SELECT nama FROM kontak WHERE id_kontak=$id"));
     mysqli_query($conn,"DELETE FROM kontak WHERE id_kontak=$id");
-    header("Location: data_kontak.php?msg=hapus"); exit();
+
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Menghapus Pesan…',
+        'proses_sub'   => 'Sedang memproses penghapusan pesan kontak',
+        'sukses_judul' => 'Pesan Berhasil Dihapus!',
+        'sukses_sub'   => 'Pesan dari "'.htmlspecialchars($k['nama'] ?? 'pengunjung').'" telah dihapus',
+        'redirect'     => 'data_kontak.php',
+        'tombol_label' => 'Lanjutkan ke Pesan Kontak',
+    ]);
+    exit;
 }
 
 // Handle ubah status
@@ -15,7 +26,17 @@ if(isset($_GET['ubah']) && isset($_GET['status'])){
     $id=(int)$_GET['ubah'];
     $st=mysqli_real_escape_string($conn,$_GET['status']);
     mysqli_query($conn,"UPDATE kontak SET status='$st' WHERE id_kontak=$id");
-    header("Location: data_kontak.php?msg=status"); exit();
+
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Memperbarui Status…',
+        'proses_sub'   => 'Sedang menyimpan perubahan status pesan',
+        'sukses_judul' => 'Status Berhasil Diperbarui!',
+        'sukses_sub'   => 'Pesan kini berstatus "'.htmlspecialchars($st).'"',
+        'redirect'     => 'data_kontak.php',
+        'tombol_label' => 'Lanjutkan ke Pesan Kontak',
+    ]);
+    exit;
 }
 
 // Handle detail modal
@@ -173,10 +194,6 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
 
 <div class="page-wrapper">
   <a href="../dashboard.php" class="btn-back">← Dashboard</a>
-
-  <?php if(isset($_GET['msg'])): ?>
-  <div class="alert alert-success">✅ <?= $_GET['msg']==='hapus'?'Pesan dihapus.':($_GET['msg']==='status'?'Status diperbarui.':'Aksi berhasil.') ?></div>
-  <?php endif; ?>
 
   <div class="stats-row">
     <div class="stat-card"><span class="stat-icon">✉️</span><div><div class="stat-val"><?= $stats['total'] ?></div><div class="stat-lbl">Total Pesan</div></div></div>

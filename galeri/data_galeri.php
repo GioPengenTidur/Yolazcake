@@ -8,12 +8,22 @@ include '../config/koneksi.php';
 // Handle hapus
 if(isset($_GET['hapus'])){
     $id = (int)$_GET['hapus'];
-    $d = mysqli_fetch_assoc(mysqli_query($conn,"SELECT foto FROM galeri WHERE id_galeri=$id"));
+    $d = mysqli_fetch_assoc(mysqli_query($conn,"SELECT foto,judul FROM galeri WHERE id_galeri=$id"));
     if($d && $d['foto'] && file_exists("../assets/img/galeri/".$d['foto'])){
         unlink("../assets/img/galeri/".$d['foto']);
     }
     mysqli_query($conn, "DELETE FROM galeri WHERE id_galeri=$id");
-    header("Location: data_galeri.php?msg=hapus"); exit();
+
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Menghapus Foto…',
+        'proses_sub'   => 'Sedang memproses penghapusan foto galeri',
+        'sukses_judul' => 'Foto Berhasil Dihapus!',
+        'sukses_sub'   => '"'.htmlspecialchars($d['judul'] ?? 'Foto').'" telah dihapus dari galeri',
+        'redirect'     => 'data_galeri.php',
+        'tombol_label' => 'Lanjutkan ke Data Galeri',
+    ]);
+    exit;
 }
 
 $filter = mysqli_real_escape_string($conn, $_GET['filter'] ?? '');
@@ -52,7 +62,7 @@ $stats  = mysqli_fetch_assoc(mysqli_query($conn,
 
     .page-hero{position:relative;height:240px;display:flex;flex-direction:column;
       align-items:center;justify-content:center;overflow:hidden;
-      background:linear-gradient(135deg,#0d1b2a 0%,#1a3a5c 40%,#0a2040 70%,#0d1b2a 100%);z-index:1;}
+      background:linear-gradient(135deg,#1a0a2e 0%,#3d1a6e 40%,#2d1560 70%,#1a0a2e 100%);z-index:1;}
     .page-hero::before{content:'';position:absolute;inset:0;
       background:radial-gradient(ellipse at 30% 50%,rgba(212,175,55,.18) 0%,transparent 60%),
                  radial-gradient(ellipse at 75% 40%,rgba(138,43,226,.15) 0%,transparent 55%);
@@ -162,12 +172,6 @@ $stats  = mysqli_fetch_assoc(mysqli_query($conn,
 <div class="page-wrapper">
 
   <a href="../dashboard.php" class="btn-back">← Dashboard</a>
-
-  <?php if(isset($_GET['msg'])): ?>
-  <div class="alert alert-success">
-    ✅ <?= $_GET['msg']==='hapus' ? 'Foto berhasil dihapus.' : ($_GET['msg']==='edit' ? 'Foto berhasil diperbarui.' : 'Foto berhasil ditambahkan.') ?>
-  </div>
-  <?php endif; ?>
 
   <div class="top-bar">
     <span class="section-eyebrow">✦ Daftar Foto Galeri</span>

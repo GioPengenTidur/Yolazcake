@@ -9,6 +9,7 @@ if(isset($_POST['tambah_poin'])){
     $jenis     = mysqli_real_escape_string($conn, $_POST['jenis']);
     $poin      = (int)$_POST['poin'];
     $ket       = mysqli_real_escape_string($conn, trim($_POST['keterangan']));
+    $m = mysqli_fetch_assoc(mysqli_query($conn,"SELECT nama FROM member WHERE id_member=$id_member"));
     if($id_member && $poin > 0){
         mysqli_query($conn,"INSERT INTO riwayat_poin (id_member,jenis,poin,keterangan) VALUES ($id_member,'$jenis',$poin,'$ket')");
         // Update total poin member
@@ -17,7 +18,17 @@ if(isset($_POST['tambah_poin'])){
         else
             mysqli_query($conn,"UPDATE member SET poin=GREATEST(0,poin-$poin) WHERE id_member=$id_member");
     }
-    header("Location: riwayat_poin.php?msg=tambah"); exit();
+
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Menyimpan Riwayat Poin…',
+        'proses_sub'   => 'Sedang mencatat perubahan poin member',
+        'sukses_judul' => 'Poin Berhasil Ditambahkan!',
+        'sukses_sub'   => htmlspecialchars($poin).' poin '.htmlspecialchars($jenis).' untuk "'.htmlspecialchars($m['nama'] ?? 'member').'"',
+        'redirect'     => 'riwayat_poin.php',
+        'tombol_label' => 'Lanjutkan ke Riwayat Poin',
+    ]);
+    exit;
 }
 
 // Handle hapus entry
@@ -32,7 +43,17 @@ if(isset($_GET['hapus'])){
             mysqli_query($conn,"UPDATE member SET poin=poin+{$rw['poin']} WHERE id_member={$rw['id_member']}");
         mysqli_query($conn,"DELETE FROM riwayat_poin WHERE id_riwayat=$id");
     }
-    header("Location: riwayat_poin.php?msg=hapus"); exit();
+
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Menghapus Entri…',
+        'proses_sub'   => 'Sedang memproses penghapusan & mengembalikan poin',
+        'sukses_judul' => 'Entri Berhasil Dihapus!',
+        'sukses_sub'   => 'Entri riwayat telah dihapus dan poin member sudah dikembalikan',
+        'redirect'     => 'riwayat_poin.php',
+        'tombol_label' => 'Lanjutkan ke Riwayat Poin',
+    ]);
+    exit;
 }
 
 // Filter
@@ -174,10 +195,6 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,"SELECT SUM(CASE WHEN jenis='Masu
 
 <div class="page-wrapper">
   <a href="../dashboard.php" class="btn-back">← Dashboard</a>
-
-  <?php if(isset($_GET['msg'])): ?>
-  <div class="alert alert-success">✅ <?= $_GET['msg']==='hapus'?'Entri dihapus & poin dikembalikan.':'Poin berhasil ditambahkan.' ?></div>
-  <?php endif; ?>
 
   <div class="stats-row">
     <div class="stat-card"><span class="stat-icon">⭐</span>

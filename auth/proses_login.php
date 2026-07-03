@@ -29,11 +29,11 @@ function respond($is_ajax, $success, $message, $redirect = null) {
     exit();
 }
 
-// Ambil user berdasarkan username saja, password dicek manual di bawah
-// supaya tetap kompatibel dengan akun lama (password polos) maupun
+// Ambil user berdasarkan username ATAU email (gmail), password dicek manual
+// di bawah supaya tetap kompatibel dengan akun lama (password polos) maupun
 // akun baru dari halaman daftar (password sudah di-hash).
-$stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
-$stmt->bind_param("s", $username);
+$stmt = $conn->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
+$stmt->bind_param("ss", $username, $username);
 $stmt->execute();
 $result = $stmt->get_result();
 

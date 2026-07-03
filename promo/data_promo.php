@@ -6,19 +6,41 @@ include '../config/koneksi.php';
 // Handle hapus
 if(isset($_GET['hapus'])){
     $id = (int)$_GET['hapus'];
+    $p = mysqli_fetch_assoc(mysqli_query($conn,"SELECT kode_promo FROM promo WHERE id_promo=$id"));
     mysqli_query($conn, "DELETE FROM promo WHERE id_promo=$id");
-    header("Location: data_promo.php?msg=hapus"); exit();
+
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Menghapus Promo…',
+        'proses_sub'   => 'Sedang memproses penghapusan data promo',
+        'sukses_judul' => 'Promo Berhasil Dihapus!',
+        'sukses_sub'   => 'Promo "'.htmlspecialchars($p['kode_promo'] ?? '').'" telah dihapus dari data',
+        'redirect'     => 'data_promo.php',
+        'tombol_label' => 'Lanjutkan ke Kelola Promo',
+    ]);
+    exit;
 }
 
 // Toggle status aktif/nonaktif
 if(isset($_GET['toggle'])){
     $id = (int)$_GET['toggle'];
-    $d  = mysqli_fetch_assoc(mysqli_query($conn,"SELECT status FROM promo WHERE id_promo=$id"));
+    $d  = mysqli_fetch_assoc(mysqli_query($conn,"SELECT kode_promo,status FROM promo WHERE id_promo=$id"));
+    $baru = null;
     if($d){
         $baru = $d['status']==='Aktif' ? 'Nonaktif' : 'Aktif';
         mysqli_query($conn, "UPDATE promo SET status='$baru' WHERE id_promo=$id");
     }
-    header("Location: data_promo.php?msg=status"); exit();
+
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Memperbarui Status Promo…',
+        'proses_sub'   => 'Sedang menyimpan perubahan status promo',
+        'sukses_judul' => 'Status Promo Berhasil Diperbarui!',
+        'sukses_sub'   => 'Promo "'.htmlspecialchars($d['kode_promo'] ?? '').'" kini berstatus '.htmlspecialchars($baru ?? '-'),
+        'redirect'     => 'data_promo.php',
+        'tombol_label' => 'Lanjutkan ke Kelola Promo',
+    ]);
+    exit;
 }
 
 // Tambah
@@ -40,7 +62,17 @@ if(isset($_POST['tambah'])){
                  VALUES ('$kode','$judul','$deskripsi',$diskon,$minbel,$poin,'$mulai','$selesai','Aktif')");
         }
     }
-    header("Location: data_promo.php?msg=tambah"); exit();
+
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Menyimpan Promo…',
+        'proses_sub'   => 'Sedang menambahkan promo baru',
+        'sukses_judul' => 'Promo Berhasil Ditambahkan!',
+        'sukses_sub'   => 'Promo "'.htmlspecialchars($kode).'" kini aktif untuk pelanggan',
+        'redirect'     => 'data_promo.php',
+        'tombol_label' => 'Lanjutkan ke Kelola Promo',
+    ]);
+    exit;
 }
 
 // Edit
@@ -61,7 +93,17 @@ if(isset($_POST['edit'])){
              diskon_persen=$diskon, min_belanja=$minbel, poin_bonus=$poin,
              tanggal_mulai='$mulai', tanggal_selesai='$selesai' WHERE id_promo=$id");
     }
-    header("Location: data_promo.php?msg=edit"); exit();
+
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Memperbarui Promo…',
+        'proses_sub'   => 'Sedang menyimpan perubahan data promo',
+        'sukses_judul' => 'Promo Berhasil Diperbarui!',
+        'sukses_sub'   => 'Promo "'.htmlspecialchars($kode).'" telah diperbarui',
+        'redirect'     => 'data_promo.php',
+        'tombol_label' => 'Lanjutkan ke Kelola Promo',
+    ]);
+    exit;
 }
 
 $hari_ini = date('Y-m-d');
@@ -208,12 +250,6 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
 
 <div class="page-wrapper">
   <a href="../dashboard.php" class="btn-back">← Dashboard</a>
-
-  <?php if(isset($_GET['msg'])): ?>
-  <div class="alert alert-success">✅
-    <?= $_GET['msg']==='hapus'?'Promo dihapus.':($_GET['msg']==='tambah'?'Promo ditambahkan.':($_GET['msg']==='status'?'Status promo diperbarui.':'Promo diperbarui.')) ?>
-  </div>
-  <?php endif; ?>
 
   <div class="top-bar">
     <span class="section-eyebrow" style="font-size:.72em;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:#D4AF37;">✦ Daftar Promo</span>

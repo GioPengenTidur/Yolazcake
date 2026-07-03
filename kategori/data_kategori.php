@@ -6,10 +6,21 @@ include '../config/koneksi.php';
 // Handle hapus
 if(isset($_GET['hapus'])){
     $id = (int)$_GET['hapus'];
+    $k = mysqli_fetch_assoc(mysqli_query($conn,"SELECT nama_kategori FROM kategori WHERE id_kategori=$id"));
     // Lepas produk dari kategori ini dulu
     mysqli_query($conn,"UPDATE produk SET id_kategori=NULL WHERE id_kategori=$id");
     mysqli_query($conn,"DELETE FROM kategori WHERE id_kategori=$id");
-    header("Location: data_kategori.php?msg=hapus"); exit();
+
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Menghapus Kategori…',
+        'proses_sub'   => 'Sedang memproses penghapusan data kategori',
+        'sukses_judul' => 'Kategori Berhasil Dihapus!',
+        'sukses_sub'   => '"'.htmlspecialchars($k['nama_kategori'] ?? 'Kategori').'" telah dihapus dari data',
+        'redirect'     => 'data_kategori.php',
+        'tombol_label' => 'Lanjutkan ke Data Kategori',
+    ]);
+    exit;
 }
 
 // Handle tambah inline
@@ -18,7 +29,17 @@ if(isset($_POST['tambah'])){
     $desk = mysqli_real_escape_string($conn, trim($_POST['deskripsi']));
     $icon = mysqli_real_escape_string($conn, trim($_POST['icon']));
     if($nama) mysqli_query($conn,"INSERT INTO kategori (nama_kategori,deskripsi,icon) VALUES ('$nama','$desk','$icon')");
-    header("Location: data_kategori.php?msg=tambah"); exit();
+
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Menyimpan Kategori…',
+        'proses_sub'   => 'Sedang menambahkan kategori baru',
+        'sukses_judul' => 'Kategori Berhasil Ditambahkan!',
+        'sukses_sub'   => '"'.htmlspecialchars($nama).'" kini tersedia sebagai kategori produk',
+        'redirect'     => 'data_kategori.php',
+        'tombol_label' => 'Lanjutkan ke Data Kategori',
+    ]);
+    exit;
 }
 
 // Handle edit inline
@@ -28,7 +49,17 @@ if(isset($_POST['edit'])){
     $desk = mysqli_real_escape_string($conn, trim($_POST['deskripsi']));
     $icon = mysqli_real_escape_string($conn, trim($_POST['icon']));
     if($nama) mysqli_query($conn,"UPDATE kategori SET nama_kategori='$nama',deskripsi='$desk',icon='$icon' WHERE id_kategori=$id");
-    header("Location: data_kategori.php?msg=edit"); exit();
+
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Memperbarui Kategori…',
+        'proses_sub'   => 'Sedang menyimpan perubahan data kategori',
+        'sukses_judul' => 'Kategori Berhasil Diperbarui!',
+        'sukses_sub'   => '"'.htmlspecialchars($nama).'" telah diperbarui',
+        'redirect'     => 'data_kategori.php',
+        'tombol_label' => 'Lanjutkan ke Data Kategori',
+    ]);
+    exit;
 }
 
 $query = mysqli_query($conn,"SELECT k.*, COUNT(p.id_produk) as jml_produk FROM kategori k LEFT JOIN produk p ON p.id_kategori=k.id_kategori GROUP BY k.id_kategori ORDER BY k.nama_kategori ASC");
@@ -169,12 +200,6 @@ mysqli_data_seek($query,0);
 
 <div class="page-wrapper">
   <a href="../dashboard.php" class="btn-back">← Dashboard</a>
-
-  <?php if(isset($_GET['msg'])): ?>
-  <div class="alert alert-success">✅
-    <?= $_GET['msg']==='hapus'?'Kategori dihapus.':($_GET['msg']==='tambah'?'Kategori ditambahkan.':'Kategori diperbarui.') ?>
-  </div>
-  <?php endif; ?>
 
   <div class="main-grid">
 

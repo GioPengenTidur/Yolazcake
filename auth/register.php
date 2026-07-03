@@ -6,6 +6,7 @@ if(isset($_SESSION['username'])){
 }
 
 $old_username = isset($_GET['username']) ? htmlspecialchars($_GET['username']) : '';
+$old_email    = isset($_GET['email']) ? htmlspecialchars($_GET['email']) : '';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -709,6 +710,26 @@ $old_username = isset($_GET['username']) ? htmlspecialchars($_GET['username']) :
         </div>
 
         <div class="field-group">
+          <label for="email">Email Gmail</label>
+          <div class="input-wrap">
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="contoh: nama@gmail.com"
+              autocomplete="email"
+              value="<?= $old_email ?>"
+              required
+            >
+            <span class="field-icon">✉️</span>
+          </div>
+
+          <div class="field-hint" id="emailHint">
+            <span class="chk-icon"></span><span class="hint-text"></span>
+          </div>
+        </div>
+
+        <div class="field-group">
           <label for="password">Password</label>
           <div class="input-wrap">
             <input
@@ -797,12 +818,19 @@ $old_username = isset($_GET['username']) ? htmlspecialchars($_GET['username']) :
 
     /* ── Elements ── */
     const usernameInput = document.getElementById('username');
+    const emailInput    = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const confirmInput  = document.getElementById('confirm_password');
     const btnRegister    = document.getElementById('btnRegister');
     const registerForm   = document.getElementById('registerForm');
     const matchHint       = document.getElementById('matchHint');
+    const emailHint        = document.getElementById('emailHint');
     const chkLength        = document.getElementById('chkLength');
+
+    /* ── Validasi format Gmail ── */
+    function isValidGmail(value) {
+      return /^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(value.trim());
+    }
 
     /* ── Eye toggle: password tersembunyi secara default,
            hanya aktif (terlihat) saat tombol mata diklik ── */
@@ -823,9 +851,24 @@ $old_username = isset($_GET['username']) ? htmlspecialchars($_GET['username']) :
     /* ── Validasi live + indikator centang animasi ── */
     function checkFields() {
       const filled = usernameInput.value.trim() !== '' &&
+                     emailInput.value.trim() !== '' &&
                      passwordInput.value.trim() !== '' &&
                      confirmInput.value.trim() !== '';
       btnRegister.classList.toggle('active', filled);
+
+      // Indikator format email harus gmail
+      if (emailInput.value.trim() === '') {
+        emailHint.classList.remove('ok', 'bad');
+        emailHint.querySelector('.hint-text').textContent = '';
+      } else if (isValidGmail(emailInput.value)) {
+        emailHint.classList.add('ok');
+        emailHint.classList.remove('bad');
+        emailHint.querySelector('.hint-text').textContent = 'Format Gmail valid';
+      } else {
+        emailHint.classList.add('bad');
+        emailHint.classList.remove('ok');
+        emailHint.querySelector('.hint-text').textContent = 'Harus email @gmail.com';
+      }
 
       // Indikator panjang password minimal
       const lengthOk = passwordInput.value.length >= 6;
@@ -847,6 +890,7 @@ $old_username = isset($_GET['username']) ? htmlspecialchars($_GET['username']) :
     }
 
     usernameInput.addEventListener('input', checkFields);
+    emailInput.addEventListener('input', checkFields);
     passwordInput.addEventListener('input', checkFields);
     confirmInput.addEventListener('input', checkFields);
 
@@ -893,11 +937,16 @@ $old_username = isset($_GET['username']) ? htmlspecialchars($_GET['username']) :
       e.preventDefault();
 
       const u = usernameInput.value.trim();
+      const em = emailInput.value.trim();
       const p = passwordInput.value;
       const c = confirmInput.value;
 
-      if (!u || !p || !c) {
+      if (!u || !em || !p || !c) {
         showError('Semua kolom wajib diisi.');
+        return;
+      }
+      if (!isValidGmail(em)) {
+        showError('Email harus berupa alamat @gmail.com yang valid.');
         return;
       }
       if (p.length < 6) {
@@ -925,7 +974,7 @@ $old_username = isset($_GET['username']) ? htmlspecialchars($_GET['username']) :
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-Requested-With': 'XMLHttpRequest'
           },
-          body: new URLSearchParams({ username: u, password: p, confirm_password: c })
+          body: new URLSearchParams({ username: u, email: em, password: p, confirm_password: c })
         });
         const data = await res.json();
 
@@ -954,11 +1003,13 @@ $old_username = isset($_GET['username']) ? htmlspecialchars($_GET['username']) :
     /* ── PHP error flag ── */
     <?php if(isset($_GET['error'])): ?>
     showError(<?= json_encode(match($_GET['error']) {
-        'empty'   => 'Semua kolom wajib diisi.',
-        'short'   => 'Password minimal 6 karakter.',
-        'mismatch'=> 'Konfirmasi password tidak sama.',
-        'taken'   => 'Username sudah dipakai, coba yang lain.',
-        default   => 'Terjadi kesalahan. Coba lagi.',
+        'empty'       => 'Semua kolom wajib diisi.',
+        'email'       => 'Email harus berupa alamat @gmail.com yang valid.',
+        'email_taken' => 'Email sudah dipakai akun lain, coba yang lain.',
+        'short'       => 'Password minimal 6 karakter.',
+        'mismatch'    => 'Konfirmasi password tidak sama.',
+        'taken'       => 'Username sudah dipakai, coba yang lain.',
+        default       => 'Terjadi kesalahan. Coba lagi.',
     }) ?>);
     <?php endif; ?>
   </script>

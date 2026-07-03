@@ -8,16 +8,38 @@ include '../config/koneksi.php';
 // Handle hapus
 if(isset($_GET['hapus'])){
     $id = (int)$_GET['hapus'];
+    $m = mysqli_fetch_assoc(mysqli_query($conn,"SELECT nomor_meja FROM meja WHERE id_meja=$id"));
     mysqli_query($conn, "DELETE FROM meja WHERE id_meja=$id");
-    header("Location: data_meja.php?msg=hapus"); exit();
+
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Menghapus Meja…',
+        'proses_sub'   => 'Sedang memproses penghapusan data meja',
+        'sukses_judul' => 'Meja Berhasil Dihapus!',
+        'sukses_sub'   => 'Meja "'.htmlspecialchars($m['nomor_meja'] ?? '').'" telah dihapus dari data',
+        'redirect'     => 'data_meja.php',
+        'tombol_label' => 'Lanjutkan ke Data Meja',
+    ]);
+    exit;
 }
 
 // Handle ubah status cepat
 if(isset($_GET['status']) && isset($_GET['id'])){
     $id  = (int)$_GET['id'];
     $st  = mysqli_real_escape_string($conn, $_GET['status']);
+    $m = mysqli_fetch_assoc(mysqli_query($conn,"SELECT nomor_meja FROM meja WHERE id_meja=$id"));
     mysqli_query($conn, "UPDATE meja SET status='$st' WHERE id_meja=$id");
-    header("Location: data_meja.php?msg=status"); exit();
+
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Memperbarui Status Meja…',
+        'proses_sub'   => 'Sedang menyimpan perubahan status meja',
+        'sukses_judul' => 'Status Meja Berhasil Diperbarui!',
+        'sukses_sub'   => 'Meja "'.htmlspecialchars($m['nomor_meja'] ?? '').'" kini berstatus '.htmlspecialchars($st),
+        'redirect'     => 'data_meja.php',
+        'tombol_label' => 'Lanjutkan ke Data Meja',
+    ]);
+    exit;
 }
 
 $query = mysqli_query($conn, "SELECT * FROM meja ORDER BY nomor_meja ASC");
@@ -187,12 +209,6 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
 <div class="page-wrapper">
 
   <a href="../dashboard.php" class="btn-back">← Dashboard</a>
-
-  <?php if(isset($_GET['msg'])): ?>
-  <div class="alert alert-success">
-    ✅ <?= $_GET['msg']==='hapus' ? 'Meja berhasil dihapus.' : ($_GET['msg']==='status' ? 'Status meja diperbarui.' : 'Data meja berhasil disimpan.') ?>
-  </div>
-  <?php endif; ?>
 
   <div class="top-bar">
     <span class="section-eyebrow">✦ Daftar Meja</span>

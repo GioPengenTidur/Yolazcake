@@ -34,7 +34,16 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 
         mysqli_query($conn,
             "UPDATE galeri SET judul='$judul', deskripsi='$deskripsi', kategori='$kategori', foto='$namaFoto' WHERE id_galeri=$id");
-        header("Location: data_galeri.php?msg=edit"); exit();
+        include 'success_overlay.php';
+        tampilkan_sukses([
+            'proses_judul' => 'Memperbarui Foto…',
+            'proses_sub'   => 'Sedang menyimpan perubahan foto galeri',
+            'sukses_judul' => 'Foto Berhasil Diperbarui!',
+            'sukses_sub'   => '"'.htmlspecialchars($judul).'" telah diperbarui',
+            'redirect'     => 'data_galeri.php',
+            'tombol_label' => 'Lanjutkan ke Data Galeri',
+        ]);
+        exit;
     }
 }
 ?>

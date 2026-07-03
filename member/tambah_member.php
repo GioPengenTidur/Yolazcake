@@ -13,12 +13,16 @@ if(isset($_POST['simpan'])){
         VALUES ('$nama','$email','$no_hp','$alamat',0)
     ");
 
-    echo "
-    <script>
-    alert('Member berhasil ditambahkan');
-    window.location='data_member.php';
-    </script>
-    ";
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Menyimpan Member…',
+        'proses_sub'   => 'Sedang mendaftarkan member baru',
+        'sukses_judul' => 'Member Berhasil Ditambahkan!',
+        'sukses_sub'   => '"'.htmlspecialchars($nama).'" kini terdaftar sebagai member',
+        'redirect'     => 'data_member.php',
+        'tombol_label' => 'Lanjutkan ke Data Member',
+    ]);
+    exit;
 }
 ?>
 <!DOCTYPE html>

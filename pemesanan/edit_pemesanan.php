@@ -8,7 +8,7 @@ $stmt->bind_param("i", $id);
 
 $stmt->execute();
 $result = $stmt->get_result();
-$member = $result->fetch_assoc();
+$data = $result->fetch_assoc();
 
 if(!$data){
     die("Data pemesanan tidak ditemukan");
@@ -26,12 +26,16 @@ if(isset($_POST['update'])){
     WHERE id_pemesanan='$id'
     ");
 
-    echo "
-    <script>
-    alert('Status pemesanan berhasil diperbarui');
-    window.location='data_pemesanan.php';
-    </script>
-    ";
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Memperbarui Pemesanan…',
+        'proses_sub'   => 'Sedang menyimpan perubahan status pesanan',
+        'sukses_judul' => 'Pemesanan Berhasil Diperbarui!',
+        'sukses_sub'   => 'Status pesanan "'.htmlspecialchars($data['kode_pesanan']).'" kini '.htmlspecialchars($status_pesanan).' · '.htmlspecialchars($status_pembayaran),
+        'redirect'     => 'data_pemesanan.php',
+        'tombol_label' => 'Lanjutkan ke Data Pemesanan',
+    ]);
+    exit;
 }
 ?>
 <!DOCTYPE html>

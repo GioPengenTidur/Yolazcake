@@ -306,6 +306,15 @@ $total_kasir  = $stats['k'] ?? 0;
     }
     .btn-hapus:hover { background:rgba(239,68,68,0.28); box-shadow:0 4px 16px rgba(239,68,68,0.25); }
 
+    .btn-editakun {
+      background:rgba(99,102,241,0.16); border-color:rgba(99,102,241,0.4);
+      color:#a5b4fc;
+    }
+    .btn-editakun:hover { background:rgba(99,102,241,0.3); box-shadow:0 4px 16px rgba(99,102,241,0.25); }
+
+    .td-email { color:rgba(255,255,255,0.65); font-size:0.85em; }
+    .no-email { color:rgba(255,255,255,0.3); font-style:italic; font-size:0.95em; }
+
     /* flash message */
     .flash-msg {
       margin-bottom:20px; padding:14px 20px; border-radius:14px;
@@ -351,6 +360,174 @@ $total_kasir  = $stats['k'] ?? 0;
       .page-wrapper { padding:24px 16px 60px; }
       .action-cell { flex-direction:column; align-items:flex-start; }
     }
+
+    /* ══════════════════ Modal Edit Akun ══════════════════ */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(10,5,20,0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 20px;
+    }
+    .modal-overlay.show { opacity: 1; pointer-events: all; }
+
+    .modal-box {
+      width: 100%; max-width: 420px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 24px;
+      padding: 32px 30px;
+      position: relative;
+      overflow: hidden;
+      transform: translateY(30px) scale(0.96);
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 40px rgba(99,102,241,0.15);
+    }
+    .modal-overlay.show .modal-box { transform: translateY(0) scale(1); opacity: 1; }
+
+    .modal-box::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, #6366f1, #D4AF37, #6366f1);
+      background-size: 300% 100%;
+      animation: goldSlide 4s linear infinite;
+    }
+
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4em; font-weight: 700; color:#fff;
+      margin-bottom: 4px;
+    }
+    .modal-sub {
+      font-size: 0.82em; color: rgba(255,255,255,0.5);
+      margin-bottom: 22px;
+    }
+    .modal-sub strong { color: #a5b4fc; }
+
+    .modal-field { margin-bottom: 16px; }
+    .modal-field label {
+      display: block; font-size: 0.75em; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: rgba(212,175,55,0.8); margin-bottom: 7px;
+    }
+    .modal-field input {
+      width: 100%; padding: 12px 14px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 12px; color: #fff;
+      font-family: 'Inter', sans-serif; font-size: 0.92em;
+      outline: none;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .modal-field input:focus {
+      border-color: rgba(99,102,241,0.6);
+      background: rgba(255,255,255,0.1);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+    .modal-field input::placeholder { color: rgba(255,255,255,0.3); }
+    .modal-field .field-note {
+      font-size: 0.72em; color: rgba(255,255,255,0.4); margin-top: 6px;
+    }
+
+    .modal-error {
+      display: none; background: rgba(238,42,123,0.15);
+      border: 1px solid rgba(238,42,123,0.35); border-radius: 10px;
+      padding: 10px 14px; font-size: 0.8em; color: #ff8ab5;
+      margin-bottom: 14px;
+    }
+    .modal-error.show { display: block; }
+
+    .modal-actions { display: flex; gap: 10px; margin-top: 22px; }
+    .btn-modal-cancel {
+      flex: 1; padding: 12px; border-radius: 12px;
+      background: none; border: 1px solid rgba(255,255,255,0.16);
+      color: rgba(255,255,255,0.6); font-family:'Inter',sans-serif;
+      font-size: 0.85em; font-weight: 500; cursor: pointer;
+      transition: border-color 0.25s, color 0.25s;
+    }
+    .btn-modal-cancel:hover { border-color: rgba(255,255,255,0.3); color:#fff; }
+
+    .btn-modal-save {
+      flex: 1.4; padding: 12px; border-radius: 12px; border: none;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #6366f1 100%);
+      background-size: 200% 100%;
+      color: #fff; font-family:'Inter',sans-serif;
+      font-size: 0.85em; font-weight: 700; letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(99,102,241,0.35);
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+    }
+    .btn-modal-save:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(99,102,241,0.5); }
+    .btn-modal-save:disabled { opacity: 0.6; cursor: not-allowed; transform:none; }
+
+    /* Status overlay proses -> hasil, konsisten dengan halaman login/register */
+    .status-overlay {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(20,10,5,0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .status-overlay.show { opacity: 1; pointer-events: all; }
+    .status-box {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px; padding: 42px 48px;
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+      min-width: 240px;
+      transform: scale(0.85);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .status-overlay.show .status-box { transform: scale(1); }
+
+    .spinner {
+      width: 54px; height: 54px; border-radius: 50%;
+      border: 4px solid rgba(212,175,55,0.2); border-top-color: #D4AF37;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .result-icon {
+      width: 54px; height: 54px; border-radius: 50%;
+      display: none; align-items: center; justify-content: center; position: relative;
+    }
+    .result-icon.success {
+      display: flex; background: rgba(155,232,164,0.15); border: 2px solid #9be8a4;
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .result-icon.success svg { width: 26px; height: 26px; }
+    .result-icon.success path {
+      stroke: #9be8a4; stroke-width: 3; fill: none;
+      stroke-linecap: round; stroke-linejoin: round;
+      stroke-dasharray: 30; stroke-dashoffset: 30;
+      animation: drawCheck 0.4s ease forwards 0.15s;
+    }
+    @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+    .result-icon.fail {
+      display: flex; background: rgba(238,42,123,0.15); border: 2px solid #ff8ab5;
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), shake 0.5s ease 0.1s;
+    }
+    .result-icon.fail::before, .result-icon.fail::after {
+      content: ''; position: absolute; width: 22px; height: 3px;
+      background: #ff8ab5; border-radius: 2px;
+    }
+    .result-icon.fail::before { transform: rotate(45deg); }
+    .result-icon.fail::after  { transform: rotate(-45deg); }
+    @keyframes popIn { 0%{transform:scale(0.5);opacity:0;} 100%{transform:scale(1);opacity:1;} }
+    @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-6px);} 75%{transform:translateX(6px);} }
+
+    .status-text { font-family:'Playfair Display', serif; font-size:1.15em; font-weight:600; color:#fff; text-align:center; }
+    .status-sub { font-size:0.82em; color:rgba(255,255,255,0.55); text-align:center; margin-top:-8px; }
   </style>
 </head>
 <body>
@@ -384,6 +561,7 @@ $total_kasir  = $stats['k'] ?? 0;
         $msgs = [
           'role'   => '✓ Peran akun berhasil diubah.',
           'hapus'  => '✓ Akun berhasil dihapus.',
+          'edit'   => '✓ Data akun berhasil diperbarui.',
         ];
         echo $msgs[$_GET['ok']] ?? '✓ Berhasil.';
       ?>
@@ -433,6 +611,7 @@ $total_kasir  = $stats['k'] ?? 0;
         <tr>
           <th style="text-align:center;">No</th>
           <th>Username</th>
+          <th>Email</th>
           <th>Peran</th>
           <th>Aksi</th>
         </tr>
@@ -451,6 +630,7 @@ $total_kasir  = $stats['k'] ?? 0;
             <?= htmlspecialchars($data['username']); ?>
             <?php if($is_me): ?><span class="you-tag">Kamu</span><?php endif; ?>
           </td>
+          <td class="td-email"><?= !empty($data['email']) ? htmlspecialchars($data['email']) : '<span class="no-email">- belum ada -</span>'; ?></td>
           <td>
             <?php if($data['role'] === 'admin'): ?>
               <span class="role-badge role-admin">👑 Admin</span>
@@ -470,6 +650,10 @@ $total_kasir  = $stats['k'] ?? 0;
                    onclick="return confirm('Jadikan <?= htmlspecialchars($data['username']); ?> sebagai Admin?')">⬆️ Jadikan Admin</a>
               <?php endif; ?>
 
+              <button type="button"
+                 class="btn-act btn-editakun"
+                 onclick="bukaModalEdit(<?= (int)$data['id']; ?>, <?= json_encode($data['username']); ?>, <?= json_encode($data['email'] ?? ''); ?>)">✏️ Edit</button>
+
               <a href="hapus_user.php?id=<?= $data['id']; ?>"
                  class="btn-act btn-hapus"
                  onclick="return confirm('Yakin ingin menghapus akun <?= htmlspecialchars($data['username']); ?>?')">🗑️ Hapus</a>
@@ -478,7 +662,7 @@ $total_kasir  = $stats['k'] ?? 0;
         </tr>
         <?php endwhile; else: ?>
         <tr>
-          <td colspan="4">
+          <td colspan="5">
             <div class="empty-state">
               <div class="es-icon">👤</div>
               <p>Belum ada akun</p>
@@ -490,6 +674,51 @@ $total_kasir  = $stats['k'] ?? 0;
     </table>
   </div>
 
+</div>
+
+<!-- Modal Edit Akun -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <div class="modal-title">Edit Akun</div>
+    <div class="modal-sub">Ubah email dan/atau reset password untuk <strong id="modalUsername">-</strong></div>
+
+    <div class="modal-error" id="modalError"><span id="modalErrorText"></span></div>
+
+    <form id="formEditAkun" novalidate>
+      <input type="hidden" id="editId" name="id">
+
+      <div class="modal-field">
+        <label for="editEmail">Email Gmail</label>
+        <input type="email" id="editEmail" name="email" placeholder="contoh: nama@gmail.com" autocomplete="off">
+        <div class="field-note">Dipakai untuk login via Gmail &amp; fitur lupa password.</div>
+      </div>
+
+      <div class="modal-field">
+        <label for="editPassword">Password Baru (opsional)</label>
+        <input type="password" id="editPassword" name="password" placeholder="Kosongkan jika tidak ingin ubah password" autocomplete="new-password">
+      </div>
+
+      <div class="modal-field">
+        <label for="editConfirmPassword">Konfirmasi Password Baru</label>
+        <input type="password" id="editConfirmPassword" name="confirm_password" placeholder="Ulangi password baru" autocomplete="new-password">
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-cancel" id="btnModalCancel">Batal</button>
+        <button type="submit" class="btn-modal-save" id="btnModalSave">💾 Simpan Perubahan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Status overlay: proses -> selesai -> hasil (konsisten dengan login/register) -->
+<div class="status-overlay" id="statusOverlay">
+  <div class="status-box">
+    <div class="spinner" id="statusSpinner"></div>
+    <div class="result-icon" id="statusResultIcon"></div>
+    <div class="status-text" id="statusText">Memproses...</div>
+    <div class="status-sub" id="statusSub"></div>
+  </div>
 </div>
 
 <script>
@@ -515,6 +744,126 @@ $total_kasir  = $stats['k'] ?? 0;
       c.appendChild(p);
     }
   })();
+
+  /* ══════════════════ Modal Edit Akun ══════════════════ */
+  const modalOverlay   = document.getElementById('modalOverlay');
+  const modalUsername   = document.getElementById('modalUsername');
+  const formEditAkun    = document.getElementById('formEditAkun');
+  const editIdInput     = document.getElementById('editId');
+  const editEmailInput  = document.getElementById('editEmail');
+  const editPasswordInput        = document.getElementById('editPassword');
+  const editConfirmPasswordInput = document.getElementById('editConfirmPassword');
+  const modalError      = document.getElementById('modalError');
+  const modalErrorText  = document.getElementById('modalErrorText');
+  const btnModalSave    = document.getElementById('btnModalSave');
+
+  function bukaModalEdit(id, username, email) {
+    editIdInput.value = id;
+    modalUsername.textContent = username;
+    editEmailInput.value = email || '';
+    editPasswordInput.value = '';
+    editConfirmPasswordInput.value = '';
+    hideModalError();
+    modalOverlay.classList.add('show');
+    setTimeout(() => editEmailInput.focus(), 300);
+  }
+
+  function tutupModalEdit() {
+    modalOverlay.classList.remove('show');
+  }
+
+  function showModalError(msg) {
+    modalErrorText.textContent = msg;
+    modalError.classList.add('show');
+  }
+  function hideModalError() {
+    modalError.classList.remove('show');
+  }
+
+  document.getElementById('btnModalCancel').addEventListener('click', tutupModalEdit);
+  modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) tutupModalEdit();
+  });
+
+  /* ── Status overlay controls (sama seperti login.php) ── */
+  const overlay      = document.getElementById('statusOverlay');
+  const spinnerEl     = document.getElementById('statusSpinner');
+  const resultIconEl  = document.getElementById('statusResultIcon');
+  const statusTextEl  = document.getElementById('statusText');
+  const statusSubEl   = document.getElementById('statusSub');
+
+  function showProcessing(text, sub) {
+    spinnerEl.style.display = 'block';
+    resultIconEl.className = 'result-icon';
+    resultIconEl.innerHTML = '';
+    statusTextEl.textContent = text || 'Memproses...';
+    statusSubEl.textContent = sub || 'Mohon tunggu sebentar';
+    overlay.classList.add('show');
+  }
+  function showResult(success, text, sub) {
+    spinnerEl.style.display = 'none';
+    resultIconEl.className = 'result-icon ' + (success ? 'success' : 'fail');
+    resultIconEl.innerHTML = success
+      ? '<svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 7"/></svg>'
+      : '';
+    statusTextEl.textContent = text;
+    statusSubEl.textContent = sub || '';
+  }
+  function hideOverlay() { overlay.classList.remove('show'); }
+
+  formEditAkun.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    hideModalError();
+
+    const id    = editIdInput.value;
+    const email = editEmailInput.value.trim();
+    const pass  = editPasswordInput.value;
+    const conf  = editConfirmPasswordInput.value;
+
+    if (email !== '' && !/^[^\s@]+@gmail\.com$/i.test(email)) {
+      showModalError('Email harus berupa alamat @gmail.com yang valid.');
+      return;
+    }
+    if (pass !== '' || conf !== '') {
+      if (pass.length < 6) { showModalError('Password baru minimal 6 karakter.'); return; }
+      if (pass !== conf)   { showModalError('Konfirmasi password baru tidak sama.'); return; }
+    }
+
+    btnModalSave.disabled = true;
+    tutupModalEdit();
+    showProcessing('Menyimpan...', 'Sedang memperbarui data akun');
+
+    try {
+      const res = await fetch('edit_user.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+        body: new URLSearchParams({ id, email, password: pass, confirm_password: conf })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        showResult(true, 'Berhasil Disimpan!', 'Mengalihkan halaman...');
+        setTimeout(() => {
+          window.location.href = data.redirect || 'data_user.php?ok=edit';
+        }, 1200);
+      } else {
+        showResult(false, 'Gagal Menyimpan', data.message || 'Terjadi kesalahan.');
+        setTimeout(() => {
+          hideOverlay();
+          btnModalSave.disabled = false;
+          modalOverlay.classList.add('show');
+          showModalError(data.message || 'Terjadi kesalahan. Coba lagi.');
+        }, 1500);
+      }
+    } catch (err) {
+      showResult(false, 'Terjadi Kesalahan', 'Gagal terhubung ke server. Coba lagi.');
+      setTimeout(() => {
+        hideOverlay();
+        btnModalSave.disabled = false;
+        modalOverlay.classList.add('show');
+      }, 1500);
+    }
+  });
 </script>
 </body>
 </html>

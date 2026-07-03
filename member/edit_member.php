@@ -29,12 +29,16 @@ if(isset($_POST['update'])){
         WHERE id_member='$id'
     ");
 
-    echo "
-    <script>
-    alert('Data member berhasil diupdate');
-    window.location='data_member.php';
-    </script>
-    ";
+    include 'success_overlay.php';
+    tampilkan_sukses([
+        'proses_judul' => 'Memperbarui Member…',
+        'proses_sub'   => 'Sedang menyimpan perubahan data member',
+        'sukses_judul' => 'Member Berhasil Diperbarui!',
+        'sukses_sub'   => 'Data "'.htmlspecialchars($nama).'" telah diperbarui',
+        'redirect'     => 'data_member.php',
+        'tombol_label' => 'Lanjutkan ke Data Member',
+    ]);
+    exit;
 }
 ?>
 <!DOCTYPE html>

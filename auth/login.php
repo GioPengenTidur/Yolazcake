@@ -246,6 +246,28 @@ if(isset($_SESSION['username'])){
       margin-bottom: 8px;
     }
 
+    /* Baris label + link "Lupa Password?" */
+    .label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .label-row label { margin-bottom: 0; }
+    .forgot-link {
+      font-size: 0.76em;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      text-transform: none;
+      color: rgba(232,160,191,0.85);
+      text-decoration: none;
+      transition: color 0.25s;
+    }
+    .forgot-link:hover {
+      color: #E8A0BF;
+      text-decoration: underline;
+    }
+
     /* Wrapper khusus untuk input + icon-icon di dalamnya, supaya
        posisi icon selalu mengikuti tinggi INPUT saja — tidak ikut
        melar saat ada hint tambahan di bawah input. */
@@ -671,13 +693,13 @@ if(isset($_SESSION['username'])){
       <form class="login-form" action="proses_login.php" method="POST" id="loginForm" novalidate>
 
         <div class="field-group">
-          <label for="username">Username</label>
+          <label for="username">Username atau Gmail</label>
           <div class="input-wrap">
             <input
               type="text"
               id="username"
               name="username"
-              placeholder="Masukkan username Anda"
+              placeholder="Username atau email Gmail Anda"
               autocomplete="username"
               required
             >
@@ -686,7 +708,10 @@ if(isset($_SESSION['username'])){
         </div>
 
         <div class="field-group">
-          <label for="password">Password</label>
+          <div class="label-row">
+            <label for="password">Password</label>
+            <a href="lupa_password.php" class="forgot-link">Lupa Password?</a>
+          </div>
           <div class="input-wrap">
             <input
               type="password"

@@ -17,7 +17,16 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
         if($cek){ $error = "Nomor meja sudah ada!"; }
         else {
             mysqli_query($conn,"INSERT INTO meja (nomor_meja,kapasitas,status,keterangan) VALUES ('$nomor',$kapasitas,'$status','$ket')");
-            header("Location: data_meja.php?msg=tambah"); exit();
+            include 'success_overlay.php';
+            tampilkan_sukses([
+                'proses_judul' => 'Menyimpan Meja…',
+                'proses_sub'   => 'Sedang menambahkan meja baru ke data',
+                'sukses_judul' => 'Meja Berhasil Ditambahkan!',
+                'sukses_sub'   => 'Meja "'.htmlspecialchars($nomor).'" kini tersedia di data meja',
+                'redirect'     => 'data_meja.php',
+                'tombol_label' => 'Lanjutkan ke Data Meja',
+            ]);
+            exit;
         }
     }
 }

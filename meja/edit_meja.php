@@ -16,7 +16,16 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     if(!$nomor || $kapasitas < 1){ $error = "Nomor dan kapasitas wajib diisi!"; }
     else {
         mysqli_query($conn,"UPDATE meja SET nomor_meja='$nomor',kapasitas=$kapasitas,status='$status',keterangan='$ket' WHERE id_meja=$id");
-        header("Location: data_meja.php?msg=edit"); exit();
+        include 'success_overlay.php';
+        tampilkan_sukses([
+            'proses_judul' => 'Memperbarui Meja…',
+            'proses_sub'   => 'Sedang menyimpan perubahan data meja',
+            'sukses_judul' => 'Meja Berhasil Diperbarui!',
+            'sukses_sub'   => 'Meja "'.htmlspecialchars($nomor).'" telah diperbarui',
+            'redirect'     => 'data_meja.php',
+            'tombol_label' => 'Lanjutkan ke Data Meja',
+        ]);
+        exit;
     }
 }
 ?>

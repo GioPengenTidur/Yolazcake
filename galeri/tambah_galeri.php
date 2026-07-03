@@ -26,7 +26,16 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
         if(move_uploaded_file($tmpFoto, $tujuan)){
             mysqli_query($conn,
                 "INSERT INTO galeri (judul,deskripsi,kategori,foto) VALUES ('$judul','$deskripsi','$kategori','$namaFoto')");
-            header("Location: data_galeri.php?msg=tambah"); exit();
+            include 'success_overlay.php';
+            tampilkan_sukses([
+                'proses_judul' => 'Mengunggah Foto…',
+                'proses_sub'   => 'Sedang menambahkan foto baru ke galeri',
+                'sukses_judul' => 'Foto Berhasil Ditambahkan!',
+                'sukses_sub'   => '"'.htmlspecialchars($judul).'" kini tampil di galeri',
+                'redirect'     => 'data_galeri.php',
+                'tombol_label' => 'Lanjutkan ke Data Galeri',
+            ]);
+            exit;
         } else {
             $error = "Gagal mengupload foto. Coba lagi.";
         }
