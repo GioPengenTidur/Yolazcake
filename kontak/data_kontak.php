@@ -1,13 +1,23 @@
 <?php
 session_start();
-if(!isset($_SESSION['username'])){ header("Location: ../auth/login.php"); exit(); }
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 
 // Handle hapus
 if(isset($_GET['hapus'])){
     $id=(int)$_GET['hapus'];
-    $k = mysqli_fetch_assoc(mysqli_query($conn,"SELECT nama FROM kontak WHERE id_kontak=$id"));
-    mysqli_query($conn,"DELETE FROM kontak WHERE id_kontak=$id");
+
+    $stmt = $conn->prepare("SELECT nama FROM kontak WHERE id_kontak=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $k = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    $stmt = $conn->prepare("DELETE FROM kontak WHERE id_kontak=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
 
     include 'success_overlay.php';
     tampilkan_sukses([
@@ -24,8 +34,12 @@ if(isset($_GET['hapus'])){
 // Handle ubah status
 if(isset($_GET['ubah']) && isset($_GET['status'])){
     $id=(int)$_GET['ubah'];
-    $st=mysqli_real_escape_string($conn,$_GET['status']);
-    mysqli_query($conn,"UPDATE kontak SET status='$st' WHERE id_kontak=$id");
+    $st=$_GET['status'];
+
+    $stmt = $conn->prepare("UPDATE kontak SET status=? WHERE id_kontak=?");
+    $stmt->bind_param("si", $st, $id);
+    $stmt->execute();
+    $stmt->close();
 
     include 'success_overlay.php';
     tampilkan_sukses([
@@ -39,24 +53,31 @@ if(isset($_GET['ubah']) && isset($_GET['status'])){
     exit;
 }
 
-// Handle detail modal
-$detail = null;
-if(isset($_GET['baca'])){
-    $id=(int)$_GET['baca'];
-    $detail=mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM kontak WHERE id_kontak=$id"));
-    // Otomatis mark as read
-    if($detail && $detail['status']==='Belum Dibaca')
-        mysqli_query($conn,"UPDATE kontak SET status='Sudah Dibaca' WHERE id_kontak=$id");
-}
+$filter   = $_GET['filter'] ?? '';
+$kategori = $_GET['kategori'] ?? '';
 
-$filter = mysqli_real_escape_string($conn, $_GET['filter'] ?? '');
-$where = $filter ? "WHERE status='$filter'" : '';
-$query = mysqli_query($conn,"SELECT * FROM kontak $where ORDER BY created_at DESC");
+$whereParts = [];
+$types  = '';
+$params = [];
+if ($filter)   { $whereParts[] = "status=?";   $types .= 's'; $params[] = $filter; }
+if ($kategori) { $whereParts[] = "kategori=?"; $types .= 's'; $params[] = $kategori; }
+$where = $whereParts ? ('WHERE ' . implode(' AND ', $whereParts)) : '';
+
+if($params){
+    $stmt = $conn->prepare("SELECT * FROM kontak $where ORDER BY created_at DESC");
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $query = $stmt->get_result();
+} else {
+    $query = $conn->query("SELECT * FROM kontak ORDER BY created_at DESC");
+}
 $stats = mysqli_fetch_assoc(mysqli_query($conn,
     "SELECT COUNT(*) as total,
             SUM(status='Belum Dibaca') as belum,
             SUM(status='Sudah Dibaca') as sudah,
-            SUM(status='Dibalas') as dibalas FROM kontak"));
+            SUM(status='Dibalas') as dibalas,
+            SUM(kategori='Bantuan Akun') as akun,
+            SUM(kategori='Bantuan Akun' AND status='Belum Dibaca') as akun_belum FROM kontak"));
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -72,10 +93,10 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
       background:radial-gradient(ellipse at 20% 30%,rgba(212,175,55,.10) 0%,transparent 55%),
                  radial-gradient(ellipse at 80% 70%,rgba(232,160,191,.10) 0%,transparent 55%);}
     .page-hero{position:relative;height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;
-      background:linear-gradient(135deg,#0a1f3a 0%,#1a4a2e 50%,#0a1f3a 100%);z-index:1;}
+      background:linear-gradient(135deg,#2b1a11 0%,#4a2c1a 40%,#6d3e26 70%,#3a1f0e 100%);z-index:1;}
     .page-hero::before{content:'';position:absolute;inset:0;
       background:radial-gradient(ellipse at 30% 50%,rgba(212,175,55,.18) 0%,transparent 60%),
-                 radial-gradient(ellipse at 75% 40%,rgba(16,185,129,.12) 0%,transparent 55%);
+                 radial-gradient(ellipse at 75% 40%,rgba(138,43,226,.15) 0%,transparent 55%);
       animation:heroAurora 8s ease-in-out infinite alternate;}
     @keyframes heroAurora{0%{opacity:.6;transform:scale(1);}100%{opacity:1;transform:scale(1.08) translateX(10px);}}
     .sparkle{position:absolute;border-radius:50%;pointer-events:none;animation:floatDot linear infinite;}
@@ -144,6 +165,10 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
     .s-belum{background:rgba(212,175,55,.15);border:1px solid rgba(212,175,55,.35);color:#D4AF37;}
     .s-sudah{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.3);color:#a5b4fc;}
     .s-dibalas{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#6ee7b7;}
+    .k-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:.73em;font-weight:700;letter-spacing:.3px;white-space:nowrap;}
+    .k-akun{background:rgba(238,42,123,.14);border:1px solid rgba(238,42,123,.35);color:#ff8ab5;}
+    .k-umum{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.6);}
+    .td-username{font-size:.75em;color:rgba(212,175,55,.75);margin-top:2px;}
     .action-cell{display:flex;gap:6px;flex-wrap:wrap;}
     .btn-act{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:7px;font-size:.72em;font-weight:600;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s;}
     .btn-act:hover{transform:translateY(-2px);}
@@ -175,8 +200,28 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
     .btn-modal{padding:10px 20px;border-radius:10px;font-size:.82em;font-weight:700;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:all .25s;}
     .btn-modal-balas{background:rgba(16,185,129,.15);border-color:rgba(16,185,129,.35);color:#6ee7b7;}
     .btn-modal-balas:hover{background:rgba(16,185,129,.3);}
+    .btn-modal-akun{background:rgba(212,175,55,.15);border-color:rgba(212,175,55,.4);color:#D4AF37;}
+    .btn-modal-akun:hover{background:rgba(212,175,55,.3);}
     .btn-modal-hapus{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.3);color:#fca5a5;}
     .btn-modal-hapus:hover{background:rgba(239,68,68,.25);}
+    .btn-modal:disabled{opacity:.4;cursor:not-allowed;}
+
+    /* Catatan status kirim notifikasi baca */
+    .baca-status-note{margin-top:14px;padding:10px 14px;border-radius:10px;font-size:.8em;line-height:1.5;}
+    .baca-status-note.pending{background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);color:#a5b4fc;}
+    .baca-status-note.ok{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#6ee7b7;}
+    .baca-status-note.warn{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:#fcd34d;}
+
+    /* Modal balas */
+    .reply-sub{font-size:.85em;color:rgba(255,255,255,.6);margin-top:4px;margin-bottom:16px;}
+    .reply-original{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;
+      padding:12px 14px;font-size:.78em;color:rgba(255,255,255,.5);max-height:90px;overflow-y:auto;white-space:pre-wrap;margin-bottom:14px;}
+    .reply-textarea{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);
+      border-radius:12px;padding:14px;color:#fff;font-family:'Inter',sans-serif;font-size:.9em;line-height:1.6;resize:vertical;min-height:120px;}
+    .reply-textarea:focus{outline:none;border-color:#D4AF37;box-shadow:0 0 0 3px rgba(212,175,55,.15);}
+    .reply-textarea::placeholder{color:rgba(255,255,255,.35);}
+    .form-error{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#fca5a5;
+      border-radius:10px;padding:10px 14px;font-size:.82em;margin-bottom:14px;}
 
     @media(max-width:768px){.stats-row{grid-template-columns:repeat(2,1fr);}.hero-inner h1{font-size:2em;}.page-wrapper{padding:24px 16px 60px;}}
   </style>
@@ -195,35 +240,67 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
 <div class="page-wrapper">
   <a href="../dashboard.php" class="btn-back">← Dashboard</a>
 
+  <?php if(isset($_GET['ok'])): ?>
+    <div class="alert alert-success">
+      <?php
+        $okMsgs = [ 'balas' => '✅ Balasan berhasil dikirim ke email pelanggan.' ];
+        echo $okMsgs[$_GET['ok']] ?? '✅ Berhasil.';
+      ?>
+    </div>
+  <?php elseif(isset($_GET['err'])): ?>
+    <div class="alert" style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#fca5a5;">
+      <?php
+        $errMsgs = [ 'notfound' => '✕ Pesan tidak ditemukan.' ];
+        echo $errMsgs[$_GET['err']] ?? '✕ Terjadi kesalahan.';
+      ?>
+    </div>
+  <?php endif; ?>
+
   <div class="stats-row">
     <div class="stat-card"><span class="stat-icon">✉️</span><div><div class="stat-val"><?= $stats['total'] ?></div><div class="stat-lbl">Total Pesan</div></div></div>
     <div class="stat-card"><span class="stat-icon">🟡</span><div><div class="stat-val"><?= $stats['belum'] ?></div><div class="stat-lbl">Belum Dibaca</div></div></div>
-    <div class="stat-card"><span class="stat-icon">🟣</span><div><div class="stat-val"><?= $stats['sudah'] ?></div><div class="stat-lbl">Sudah Dibaca</div></div></div>
+    <div class="stat-card"><span class="stat-icon">🔑</span><div><div class="stat-val"><?= $stats['akun'] ?></div><div class="stat-lbl">Bantuan Akun</div></div></div>
     <div class="stat-card"><span class="stat-icon">✅</span><div><div class="stat-val"><?= $stats['dibalas'] ?></div><div class="stat-lbl">Dibalas</div></div></div>
   </div>
 
   <div class="filter-tabs">
     <a href="data_kontak.php" class="filter-tab <?= !$filter?'active':'' ?>">Semua</a>
-    <a href="?filter=Belum Dibaca" class="filter-tab <?= $filter==='Belum Dibaca'?'active':'' ?>">🟡 Belum Dibaca <span class="tab-badge"><?= $stats['belum'] ?></span></a>
-    <a href="?filter=Sudah Dibaca" class="filter-tab <?= $filter==='Sudah Dibaca'?'active':'' ?>">🟣 Sudah Dibaca</a>
-    <a href="?filter=Dibalas" class="filter-tab <?= $filter==='Dibalas'?'active':'' ?>">✅ Dibalas</a>
+    <a href="?filter=Belum Dibaca<?= $kategori?'&kategori='.urlencode($kategori):'' ?>" class="filter-tab <?= $filter==='Belum Dibaca'?'active':'' ?>">🟡 Belum Dibaca <span class="tab-badge"><?= $stats['belum'] ?></span></a>
+    <a href="?filter=Sudah Dibaca<?= $kategori?'&kategori='.urlencode($kategori):'' ?>" class="filter-tab <?= $filter==='Sudah Dibaca'?'active':'' ?>">🟣 Sudah Dibaca</a>
+    <a href="?filter=Dibalas<?= $kategori?'&kategori='.urlencode($kategori):'' ?>" class="filter-tab <?= $filter==='Dibalas'?'active':'' ?>">✅ Dibalas</a>
+  </div>
+
+  <div class="filter-tabs">
+    <a href="?<?= $filter?'filter='.urlencode($filter):'' ?>" class="filter-tab <?= !$kategori?'active':'' ?>">Semua Kategori</a>
+    <a href="?kategori=Bantuan Akun<?= $filter?'&filter='.urlencode($filter):'' ?>" class="filter-tab <?= $kategori==='Bantuan Akun'?'active':'' ?>">🔑 Bantuan Akun <?php if($stats['akun_belum']>0): ?><span class="tab-badge"><?= $stats['akun_belum'] ?></span><?php endif; ?></a>
+    <a href="?kategori=Umum<?= $filter?'&filter='.urlencode($filter):'' ?>" class="filter-tab <?= $kategori==='Umum'?'active':'' ?>">💬 Umum</a>
   </div>
 
   <div class="table-card">
     <div style="overflow-x:auto;">
     <table>
-      <thead><tr><th>Tgl</th><th>Nama</th><th>Kontak</th><th>Subjek</th><th>Preview</th><th>Status</th><th>Aksi</th></tr></thead>
+      <thead><tr><th>Tgl</th><th>Nama</th><th>Kontak</th><th>Kategori</th><th>Subjek</th><th>Preview</th><th>Status</th><th>Aksi</th></tr></thead>
       <tbody>
       <?php $rows=mysqli_num_rows($query); if($rows>0): while($d=mysqli_fetch_assoc($query)): ?>
-      <tr class="<?= $d['status']==='Belum Dibaca'?'unread':'' ?>">
+      <tr class="<?= $d['status']==='Belum Dibaca'?'unread':'' ?>" data-id="<?= (int)$d['id_kontak'] ?>">
         <td style="font-size:.75em;color:rgba(255,255,255,.5);white-space:nowrap;"><?= date('d M Y',strtotime($d['created_at'])) ?></td>
         <td class="td-nama">
           <?= $d['status']==='Belum Dibaca'?'<span class="unread-dot"></span>':'' ?>
           <?= htmlspecialchars($d['nama']) ?>
+          <?php if(!empty($d['username_terkait'])): ?>
+            <div class="td-username">👤 <?= htmlspecialchars($d['username_terkait']) ?></div>
+          <?php endif; ?>
         </td>
         <td style="font-size:.8em;color:rgba(255,255,255,.55);">
           <?= $d['email']?htmlspecialchars($d['email']):'—' ?><br>
           <?= $d['no_hp']?htmlspecialchars($d['no_hp']):'—' ?>
+        </td>
+        <td>
+          <?php if(($d['kategori'] ?? 'Umum') === 'Bantuan Akun'): ?>
+            <span class="k-badge k-akun">🔑 Bantuan Akun</span>
+          <?php else: ?>
+            <span class="k-badge k-umum">💬 Umum</span>
+          <?php endif; ?>
         </td>
         <td class="td-subjek"><?= $d['subjek']?htmlspecialchars($d['subjek']):'—' ?></td>
         <td class="td-preview"><?= htmlspecialchars($d['pesan']) ?></td>
@@ -233,9 +310,9 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
         </td>
         <td>
           <div class="action-cell">
-            <button class="btn-act btn-baca" onclick="openDetail(<?= htmlspecialchars(json_encode($d)) ?>)">👁️ Baca</button>
+            <button class="btn-act btn-baca" onclick="bacaPesan(<?= htmlspecialchars(json_encode($d)) ?>)">👁️ Baca</button>
             <?php if($d['status']!=='Dibalas'): ?>
-            <a href="?ubah=<?= $d['id_kontak'] ?>&status=Dibalas" class="btn-act btn-balas">✉️ Balas</a>
+            <button class="btn-act btn-balas" onclick="bukaBalas(<?= htmlspecialchars(json_encode($d)) ?>)">✉️ Balas</button>
             <?php endif; ?>
             <a href="?hapus=<?= $d['id_kontak'] ?>" class="btn-act btn-hapus"
                onclick="return confirm('Hapus pesan ini?')">🗑️</a>
@@ -243,7 +320,7 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
         </td>
       </tr>
       <?php endwhile; else: ?>
-      <tr><td colspan="7"><div class="empty-state">📭 Tidak ada pesan</div></td></tr>
+      <tr><td colspan="8"><div class="empty-state">📭 Tidak ada pesan</div></td></tr>
       <?php endif; ?>
       </tbody>
     </table>
@@ -261,33 +338,189 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
       <div class="meta-item"><label>Tanggal</label><p id="mTgl"></p></div>
       <div class="meta-item"><label>Email</label><p id="mEmail"></p></div>
       <div class="meta-item"><label>No HP</label><p id="mHp"></p></div>
+      <div class="meta-item" id="mUsernameWrap" style="display:none;"><label>Username Terkait</label><p id="mUsername"></p></div>
+      <div class="meta-item"><label>Kategori</label><p id="mKategori"></p></div>
     </div>
     <div class="pesan-box" id="mPesan"></div>
+    <p class="baca-status-note" id="mBacaStatus" style="display:none;"></p>
     <div class="modal-actions">
-      <a id="mBtnBalas" href="#" class="btn-modal btn-modal-balas">✉️ Tandai Dibalas</a>
+      <button type="button" id="mBtnBalas" class="btn-modal btn-modal-balas" onclick="bukaBalasDariDetail()">✉️ Balas Pesan Ini</button>
+      <a id="mBtnAkun" href="../user/data_user.php" target="_blank" class="btn-modal btn-modal-akun" style="display:none;">🔑 Buka Kelola Akun</a>
       <a id="mBtnHapus" href="#" class="btn-modal btn-modal-hapus" onclick="return confirm('Hapus pesan ini?')">🗑️ Hapus</a>
     </div>
   </div>
 </div>
 
+<!-- REPLY MODAL -->
+<div class="modal-overlay" id="replyModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeBalas()">✕</button>
+    <h3>Balas Pesan</h3>
+    <p class="reply-sub">Balasan akan dikirim ke email <strong id="rEmail">-</strong> atas nama <strong id="rNama">-</strong></p>
+    <div class="form-error" id="replyError" style="display:none;"></div>
+    <div class="reply-original" id="rPesanAsli"></div>
+    <textarea id="replyPesan" class="reply-textarea" placeholder="Tulis balasan Anda untuk pelanggan ini…" rows="6"></textarea>
+    <div class="modal-actions">
+      <button type="button" class="btn-modal" id="btnReplyCancel" onclick="closeBalas()">Batal</button>
+      <button type="button" class="btn-modal btn-modal-balas" id="btnReplySend" onclick="kirimBalasan()">📨 Kirim Balasan</button>
+    </div>
+  </div>
+</div>
+
 <script>
+let currentDetail = null;
+
 function openDetail(d){
+  currentDetail = d;
   document.getElementById('mSubjek').textContent = d.subjek || '(Tanpa Subjek)';
   document.getElementById('mNama').textContent   = d.nama;
   document.getElementById('mEmail').textContent  = d.email || '—';
   document.getElementById('mHp').textContent     = d.no_hp || '—';
   document.getElementById('mPesan').textContent  = d.pesan;
   document.getElementById('mTgl').textContent    = d.created_at;
-  document.getElementById('mBtnBalas').href      = '?ubah='+d.id_kontak+'&status=Dibalas';
+  document.getElementById('mKategori').textContent = (d.kategori === 'Bantuan Akun') ? '🔑 Bantuan Akun' : '💬 Umum';
   document.getElementById('mBtnHapus').href      = '?hapus='+d.id_kontak;
+
+  const btnBalas = document.getElementById('mBtnBalas');
+  btnBalas.style.display = (d.status === 'Dibalas') ? 'none' : '';
+
+  const noteEl = document.getElementById('mBacaStatus');
+  noteEl.style.display = 'none';
+
+  const usernameWrap = document.getElementById('mUsernameWrap');
+  const akunBtn = document.getElementById('mBtnAkun');
+  if (d.username_terkait) {
+    document.getElementById('mUsername').textContent = d.username_terkait;
+    usernameWrap.style.display = '';
+  } else {
+    usernameWrap.style.display = 'none';
+  }
+  if (d.kategori === 'Bantuan Akun') {
+    akunBtn.style.display = '';
+  } else {
+    akunBtn.style.display = 'none';
+  }
+
   document.getElementById('detailModal').classList.add('open');
 }
 function closeDetail(){ document.getElementById('detailModal').classList.remove('open'); }
 document.getElementById('detailModal').addEventListener('click',function(e){if(e.target===this)closeDetail();});
 
+/* ══════════════════ Baca Pesan → notifikasi email otomatis ══════════════════ */
+function bacaPesan(d){
+  openDetail(d);
+  if (d.status !== 'Belum Dibaca') return;
+
+  const noteEl = document.getElementById('mBacaStatus');
+  noteEl.style.display = '';
+  noteEl.className = 'baca-status-note pending';
+  noteEl.textContent = '📧 Mengirim notifikasi otomatis ke email pelanggan…';
+
+  fetch('baca_kontak.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+    body: new URLSearchParams({ id: d.id_kontak })
+  })
+  .then(res => res.json())
+  .then(data => {
+    noteEl.className = 'baca-status-note ' + (data.email_sent ? 'ok' : 'warn');
+    noteEl.textContent = (data.email_sent ? '✅ ' : '⚠️ ') + data.message;
+    d.status = 'Sudah Dibaca';
+    currentDetail = d;
+    updateRowStatus(d.id_kontak, 'Sudah Dibaca');
+  })
+  .catch(() => {
+    noteEl.className = 'baca-status-note warn';
+    noteEl.textContent = '⚠️ Gagal terhubung ke server saat mengirim notifikasi.';
+  });
+}
+
+function updateRowStatus(id, status){
+  const row = document.querySelector('tr[data-id="'+id+'"]');
+  if (!row) return;
+  row.classList.remove('unread');
+  const dot = row.querySelector('.unread-dot');
+  if (dot) dot.remove();
+  const badge = row.querySelector('.s-badge');
+  if (badge) {
+    const cls = { 'Belum Dibaca':'s-belum', 'Sudah Dibaca':'s-sudah', 'Dibalas':'s-dibalas' }[status] || '';
+    badge.className = 's-badge ' + cls;
+    badge.textContent = status;
+  }
+}
+
+/* ══════════════════ Balas Pesan → admin ketik sendiri, kirim email ══════════════════ */
+let replyTargetId = null;
+
+function bukaBalas(d){
+  replyTargetId = d.id_kontak;
+  document.getElementById('rEmail').textContent   = d.email || '(tidak ada email)';
+  document.getElementById('rNama').textContent    = d.nama;
+  document.getElementById('rPesanAsli').textContent = d.pesan;
+  document.getElementById('replyPesan').value     = '';
+  hideReplyError();
+
+  const sendBtn = document.getElementById('btnReplySend');
+  sendBtn.disabled = false;
+  sendBtn.textContent = '📨 Kirim Balasan';
+  if (!d.email) {
+    showReplyError('Pelanggan ini tidak mencantumkan alamat email, balasan tidak bisa dikirim.');
+    sendBtn.disabled = true;
+  }
+
+  document.getElementById('replyModal').classList.add('open');
+}
+
+function bukaBalasDariDetail(){
+  if (!currentDetail) return;
+  closeDetail();
+  bukaBalas(currentDetail);
+}
+
+function closeBalas(){ document.getElementById('replyModal').classList.remove('open'); }
+document.getElementById('replyModal').addEventListener('click', function(e){ if (e.target === this) closeBalas(); });
+
+function showReplyError(msg){
+  const el = document.getElementById('replyError');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function hideReplyError(){ document.getElementById('replyError').style.display = 'none'; }
+
+function kirimBalasan(){
+  const teks = document.getElementById('replyPesan').value.trim();
+  if (!teks) { showReplyError('Isi balasan tidak boleh kosong.'); return; }
+  hideReplyError();
+
+  const btn = document.getElementById('btnReplySend');
+  btn.disabled = true;
+  btn.textContent = 'Mengirim…';
+
+  fetch('balas_kontak.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+    body: new URLSearchParams({ id: replyTargetId, balasan: teks })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      window.location.href = data.redirect || 'data_kontak.php?ok=balas';
+    } else {
+      showReplyError(data.message || 'Gagal mengirim balasan.');
+      btn.disabled = false;
+      btn.textContent = '📨 Kirim Balasan';
+    }
+  })
+  .catch(() => {
+    showReplyError('Gagal terhubung ke server. Coba lagi.');
+    btn.disabled = false;
+    btn.textContent = '📨 Kirim Balasan';
+  });
+}
+
 (function(){
   const hero=document.getElementById('pageHero');
-  const colors=['#D4AF37','#FFE4B5','#6ee7b7','#fff'];
+  const colors=['#D4AF37','#FFE4B5','#8A2BE2','#fff'];
   for(let i=0;i<20;i++){
     const d=document.createElement('div');d.className='sparkle';
     const s=Math.random()*5+2;

@@ -1,4 +1,7 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 
 $query = mysqli_query($conn, "SELECT * FROM member ORDER BY id_member DESC");
@@ -112,6 +115,12 @@ $query = mysqli_query($conn, "SELECT * FROM member ORDER BY id_member DESC");
     }
 
     /* top bar */
+    .btn-back{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;
+      background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);color:#D4AF37;
+      font-size:.82em;font-weight:600;letter-spacing:1px;border-radius:999px;text-decoration:none;
+      transition:transform .25s,box-shadow .3s,background .3s;margin-bottom:24px;}
+    .btn-back:hover{transform:translateX(-3px);background:rgba(212,175,55,.2);box-shadow:0 6px 20px rgba(212,175,55,.25);}
+
     .top-bar {
       display:flex; justify-content:space-between; align-items:center;
       margin-bottom:28px;
@@ -323,6 +332,8 @@ $query = mysqli_query($conn, "SELECT * FROM member ORDER BY id_member DESC");
 </div>
 
 <div class="page-wrapper">
+
+  <a href="../dashboard.php" class="btn-back">← Dashboard</a>
 
   <!-- top bar -->
   <div class="top-bar">

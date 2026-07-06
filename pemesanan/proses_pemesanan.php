@@ -1,6 +1,8 @@
 <?php
 session_start();
 include '../config/koneksi.php';
+require_once '../config/member_helper.php';
+require_once '../config/promo_helper.php';
 
 if (!isset($_SESSION['keranjang']) || empty($_SESSION['keranjang'])) {
     header('Location: menuu.php');
@@ -13,18 +15,37 @@ $no_hp        = $_SESSION['no_hp'] ?? '-';
 $id_booking     = $_SESSION['id_booking'] ?? null;
 $id_booking_sql = $id_booking ? "'$id_booking'" : "NULL";
 
-$tanggal     = date('Y-m-d H:i:s');
-$total_harga = 0;
+// Kalau sedang login, tandai pesanan ini milik akun mana (dipakai untuk
+// menghitung riwayat kunjungan menuju status member).
+$id_user_sql = "NULL";
+if (isset($_SESSION['user_id']) && $_SESSION['user_id']) {
+    $id_user_sql = (int) $_SESSION['user_id'];
+}
 
-// Hitung total & kumpulkan item keranjang
-$items = [];
+$tanggal        = date('Y-m-d H:i:s');
+$subtotal_harga = 0;
+
+// Hitung total, kumpulkan item keranjang, DAN cek stok tiap produk.
+// Kalau ada produk yang stoknya sudah kurang dari jumlah di keranjang,
+// tolak checkout di sini -- jangan sampai pesanan tetap masuk padahal
+// barangnya nggak tersedia.
+$items      = [];
+$stok_kurang = [];
+$stmtHarga = $conn->prepare("SELECT nama_produk, harga, stok FROM produk WHERE id_produk=?");
 foreach ($_SESSION['keranjang'] as $id_produk => $jumlah) {
-    $q = mysqli_query($conn, "SELECT nama_produk, harga FROM produk WHERE id_produk='$id_produk'");
-    $p = mysqli_fetch_assoc($q);
+    $id_produk_int = (int)$id_produk;
+    $jumlah        = (int)$jumlah;
+    $stmtHarga->bind_param("i", $id_produk_int);
+    $stmtHarga->execute();
+    $p = $stmtHarga->get_result()->fetch_assoc();
     if ($p) {
-        $subtotal     = $p['harga'] * $jumlah;
-        $total_harga += $subtotal;
-        $items[]      = [
+        if ((int)$p['stok'] < $jumlah) {
+            $stok_kurang[] = $p['nama_produk'].' (sisa '.(int)$p['stok'].', diminta '.$jumlah.')';
+        }
+        $subtotal        = $p['harga'] * $jumlah;
+        $subtotal_harga += $subtotal;
+        $items[]         = [
+            'id'       => $id_produk_int,
             'nama'     => $p['nama_produk'],
             'harga'    => $p['harga'],
             'jumlah'   => $jumlah,
@@ -32,31 +53,137 @@ foreach ($_SESSION['keranjang'] as $id_produk => $jumlah) {
         ];
     }
 }
+$stmtHarga->close();
+
+if (!empty($stok_kurang)) {
+    $_SESSION['checkout_error'] = 'Maaf, stok tidak mencukupi untuk: '.implode(', ', $stok_kurang).'. Silakan sesuaikan jumlah di keranjang.';
+    header('Location: keranjang.php');
+    exit;
+}
+
+// Terapkan kode promo (kalau ada) -- divalidasi ulang di server terhadap
+// subtotal yang baru saja dihitung dari database, bukan cuma percaya
+// nilai dari session/klien.
+$diskon_nominal     = 0;
+$kode_promo_dipakai = null;
+if (!empty($_SESSION['checkout_promo'])) {
+    $cekPromo = cek_promo($conn, $_SESSION['checkout_promo']['kode_promo'], $subtotal_harga);
+    if ($cekPromo['ok']) {
+        $diskon_nominal     = $cekPromo['diskon_nominal'];
+        $kode_promo_dipakai = $cekPromo['promo']['kode_promo'];
+    }
+}
+$total_harga = $subtotal_harga - $diskon_nominal;
 
 $kode_pesanan = "ORD" . date("YmdHis");
 
-mysqli_query($conn, "
-INSERT INTO pemesanan
-(kode_pesanan, id_member, id_booking, tanggal, total_harga,
- nama_pemesan, no_hp, metode_pembayaran, status_pembayaran, status_pesanan)
-VALUES
-('$kode_pesanan', NULL, $id_booking_sql, '$tanggal', '$total_harga',
- '$nama_pemesan', '$no_hp', 'QRIS', 'Lunas', 'Menunggu')
-");
+$id_booking_param = $id_booking ? (int)$id_booking : null;
+$id_user_param    = ($id_user_sql === "NULL") ? null : $id_user_sql;
 
-$id_pemesanan = mysqli_insert_id($conn);
+// ── Simpan pesanan + detail + kurangi stok + tambah poin, semua dalam
+//    satu transaksi supaya kalau ada langkah yang gagal (misal stok
+//    keburu habis karena pesanan lain), semuanya dibatalkan bersamaan. ──
+$conn->begin_transaction();
+$poin_didapat   = 0;
+$memberSekarang = null;
 
-foreach ($_SESSION['keranjang'] as $id_produk => $jumlah) {
-    $q        = mysqli_query($conn, "SELECT harga FROM produk WHERE id_produk='$id_produk'");
-    $p        = mysqli_fetch_assoc($q);
-    $subtotal = $p['harga'] * $jumlah;
-    mysqli_query($conn, "
-        INSERT INTO detail_pemesanan (id_pemesanan, id_produk, jumlah, subtotal)
-        VALUES ('$id_pemesanan', '$id_produk', '$jumlah', '$subtotal')
+try {
+    $stmtInsert = $conn->prepare("
+        INSERT INTO pemesanan
+        (kode_pesanan, id_member, id_user, id_booking, tanggal, total_harga,
+         kode_promo, diskon_nominal, nama_pemesan, no_hp, metode_pembayaran, status_pembayaran, status_pesanan)
+        VALUES
+        (?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, 'QRIS', 'Lunas', 'Menunggu')
     ");
+    $stmtInsert->bind_param(
+        "siisdsdss",
+        $kode_pesanan,
+        $id_user_param,
+        $id_booking_param,
+        $tanggal,
+        $total_harga,
+        $kode_promo_dipakai,
+        $diskon_nominal,
+        $nama_pemesan,
+        $no_hp
+    );
+    $stmtInsert->execute();
+    $stmtInsert->close();
+
+    $id_pemesanan = mysqli_insert_id($conn);
+
+    // Pesanan ini sudah tercatat (dengan id_user) -> baru sekarang cek
+    // status member, supaya pesanan yang baru saja dibuat ini ikut
+    // terhitung kalau pas jadi transaksi ke-5.
+    if (isset($_SESSION['user_id']) && $_SESSION['user_id']) {
+        $memberSekarang = get_current_member($conn);
+        if ($memberSekarang) {
+            $stmtLinkPesanan = $conn->prepare("UPDATE pemesanan SET id_member = ? WHERE id_pemesanan = ?");
+            $idMemberBaru = (int) $memberSekarang['id_member'];
+            $stmtLinkPesanan->bind_param("ii", $idMemberBaru, $id_pemesanan);
+            $stmtLinkPesanan->execute();
+            $stmtLinkPesanan->close();
+        }
+    }
+
+    // Simpan detail item + kurangi stok produk secara atomik. Kondisi
+    // "stok >= ?" di WHERE mencegah stok jadi minus kalau ada pesanan
+    // lain yang barusan menghabiskan sisa stok di saat bersamaan.
+    $stmtInsertDetail = $conn->prepare("
+        INSERT INTO detail_pemesanan (id_pemesanan, id_produk, jumlah, subtotal)
+        VALUES (?, ?, ?, ?)
+    ");
+    $stmtKurangiStok = $conn->prepare("
+        UPDATE produk SET stok = stok - ? WHERE id_produk = ? AND stok >= ?
+    ");
+    foreach ($items as $it) {
+        $stmtInsertDetail->bind_param("iiid", $id_pemesanan, $it['id'], $it['jumlah'], $it['subtotal']);
+        $stmtInsertDetail->execute();
+
+        $stmtKurangiStok->bind_param("iii", $it['jumlah'], $it['id'], $it['jumlah']);
+        $stmtKurangiStok->execute();
+        if ($stmtKurangiStok->affected_rows < 1) {
+            throw new Exception('Maaf, stok "'.$it['nama'].'" baru saja habis dipesan orang lain. Silakan coba lagi.');
+        }
+    }
+    $stmtInsertDetail->close();
+    $stmtKurangiStok->close();
+
+    // Poin loyalti otomatis: tiap Rp10.000 belanja (setelah diskon) = 1
+    // poin, hanya untuk akun yang statusnya sudah member.
+    if ($memberSekarang && $total_harga > 0) {
+        $poin_didapat = (int) floor($total_harga / 10000);
+        if ($poin_didapat > 0) {
+            $idMemberPoin = (int) $memberSekarang['id_member'];
+
+            $stmtPoin = $conn->prepare("UPDATE member SET poin = poin + ? WHERE id_member = ?");
+            $stmtPoin->bind_param("ii", $poin_didapat, $idMemberPoin);
+            $stmtPoin->execute();
+            $stmtPoin->close();
+
+            $ket = "Belanja pesanan #".$kode_pesanan;
+            $stmtRiwayat = $conn->prepare("INSERT INTO riwayat_poin (id_member, jenis, poin, keterangan) VALUES (?, 'Masuk', ?, ?)");
+            $stmtRiwayat->bind_param("iis", $idMemberPoin, $poin_didapat, $ket);
+            $stmtRiwayat->execute();
+            $stmtRiwayat->close();
+        }
+    }
+
+    $conn->commit();
+} catch (Exception $e) {
+    $conn->rollback();
+    $_SESSION['checkout_error'] = $e->getMessage();
+    header('Location: keranjang.php');
+    exit;
 }
 
+// Simpan total pesanan terakhir ke session (dipakai untuk validasi syarat
+// minimal belanja saat klaim promo, karena keranjang akan dikosongkan
+// setelah pesanan ini selesai dibuat).
+$_SESSION['riwayat_belanja_total'] = $total_harga;
+
 unset($_SESSION['keranjang']);
+unset($_SESSION['checkout_promo']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -659,6 +786,22 @@ unset($_SESSION['keranjang']);
   </div>
   <?php endif; ?>
 
+  <?php if($kode_promo_dipakai && $diskon_nominal > 0): ?>
+  <div class="items-card" style="margin-top:16px;">
+    <div class="card-header">
+      <span>🏷️</span><h3>Diskon Dipakai</h3>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px 4px 8px;color:#fff;">
+      <span>Subtotal</span>
+      <span>Rp <?= number_format($subtotal_harga,0,',','.') ?></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:4px;color:#6efabc;">
+      <span>Kode <?= htmlspecialchars($kode_promo_dipakai) ?></span>
+      <span>-Rp <?= number_format($diskon_nominal,0,',','.') ?></span>
+    </div>
+  </div>
+  <?php endif; ?>
+
   <!-- TOTAL HARGA -->
   <div class="total-box">
     <div class="total-label-wrap">
@@ -667,6 +810,15 @@ unset($_SESSION['keranjang']);
     </div>
     <span class="paid-badge">✅ Sudah Dibayar</span>
   </div>
+
+  <?php if($poin_didapat > 0): ?>
+  <div class="total-box" style="margin-top:14px;background:rgba(212,175,55,.1);border-color:rgba(212,175,55,.3);">
+    <div class="total-label-wrap">
+      <div class="tl">⭐ Poin Member Didapat</div>
+      <div class="tv" style="color:#D4AF37;">+<?= $poin_didapat ?> Poin</div>
+    </div>
+  </div>
+  <?php endif; ?>
 
   <!-- STATUS TIMELINE -->
   <div class="timeline">

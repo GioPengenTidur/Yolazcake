@@ -1,22 +1,110 @@
 <?php
 session_start();
-if(!isset($_SESSION['username'])){
-    header("Location: auth/login.php");
-    exit();
-}
+require_once __DIR__.'/config/staff_guard.php';
+require_staff_login('auth/login.php', 'member/member.php');
 require_once 'config/koneksi.php';
+
+/* ── TANDAI SUDAH PERNAH MASUK MODE SERIUS ──
+   Sekali admin/kasir sampai di dashboard penuh ini (baik lewat tombol
+   "Mode Serius?" maupun link langsung), tandai di DB supaya kunjungan
+   berikutnya tidak lagi diarahkan ke dashboard_awal.php (Mode Dasar). */
+if (!empty($_SESSION['user_id'])) {
+  mysqli_query($conn, "UPDATE users SET sudah_mode_serius = 1 WHERE id = " . (int) $_SESSION['user_id'] . " AND sudah_mode_serius = 0");
+}
 
 /* ── STATS ── */
 $s_booking   = mysqli_fetch_assoc(mysqli_query($conn,"SELECT COUNT(*) AS t, SUM(status='Pending') AS p FROM booking"));
 $s_pesanan   = mysqli_fetch_assoc(mysqli_query($conn,"SELECT COUNT(*) AS t, SUM(status_pesanan='Menunggu') AS p FROM pemesanan"));
 $s_produk    = mysqli_fetch_assoc(mysqli_query($conn,"SELECT COUNT(*) AS t FROM produk"));
 $s_member    = mysqli_fetch_assoc(mysqli_query($conn,"SELECT COUNT(*) AS t FROM member"));
+$s_kontak    = mysqli_fetch_assoc(mysqli_query($conn,"SELECT COUNT(*) AS t, SUM(status='Belum Dibaca') AS p FROM kontak"));
 
 /* ── RECENT BOOKING (5) ── */
 $q_booking = mysqli_query($conn,"SELECT * FROM booking ORDER BY created_at DESC LIMIT 5");
 
 /* ── RECENT PEMESANAN (5) ── */
 $q_pesanan = mysqli_query($conn,"SELECT * FROM pemesanan ORDER BY tanggal DESC LIMIT 5");
+
+/* ── RECENT PESAN KONTAK (5) ── */
+$q_kontak = mysqli_query($conn,"SELECT * FROM kontak ORDER BY created_at DESC LIMIT 5");
+
+/* ── GRAFIK: PENJUALAN HARIAN (7 hari terakhir) ── */
+$chart_harian_label = [];
+$chart_harian_data  = [];
+$q_harian = mysqli_query($conn,"
+  SELECT DATE(tanggal) AS d, SUM(total_harga) AS total
+  FROM pemesanan
+  WHERE status_pembayaran='Lunas' AND tanggal >= (CURDATE() - INTERVAL 6 DAY)
+  GROUP BY DATE(tanggal)
+");
+$harian_map = [];
+while ($row = mysqli_fetch_assoc($q_harian)) { $harian_map[$row['d']] = (float)$row['total']; }
+$hari_singkat = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+for ($i = 6; $i >= 0; $i--) {
+  $d = date('Y-m-d', strtotime("-$i day"));
+  $chart_harian_label[] = $hari_singkat[date('w', strtotime($d))] . ' ' . date('d/m', strtotime($d));
+  $chart_harian_data[]  = $harian_map[$d] ?? 0;
+}
+
+/* ── GRAFIK: PENJUALAN MINGGUAN (8 minggu terakhir) ── */
+$chart_mingguan_label = [];
+$chart_mingguan_data  = [];
+$q_mingguan = mysqli_query($conn,"
+  SELECT YEARWEEK(tanggal,3) AS yw, MIN(DATE(tanggal)) AS awal, SUM(total_harga) AS total
+  FROM pemesanan
+  WHERE status_pembayaran='Lunas' AND tanggal >= (CURDATE() - INTERVAL 7 WEEK)
+  GROUP BY YEARWEEK(tanggal,3)
+");
+$mingguan_map = [];
+while ($row = mysqli_fetch_assoc($q_mingguan)) { $mingguan_map[$row['yw']] = ['awal'=>$row['awal'],'total'=>(float)$row['total']]; }
+for ($i = 7; $i >= 0; $i--) {
+  $ts = strtotime("-$i week");
+  $yw = date('oW', $ts); // ISO year+week, cocok dgn mode 3 di YEARWEEK
+  if (isset($mingguan_map[$yw])) {
+    $chart_mingguan_label[] = 'Mgg ' . date('d/m', strtotime($mingguan_map[$yw]['awal']));
+    $chart_mingguan_data[]  = $mingguan_map[$yw]['total'];
+  } else {
+    $chart_mingguan_label[] = 'Mgg ' . date('d/m', strtotime('monday this week', $ts));
+    $chart_mingguan_data[]  = 0;
+  }
+}
+
+/* ── GRAFIK: PRODUK TERLARIS (top 5, all-time dari pesanan Lunas) ── */
+$chart_produk_label = [];
+$chart_produk_data  = [];
+$q_produk_terlaris = mysqli_query($conn,"
+  SELECT p.nama_produk, SUM(dp.jumlah) AS qty
+  FROM detail_pemesanan dp
+  JOIN produk p ON p.id_produk = dp.id_produk
+  JOIN pemesanan pm ON pm.id_pemesanan = dp.id_pemesanan
+  WHERE pm.status_pembayaran='Lunas'
+  GROUP BY dp.id_produk
+  ORDER BY qty DESC
+  LIMIT 5
+");
+while ($row = mysqli_fetch_assoc($q_produk_terlaris)) {
+  $chart_produk_label[] = $row['nama_produk'];
+  $chart_produk_data[]  = (int)$row['qty'];
+}
+
+/* ── HERO BACKGROUND VIDEO & MUSIK "MODE SERIUS" ──
+   Taruh file video di assets/video/ (mp4/webm/mov) dan musik di
+   assets/audio/ (mp3/ogg/wav) — otomatis terpakai, tidak perlu nama file
+   tertentu (pakai file pertama yang ditemukan). */
+$hero_video = null;
+$video_files = glob(__DIR__ . '/assets/video/*.{mp4,webm,mov,MP4,WEBM,MOV}', GLOB_BRACE);
+if (!empty($video_files)) { sort($video_files); $hero_video = 'assets/video/' . basename($video_files[0]); }
+
+$hero_audio = null;
+$audio_name = 'Musik Latar';
+$audio_files = glob(__DIR__ . '/assets/audio/*.{mp3,ogg,wav,MP3,OGG,WAV}', GLOB_BRACE);
+if (!empty($audio_files)) {
+  sort($audio_files);
+  $hero_audio = 'assets/audio/' . basename($audio_files[0]);
+  $audio_name = pathinfo($audio_files[0], PATHINFO_FILENAME);
+}
+
+$masuk_mode_serius = isset($_GET['serius']) && $_GET['serius'] === '1';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -25,6 +113,7 @@ $q_pesanan = mysqli_query($conn,"SELECT * FROM pemesanan ORDER BY tanggal DESC L
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard Admin – YOLAZCAKE</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
 /* ════════════════════════════════════════════
    RESET & ROOT
@@ -495,6 +584,156 @@ body::before{
 }
 .stat-badge.ok{color:#2ed573;background:rgba(46,213,115,.1);border-color:rgba(46,213,115,.3);}
 
+/* ── "API" GLOW — mode serius flair (subtle, bukan norak) ── */
+.flame-text{animation:flameText 4.5s ease-in-out infinite;}
+@keyframes flameText{
+  0%,100%{text-shadow:0 0 10px rgba(138,43,226,.5),0 0 18px rgba(138,43,226,.2);}
+  33%    {text-shadow:0 0 10px rgba(75,110,255,.5),0 0 18px rgba(75,110,255,.2);}
+  66%    {text-shadow:0 0 10px rgba(238,42,123,.5),0 0 18px rgba(238,42,123,.2);}
+}
+.flame-card{animation:flameCard 6s ease-in-out infinite;}
+@keyframes flameCard{
+  0%,100%{box-shadow:0 12px 40px rgba(0,0,0,.3),0 0 22px rgba(138,43,226,.16);}
+  33%    {box-shadow:0 12px 40px rgba(0,0,0,.3),0 0 22px rgba(75,110,255,.16);}
+  66%    {box-shadow:0 12px 40px rgba(0,0,0,.3),0 0 22px rgba(238,42,123,.16);}
+}
+
+/* ── HERO MEDIA (video latar) ── */
+.dash-hero{transition:padding .4s ease;}
+.dash-hero.media-half{display:flex;align-items:center;gap:30px;}
+.hero-media{border-radius:20px;overflow:hidden;}
+.dash-hero.media-full .hero-media{position:absolute;inset:0;z-index:0;border-radius:inherit;}
+.dash-hero.media-full .hero-media video{width:100%;height:100%;object-fit:cover;object-position:center 65%;opacity:.5;}
+.dash-hero.media-full .hero-media-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(120deg,rgba(13,5,32,.78) 0%,rgba(26,10,58,.55) 55%,rgba(13,5,32,.82) 100%);
+}
+.dash-hero.media-half .hero-media{position:relative;flex:0 0 300px;max-width:38%;min-height:230px;align-self:stretch;}
+.dash-hero.media-half .hero-media video{width:100%;height:100%;object-fit:cover;display:block;}
+.dash-hero.media-half .hero-media-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(13,5,32,.35),transparent 40%);}
+.hero-media-placeholder{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;
+  font-size:.78em;color:rgba(255,255,255,.4);padding:14px;
+  border:1px dashed rgba(255,255,255,.15);border-radius:inherit;background:rgba(255,255,255,.02);
+}
+.dash-hero.media-half .dash-hero-inner{flex:1;}
+
+.hero-media-toggle{
+  position:relative;z-index:3;display:flex;gap:8px;margin-top:18px;
+}
+.dash-hero.media-half .hero-media-toggle,
+.dash-hero.media-full .hero-media-toggle{position:absolute;right:24px;bottom:20px;margin-top:0;}
+.hmt-btn{
+  font-family:'Inter',sans-serif;font-size:.72em;font-weight:600;
+  padding:7px 13px;border-radius:9px;cursor:pointer;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  color:rgba(255,255,255,.65);transition:.2s;
+}
+.hmt-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
+.hmt-btn.active{background:rgba(212,175,55,.18);border-color:rgba(212,175,55,.4);color:var(--gold);}
+
+/* ── MUSIC PLAYER (gaya Spotify) ── */
+.music-player{
+  display:flex;align-items:center;gap:16px;
+  background:var(--glass);backdrop-filter:blur(20px);
+  border:1px solid var(--gb);border-radius:18px;
+  padding:14px 20px;margin-bottom:32px;
+  opacity:0;animation:fadeUp .7s forwards .65s;
+}
+.mp-art{
+  width:46px;height:46px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--purple),var(--rose));
+  display:flex;align-items:center;justify-content:center;font-size:1.2em;
+  animation:mpSpin 8s linear infinite;
+}
+@keyframes mpSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.music-player.playing .mp-art{animation-play-state:running;}
+.music-player:not(.playing) .mp-art{animation-play-state:paused;}
+.mp-info{flex:1;min-width:0;}
+.mp-title{font-size:.85em;font-weight:600;margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mp-progress-wrap{position:relative;height:4px;border-radius:99px;background:rgba(255,255,255,.1);margin-bottom:5px;}
+.mp-progress{position:absolute;left:0;top:0;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--rose));border-radius:99px;pointer-events:none;}
+.mp-seek{
+  position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:100%;height:16px;margin:0;
+  -webkit-appearance:none;appearance:none;
+  background:transparent;cursor:pointer;
+}
+.mp-seek::-webkit-slider-runnable-track{background:transparent;height:16px;}
+.mp-seek::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:12px;height:12px;border-radius:50%;margin-top:2px;
+  background:#fff;box-shadow:0 0 0 2px rgba(0,0,0,.3),0 0 8px rgba(212,175,55,.65);
+  cursor:pointer;transition:transform .15s;
+}
+.mp-seek:hover::-webkit-slider-thumb{transform:scale(1.15);}
+.mp-seek::-moz-range-track{background:transparent;height:16px;border:none;}
+.mp-seek::-moz-range-thumb{
+  width:12px;height:12px;border-radius:50%;border:none;
+  background:#fff;box-shadow:0 0 0 2px rgba(0,0,0,.3),0 0 8px rgba(212,175,55,.65);
+  cursor:pointer;
+}
+.mp-time{font-size:.65em;color:var(--muted);}
+.mp-playbtn{
+  flex-shrink:0;width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--gold),var(--rose));color:#1a0533;font-size:1em;font-weight:700;
+  display:flex;align-items:center;justify-content:center;transition:transform .2s;
+}
+.mp-playbtn:hover{transform:scale(1.08);}
+.mp-placeholder{font-size:.78em;color:var(--muted);}
+
+.mp-autoplay{
+  flex-shrink:0;display:flex;align-items:center;gap:8px;
+  cursor:pointer;user-select:none;
+}
+.mp-autoplay input{position:absolute;opacity:0;width:0;height:0;}
+.mp-autoplay-track{
+  position:relative;width:34px;height:19px;border-radius:99px;flex-shrink:0;
+  background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);
+  transition:background .2s,border-color .2s;
+}
+.mp-autoplay-thumb{
+  position:absolute;top:1px;left:1px;width:15px;height:15px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.4);
+  transition:transform .2s;
+}
+.mp-autoplay input:checked + .mp-autoplay-track{
+  background:linear-gradient(135deg,var(--gold),var(--rose));border-color:transparent;
+}
+.mp-autoplay input:checked + .mp-autoplay-track .mp-autoplay-thumb{transform:translateX(15px);}
+.mp-autoplay-label{font-size:.68em;color:var(--muted);letter-spacing:.3px;white-space:nowrap;}
+
+/* ── MODAL "MODE SERIUS" ── */
+.serius-modal-overlay{
+  position:fixed;inset:0;z-index:9999;
+  background:rgba(5,2,15,.75);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .35s;
+}
+.serius-modal-overlay.show{opacity:1;pointer-events:auto;}
+.serius-modal{
+  width:90%;max-width:420px;text-align:center;padding:42px 34px;
+  background:rgba(255,255,255,.06);backdrop-filter:blur(24px);
+  border:1px solid rgba(255,255,255,.12);border-radius:24px;
+  box-shadow:0 30px 70px rgba(0,0,0,.45);
+  transform:translateY(24px) scale(.94);transition:transform .4s cubic-bezier(.22,.68,0,1.2);
+}
+.serius-modal-overlay.show .serius-modal{transform:translateY(0) scale(1);}
+.serius-modal-icon{font-size:2.6em;margin-bottom:14px;}
+.serius-modal h2{
+  font-family:'Playfair Display',serif;font-size:1.35em;margin-bottom:12px;
+  background:linear-gradient(135deg,#fff,var(--gold) 35%,var(--rose) 70%,var(--purple));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.serius-modal p{color:rgba(255,255,255,.62);font-size:.92em;line-height:1.6;margin-bottom:24px;}
+.serius-modal button{
+  padding:12px 28px;border:none;border-radius:12px;cursor:pointer;
+  font-weight:700;font-size:.9em;color:#fff;
+  background:linear-gradient(135deg,var(--purple),var(--rose) 60%,var(--gold));
+  box-shadow:0 10px 26px rgba(138,43,226,.35);transition:transform .2s;
+}
+.serius-modal button:hover{transform:translateY(-2px);}
+
 /* ── SECTION TITLE ── */
 .section-hd{
   display:flex;align-items:center;gap:12px;
@@ -685,7 +924,7 @@ body::before{
 /* ── ACTIVITY SECTION ── */
 .activity-grid{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+  grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
   gap:20px;
   margin-bottom:32px;
 }
@@ -701,6 +940,7 @@ body::before{
 }
 .activity-card.a1{animation:fadeUp .7s forwards .6s;}
 .activity-card.a2{animation:fadeUp .7s forwards .7s;}
+.activity-card.a3{animation:fadeUp .7s forwards .8s;}
 
 .activity-card::before{
   content:'';position:absolute;top:0;left:0;right:0;height:3px;
@@ -749,6 +989,57 @@ body::before{
 .s-batal{background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.35);color:#fca5a5;}
 .s-lunas{background:rgba(46,213,115,.12);border:1px solid rgba(46,213,115,.3);color:#2ed573;}
 .s-menunggu{background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.35);color:#D4AF37;}
+.s-akun{background:rgba(238,42,123,.14);border:1px solid rgba(238,42,123,.35);color:#ff8ab5;}
+.s-umum{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.6);}
+
+/* ── GRAFIK PENJUALAN ── */
+.charts-grid{
+  display:grid;
+  grid-template-columns:1.4fr 1fr;
+  gap:20px;
+  margin-bottom:32px;
+}
+@media(max-width:1000px){ .charts-grid{grid-template-columns:1fr;} }
+
+.chart-card{
+  position:relative;
+  background:var(--glass);
+  backdrop-filter:blur(22px);
+  border:1px solid var(--gb);
+  border-radius:24px;
+  overflow:hidden;
+  opacity:0;
+  animation:fadeUp .7s forwards .5s;
+}
+.chart-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#D4AF37,#EE2A7B,#8A2BE2,#D4AF37);
+  background-size:300% 100%;
+  animation:goldSlide 5s linear infinite;
+}
+.chart-body{padding:18px 22px 24px;}
+.chart-canvas-wrap{position:relative;height:260px;}
+
+.chart-toggle{
+  display:flex;gap:6px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:999px;padding:3px;
+}
+.chart-toggle button{
+  border:none;background:transparent;color:rgba(255,255,255,.55);
+  font-size:.72em;font-weight:700;letter-spacing:.5px;
+  padding:6px 14px;border-radius:999px;cursor:pointer;
+  transition:background .2s,color .2s;
+}
+.chart-toggle button.active{
+  background:linear-gradient(135deg,rgba(212,175,55,.9),rgba(238,42,123,.85));
+  color:#fff;
+}
+.chart-empty{
+  display:flex;align-items:center;justify-content:center;
+  height:260px;color:rgba(255,255,255,.35);font-size:.85em;text-align:center;
+}
 
 .ac-empty{
   text-align:center;padding:30px;color:var(--muted);font-size:.85em;
@@ -874,6 +1165,16 @@ body::before{
 </head>
 <body>
 
+<!-- MODAL "MODE SERIUS" -->
+<div class="serius-modal-overlay" id="seriusModalOverlay">
+  <div class="serius-modal">
+    <div class="serius-modal-icon">🔥</div>
+    <h2>Ngalamin masalah serius ya?</h2>
+    <p>Oke silahkan laksanakan, yang mulia.</p>
+    <button type="button" onclick="document.getElementById('seriusModalOverlay').classList.remove('show')">Lanjutkan</button>
+  </div>
+</div>
+
 <!-- PARTICLES -->
 <div id="particles-wrap"></div>
 
@@ -941,9 +1242,15 @@ body::before{
       </a>
       <a class="sb-link" href="kontak/data_kontak.php">
         <span class="sb-link-icon">✉️</span> Pesan Kontak
+        <?php if(($s_kontak['p'] ?? 0) > 0): ?>
+          <span class="sb-link-badge"><?= $s_kontak['p'] ?></span>
+        <?php endif; ?>
       </a>
       <a class="sb-link" href="galeri/data_galeri.php">
         <span class="sb-link-icon">🖼️</span> Galeri
+      </a>
+      <a class="sb-link" href="menu_foto/data_menu_foto.php">
+        <span class="sb-link-icon">✨</span> Foto Menu & Highlight
       </a>
       <a class="sb-link" href="promo/data_promo.php">
         <span class="sb-link-icon">🎟️</span> Promo
@@ -1013,10 +1320,21 @@ body::before{
     <div class="page-body">
 
       <!-- ─── HERO BANNER ─── -->
-      <div class="dash-hero">
+      <div class="dash-hero" id="dashHero">
         <div class="dash-hero-grid"></div>
+
+        <!-- Video latar "Mode Serius" — dua opsi tampilan (wallpaper penuh / panel kiri).
+             Hanya dirender kalau ada file video di assets/video/, supaya tampilan hero
+             tidak berubah sebelum videonya ditaruh. -->
+        <?php if ($hero_video): ?>
+        <div class="hero-media" id="heroMedia">
+          <video id="heroVideo" src="<?= htmlspecialchars($hero_video) ?>" autoplay muted loop playsinline></video>
+          <div class="hero-media-overlay"></div>
+        </div>
+        <?php endif; ?>
+
         <div class="dash-hero-inner">
-          <div class="dash-eyebrow">Panel Kontrol YOLAZCAKE</div>
+          <div class="dash-eyebrow flame-text">Panel Kontrol YOLAZCAKE</div>
           <h1><span>Selamat Datang, <?= htmlspecialchars($_SESSION['username']) ?>!</span></h1>
           <div class="dash-hero-sub">
             <span>📅 <?= date("d F Y") ?></span>
@@ -1040,11 +1358,43 @@ body::before{
         <?php else: ?>
           <div class="dash-hero-deco">YZ</div>
         <?php endif; ?>
+
+        <?php if ($hero_video): ?>
+        <div class="hero-media-toggle">
+          <button type="button" class="hmt-btn" data-mode="full">🖼️ Wallpaper Penuh</button>
+          <button type="button" class="hmt-btn" data-mode="half">📺 Panel Kiri</button>
+        </div>
+        <?php endif; ?>
+      </div>
+
+      <!-- ─── MUSIC PLAYER (gaya Spotify) ─── -->
+      <div class="music-player" id="musicPlayer">
+        <?php if ($hero_audio): ?>
+          <audio id="heroAudio" src="<?= htmlspecialchars($hero_audio) ?>" loop></audio>
+          <div class="mp-art">🎵</div>
+          <div class="mp-info">
+            <div class="mp-title"><?= htmlspecialchars($audio_name) ?></div>
+            <div class="mp-progress-wrap">
+              <div class="mp-progress" id="mpProgress"></div>
+              <input type="range" class="mp-seek" id="mpSeek" min="0" max="100" step="0.1" value="0">
+            </div>
+            <div class="mp-time"><span id="mpCur">0:00</span> / <span id="mpDur">0:00</span></div>
+          </div>
+          <button type="button" class="mp-playbtn" id="mpPlayBtn" onclick="toggleMusic()">▶</button>
+          <label class="mp-autoplay" title="Putar otomatis musik saat kembali ke dashboard">
+            <input type="checkbox" id="mpAutoplayToggle">
+            <span class="mp-autoplay-track"><span class="mp-autoplay-thumb"></span></span>
+            <span class="mp-autoplay-label">Auto-play</span>
+          </label>
+        <?php else: ?>
+          <div class="mp-art">🎵</div>
+          <div class="mp-placeholder">Taruh file musik di <code>assets/audio/</code> untuk mengaktifkan pemutar ini.</div>
+        <?php endif; ?>
       </div>
 
       <!-- ─── STATS ─── -->
       <div class="stats-grid">
-        <div class="stat-card s1">
+        <div class="stat-card s1 flame-card">
           <div class="stat-icon-wrap">📋</div>
           <div class="stat-val" data-count="<?= $s_booking['t'] ?? 0 ?>"><?= $s_booking['t'] ?? 0 ?></div>
           <div class="stat-lbl">Total Booking</div>
@@ -1052,7 +1402,7 @@ body::before{
             <div class="stat-badge">⏳ <?= $s_booking['p'] ?> Pending</div>
           <?php endif; ?>
         </div>
-        <div class="stat-card s2">
+        <div class="stat-card s2 flame-card">
           <div class="stat-icon-wrap">🛍️</div>
           <div class="stat-val" data-count="<?= $s_pesanan['t'] ?? 0 ?>"><?= $s_pesanan['t'] ?? 0 ?></div>
           <div class="stat-lbl">Total Pemesanan</div>
@@ -1060,19 +1410,73 @@ body::before{
             <div class="stat-badge">⏳ <?= $s_pesanan['p'] ?> Menunggu</div>
           <?php endif; ?>
         </div>
-        <div class="stat-card s3">
+        <div class="stat-card s3 flame-card">
           <div class="stat-icon-wrap">🍰</div>
           <div class="stat-val" data-count="<?= $s_produk['t'] ?? 0 ?>"><?= $s_produk['t'] ?? 0 ?></div>
           <div class="stat-lbl">Total Produk</div>
           <div class="stat-badge ok">✓ Aktif</div>
         </div>
-        <div class="stat-card s4">
+        <div class="stat-card s4 flame-card">
           <div class="stat-icon-wrap">👥</div>
           <div class="stat-val" data-count="<?= $s_member['t'] ?? 0 ?>"><?= $s_member['t'] ?? 0 ?></div>
           <div class="stat-lbl">Total Member</div>
           <div class="stat-badge ok">✓ Terdaftar</div>
         </div>
       </div>
+
+      <!-- ─── GRAFIK PENJUALAN ─── -->
+      <div class="section-hd">
+        <div class="sh-icon">📊</div>
+        <h2>Grafik Penjualan</h2>
+        <div class="section-hd-line"></div>
+      </div>
+
+      <div class="charts-grid">
+
+        <!-- Grafik Penjualan Harian/Mingguan -->
+        <div class="chart-card">
+          <div class="ac-head">
+            <div class="ac-head-left">
+              <div class="ac-head-icon">📈</div>
+              <div class="ac-head-title">Tren Penjualan</div>
+            </div>
+            <div class="chart-toggle" id="salesToggle">
+              <button type="button" class="active" data-mode="harian">Harian</button>
+              <button type="button" data-mode="mingguan">Mingguan</button>
+            </div>
+          </div>
+          <div class="chart-body">
+            <?php
+              $ada_data_harian = array_sum($chart_harian_data) > 0;
+              $ada_data_mingguan = array_sum($chart_mingguan_data) > 0;
+            ?>
+            <?php if ($ada_data_harian || $ada_data_mingguan): ?>
+              <div class="chart-canvas-wrap"><canvas id="salesChart"></canvas></div>
+            <?php else: ?>
+              <div class="chart-empty">Belum ada transaksi lunas untuk ditampilkan.</div>
+            <?php endif; ?>
+          </div>
+        </div>
+
+        <!-- Grafik Produk Terlaris -->
+        <div class="chart-card">
+          <div class="ac-head">
+            <div class="ac-head-left">
+              <div class="ac-head-icon">🏆</div>
+              <div class="ac-head-title">Produk Terlaris</div>
+            </div>
+          </div>
+          <div class="chart-body">
+            <?php if (!empty($chart_produk_data)): ?>
+              <div class="chart-canvas-wrap"><canvas id="topProdukChart"></canvas></div>
+            <?php else: ?>
+              <div class="chart-empty">Belum ada produk terjual untuk ditampilkan.</div>
+            <?php endif; ?>
+          </div>
+        </div>
+
+      </div>
+      <!-- end charts-grid -->
 
       <!-- ─── MANAGEMENT CARDS ─── -->
       <div class="section-hd">
@@ -1263,6 +1667,48 @@ body::before{
           </table>
         </div>
 
+        <!-- Pesan Masuk -->
+        <div class="activity-card a3">
+          <div class="ac-head">
+            <div class="ac-head-left">
+              <span class="ac-head-icon">✉️</span>
+              <span class="ac-head-title">Pesan Masuk</span>
+              <?php if(($s_kontak['p'] ?? 0) > 0): ?>
+                <span class="sb-link-badge" style="position:relative;top:0;margin-left:6px;"><?= $s_kontak['p'] ?></span>
+              <?php endif; ?>
+            </div>
+            <a class="ac-head-link" href="kontak/data_kontak.php">Lihat Semua →</a>
+          </div>
+          <table class="ac-table">
+            <thead>
+              <tr>
+                <th>Nama</th>
+                <th>Kategori</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php
+              $rows3 = mysqli_num_rows($q_kontak);
+              if($rows3 > 0):
+                while($r3 = mysqli_fetch_assoc($q_kontak)):
+                  $kc = ($r3['kategori'] ?? 'Umum') === 'Bantuan Akun' ? 's-akun' : 's-umum';
+                  $ki = ($r3['kategori'] ?? 'Umum') === 'Bantuan Akun' ? '🔑 Bantuan Akun' : '💬 Umum';
+                  $sc3 = $r3['status']==='Dibalas' ? 's-lunas' : ($r3['status']==='Sudah Dibaca' ? 's-umum' : 's-pending');
+                  $si3 = $r3['status']==='Dibalas' ? '✅' : ($r3['status']==='Sudah Dibaca' ? '🟣' : '🟡');
+              ?>
+              <tr>
+                <td class="td-name"><?= htmlspecialchars($r3['nama']) ?></td>
+                <td><span class="s-badge <?= $kc ?>"><?= $ki ?></span></td>
+                <td><span class="s-badge <?= $sc3 ?>"><?= $si3 ?> <?= htmlspecialchars($r3['status']) ?></span></td>
+              </tr>
+              <?php endwhile; else: ?>
+              <tr><td colspan="3" class="ac-empty">Belum ada pesan masuk</td></tr>
+              <?php endif; ?>
+            </tbody>
+          </table>
+        </div>
+
       </div>
       <!-- end activity-grid -->
 
@@ -1344,6 +1790,270 @@ function closeSidebar(){
   document.getElementById('sidebarOverlay').classList.remove('open');
   document.getElementById('hamburgerBtn').textContent = '☰';
 }
+
+/* ── HERO MEDIA LAYOUT (wallpaper penuh / panel kiri) ── */
+(function(){
+  const hero = document.getElementById('dashHero');
+  const heroMediaEl = document.getElementById('heroMedia');
+  if (!hero || !heroMediaEl) return; // belum ada video -> lewati, tampilan hero default
+  const btns = document.querySelectorAll('.hmt-btn');
+
+  function setHeroLayout(mode){
+    hero.classList.remove('media-full','media-half');
+    hero.classList.add('media-' + mode);
+    btns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    localStorage.setItem('yolaz_hero_layout', mode);
+  }
+
+  btns.forEach(b => b.addEventListener('click', () => setHeroLayout(b.dataset.mode)));
+  setHeroLayout(localStorage.getItem('yolaz_hero_layout') || 'full');
+
+  // Fallback: sebagian browser kadang mengabaikan atribut autoplay
+  // (mis. tab sempat di-background), jadi coba play() manual juga.
+  const heroVideoFallback = document.getElementById('heroVideo');
+  if (heroVideoFallback) {
+    heroVideoFallback.play().catch(()=>{});
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && heroVideoFallback.paused) {
+        heroVideoFallback.play().catch(()=>{});
+      }
+    });
+  }
+})();
+
+/* ── MUSIC PLAYER (gaya Spotify) ── */
+const heroAudioEl = document.getElementById('heroAudio');
+const mpPlayBtn   = document.getElementById('mpPlayBtn');
+const mpPlayerEl  = document.getElementById('musicPlayer');
+
+function fmtTime(t){
+  if (!isFinite(t)) return '0:00';
+  const m = Math.floor(t / 60);
+  const s = Math.floor(t % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+}
+
+function toggleMusic(){
+  if (!heroAudioEl) return;
+  if (heroAudioEl.paused) heroAudioEl.play().catch(()=>{});
+  else heroAudioEl.pause();
+}
+
+if (heroAudioEl){
+  heroAudioEl.addEventListener('play', () => {
+    mpPlayBtn.textContent = '⏸';
+    mpPlayerEl.classList.add('playing');
+  });
+  heroAudioEl.addEventListener('pause', () => {
+    mpPlayBtn.textContent = '▶';
+    mpPlayerEl.classList.remove('playing');
+  });
+  let isSeeking = false;
+  const mpSeek = document.getElementById('mpSeek');
+
+  heroAudioEl.addEventListener('timeupdate', () => {
+    if (isSeeking) return;
+    const pct = (heroAudioEl.currentTime / heroAudioEl.duration) * 100 || 0;
+    const bar = document.getElementById('mpProgress');
+    if (bar) bar.style.width = pct + '%';
+    if (mpSeek) mpSeek.value = pct;
+    const cur = document.getElementById('mpCur');
+    if (cur) cur.textContent = fmtTime(heroAudioEl.currentTime);
+  });
+
+  if (mpSeek) {
+    mpSeek.addEventListener('input', () => {
+      isSeeking = true;
+      const pct = parseFloat(mpSeek.value);
+      const bar = document.getElementById('mpProgress');
+      if (bar) bar.style.width = pct + '%';
+      const cur = document.getElementById('mpCur');
+      if (cur) cur.textContent = fmtTime((pct / 100) * (heroAudioEl.duration || 0));
+    });
+    mpSeek.addEventListener('change', () => {
+      const pct = parseFloat(mpSeek.value);
+      heroAudioEl.currentTime = (pct / 100) * (heroAudioEl.duration || 0);
+      isSeeking = false;
+    });
+  }
+
+  heroAudioEl.addEventListener('loadedmetadata', () => {
+    const dur = document.getElementById('mpDur');
+    if (dur) dur.textContent = fmtTime(heroAudioEl.duration);
+  });
+
+  /* ── AUTO-PLAY MUSIK SAAT KEMBALI KE DASHBOARD ──
+     Tersimpan per-browser lewat localStorage. Kalau dinyalakan, musik
+     otomatis terputar tiap kali dashboard ini dibuka lagi. Kalau
+     dimatikan, musik tetap diam (paused) sampai ditekan manual. */
+  const AUTOPLAY_KEY = 'yolaz_music_autoplay';
+  const autoplayToggle = document.getElementById('mpAutoplayToggle');
+  const isAutoplayOn = () => localStorage.getItem(AUTOPLAY_KEY) === '1';
+
+  if (autoplayToggle) {
+    autoplayToggle.checked = isAutoplayOn();
+
+    autoplayToggle.addEventListener('change', () => {
+      if (autoplayToggle.checked) {
+        localStorage.setItem(AUTOPLAY_KEY, '1');
+        heroAudioEl.play().catch(()=>{});
+      } else {
+        localStorage.setItem(AUTOPLAY_KEY, '0');
+        heroAudioEl.pause();
+      }
+    });
+  }
+
+  // Kalau auto-play aktif, coba putar begitu dashboard dibuka.
+  if (isAutoplayOn()) {
+    heroAudioEl.play().catch(()=>{});
+  }
+}
+
+/* ── GRAFIK PENJUALAN (Chart.js) ── */
+(function(){
+  if (typeof Chart === 'undefined') return;
+
+  const goldColor  = '#D4AF37';
+  const roseColor  = '#EE2A7B';
+  const purpleColor= '#8A2BE2';
+
+  Chart.defaults.color = 'rgba(255,255,255,.55)';
+  Chart.defaults.font.family = "'Inter',sans-serif";
+
+  const fmtRupiah = (v) => 'Rp' + Number(v).toLocaleString('id-ID');
+
+  /* ── Tren Penjualan (Harian / Mingguan) ── */
+  const salesCanvas = document.getElementById('salesChart');
+  if (salesCanvas) {
+    const dataSets = {
+      harian:   { labels: <?= json_encode($chart_harian_label) ?>,   data: <?= json_encode($chart_harian_data) ?> },
+      mingguan: { labels: <?= json_encode($chart_mingguan_label) ?>, data: <?= json_encode($chart_mingguan_data) ?> }
+    };
+
+    const gradient = salesCanvas.getContext('2d').createLinearGradient(0,0,0,260);
+    gradient.addColorStop(0, 'rgba(212,175,55,.35)');
+    gradient.addColorStop(1, 'rgba(212,175,55,0)');
+
+    const salesChart = new Chart(salesCanvas, {
+      type: 'line',
+      data: {
+        labels: dataSets.harian.labels,
+        datasets: [{
+          label: 'Penjualan',
+          data: dataSets.harian.data,
+          borderColor: goldColor,
+          backgroundColor: gradient,
+          borderWidth: 2.5,
+          pointBackgroundColor: goldColor,
+          pointBorderColor: '#0d0520',
+          pointBorderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          tension: .35,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(13,5,32,.95)',
+            borderColor: 'rgba(212,175,55,.35)',
+            borderWidth: 1,
+            padding: 10,
+            titleColor: '#fff',
+            bodyColor: 'rgba(255,255,255,.85)',
+            callbacks: { label: (ctx) => fmtRupiah(ctx.parsed.y) }
+          }
+        },
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,.06)' }, ticks: { font: { size: 11 } } },
+          y: {
+            grid: { color: 'rgba(255,255,255,.06)' },
+            ticks: { font: { size: 11 }, callback: (v) => fmtRupiah(v) }
+          }
+        }
+      }
+    });
+
+    const toggleWrap = document.getElementById('salesToggle');
+    if (toggleWrap) {
+      toggleWrap.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          toggleWrap.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const mode = btn.dataset.mode;
+          salesChart.data.labels = dataSets[mode].labels;
+          salesChart.data.datasets[0].data = dataSets[mode].data;
+          salesChart.update();
+        });
+      });
+    }
+  }
+
+  /* ── Produk Terlaris ── */
+  const produkCanvas = document.getElementById('topProdukChart');
+  if (produkCanvas) {
+    new Chart(produkCanvas, {
+      type: 'bar',
+      data: {
+        labels: <?= json_encode($chart_produk_label) ?>,
+        datasets: [{
+          label: 'Terjual',
+          data: <?= json_encode($chart_produk_data) ?>,
+          backgroundColor: [goldColor, roseColor, purpleColor, 'rgba(212,175,55,.6)', 'rgba(238,42,123,.6)'],
+          borderRadius: 8,
+          maxBarThickness: 38
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(13,5,32,.95)',
+            borderColor: 'rgba(212,175,55,.35)',
+            borderWidth: 1,
+            padding: 10,
+            callbacks: { label: (ctx) => ctx.parsed.x + ' terjual' }
+          }
+        },
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,.06)' }, ticks: { precision: 0 } },
+          y: { grid: { display: false } }
+        }
+      }
+    });
+  }
+})();
+
+/* ── MODE SERIUS: popup + auto-play video & musik ── */
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('serius') !== '1') return;
+
+  const modal = document.getElementById('seriusModalOverlay');
+  setTimeout(() => { if (modal) modal.classList.add('show'); }, 500);
+
+  const heroVideoEl = document.getElementById('heroVideo');
+  if (heroVideoEl) heroVideoEl.play().catch(()=>{});
+  if (heroAudioEl) {
+    heroAudioEl.play().catch(()=>{});
+    // Tandai auto-play aktif supaya kunjungan berikutnya musik langsung
+    // terputar juga, kecuali admin mematikannya lewat toggle.
+    localStorage.setItem('yolaz_music_autoplay', '1');
+    const autoplayToggleEl = document.getElementById('mpAutoplayToggle');
+    if (autoplayToggleEl) autoplayToggleEl.checked = true;
+  }
+
+  // Bersihkan parameter URL supaya popup tidak muncul lagi saat refresh
+  window.history.replaceState({}, document.title, window.location.pathname);
+})();
 </script>
 
 </body>

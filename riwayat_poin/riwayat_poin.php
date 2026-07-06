@@ -1,22 +1,37 @@
 <?php
 session_start();
-if(!isset($_SESSION['username'])){ header("Location: ../auth/login.php"); exit(); }
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 
 // Handle tambah poin manual
 if(isset($_POST['tambah_poin'])){
     $id_member = (int)$_POST['id_member'];
-    $jenis     = mysqli_real_escape_string($conn, $_POST['jenis']);
+    $jenis     = $_POST['jenis'];
     $poin      = (int)$_POST['poin'];
-    $ket       = mysqli_real_escape_string($conn, trim($_POST['keterangan']));
-    $m = mysqli_fetch_assoc(mysqli_query($conn,"SELECT nama FROM member WHERE id_member=$id_member"));
+    $ket       = trim($_POST['keterangan']);
+
+    $stmt = $conn->prepare("SELECT nama FROM member WHERE id_member=?");
+    $stmt->bind_param("i", $id_member);
+    $stmt->execute();
+    $m = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
     if($id_member && $poin > 0){
-        mysqli_query($conn,"INSERT INTO riwayat_poin (id_member,jenis,poin,keterangan) VALUES ($id_member,'$jenis',$poin,'$ket')");
+        $stmt = $conn->prepare("INSERT INTO riwayat_poin (id_member,jenis,poin,keterangan) VALUES (?,?,?,?)");
+        $stmt->bind_param("isis", $id_member, $jenis, $poin, $ket);
+        $stmt->execute();
+        $stmt->close();
+
         // Update total poin member
-        if($jenis==='Masuk')
-            mysqli_query($conn,"UPDATE member SET poin=poin+$poin WHERE id_member=$id_member");
-        else
-            mysqli_query($conn,"UPDATE member SET poin=GREATEST(0,poin-$poin) WHERE id_member=$id_member");
+        if($jenis==='Masuk'){
+            $stmt = $conn->prepare("UPDATE member SET poin=poin+? WHERE id_member=?");
+        } else {
+            $stmt = $conn->prepare("UPDATE member SET poin=GREATEST(0,poin-?) WHERE id_member=?");
+        }
+        $stmt->bind_param("ii", $poin, $id_member);
+        $stmt->execute();
+        $stmt->close();
     }
 
     include 'success_overlay.php';
@@ -34,14 +49,28 @@ if(isset($_POST['tambah_poin'])){
 // Handle hapus entry
 if(isset($_GET['hapus'])){
     $id = (int)$_GET['hapus'];
-    $rw = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM riwayat_poin WHERE id_riwayat=$id"));
+
+    $stmt = $conn->prepare("SELECT * FROM riwayat_poin WHERE id_riwayat=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $rw = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
     if($rw){
         // Rollback poin member
-        if($rw['jenis']==='Masuk')
-            mysqli_query($conn,"UPDATE member SET poin=GREATEST(0,poin-{$rw['poin']}) WHERE id_member={$rw['id_member']}");
-        else
-            mysqli_query($conn,"UPDATE member SET poin=poin+{$rw['poin']} WHERE id_member={$rw['id_member']}");
-        mysqli_query($conn,"DELETE FROM riwayat_poin WHERE id_riwayat=$id");
+        if($rw['jenis']==='Masuk'){
+            $stmt = $conn->prepare("UPDATE member SET poin=GREATEST(0,poin-?) WHERE id_member=?");
+        } else {
+            $stmt = $conn->prepare("UPDATE member SET poin=poin+? WHERE id_member=?");
+        }
+        $stmt->bind_param("ii", $rw['poin'], $rw['id_member']);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt = $conn->prepare("DELETE FROM riwayat_poin WHERE id_riwayat=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $stmt->close();
     }
 
     include 'success_overlay.php';
@@ -58,8 +87,14 @@ if(isset($_GET['hapus'])){
 
 // Filter
 $filter_member = (int)($_GET['member'] ?? 0);
-$where = $filter_member ? "WHERE rp.id_member=$filter_member" : "";
-$query = mysqli_query($conn,"SELECT rp.*,m.nama FROM riwayat_poin rp LEFT JOIN member m ON m.id_member=rp.id_member $where ORDER BY rp.created_at DESC");
+if($filter_member){
+    $stmt = $conn->prepare("SELECT rp.*,m.nama FROM riwayat_poin rp LEFT JOIN member m ON m.id_member=rp.id_member WHERE rp.id_member=? ORDER BY rp.created_at DESC");
+    $stmt->bind_param("i", $filter_member);
+    $stmt->execute();
+    $query = $stmt->get_result();
+} else {
+    $query = $conn->query("SELECT rp.*,m.nama FROM riwayat_poin rp LEFT JOIN member m ON m.id_member=rp.id_member ORDER BY rp.created_at DESC");
+}
 $members = mysqli_query($conn,"SELECT id_member,nama,poin FROM member ORDER BY nama");
 
 $stats = mysqli_fetch_assoc(mysqli_query($conn,"SELECT SUM(CASE WHEN jenis='Masuk' THEN poin ELSE 0 END) as total_masuk, SUM(CASE WHEN jenis='Keluar' THEN poin ELSE 0 END) as total_keluar, COUNT(*) as total FROM riwayat_poin"));
@@ -78,10 +113,10 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,"SELECT SUM(CASE WHEN jenis='Masu
       background:radial-gradient(ellipse at 20% 30%,rgba(212,175,55,.10) 0%,transparent 55%),
                  radial-gradient(ellipse at 80% 70%,rgba(232,160,191,.10) 0%,transparent 55%);}
     .page-hero{position:relative;height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;
-      background:linear-gradient(135deg,#1a0a2e 0%,#3d1a0d 50%,#1a0a2e 100%);z-index:1;}
+      background:linear-gradient(135deg,#2b1a11 0%,#4a2c1a 40%,#6d3e26 70%,#3a1f0e 100%);z-index:1;}
     .page-hero::before{content:'';position:absolute;inset:0;
-      background:radial-gradient(ellipse at 30% 50%,rgba(212,175,55,.20) 0%,transparent 60%),
-                 radial-gradient(ellipse at 75% 40%,rgba(239,68,68,.12) 0%,transparent 55%);
+      background:radial-gradient(ellipse at 30% 50%,rgba(212,175,55,.18) 0%,transparent 60%),
+                 radial-gradient(ellipse at 75% 40%,rgba(232,160,191,.15) 0%,transparent 55%);
       animation:heroAurora 8s ease-in-out infinite alternate;}
     @keyframes heroAurora{0%{opacity:.6;transform:scale(1);}100%{opacity:1;transform:scale(1.08) translateX(10px);}}
     .sparkle{position:absolute;border-radius:50%;pointer-events:none;animation:floatDot linear infinite;}

@@ -1,4 +1,7 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 require_once '../config/koneksi.php';
 include 'success_overlay.php';
 
@@ -6,13 +9,18 @@ if (isset($_GET['id'])) {
 
     $id = (int) $_GET['id'];
 
-    $cek = mysqli_query($conn, "SELECT nama_pemesan FROM booking WHERE id_booking = $id");
-    $booking = $cek ? mysqli_fetch_assoc($cek) : null;
+    $stmt = $conn->prepare("SELECT nama_pemesan FROM booking WHERE id_booking = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $booking = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
     $nama_pemesan = $booking['nama_pemesan'] ?? 'Booking';
 
-    $query = "DELETE FROM booking WHERE id_booking = $id";
+    $stmt = $conn->prepare("DELETE FROM booking WHERE id_booking = ?");
+    $stmt->bind_param("i", $id);
 
-    if (mysqli_query($conn, $query)) {
+    if ($stmt->execute()) {
+        $stmt->close();
 
         tampilkan_sukses([
             'proses_judul' => 'Menghapus Booking…',

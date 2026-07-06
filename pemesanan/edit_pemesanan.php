@@ -1,7 +1,10 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 
-$id = $_GET['id'] ?? 0;
+$id = (int)($_GET['id'] ?? 0);
 $stmt = $conn->prepare("SELECT * FROM pemesanan WHERE id_pemesanan= ?");
 
 $stmt->bind_param("i", $id);
@@ -16,15 +19,15 @@ if(!$data){
 
 if(isset($_POST['update'])){
 
-    $status_pesanan    = mysqli_real_escape_string($conn, $_POST['status_pesanan']);
-    $status_pembayaran = mysqli_real_escape_string($conn, $_POST['status_pembayaran']);
+    $status_pesanan_opts    = ['Menunggu', 'Diproses', 'Siap Diambil', 'Selesai', 'Dibatalkan'];
+    $status_pembayaran_opts = ['Menunggu', 'Lunas', 'Gagal'];
 
-    mysqli_query($conn,"
-    UPDATE pemesanan
-    SET status_pesanan='$status_pesanan',
-        status_pembayaran='$status_pembayaran'
-    WHERE id_pemesanan='$id'
-    ");
+    $status_pesanan    = in_array($_POST['status_pesanan'] ?? '', $status_pesanan_opts, true) ? $_POST['status_pesanan'] : $data['status_pesanan'];
+    $status_pembayaran = in_array($_POST['status_pembayaran'] ?? '', $status_pembayaran_opts, true) ? $_POST['status_pembayaran'] : $data['status_pembayaran'];
+
+    $stmt2 = $conn->prepare("UPDATE pemesanan SET status_pesanan=?, status_pembayaran=? WHERE id_pemesanan=?");
+    $stmt2->bind_param("ssi", $status_pesanan, $status_pembayaran, $id);
+    $stmt2->execute();
 
     include 'success_overlay.php';
     tampilkan_sukses([

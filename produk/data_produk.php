@@ -1,7 +1,15 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 
-$query = mysqli_query($conn, "SELECT * FROM produk ORDER BY id_produk DESC");
+$query = mysqli_query($conn,
+    "SELECT p.*, COALESCE(k.nama_kategori, 'Lainnya') AS nama_kategori, k.icon AS kategori_icon
+     FROM produk p
+     LEFT JOIN kategori k ON k.id_kategori = p.id_kategori
+     ORDER BY p.id_produk DESC"
+);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -88,20 +96,22 @@ $query = mysqli_query($conn, "SELECT * FROM produk ORDER BY id_produk DESC");
     /* back link */
     .back-link{
       position:relative;z-index:2;
-      display:inline-flex;align-items:center;gap:8px;
-      margin:32px auto 0;padding:0 32px;max-width:1100px;width:100%;
+      display:flex;justify-content:flex-start;
+      width:100%;margin-bottom:20px;
     }
 
     .back-link a{
-      font-size:.82em;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;
-      color:rgba(212,175,55,.85);text-decoration:none;
-      border:1px solid rgba(212,175,55,.3);padding:7px 18px;border-radius:999px;
-      transition:all .3s;background:rgba(212,175,55,.06);
+      display:inline-flex;align-items:center;gap:8px;
+      font-size:.82em;font-weight:600;letter-spacing:1px;
+      color:#D4AF37;text-decoration:none;
+      border:1px solid rgba(212,175,55,.3);padding:10px 22px;border-radius:999px;
+      transition:transform .25s,box-shadow .3s,background .3s;background:rgba(212,175,55,.1);
     }
 
     .back-link a:hover{
-      background:rgba(212,175,55,.16);border-color:rgba(212,175,55,.7);
-      box-shadow:0 0 18px rgba(212,175,55,.25);color:#D4AF37;
+      transform:translateX(-3px);
+      background:rgba(212,175,55,.2);
+      box-shadow:0 6px 20px rgba(212,175,55,.25);
     }
 
     /* PAGE WRAPPER */
@@ -345,8 +355,8 @@ $query = mysqli_query($conn, "SELECT * FROM produk ORDER BY id_produk DESC");
     @media(max-width:768px){
       .hero-inner h1{font-size:2em;}
       .top-bar{flex-direction:column;align-items:flex-start;}
-      tbody td:nth-child(5){display:none;}
-      thead th:nth-child(5){display:none;}
+      tbody td:nth-child(4), tbody td:nth-child(6){display:none;}
+      thead th:nth-child(4), thead th:nth-child(6){display:none;}
     }
   </style>
 </head>
@@ -366,11 +376,11 @@ $query = mysqli_query($conn, "SELECT * FROM produk ORDER BY id_produk DESC");
   </div>
 </div>
 
-<div class="back-link">
-  <a href="../index.php">← Kembali ke Beranda</a>
-</div>
-
 <div class="page-wrapper">
+
+  <div class="back-link">
+    <a href="../dashboard.php">← Dashboard</a>
+  </div>
 
   <div class="top-bar">
     <div>
@@ -390,6 +400,7 @@ $query = mysqli_query($conn, "SELECT * FROM produk ORDER BY id_produk DESC");
             <th>No</th>
             <th>Foto</th>
             <th>Nama Produk</th>
+            <th>Kategori</th>
             <th>Harga</th>
             <th>Stok</th>
             <th>Aksi</th>
@@ -419,6 +430,11 @@ $query = mysqli_query($conn, "SELECT * FROM produk ORDER BY id_produk DESC");
                 class="prod-img">
             </td>
             <td><span class="prod-name"><?= htmlspecialchars($data['nama_produk']); ?></span></td>
+            <td>
+              <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.3);color:#D4AF37;padding:4px 12px;border-radius:999px;font-size:.78em;white-space:nowrap;">
+                <?= htmlspecialchars($data['kategori_icon'] ?? '🍽️'); ?> <?= htmlspecialchars($data['nama_kategori']); ?>
+              </span>
+            </td>
             <td><span class="prod-price">Rp <?= number_format($data['harga'],0,',','.'); ?></span></td>
             <td><span class="stok-badge <?= $stok_class; ?>"><?= $stok_label; ?></span></td>
             <td>
@@ -435,7 +451,7 @@ $query = mysqli_query($conn, "SELECT * FROM produk ORDER BY id_produk DESC");
 
           <?php if(!$found): ?>
           <tr>
-            <td colspan="6">
+            <td colspan="7">
               <div class="empty-state">
                 <div class="empty-icon">🎂</div>
                 <p>Belum ada produk. Tambahkan produk pertama Anda!</p>

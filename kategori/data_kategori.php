@@ -1,15 +1,29 @@
 <?php
 session_start();
-if(!isset($_SESSION['username'])){ header("Location: ../auth/login.php"); exit(); }
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 
 // Handle hapus
 if(isset($_GET['hapus'])){
     $id = (int)$_GET['hapus'];
-    $k = mysqli_fetch_assoc(mysqli_query($conn,"SELECT nama_kategori FROM kategori WHERE id_kategori=$id"));
+
+    $stmt = $conn->prepare("SELECT nama_kategori FROM kategori WHERE id_kategori=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $k = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
     // Lepas produk dari kategori ini dulu
-    mysqli_query($conn,"UPDATE produk SET id_kategori=NULL WHERE id_kategori=$id");
-    mysqli_query($conn,"DELETE FROM kategori WHERE id_kategori=$id");
+    $stmt = $conn->prepare("UPDATE produk SET id_kategori=NULL WHERE id_kategori=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
+
+    $stmt = $conn->prepare("DELETE FROM kategori WHERE id_kategori=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
 
     include 'success_overlay.php';
     tampilkan_sukses([
@@ -25,10 +39,16 @@ if(isset($_GET['hapus'])){
 
 // Handle tambah inline
 if(isset($_POST['tambah'])){
-    $nama = mysqli_real_escape_string($conn, trim($_POST['nama_kategori']));
-    $desk = mysqli_real_escape_string($conn, trim($_POST['deskripsi']));
-    $icon = mysqli_real_escape_string($conn, trim($_POST['icon']));
-    if($nama) mysqli_query($conn,"INSERT INTO kategori (nama_kategori,deskripsi,icon) VALUES ('$nama','$desk','$icon')");
+    $nama = trim($_POST['nama_kategori']);
+    $desk = trim($_POST['deskripsi']);
+    $icon = trim($_POST['icon']);
+
+    if($nama){
+        $stmt = $conn->prepare("INSERT INTO kategori (nama_kategori,deskripsi,icon) VALUES (?,?,?)");
+        $stmt->bind_param("sss", $nama, $desk, $icon);
+        $stmt->execute();
+        $stmt->close();
+    }
 
     include 'success_overlay.php';
     tampilkan_sukses([
@@ -45,10 +65,16 @@ if(isset($_POST['tambah'])){
 // Handle edit inline
 if(isset($_POST['edit'])){
     $id   = (int)$_POST['id_kategori'];
-    $nama = mysqli_real_escape_string($conn, trim($_POST['nama_kategori']));
-    $desk = mysqli_real_escape_string($conn, trim($_POST['deskripsi']));
-    $icon = mysqli_real_escape_string($conn, trim($_POST['icon']));
-    if($nama) mysqli_query($conn,"UPDATE kategori SET nama_kategori='$nama',deskripsi='$desk',icon='$icon' WHERE id_kategori=$id");
+    $nama = trim($_POST['nama_kategori']);
+    $desk = trim($_POST['deskripsi']);
+    $icon = trim($_POST['icon']);
+
+    if($nama){
+        $stmt = $conn->prepare("UPDATE kategori SET nama_kategori=?,deskripsi=?,icon=? WHERE id_kategori=?");
+        $stmt->bind_param("sssi", $nama, $desk, $icon, $id);
+        $stmt->execute();
+        $stmt->close();
+    }
 
     include 'success_overlay.php';
     tampilkan_sukses([
@@ -80,7 +106,7 @@ mysqli_data_seek($query,0);
       background:radial-gradient(ellipse at 20% 30%,rgba(212,175,55,.10) 0%,transparent 55%),
                  radial-gradient(ellipse at 80% 70%,rgba(232,160,191,.10) 0%,transparent 55%);}
     .page-hero{position:relative;height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;
-      background:linear-gradient(135deg,#1a0a2e 0%,#3d1a6e 50%,#1a0a2e 100%);z-index:1;}
+      background:linear-gradient(135deg,#2b1a11 0%,#4a2c1a 40%,#6d3e26 70%,#3a1f0e 100%);z-index:1;}
     .page-hero::before{content:'';position:absolute;inset:0;
       background:radial-gradient(ellipse at 30% 50%,rgba(212,175,55,.18) 0%,transparent 60%),
                  radial-gradient(ellipse at 75% 40%,rgba(232,160,191,.15) 0%,transparent 55%);

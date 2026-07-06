@@ -6,19 +6,25 @@ require_once 'config/koneksi.php';
 $kode_req = isset($_GET['kode']) ? strtoupper(trim($_GET['kode'])) : '';
 
 if ($kode_req) {
-    $kode_esc = mysqli_real_escape_string($conn, $kode_req);
-    $promo = mysqli_fetch_assoc(mysqli_query($conn,
-        "SELECT * FROM promo WHERE kode_promo='$kode_esc' AND status='Aktif' LIMIT 1"));
+    $stmt = $conn->prepare("SELECT * FROM promo WHERE kode_promo=? AND status='Aktif' LIMIT 1");
+    $stmt->bind_param("s", $kode_req);
+    $stmt->execute();
+    $promo = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
 } else {
     // Tampilkan promo aktif pertama yang masih berlaku
     $today = date('Y-m-d');
-    $promo = mysqli_fetch_assoc(mysqli_query($conn,
-        "SELECT * FROM promo WHERE status='Aktif'
-         AND (tanggal_selesai IS NULL OR tanggal_selesai >= '$today')
-         ORDER BY id_promo DESC LIMIT 1"));
+    $stmt = $conn->prepare("SELECT * FROM promo WHERE status='Aktif'
+         AND (tanggal_selesai IS NULL OR tanggal_selesai >= ?)
+         ORDER BY id_promo DESC LIMIT 1");
+    $stmt->bind_param("s", $today);
+    $stmt->execute();
+    $promo = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
 }
 
 // Fallback jika tidak ada promo
+$promo_is_real = (bool) $promo;
 if (!$promo) {
     $promo = [
         'kode_promo'     => 'YOLA25',
@@ -29,6 +35,75 @@ if (!$promo) {
         'poin_bonus'     => 50,
         'tanggal_selesai'=> null,
     ];
+}
+
+// ─────────────────────────────────────────────────────────────
+// VALIDASI SYARAT PROMO (baru): promo hanya boleh "diambil" kalau
+// syaratnya benar-benar terpenuhi, bukan otomatis lolos.
+// ─────────────────────────────────────────────────────────────
+require_once __DIR__.'/config/member_helper.php';
+
+$is_logged_in      = isset($_SESSION['username']);
+$min_belanja       = (float) ($promo['min_belanja'] ?? 0);
+$cart_total        = $is_logged_in ? get_cart_total($conn) : 0;
+$last_order_total  = $is_logged_in ? (float) ($_SESSION['riwayat_belanja_total'] ?? 0) : 0;
+// Ambil yang terbesar: bisa dari keranjang yang lagi diisi, ATAU dari
+// pesanan yang baru saja selesai dibuat (keranjang otomatis kosong
+// setelah checkout, jadi total pesanan terakhir tetap dihitung).
+$belanja_relevan   = max($cart_total, $last_order_total);
+$alasan_gagal      = [];
+
+// Cek status member lebih dulu (bisa null kalau belum menyentuh syarat
+// minimal transaksi -> lihat config/member_helper.php)
+$member = $is_logged_in ? get_current_member($conn) : null;
+
+if (!$promo_is_real) {
+    $alasan_gagal[] = 'Promo dengan kode tersebut tidak ditemukan atau sudah tidak aktif.';
+}
+if (!$is_logged_in) {
+    $alasan_gagal[] = 'Kamu harus login terlebih dahulu supaya poin bonus bisa masuk ke akun member kamu.';
+} elseif ($member === null) {
+    $alasan_gagal[] = 'Poin bonus promo cuma buat member. Booking/pesan online dulu sampai total '.MEMBER_MIN_VISITS.'x transaksi supaya otomatis jadi member.';
+}
+if ($is_logged_in && $min_belanja > 0 && $belanja_relevan < $min_belanja) {
+    $alasan_gagal[] = 'Belanja kamu baru Rp'.number_format($belanja_relevan,0,',','.').
+                       ', minimal belanja untuk promo ini adalah Rp'.number_format($min_belanja,0,',','.').'.';
+}
+
+$syarat_terpenuhi = empty($alasan_gagal);
+$sudah_diklaim    = false;
+
+if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
+    $stmtCek = $conn->prepare("SELECT id_klaim FROM promo_klaim WHERE id_promo = ? AND id_member = ? LIMIT 1");
+    $stmtCek->bind_param("ii", $promo['id_promo'], $member['id_member']);
+    $stmtCek->execute();
+    $sudah_diklaim = (bool) $stmtCek->get_result()->fetch_assoc();
+    $stmtCek->close();
+
+    if (!$sudah_diklaim) {
+        // Catat klaim, tambahkan poin bonus, dan catat di riwayat poin
+        $stmtKlaim = $conn->prepare("INSERT INTO promo_klaim (id_promo, id_member) VALUES (?, ?)");
+        $stmtKlaim->bind_param("ii", $promo['id_promo'], $member['id_member']);
+
+        if ($stmtKlaim->execute()) {
+            $bonus = (int) ($promo['poin_bonus'] ?? 0);
+            if ($bonus > 0) {
+                $stmtPoin = $conn->prepare("UPDATE member SET poin = poin + ? WHERE id_member = ?");
+                $stmtPoin->bind_param("ii", $bonus, $member['id_member']);
+                $stmtPoin->execute();
+                $stmtPoin->close();
+
+                $ket = "Klaim promo ".$promo['kode_promo'];
+                $stmtRiwayat = $conn->prepare("INSERT INTO riwayat_poin (id_member, jenis, poin, keterangan) VALUES (?, 'Masuk', ?, ?)");
+                $stmtRiwayat->bind_param("iis", $member['id_member'], $bonus, $ket);
+                $stmtRiwayat->execute();
+                $stmtRiwayat->close();
+            }
+            // refresh data member supaya poin yang ditampilkan sudah terbaru
+            $member['poin'] = ($member['poin'] ?? 0) + $bonus;
+        }
+        $stmtKlaim->close();
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -674,8 +749,13 @@ if (!$promo) {
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
     <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
-    <h1>Promo Berhasil!</h1>
-    <p class="hero-sub">Kode eksklusif Anda sudah siap digunakan 🎉</p>
+    <?php if ($syarat_terpenuhi): ?>
+      <h1>Promo Berhasil!</h1>
+      <p class="hero-sub">Kode eksklusif Anda sudah siap digunakan 🎉</p>
+    <?php else: ?>
+      <h1>Syarat Belum Terpenuhi</h1>
+      <p class="hero-sub">Lengkapi dulu syaratnya untuk mengambil promo ini</p>
+    <?php endif; ?>
     <div class="hero-divider">
       <span></span><span class="dmd">✦ ✦ ✦</span><span></span>
     </div>
@@ -683,6 +763,46 @@ if (!$promo) {
 </div>
 
 <div class="page-wrapper">
+
+<?php if (!$syarat_terpenuhi): ?>
+
+  <!-- SYARAT BELUM TERPENUHI -->
+  <div class="badge-wrap">
+    <div class="badge-icon" id="badgeIcon">⚠️</div>
+  </div>
+
+  <div class="headline-card">
+    <h1>Belum Bisa Diambil</h1>
+    <p class="sub-text">
+      Promo ini punya syarat yang harus dipenuhi dulu sebelum bisa kamu ambil:
+    </p>
+  </div>
+
+  <div class="steps-card">
+    <div class="section-title">📋 Yang Perlu Dilengkapi</div>
+    <div class="steps-list">
+      <?php foreach ($alasan_gagal as $i => $alasan): ?>
+      <div class="step-item">
+        <div class="step-num"><?= $i + 1 ?></div>
+        <div class="step-text">
+          <p><?= htmlspecialchars($alasan) ?></p>
+        </div>
+      </div>
+      <?php endforeach; ?>
+    </div>
+  </div>
+
+  <div class="cta-row">
+    <a href="produk/menu.php#Product" class="btn-primary">🛍️ Lihat Produk</a>
+    <?php if(!$is_logged_in): ?>
+    <a href="auth/login.php" class="btn-secondary">🔑 Login Dulu</a>
+    <?php else: ?>
+    <a href="pemesanan/keranjang.php" class="btn-secondary">🛒 Ke Keranjang</a>
+    <?php endif; ?>
+    <a href="index.php" class="btn-secondary">🏠 Kembali ke Home</a>
+  </div>
+
+<?php else: ?>
 
   <!-- ICON BADGE -->
   <div class="badge-wrap">
@@ -695,6 +815,9 @@ if (!$promo) {
     <p class="sub-text">
       Kamu telah mendapatkan promo spesial dari YOLAZCAKE Sintang.
       Tunjukkan kode berikut kepada kasir saat pembayaran dan nikmati diskonnya!
+      <?php if ($sudah_diklaim): ?>
+        <br><em>(Kamu sudah pernah mengambil promo ini sebelumnya, jadi poin bonus tidak ditambahkan lagi.)</em>
+      <?php endif; ?>
     </p>
   </div>
 
@@ -727,7 +850,7 @@ if (!$promo) {
     <div class="benefit-card">
       <div class="benefit-icon">⭐</div>
       <div class="benefit-title">Poin Bonus</div>
-      <div class="benefit-val">+<?= $promo['poin_bonus'] ?> Poin Member</div>
+      <div class="benefit-val"><?= $sudah_diklaim ? 'Sudah pernah diklaim' : '+'.$promo['poin_bonus'].' Poin Member (sudah ditambahkan)' ?></div>
     </div>
   </div>
 
@@ -760,7 +883,7 @@ if (!$promo) {
         <div class="step-num">4</div>
         <div class="step-text">
           <h4>Kumpulkan Poin Member</h4>
-          <p>Setiap transaksi menggunakan kode promo ini akan menambah <?= $promo['poin_bonus'] ?> poin ke akun member kamu secara otomatis.</p>
+          <p>Poin bonus <?= $promo['poin_bonus'] ?> sudah otomatis masuk ke akun member kamu, cek di halaman Member Area.</p>
         </div>
       </div>
     </div>
@@ -774,6 +897,8 @@ if (!$promo) {
     <a href="member/member.php" class="btn-secondary">👤 Member Area</a>
     <?php endif; ?>
   </div>
+
+<?php endif; ?>
 
 </div>
 

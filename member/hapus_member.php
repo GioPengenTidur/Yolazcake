@@ -1,8 +1,11 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 include 'success_overlay.php';
 
-$id = $_GET['id'] ?? 0;
+$id = (int)($_GET['id'] ?? 0);
 
 $stmt = $conn->prepare("SELECT * FROM member WHERE id_member = ?");
 $stmt->bind_param("i", $id);
@@ -12,10 +15,9 @@ $member = $result->fetch_assoc();
 
 $nama = $member['nama'] ?? 'Member';
 
-mysqli_query(
-    $conn,
-    "DELETE FROM member WHERE id_member='$id'"
-);
+$del = $conn->prepare("DELETE FROM member WHERE id_member = ?");
+$del->bind_param("i", $id);
+$del->execute();
 
 tampilkan_sukses([
     'proses_judul' => 'Menghapus Member…',

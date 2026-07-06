@@ -1,21 +1,29 @@
 <?php
 session_start();
-if(!isset($_SESSION['username'])){ header("Location: ../auth/login.php"); exit(); }
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 
 $id = (int)($_GET['id'] ?? 0);
-$data = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM meja WHERE id_meja=$id"));
+$stmt = $conn->prepare("SELECT * FROM meja WHERE id_meja=?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$data = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 if(!$data){ header("Location: data_meja.php"); exit(); }
 
 $error = '';
 if($_SERVER['REQUEST_METHOD']==='POST'){
-    $nomor    = mysqli_real_escape_string($conn, trim($_POST['nomor_meja']));
+    $nomor    = trim($_POST['nomor_meja']);
     $kapasitas= (int)$_POST['kapasitas'];
-    $status   = mysqli_real_escape_string($conn, $_POST['status']);
-    $ket      = mysqli_real_escape_string($conn, trim($_POST['keterangan']));
+    $status   = $_POST['status'];
+    $ket      = trim($_POST['keterangan']);
     if(!$nomor || $kapasitas < 1){ $error = "Nomor dan kapasitas wajib diisi!"; }
     else {
-        mysqli_query($conn,"UPDATE meja SET nomor_meja='$nomor',kapasitas=$kapasitas,status='$status',keterangan='$ket' WHERE id_meja=$id");
+        $stmt = $conn->prepare("UPDATE meja SET nomor_meja=?,kapasitas=?,status=?,keterangan=? WHERE id_meja=?");
+        $stmt->bind_param("sissi", $nomor, $kapasitas, $status, $ket, $id);
+        $stmt->execute();
+        $stmt->close();
         include 'success_overlay.php';
         tampilkan_sukses([
             'proses_judul' => 'Memperbarui Meja…',

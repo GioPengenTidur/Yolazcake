@@ -1,15 +1,23 @@
 <?php
 session_start();
-if(!isset($_SESSION['username'])){
-    header("Location: ../auth/login.php"); exit();
-}
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 
 // Handle hapus
 if(isset($_GET['hapus'])){
     $id = (int)$_GET['hapus'];
-    $m = mysqli_fetch_assoc(mysqli_query($conn,"SELECT nomor_meja FROM meja WHERE id_meja=$id"));
-    mysqli_query($conn, "DELETE FROM meja WHERE id_meja=$id");
+
+    $stmt = $conn->prepare("SELECT nomor_meja FROM meja WHERE id_meja=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $m = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    $stmt = $conn->prepare("DELETE FROM meja WHERE id_meja=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
 
     include 'success_overlay.php';
     tampilkan_sukses([
@@ -26,9 +34,18 @@ if(isset($_GET['hapus'])){
 // Handle ubah status cepat
 if(isset($_GET['status']) && isset($_GET['id'])){
     $id  = (int)$_GET['id'];
-    $st  = mysqli_real_escape_string($conn, $_GET['status']);
-    $m = mysqli_fetch_assoc(mysqli_query($conn,"SELECT nomor_meja FROM meja WHERE id_meja=$id"));
-    mysqli_query($conn, "UPDATE meja SET status='$st' WHERE id_meja=$id");
+    $st  = $_GET['status'];
+
+    $stmt = $conn->prepare("SELECT nomor_meja FROM meja WHERE id_meja=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $m = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    $stmt = $conn->prepare("UPDATE meja SET status=? WHERE id_meja=?");
+    $stmt->bind_param("si", $st, $id);
+    $stmt->execute();
+    $stmt->close();
 
     include 'success_overlay.php';
     tampilkan_sukses([
@@ -78,10 +95,10 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
     /* ── HERO ── */
     .page-hero{position:relative;height:240px;display:flex;flex-direction:column;
       align-items:center;justify-content:center;overflow:hidden;
-      background:linear-gradient(135deg,#0d1b2a 0%,#1a3a5c 40%,#0a2040 70%,#0d1b2a 100%);z-index:1;}
+      background:linear-gradient(135deg,#2b1a11 0%,#4a2c1a 40%,#6d3e26 70%,#3a1f0e 100%);z-index:1;}
     .page-hero::before{content:'';position:absolute;inset:0;
       background:radial-gradient(ellipse at 30% 50%,rgba(212,175,55,.18) 0%,transparent 60%),
-                 radial-gradient(ellipse at 75% 40%,rgba(138,43,226,.15) 0%,transparent 55%);
+                 radial-gradient(ellipse at 75% 40%,rgba(232,160,191,.15) 0%,transparent 55%);
       animation:heroAurora 8s ease-in-out infinite alternate;}
     @keyframes heroAurora{0%{opacity:.6;transform:scale(1);}100%{opacity:1;transform:scale(1.08) translateX(10px);}}
     .sparkle{position:absolute;border-radius:50%;pointer-events:none;animation:floatDot linear infinite;}

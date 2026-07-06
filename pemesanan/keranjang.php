@@ -3,21 +3,21 @@ session_start();
 include '../config/koneksi.php';
 
 if(isset($_POST['tambah'])){
-    $id_produk = $_POST['id_produk'];
-    $jumlah = $_POST['jumlah'];
+    $id_produk = (int)$_POST['id_produk'];
+    $jumlah = (int)$_POST['jumlah'];
     $_SESSION['keranjang'][$id_produk] =
         ($_SESSION['keranjang'][$id_produk] ?? 0) + $jumlah;
 }
 
 if(isset($_GET['hapus'])){
-    $id_produk = $_GET['hapus'];
+    $id_produk = (int)$_GET['hapus'];
     unset($_SESSION['keranjang'][$id_produk]);
     header("Location: keranjang.php");
     exit();
 }
 
 if(isset($_GET['aksi'])){
-    $id_produk = $_GET['id'];
+    $id_produk = (int)$_GET['id'];
     if($_GET['aksi'] == 'tambah'){
         $_SESSION['keranjang'][$id_produk]++;
     }
@@ -34,18 +34,28 @@ if(isset($_GET['aksi'])){
 $total = 0;
 $items = [];
 if(!empty($_SESSION['keranjang'])){
+    $stmtProduk = $conn->prepare("SELECT * FROM produk WHERE id_produk=?");
     foreach($_SESSION['keranjang'] as $id_produk => $jumlah){
-        $q = mysqli_query($conn, "SELECT * FROM produk WHERE id_produk='$id_produk'");
-        $p = mysqli_fetch_assoc($q);
+        $id_produk = (int)$id_produk;
+        $stmtProduk->bind_param("i", $id_produk);
+        $stmtProduk->execute();
+        $p = $stmtProduk->get_result()->fetch_assoc();
         if($p){
             $subtotal = $p['harga'] * $jumlah;
             $total += $subtotal;
             $items[] = array_merge($p, ['jumlah' => $jumlah, 'subtotal' => $subtotal]);
         }
     }
+    $stmtProduk->close();
 }
 
 $total_keranjang = array_sum(array_column($items, 'jumlah'));
+
+// Pesan error dari proses_pemesanan.php (misal stok nggak cukup saat
+// checkout) ditampilkan sekali lalu dibuang, supaya nggak muncul lagi
+// kalau halaman ini di-refresh.
+$checkout_error = $_SESSION['checkout_error'] ?? null;
+unset($_SESSION['checkout_error']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -441,6 +451,12 @@ $total_keranjang = array_sum(array_column($items, 'jumlah'));
 
 <!-- ═══════════════ PAGE WRAPPER ═══════════════ -->
 <div class="page-wrapper">
+
+  <?php if($checkout_error): ?>
+  <div style="background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.35);color:#ff8080;padding:14px 20px;border-radius:14px;margin-bottom:20px;font-size:.85em;line-height:1.6;">
+    ⚠️ <?= htmlspecialchars($checkout_error) ?>
+  </div>
+  <?php endif; ?>
 
   <!-- TOP BAR -->
   <div class="top-bar">

@@ -665,6 +665,26 @@ $old_email    = isset($_GET['email']) ? htmlspecialchars($_GET['email']) : '';
       text-align: center;
       margin-top: -8px;
     }
+
+    /* ══════════════════ Responsive (mobile) ══════════════════ */
+    @media (max-width: 480px) {
+      .login-wrapper { padding: 14px; max-width: 100%; }
+      .login-card { padding: 32px 22px 28px; border-radius: 22px; }
+      .login-brand { margin-bottom: 24px; }
+      .login-brand h1 { font-size: 1.8em; }
+      .login-brand .eyebrow { letter-spacing: 3px; font-size: 0.68em; }
+      .login-brand .subtitle { font-size: 0.82em; }
+      .back-link { top: 14px; left: 14px; font-size: 0.78em; }
+      .field-group input { padding: 12px 14px 12px 42px; font-size: 0.92em; }
+      .btn-login { padding: 13px 18px; font-size: 0.98em; }
+      .pwd-checklist li { font-size: 0.72em; }
+      .status-box { padding: 28px 22px; min-width: 0; width: 82%; }
+    }
+
+    @media (max-width: 360px) {
+      .login-card { padding: 26px 16px 24px; }
+      .login-brand h1 { font-size: 1.55em; }
+    }
   </style>
 </head>
 <body>

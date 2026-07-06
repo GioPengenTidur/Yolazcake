@@ -1,16 +1,23 @@
 <?php
 session_start();
-if(!isset($_SESSION['username'])){
-    header("Location: ../auth/login.php");
+
+header('Content-Type: application/json');
+
+function respond_json($success, $message, $extra = []) {
+    echo json_encode(array_merge(['success' => $success, 'message' => $message], $extra));
     exit();
 }
-if(($_SESSION['role'] ?? '') !== 'admin'){
-    header("Location: ../dashboard.php");
-    exit();
+
+if (!isset($_SESSION['username'])) {
+    respond_json(false, 'Sesi login tidak ditemukan, silakan login ulang.');
 }
+if (($_SESSION['role'] ?? '') !== 'admin') {
+    respond_json(false, 'Hanya admin yang bisa melakukan aksi ini.');
+}
+
 require_once '../config/koneksi.php';
 
-$id = (int)($_GET['id'] ?? 0);
+$id = (int) ($_POST['id'] ?? 0);
 
 $stmt = $conn->prepare("SELECT * FROM users WHERE id = ?");
 $stmt->bind_param("i", $id);
@@ -18,28 +25,27 @@ $stmt->execute();
 $target = $stmt->get_result()->fetch_assoc();
 
 if (!$target) {
-    header("Location: data_user.php?err=notfound");
-    exit();
+    respond_json(false, 'Akun tidak ditemukan.');
 }
 
 // Tidak boleh hapus akun sendiri
 if ($target['username'] === $_SESSION['username']) {
-    header("Location: data_user.php?err=self");
-    exit();
+    respond_json(false, 'Tidak bisa menghapus akun yang sedang kamu pakai sendiri.');
 }
 
 // Tidak boleh hapus admin terakhir
 if ($target['role'] === 'admin') {
     $cek = mysqli_fetch_assoc(mysqli_query($conn, "SELECT COUNT(*) AS t FROM users WHERE role='admin'"));
     if (($cek['t'] ?? 0) <= 1) {
-        header("Location: data_user.php?err=last_admin");
-        exit();
+        respond_json(false, 'Tidak bisa menghapus admin terakhir. Minimal harus ada 1 admin.');
     }
 }
 
 $del = $conn->prepare("DELETE FROM users WHERE id = ?");
 $del->bind_param("i", $id);
-$del->execute();
 
-header("Location: data_user.php?ok=hapus");
-exit();
+if ($del->execute()) {
+    respond_json(true, 'Akun berhasil dihapus.');
+} else {
+    respond_json(false, 'Terjadi kesalahan saat menghapus, coba lagi.');
+}

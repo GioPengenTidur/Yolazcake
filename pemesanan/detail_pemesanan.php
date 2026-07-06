@@ -1,19 +1,33 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 
-$id_pemesanan = $_GET['id'] ?? 0;
+$id_pemesanan = (int)($_GET['id'] ?? 0);
 
-$pemesanan = mysqli_query($conn,"
-SELECT *
-FROM pemesanan
-WHERE id_pemesanan='$id_pemesanan'
-");
-
-$data = mysqli_fetch_assoc($pemesanan);
+$stmt = $conn->prepare("SELECT * FROM pemesanan WHERE id_pemesanan = ?");
+$stmt->bind_param("i", $id_pemesanan);
+$stmt->execute();
+$data = $stmt->get_result()->fetch_assoc();
 
 if(!$data){
     die("Data pemesanan tidak ditemukan");
 }
+
+// Ambil rincian item pesanan dari tabel detail_pemesanan (join ke produk
+// untuk nama & foto produk). Sebelumnya halaman ini tidak pernah
+// menampilkan isi pesanan sama sekali walau tabelnya sudah ada.
+$stmtItems = $conn->prepare(
+    "SELECT dp.*, p.nama_produk, p.foto
+     FROM detail_pemesanan dp
+     LEFT JOIN produk p ON p.id_produk = dp.id_produk
+     WHERE dp.id_pemesanan = ?"
+);
+$stmtItems->bind_param("i", $id_pemesanan);
+$stmtItems->execute();
+$items = $stmtItems->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmtItems->close();
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -432,6 +446,44 @@ if(!$data){
       </div>
     </div>
   </div>
+
+  <!-- ITEM PESANAN -->
+  <?php if(!empty($items)): ?>
+  <div class="detail-card" style="margin-top:20px;">
+    <div class="gold-rule"><span>✦ Item Pesanan ✦</span></div>
+    <table style="width:100%;border-collapse:collapse;color:#fff;">
+      <thead>
+        <tr style="border-bottom:1px solid rgba(212,175,55,.3);">
+          <th style="text-align:left;padding:8px;font-size:.85em;opacity:.7;">Produk</th>
+          <th style="text-align:center;padding:8px;font-size:.85em;opacity:.7;">Qty</th>
+          <th style="text-align:right;padding:8px;font-size:.85em;opacity:.7;">Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php foreach($items as $item): ?>
+        <tr style="border-bottom:1px solid rgba(255,255,255,.08);">
+          <td style="padding:8px;"><?= htmlspecialchars($item['nama_produk'] ?? 'Produk telah dihapus') ?></td>
+          <td style="text-align:center;padding:8px;"><?= (int)$item['jumlah'] ?></td>
+          <td style="text-align:right;padding:8px;">Rp <?= number_format($item['subtotal'],0,',','.') ?></td>
+        </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+  <?php endif; ?>
+
+  <?php if(!empty($data['kode_promo']) && (float)($data['diskon_nominal'] ?? 0) > 0): ?>
+  <div class="detail-card" style="margin-top:20px;">
+    <div class="detail-row">
+      <div class="detail-label"><span class="row-icon">🏷️</span>Kode Promo</div>
+      <div class="detail-val" style="color:#6efabc;"><?= htmlspecialchars($data['kode_promo']) ?></div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-label"><span class="row-icon">💸</span>Diskon</div>
+      <div class="detail-val" style="color:#6efabc;">-Rp <?= number_format($data['diskon_nominal'],0,',','.') ?></div>
+    </div>
+  </div>
+  <?php endif; ?>
 
   <!-- SUMMARY BOX -->
   <div class="summary-box">

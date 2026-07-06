@@ -12,11 +12,19 @@ require_once '../config/koneksi.php';
 
 $query = mysqli_query($conn, "SELECT * FROM users ORDER BY id DESC");
 
-$total_query  = mysqli_query($conn, "SELECT COUNT(*) AS t, SUM(role='admin') AS a, SUM(role='kasir') AS k FROM users");
+$total_query  = mysqli_query($conn, "SELECT COUNT(*) AS t, SUM(role='admin') AS a, SUM(role='kasir') AS k, SUM(role='pengunjung') AS p FROM users");
 $stats        = mysqli_fetch_assoc($total_query);
 $total_user   = $stats['t'] ?? 0;
 $total_admin  = $stats['a'] ?? 0;
 $total_kasir  = $stats['k'] ?? 0;
+$total_pengunjung = $stats['p'] ?? 0;
+
+// Kategori peran yang tersedia untuk dropdown ubah pangkat
+$role_options = [
+    'pengunjung' => ['label' => 'Pengunjung', 'icon' => '👁️'],
+    'kasir'      => ['label' => 'Kasir',      'icon' => '🧑‍🍳'],
+    'admin'      => ['label' => 'Admin',      'icon' => '👑'],
+];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -168,7 +176,7 @@ $total_kasir  = $stats['k'] ?? 0;
 
     /* stats bar */
     .stats-row {
-      display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
+      display:grid; grid-template-columns:repeat(4,1fr); gap:16px;
       margin-bottom:28px;
       opacity:0; animation:cardReveal 0.7s forwards 0.85s;
     }
@@ -277,6 +285,44 @@ $total_kasir  = $stats['k'] ?? 0;
       border:1px solid rgba(99,102,241,0.4);
       color:#a5b4fc;
     }
+    .role-pengunjung {
+      background:rgba(255,255,255,0.09);
+      border:1px solid rgba(255,255,255,0.22);
+      color:rgba(255,255,255,0.65);
+    }
+
+    /* role dropdown (ubah pangkat) */
+    .role-select-wrap { position:relative; display:inline-block; }
+    .role-select {
+      appearance:none; -webkit-appearance:none; -moz-appearance:none;
+      display:inline-flex; align-items:center; gap:5px;
+      border-radius:999px; padding:6px 30px 6px 13px;
+      font-size:0.78em; font-weight:700; letter-spacing:0.5px;
+      font-family:'Inter',sans-serif;
+      cursor:pointer; outline:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4AF37' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat:no-repeat; background-position:right 9px center; background-size:13px;
+      transition:border-color 0.25s, box-shadow 0.25s, opacity 0.25s;
+    }
+    .role-select:hover:not(:disabled) { box-shadow:0 0 0 3px rgba(212,175,55,0.12); }
+    .role-select:focus:not(:disabled) { box-shadow:0 0 0 3px rgba(212,175,55,0.22); }
+    .role-select:disabled { opacity:0.5; cursor:not-allowed; }
+    .role-select option { background:#2d1560; color:#fff; }
+
+    .role-select.role-admin {
+      background-color:rgba(212,175,55,0.16); border:1px solid rgba(212,175,55,0.4); color:#D4AF37;
+    }
+    .role-select.role-kasir {
+      background-color:rgba(99,102,241,0.16); border:1px solid rgba(99,102,241,0.4); color:#a5b4fc;
+    }
+    .role-select.role-pengunjung {
+      background-color:rgba(255,255,255,0.09); border:1px solid rgba(255,255,255,0.22); color:rgba(255,255,255,0.65);
+    }
+
+    .role-locked {
+      display:inline-flex; align-items:center; gap:5px;
+      font-size:0.72em; color:rgba(255,255,255,0.35); margin-top:5px;
+    }
 
     /* action buttons */
     .action-cell { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
@@ -345,17 +391,25 @@ $total_kasir  = $stats['k'] ?? 0;
     }
 
     .back-link {
-      display:inline-flex; align-items:center; gap:6px;
-      color:rgba(212,175,55,0.85); text-decoration:none;
-      font-size:0.82em; font-weight:600; letter-spacing:0.5px;
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 22px;
+      background:rgba(212,175,55,0.1);
+      border:1px solid rgba(212,175,55,0.3);
+      color:#D4AF37; text-decoration:none;
+      font-size:0.82em; font-weight:600; letter-spacing:1px;
+      border-radius:999px;
       margin-bottom:18px;
-      transition:color 0.25s, transform 0.25s;
+      transition:transform 0.25s, box-shadow 0.3s, background 0.3s;
       opacity:0; animation:cardReveal 0.6s forwards 0.55s;
     }
-    .back-link:hover { color:#FFE4B5; transform:translateX(-4px); }
+    .back-link:hover {
+      transform:translateX(-3px);
+      background:rgba(212,175,55,0.2);
+      box-shadow:0 6px 20px rgba(212,175,55,0.25);
+    }
 
     @media(max-width:768px){
-      .stats-row { grid-template-columns:1fr; }
+      .stats-row { grid-template-columns:repeat(2,1fr); }
       .hero-inner h1 { font-size:2em; }
       .page-wrapper { padding:24px 16px 60px; }
       .action-cell { flex-direction:column; align-items:flex-start; }
@@ -548,11 +602,12 @@ $total_kasir  = $stats['k'] ?? 0;
 
 <div class="page-wrapper">
 
-  <a href="../dashboard.php" class="back-link">&#8592; Kembali ke Dashboard</a>
+  <a href="../dashboard.php" class="back-link">← Dashboard</a>
 
   <!-- top bar -->
   <div class="top-bar">
     <span class="section-eyebrow">✦ Daftar Akun</span>
+    <button type="button" class="btn-tambah" onclick="bukaModalTambah()">+ Tambah Akun</button>
   </div>
 
   <?php if(isset($_GET['ok'])): ?>
@@ -562,6 +617,7 @@ $total_kasir  = $stats['k'] ?? 0;
           'role'   => '✓ Peran akun berhasil diubah.',
           'hapus'  => '✓ Akun berhasil dihapus.',
           'edit'   => '✓ Data akun berhasil diperbarui.',
+          'tambah' => '✓ Akun baru berhasil dibuat.',
         ];
         echo $msgs[$_GET['ok']] ?? '✓ Berhasil.';
       ?>
@@ -602,6 +658,13 @@ $total_kasir  = $stats['k'] ?? 0;
         <div class="stat-lbl">Kasir</div>
       </div>
     </div>
+    <div class="stat-card">
+      <span class="stat-icon">👁️</span>
+      <div>
+        <div class="stat-val"><?= $total_pengunjung; ?></div>
+        <div class="stat-lbl">Pengunjung</div>
+      </div>
+    </div>
   </div>
 
   <!-- table -->
@@ -632,31 +695,32 @@ $total_kasir  = $stats['k'] ?? 0;
           </td>
           <td class="td-email"><?= !empty($data['email']) ? htmlspecialchars($data['email']) : '<span class="no-email">- belum ada -</span>'; ?></td>
           <td>
-            <?php if($data['role'] === 'admin'): ?>
-              <span class="role-badge role-admin">👑 Admin</span>
-            <?php else: ?>
-              <span class="role-badge role-kasir">🧑‍🍳 Kasir</span>
-            <?php endif; ?>
+            <div class="role-select-wrap">
+              <select class="role-select role-<?= htmlspecialchars($data['role']); ?>"
+                      data-old-role="<?= htmlspecialchars($data['role']); ?>"
+                      data-id="<?= (int)$data['id']; ?>"
+                      data-username="<?= htmlspecialchars($data['username'], ENT_QUOTES); ?>"
+                      <?= $is_me ? 'disabled' : ''; ?>
+                      onchange="ubahPangkat(this)">
+                <?php foreach($role_options as $rv => $ro): ?>
+                  <option value="<?= $rv; ?>" <?= $data['role'] === $rv ? 'selected' : ''; ?>><?= $ro['icon']; ?> <?= $ro['label']; ?></option>
+                <?php endforeach; ?>
+              </select>
+              <?php if($is_me): ?>
+                <div class="role-locked">🔒 Akun sendiri</div>
+              <?php endif; ?>
+            </div>
           </td>
           <td>
             <div class="action-cell">
-              <?php if($data['role'] === 'admin'): ?>
-                <a href="ubah_role.php?id=<?= $data['id']; ?>&role=kasir"
-                   class="btn-act btn-edit"
-                   onclick="return confirm('Turunkan <?= htmlspecialchars($data['username']); ?> jadi Kasir?')">⬇️ Jadikan Kasir</a>
-              <?php else: ?>
-                <a href="ubah_role.php?id=<?= $data['id']; ?>&role=admin"
-                   class="btn-act btn-edit"
-                   onclick="return confirm('Jadikan <?= htmlspecialchars($data['username']); ?> sebagai Admin?')">⬆️ Jadikan Admin</a>
-              <?php endif; ?>
-
               <button type="button"
                  class="btn-act btn-editakun"
-                 onclick="bukaModalEdit(<?= (int)$data['id']; ?>, <?= json_encode($data['username']); ?>, <?= json_encode($data['email'] ?? ''); ?>)">✏️ Edit</button>
+                 onclick="bukaModalEdit(<?= (int)$data['id']; ?>, <?= htmlspecialchars(json_encode($data['username']), ENT_QUOTES); ?>, <?= htmlspecialchars(json_encode($data['email'] ?? ''), ENT_QUOTES); ?>)">✏️ Edit</button>
 
-              <a href="hapus_user.php?id=<?= $data['id']; ?>"
+              <button type="button"
                  class="btn-act btn-hapus"
-                 onclick="return confirm('Yakin ingin menghapus akun <?= htmlspecialchars($data['username']); ?>?')">🗑️ Hapus</a>
+                 <?= $is_me ? 'disabled' : ''; ?>
+                 onclick="hapusAkun(<?= (int)$data['id']; ?>, <?= htmlspecialchars(json_encode($data['username']), ENT_QUOTES); ?>)">🗑️ Hapus</button>
             </div>
           </td>
         </tr>
@@ -706,6 +770,47 @@ $total_kasir  = $stats['k'] ?? 0;
       <div class="modal-actions">
         <button type="button" class="btn-modal-cancel" id="btnModalCancel">Batal</button>
         <button type="submit" class="btn-modal-save" id="btnModalSave">💾 Simpan Perubahan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Tambah Akun -->
+<div class="modal-overlay" id="modalTambahOverlay">
+  <div class="modal-box">
+    <div class="modal-title">Tambah Akun</div>
+    <div class="modal-sub">Buat akun baru untuk Admin, Kasir, atau Pengunjung</div>
+
+    <div class="modal-error" id="modalTambahError"><span id="modalTambahErrorText"></span></div>
+
+    <form id="formTambahAkun" novalidate>
+      <div class="modal-field">
+        <label for="tambahUsername">Username</label>
+        <input type="text" id="tambahUsername" name="username" placeholder="mis: kasir_baru" autocomplete="off" required>
+      </div>
+
+      <div class="modal-field">
+        <label for="tambahEmail">Email Gmail (opsional)</label>
+        <input type="email" id="tambahEmail" name="email" placeholder="contoh: nama@gmail.com" autocomplete="off">
+      </div>
+
+      <div class="modal-field">
+        <label for="tambahPassword">Password</label>
+        <input type="password" id="tambahPassword" name="password" placeholder="Minimal 6 karakter" autocomplete="new-password" required>
+      </div>
+
+      <div class="modal-field">
+        <label for="tambahRole">Peran</label>
+        <select id="tambahRole" name="role" required>
+          <?php foreach($role_options as $rv => $ro): ?>
+            <option value="<?= $rv; ?>"><?= $ro['icon']; ?> <?= $ro['label']; ?></option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-modal-cancel" id="btnModalTambahCancel">Batal</button>
+        <button type="submit" class="btn-modal-save" id="btnModalTambahSave">✦ Buat Akun</button>
       </div>
     </form>
   </div>
@@ -864,6 +969,184 @@ $total_kasir  = $stats['k'] ?? 0;
       }, 1500);
     }
   });
+
+  /* ══════════════════ Modal Tambah Akun ══════════════════ */
+  const modalTambahOverlay  = document.getElementById('modalTambahOverlay');
+  const formTambahAkun      = document.getElementById('formTambahAkun');
+  const tambahUsernameInput = document.getElementById('tambahUsername');
+  const tambahEmailInput    = document.getElementById('tambahEmail');
+  const tambahPasswordInput = document.getElementById('tambahPassword');
+  const tambahRoleInput     = document.getElementById('tambahRole');
+  const modalTambahError    = document.getElementById('modalTambahError');
+  const modalTambahErrorText = document.getElementById('modalTambahErrorText');
+  const btnModalTambahSave  = document.getElementById('btnModalTambahSave');
+
+  function bukaModalTambah() {
+    formTambahAkun.reset();
+    hideModalTambahError();
+    modalTambahOverlay.classList.add('show');
+    setTimeout(() => tambahUsernameInput.focus(), 300);
+  }
+
+  function tutupModalTambah() {
+    modalTambahOverlay.classList.remove('show');
+  }
+
+  function showModalTambahError(msg) {
+    modalTambahErrorText.textContent = msg;
+    modalTambahError.classList.add('show');
+  }
+  function hideModalTambahError() {
+    modalTambahError.classList.remove('show');
+  }
+
+  document.getElementById('btnModalTambahCancel').addEventListener('click', tutupModalTambah);
+  modalTambahOverlay.addEventListener('click', (e) => {
+    if (e.target === modalTambahOverlay) tutupModalTambah();
+  });
+
+  formTambahAkun.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    hideModalTambahError();
+
+    const username = tambahUsernameInput.value.trim();
+    const email    = tambahEmailInput.value.trim();
+    const password = tambahPasswordInput.value;
+    const role     = tambahRoleInput.value;
+
+    if (username.length < 3) {
+      showModalTambahError('Username minimal 3 karakter.');
+      return;
+    }
+    if (email !== '' && !/^[^\s@]+@gmail\.com$/i.test(email)) {
+      showModalTambahError('Email harus berupa alamat @gmail.com yang valid.');
+      return;
+    }
+    if (password.length < 6) {
+      showModalTambahError('Password minimal 6 karakter.');
+      return;
+    }
+
+    btnModalTambahSave.disabled = true;
+    tutupModalTambah();
+    showProcessing('Menyimpan...', 'Sedang membuat akun baru');
+
+    try {
+      const res = await fetch('tambah_user.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+        body: new URLSearchParams({ username, email, password, role })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        showResult(true, 'Akun Berhasil Dibuat!', 'Mengalihkan halaman...');
+        setTimeout(() => {
+          window.location.href = data.redirect || 'data_user.php?ok=tambah';
+        }, 1200);
+      } else {
+        showResult(false, 'Gagal Membuat Akun', data.message || 'Terjadi kesalahan.');
+        setTimeout(() => {
+          hideOverlay();
+          btnModalTambahSave.disabled = false;
+          modalTambahOverlay.classList.add('show');
+          showModalTambahError(data.message || 'Terjadi kesalahan. Coba lagi.');
+        }, 1500);
+      }
+    } catch (err) {
+      showResult(false, 'Terjadi Kesalahan', 'Gagal terhubung ke server. Coba lagi.');
+      setTimeout(() => {
+        hideOverlay();
+        btnModalTambahSave.disabled = false;
+        modalTambahOverlay.classList.add('show');
+      }, 1500);
+    }
+  });
+
+  /* ══════════════════ Ubah Pangkat (dropdown) ══════════════════ */
+  const roleLabels = {
+    admin: 'Admin',
+    kasir: 'Kasir',
+    pengunjung: 'Pengunjung'
+  };
+
+  function ubahPangkat(selectEl) {
+    const id       = selectEl.dataset.id;
+    const username = selectEl.dataset.username;
+    const oldRole  = selectEl.dataset.oldRole;
+    const newRole  = selectEl.value;
+
+    if (newRole === oldRole) return;
+
+    const labelBaru = roleLabels[newRole] || newRole;
+    const ok = confirm(`Ubah pangkat "${username}" menjadi ${labelBaru}?`);
+    if (!ok) {
+      selectEl.value = oldRole;
+      return;
+    }
+
+    selectEl.disabled = true;
+    showProcessing('Mengubah Pangkat...', `Menjadikan ${username} sebagai ${labelBaru}`);
+
+    fetch('ubah_role.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+      body: new URLSearchParams({ id, role: newRole })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          selectEl.dataset.oldRole = newRole;
+          selectEl.classList.remove('role-admin', 'role-kasir', 'role-pengunjung');
+          selectEl.classList.add('role-' + newRole);
+          showResult(true, 'Pangkat Diubah!', `${username} kini menjadi ${labelBaru}`);
+          setTimeout(() => {
+            window.location.href = 'data_user.php?ok=role';
+          }, 1200);
+        } else {
+          selectEl.value = oldRole;
+          selectEl.disabled = false;
+          showResult(false, 'Gagal Mengubah', data.message || 'Terjadi kesalahan.');
+          setTimeout(hideOverlay, 1800);
+        }
+      })
+      .catch(() => {
+        selectEl.value = oldRole;
+        selectEl.disabled = false;
+        showResult(false, 'Terjadi Kesalahan', 'Gagal terhubung ke server. Coba lagi.');
+        setTimeout(hideOverlay, 1800);
+      });
+  }
+
+  /* ══════════════════ Hapus Akun ══════════════════ */
+  function hapusAkun(id, username) {
+    const ok = confirm(`Yakin ingin menghapus akun "${username}"? Tindakan ini tidak bisa dibatalkan.`);
+    if (!ok) return;
+
+    showProcessing('Menghapus Akun...', `Menghapus data akun ${username}`);
+
+    fetch('hapus_user.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+      body: new URLSearchParams({ id })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showResult(true, 'Akun Terhapus!', `"${username}" telah dihapus dari daftar`);
+          setTimeout(() => {
+            window.location.href = 'data_user.php?ok=hapus';
+          }, 1200);
+        } else {
+          showResult(false, 'Gagal Menghapus', data.message || 'Terjadi kesalahan.');
+          setTimeout(hideOverlay, 1800);
+        }
+      })
+      .catch(() => {
+        showResult(false, 'Terjadi Kesalahan', 'Gagal terhubung ke server. Coba lagi.');
+        setTimeout(hideOverlay, 1800);
+      });
+  }
 </script>
 </body>
 </html>

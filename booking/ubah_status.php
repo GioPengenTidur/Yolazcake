@@ -1,25 +1,31 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 require_once '../config/koneksi.php';
 include 'success_overlay.php';
 
 if (isset($_GET['id']) && isset($_GET['status'])) {
 
     $id = (int) $_GET['id'];
-    $status = mysqli_real_escape_string($conn, $_GET['status']);
+    $status = $_GET['status'];
 
     $allowed_status = ['Dikonfirmasi', 'Dibatalkan'];
 
     if (in_array($status, $allowed_status)) {
 
-        $cek = mysqli_query($conn, "SELECT nama_pemesan FROM booking WHERE id_booking = $id");
-        $booking = $cek ? mysqli_fetch_assoc($cek) : null;
+        $stmt = $conn->prepare("SELECT nama_pemesan FROM booking WHERE id_booking = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $booking = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
         $nama_pemesan = $booking['nama_pemesan'] ?? 'Booking';
 
-        $query = "UPDATE booking
-                  SET status = '$status'
-                  WHERE id_booking = $id";
+        $stmt = $conn->prepare("UPDATE booking SET status = ? WHERE id_booking = ?");
+        $stmt->bind_param("si", $status, $id);
 
-        if (mysqli_query($conn, $query)) {
+        if ($stmt->execute()) {
+            $stmt->close();
 
             $judulSukses = ($status === 'Dikonfirmasi')
                 ? 'Booking Berhasil Dikonfirmasi!'

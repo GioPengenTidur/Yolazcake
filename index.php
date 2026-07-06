@@ -13,8 +13,91 @@ session_start();
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/landing.css">
 <link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/intro-animation.css">
 </head>
 <body>
+
+<?php
+// ==================== PREMIUM ENTRY ANIMATION ====================
+// Overlay ini hanya boleh tampil jika user SUDAH LOGIN dan memulai
+// sesi baru di tab/browser (bukan sekadar pindah halaman, refresh,
+// atau pindah tab lalu kembali). Logikanya dijalankan lewat
+// sessionStorage di script inline tepat di bawah ini:
+//  - Tamu (belum login)          -> overlay langsung disembunyikan, tanpa animasi.
+//  - Login, sesi tab baru        -> overlay tampil dengan animasi premium.
+//  - Login, masih di tab yg sama (pindah halaman/refresh/ganti tab lalu balik)
+//                                 -> overlay disembunyikan langsung (flag sudah tercatat).
+//  - Logout                      -> overlay disembunyikan, dan flag direset supaya
+//                                    saat login lagi animasi muncul kembali.
+$__yzLoggedIn = isset($_SESSION['username']) ? 'true' : 'false';
+$__yzUsername = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username'], ENT_QUOTES) : '';
+?>
+<div id="yzIntro" class="yz-intro" aria-hidden="true">
+  <div class="yz-intro-panel yz-intro-panel-left"></div>
+  <div class="yz-intro-panel yz-intro-panel-right"></div>
+  <div class="yz-intro-particles">
+    <span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+  </div>
+  <div class="yz-intro-content">
+    <div class="yz-intro-ring">
+      <svg class="yz-intro-ring-svg" viewBox="0 0 140 140">
+        <circle class="yz-intro-ring-track" cx="70" cy="70" r="70"></circle>
+        <circle class="yz-intro-ring-progress" cx="70" cy="70" r="70"></circle>
+      </svg>
+      <img src="assets/img/Yolazcake.png" alt="YOLAZCAKE" class="yz-intro-logo">
+    </div>
+    <h1 class="yz-intro-title">
+      <span>Y</span><span>O</span><span>L</span><span>A</span><span>Z</span><span>C</span><span>A</span><span>K</span><span>E</span>
+    </h1>
+    <p class="yz-intro-tagline">Cafe &bull; Bakery &bull; Boutique</p>
+    <div class="yz-intro-line"></div>
+    <p class="yz-intro-welcome">Selamat datang kembali<?php echo $__yzUsername ? ', ' . $__yzUsername : ''; ?></p>
+  </div>
+</div>
+<script>
+(function () {
+  var isLoggedIn = <?php echo $__yzLoggedIn; ?>;
+  var KEY = 'yz_intro_played_v1';
+  var overlay = document.getElementById('yzIntro');
+  var root = document.documentElement;
+
+  function safeGet(k) { try { return sessionStorage.getItem(k); } catch (e) { return null; } }
+  function safeSet(k, v) { try { sessionStorage.setItem(k, v); } catch (e) {} }
+  function safeRemove(k) { try { sessionStorage.removeItem(k); } catch (e) {} }
+
+  if (!isLoggedIn) {
+    // Tamu: jangan pernah animasikan, dan reset flag supaya begitu
+    // user login nanti (di tab yg sama), animasi tetap muncul segar.
+    safeRemove(KEY);
+    overlay.className = 'yz-intro yz-intro-skip';
+    return;
+  }
+
+  if (safeGet(KEY) === '1') {
+    // Sudah login & sudah pernah diputar di sesi tab ini
+    // (pindah halaman / refresh / ganti tab lalu balik) -> jangan ulangi.
+    overlay.className = 'yz-intro yz-intro-skip';
+    return;
+  }
+
+  // Sesi tab baru + sudah login -> putar animasi masuk premium.
+  root.classList.add('yz-lock');
+
+  var HOLD_MS = 2400;   // lama animasi konten ditampilkan
+  var EXIT_MS = 1000;   // lama transisi tirai terbuka
+
+  setTimeout(function () {
+    overlay.classList.add('yz-intro-exit');
+  }, HOLD_MS);
+
+  setTimeout(function () {
+    overlay.classList.add('yz-intro-hidden');
+    root.classList.remove('yz-lock');
+    safeSet(KEY, '1');
+  }, HOLD_MS + EXIT_MS);
+})();
+</script>
 
 <nav>
   <!-- LEFT: LOGO + NAMA -->
@@ -45,7 +128,7 @@ session_start();
 
 <div class="account-menu">
 
-<a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'dashboard.php' : 'member/member.php'; ?>">
+<a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'dashboard_awal.php' : 'member/member.php'; ?>">
 <?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'Dashboard' : 'Member'; ?>
 </a>
 

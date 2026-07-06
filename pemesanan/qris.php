@@ -1,5 +1,7 @@
 <?php
 session_start();
+include '../config/koneksi.php';
+require_once '../config/promo_helper.php';
 
 if(isset($_POST['nama_pemesan'])){
     $_SESSION['nama_pemesan'] = $_POST['nama_pemesan'];
@@ -12,11 +14,31 @@ $_SESSION['id_booking'] = $_POST['id_booking'] ?? ($_SESSION['id_booking'] ?? nu
 $nama    = $_SESSION['nama_pemesan'] ?? '';
 $no_hp   = $_SESSION['no_hp'] ?? '';
 
-// Hitung total dari keranjang
-$total_keranjang = 0;
+// Hitung total harga sebenarnya dari keranjang (bukan cuma jumlah pcs),
+// lalu terapkan kode promo yang sudah divalidasi di halaman checkout.
+$subtotal_keranjang = 0;
 if(!empty($_SESSION['keranjang'])){
-    foreach($_SESSION['keranjang'] as $jml){ $total_keranjang += $jml; }
+    $stmtP = $conn->prepare("SELECT harga FROM produk WHERE id_produk=?");
+    foreach($_SESSION['keranjang'] as $id_produk => $jml){
+        $id_produk_int = (int)$id_produk;
+        $stmtP->bind_param("i", $id_produk_int);
+        $stmtP->execute();
+        $p = $stmtP->get_result()->fetch_assoc();
+        if($p){ $subtotal_keranjang += $p['harga'] * $jml; }
+    }
+    $stmtP->close();
 }
+
+$diskon_nominal = 0;
+$kode_promo_aktif = null;
+if(!empty($_SESSION['checkout_promo'])){
+    $cek = cek_promo($conn, $_SESSION['checkout_promo']['kode_promo'], $subtotal_keranjang);
+    if($cek['ok']){
+        $diskon_nominal   = $cek['diskon_nominal'];
+        $kode_promo_aktif = $cek['promo']['kode_promo'];
+    }
+}
+$total_keranjang = $subtotal_keranjang - $diskon_nominal;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -447,6 +469,14 @@ if(!empty($_SESSION['keranjang'])){
     <div class="qris-note">
       Scan QRIS ini menggunakan <span>GoPay, OVO, Dana, ShopeePay, BCA, BNI, BRI,</span> atau aplikasi e-wallet lainnya<br>
       yang mendukung pembayaran QRIS
+    </div>
+
+    <div style="margin-top:20px;padding:16px 20px;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.25);border-radius:14px;text-align:center;">
+      <div style="font-size:.72em;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5);">Total yang Harus Dibayar</div>
+      <div style="font-family:'Playfair Display',serif;font-size:1.6em;font-weight:700;color:#D4AF37;margin-top:4px;">Rp <?= number_format($total_keranjang,0,',','.') ?></div>
+      <?php if($kode_promo_aktif): ?>
+        <div style="font-size:.75em;color:#6efabc;margin-top:4px;">✓ Sudah termasuk diskon kode <?= htmlspecialchars($kode_promo_aktif) ?> (-Rp <?= number_format($diskon_nominal,0,',','.') ?>)</div>
+      <?php endif; ?>
     </div>
   </div>
 

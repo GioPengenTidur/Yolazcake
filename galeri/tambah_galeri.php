@@ -1,31 +1,35 @@
 <?php
 session_start();
-if(!isset($_SESSION['username'])){ header("Location: ../auth/login.php"); exit(); }
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
+include '../config/upload_helper.php';
 
 $error = '';
 
 if($_SERVER['REQUEST_METHOD']==='POST'){
-    $judul     = mysqli_real_escape_string($conn, trim($_POST['judul']));
-    $deskripsi = mysqli_real_escape_string($conn, trim($_POST['deskripsi']));
-    $kategori  = mysqli_real_escape_string($conn, $_POST['kategori']);
+    $judul     = trim($_POST['judul'] ?? '');
+    $deskripsi = trim($_POST['deskripsi'] ?? '');
+    $kategori  = $_POST['kategori'] ?? '';
 
     if(!$judul){
         $error = "Judul foto wajib diisi!";
     } elseif(!isset($_FILES['foto']) || $_FILES['foto']['error'] !== 0){
         $error = "Foto wajib diupload!";
     } else {
-        $namaFoto = time()."_".basename($_FILES['foto']['name']);
-        $tmpFoto  = $_FILES['foto']['tmp_name'];
-        $tujuan   = "../assets/img/galeri/".$namaFoto;
+        $upload = upload_gambar($_FILES['foto'], '../assets/img/galeri/');
 
-        if(!is_dir("../assets/img/galeri")){
-            mkdir("../assets/img/galeri", 0777, true);
-        }
+        if(!$upload['success']){
+            $error = $upload['error'];
+        } else {
+            $namaFoto = $upload['filename'];
 
-        if(move_uploaded_file($tmpFoto, $tujuan)){
-            mysqli_query($conn,
-                "INSERT INTO galeri (judul,deskripsi,kategori,foto) VALUES ('$judul','$deskripsi','$kategori','$namaFoto')");
+            $stmt = $conn->prepare(
+                "INSERT INTO galeri (judul, deskripsi, kategori, foto) VALUES (?, ?, ?, ?)"
+            );
+            $stmt->bind_param("ssss", $judul, $deskripsi, $kategori, $namaFoto);
+            $stmt->execute();
+
             include 'success_overlay.php';
             tampilkan_sukses([
                 'proses_judul' => 'Mengunggah Foto…',
@@ -36,8 +40,6 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
                 'tombol_label' => 'Lanjutkan ke Data Galeri',
             ]);
             exit;
-        } else {
-            $error = "Gagal mengupload foto. Coba lagi.";
         }
     }
 }

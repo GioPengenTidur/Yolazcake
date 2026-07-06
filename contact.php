@@ -6,19 +6,22 @@ $msg_kontak  = '';
 $err_kontak  = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
-    $nama    = mysqli_real_escape_string($conn, trim($_POST['nama']));
-    $email   = mysqli_real_escape_string($conn, trim($_POST['email']));
-    $no_hp   = mysqli_real_escape_string($conn, trim($_POST['no_hp']));
-    $subjek  = mysqli_real_escape_string($conn, trim($_POST['subjek']));
-    $pesan   = mysqli_real_escape_string($conn, trim($_POST['pesan']));
+    $nama    = trim($_POST['nama']);
+    $email   = trim($_POST['email']);
+    $no_hp   = trim($_POST['no_hp']);
+    $subjek  = trim($_POST['subjek']);
+    $pesan   = trim($_POST['pesan']);
 
     if (!$nama || !$pesan) {
         $err_kontak = 'Nama dan pesan wajib diisi!';
     } else {
-        $ok = mysqli_query($conn,
+        $stmt = $conn->prepare(
             "INSERT INTO kontak (nama, email, no_hp, subjek, pesan)
-             VALUES ('$nama','$email','$no_hp','$subjek','$pesan')"
+             VALUES (?,?,?,?,?)"
         );
+        $stmt->bind_param("sssss", $nama, $email, $no_hp, $subjek, $pesan);
+        $ok = $stmt->execute();
+        $stmt->close();
         if ($ok) {
             $msg_kontak = 'Pesan berhasil dikirim! Kami akan segera menghubungi Anda.';
         } else {

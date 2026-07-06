@@ -1,14 +1,27 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 
-$id = $_GET['id'];
-$stmt = $conn->prepare("SELECT * FROM produk WHERE id_produk = ?");
+$id = (int)($_GET['id'] ?? 0);
+$stmt = $conn->prepare(
+    "SELECT p.*, COALESCE(k.nama_kategori, 'Lainnya') AS nama_kategori, k.icon AS kategori_icon
+     FROM produk p
+     LEFT JOIN kategori k ON k.id_kategori = p.id_kategori
+     WHERE p.id_produk = ?"
+);
 
 $stmt->bind_param("i", $id);
 
 $stmt->execute();
 $result = $stmt->get_result();
 $produk = $result->fetch_assoc();
+
+if(!$produk){
+    header("Location: data_produk.php");
+    exit();
+}
 
 $stok = (int)$produk['stok'];
 if($stok <= 0){
@@ -385,7 +398,12 @@ if($stok <= 0){
 
         <div class="detail-price">Rp <?= number_format($produk['harga'],0,',','.'); ?></div>
 
-        <div class="stok-badge <?= $stok_class; ?>">📦 <?= $stok_label; ?></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <div class="stok-badge <?= $stok_class; ?>">📦 <?= $stok_label; ?></div>
+          <div class="stok-badge" style="background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.3);color:#D4AF37;">
+            <?= htmlspecialchars($produk['kategori_icon'] ?? '🍽️'); ?> <?= htmlspecialchars($produk['nama_kategori']); ?>
+          </div>
+        </div>
 
         <div class="detail-divider"></div>
 

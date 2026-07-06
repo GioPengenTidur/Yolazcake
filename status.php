@@ -17,24 +17,30 @@ $bookings   = [];
 $pemesanans = [];
 
 if ($do_search && $no_hp !== '') {
-    $no_hp_esc = mysqli_real_escape_string($conn, $no_hp);
-
-    $qb = mysqli_query($conn, "
+    $stmtB = $conn->prepare("
         SELECT b.*, m.nomor_meja AS nomor_meja_terdaftar
         FROM booking b
         LEFT JOIN meja m ON m.id_meja = b.id_meja
-        WHERE b.no_hp = '$no_hp_esc'
+        WHERE b.no_hp = ?
         ORDER BY b.created_at DESC
     ");
+    $stmtB->bind_param("s", $no_hp);
+    $stmtB->execute();
+    $qb = $stmtB->get_result();
     if ($qb) { while ($row = mysqli_fetch_assoc($qb)) { $bookings[] = $row; } }
+    $stmtB->close();
 
-    $qp = mysqli_query($conn, "
+    $stmtP = $conn->prepare("
         SELECT *
         FROM pemesanan
-        WHERE no_hp = '$no_hp_esc'
+        WHERE no_hp = ?
         ORDER BY tanggal DESC
     ");
+    $stmtP->bind_param("s", $no_hp);
+    $stmtP->execute();
+    $qp = $stmtP->get_result();
     if ($qp) { while ($row = mysqli_fetch_assoc($qp)) { $pemesanans[] = $row; } }
+    $stmtP->close();
 }
 
 function badge_booking($status) {

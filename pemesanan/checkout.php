@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../config/koneksi.php';
+require_once '../config/promo_helper.php';
 
 // Redirect jika keranjang kosong
 if(empty($_SESSION['keranjang'])){
@@ -11,14 +12,53 @@ if(empty($_SESSION['keranjang'])){
 // Hitung total & ambil data produk
 $items = [];
 $total = 0;
+$stmtProduk = $conn->prepare("SELECT * FROM produk WHERE id_produk=?");
 foreach($_SESSION['keranjang'] as $id_produk => $jumlah){
-  $q = mysqli_query($conn, "SELECT * FROM produk WHERE id_produk='$id_produk'");
-  $p = mysqli_fetch_assoc($q);
+  $id_produk_int = (int)$id_produk;
+  $stmtProduk->bind_param("i", $id_produk_int);
+  $stmtProduk->execute();
+  $p = $stmtProduk->get_result()->fetch_assoc();
   $subtotal       = $p['harga'] * $jumlah;
   $total         += $subtotal;
   $items[]        = array_merge($p, ['jumlah'=>$jumlah,'subtotal'=>$subtotal]);
 }
+$stmtProduk->close();
 $ada_booking = isset($_SESSION['id_booking']) && $_SESSION['id_booking'];
+
+// ── KODE PROMO ──
+$promo_error = null;
+
+if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['terapkan_promo'])){
+  $hasil = cek_promo($conn, $_POST['kode_promo'] ?? '', $total);
+  if($hasil['ok']){
+    $_SESSION['checkout_promo'] = [
+      'kode_promo' => $hasil['promo']['kode_promo'],
+    ];
+  } else {
+    $promo_error = $hasil['pesan'];
+    unset($_SESSION['checkout_promo']);
+  }
+}
+
+if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hapus_promo'])){
+  unset($_SESSION['checkout_promo']);
+}
+
+// Validasi ulang promo yang sedang aktif di session terhadap subtotal
+// saat ini (jaga-jaga kalau isi keranjang berubah setelah promo diklaim).
+$promo_aktif    = null;
+$diskon_nominal = 0;
+if(!empty($_SESSION['checkout_promo'])){
+  $cek = cek_promo($conn, $_SESSION['checkout_promo']['kode_promo'], $total);
+  if($cek['ok']){
+    $promo_aktif    = $cek['promo'];
+    $diskon_nominal = $cek['diskon_nominal'];
+  } else {
+    $promo_error = $promo_error ?? $cek['pesan'];
+    unset($_SESSION['checkout_promo']);
+  }
+}
+$total_bayar = $total - $diskon_nominal;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -262,6 +302,38 @@ $ada_booking = isset($_SESSION['id_booking']) && $_SESSION['id_booking'];
       font-size:.9em;font-weight:700;color:#D4AF37;
       white-space:nowrap;flex-shrink:0;
     }
+
+    /* ── PROMO BOX ── */
+    .promo-box{margin:0 26px 22px;}
+    .promo-form{display:flex;gap:10px;}
+    .promo-form input{
+      flex:1;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:12px;
+      padding:12px 16px;
+      font-family:'Inter',sans-serif;
+      font-size:.85em;color:#fff;letter-spacing:1px;
+      outline:none;transition:border-color .3s,background .3s;
+    }
+    .promo-form input::placeholder{color:rgba(255,255,255,.3);letter-spacing:normal;}
+    .promo-form input:focus{border-color:rgba(212,175,55,.55);background:rgba(212,175,55,.06);}
+    .promo-form input[readonly]{color:#6efabc;border-color:rgba(99,250,180,.35);background:rgba(99,250,180,.06);}
+    .promo-form button{
+      flex-shrink:0;padding:12px 20px;border:none;border-radius:12px;
+      font-family:'Inter',sans-serif;font-size:.78em;font-weight:700;
+      letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;
+      background:linear-gradient(135deg,#D4AF37,#b8860b);color:#1e0e3a;
+      transition:transform .2s,box-shadow .2s;
+    }
+    .promo-form button:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(212,175,55,.3);}
+    .promo-form button.btn-hapus{background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);}
+    .promo-msg{
+      margin-top:10px;font-size:.78em;line-height:1.5;padding:10px 14px;
+      border-radius:10px;
+    }
+    .promo-msg.error{background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.3);color:#ff8080;}
+    .promo-msg.success{background:rgba(99,250,180,.1);border:1px solid rgba(99,250,180,.3);color:#6efabc;}
 
     /* ── TOTAL SECTION ── */
     .total-wrap{
@@ -570,19 +642,51 @@ $ada_booking = isset($_SESSION['id_booking']) && $_SESSION['id_booking'];
 
       <div class="gold-div"></div>
 
+      <!-- KODE PROMO -->
+      <div class="promo-box">
+        <form method="POST" class="promo-form">
+          <input
+            type="text"
+            name="kode_promo"
+            placeholder="✦ Punya kode promo?"
+            style="text-transform:uppercase;"
+            value="<?= $promo_aktif ? htmlspecialchars($promo_aktif['kode_promo']) : '' ?>"
+            <?= $promo_aktif ? 'readonly' : '' ?>
+            <?= $promo_aktif ? '' : 'required' ?>>
+          <?php if($promo_aktif): ?>
+            <button type="submit" name="hapus_promo" value="1" class="btn-hapus">✕ Hapus</button>
+          <?php else: ?>
+            <button type="submit" name="terapkan_promo" value="1">Terapkan</button>
+          <?php endif; ?>
+        </form>
+        <?php if($promo_error): ?>
+          <div class="promo-msg error">⚠️ <?= htmlspecialchars($promo_error) ?></div>
+        <?php elseif($promo_aktif): ?>
+          <div class="promo-msg success">✓ Kode <strong><?= htmlspecialchars($promo_aktif['kode_promo']) ?></strong> diterapkan — diskon <?= (int)$promo_aktif['diskon_persen'] ?>%.</div>
+        <?php endif; ?>
+      </div>
+
+      <div class="gold-div"></div>
+
       <!-- TOTAL -->
       <div class="total-wrap">
         <div class="total-row">
           <span>Subtotal (<?= count($items) ?> item)</span>
           <span>Rp <?= number_format($total,0,',','.'); ?></span>
         </div>
+        <?php if($promo_aktif): ?>
+        <div class="total-row" style="color:#6efabc;">
+          <span>Diskon (<?= htmlspecialchars($promo_aktif['kode_promo']) ?>)</span>
+          <span>-Rp <?= number_format($diskon_nominal,0,',','.'); ?></span>
+        </div>
+        <?php endif; ?>
         <div class="total-row">
           <span>Biaya Layanan</span>
           <span style="color:#6efabc;">Gratis</span>
         </div>
         <div class="total-row main">
           <span class="label">Total Pembayaran</span>
-          <span class="value">Rp <?= number_format($total,0,',','.'); ?></span>
+          <span class="value">Rp <?= number_format($total_bayar,0,',','.'); ?></span>
         </div>
       </div>
 

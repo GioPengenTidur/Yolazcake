@@ -1,17 +1,22 @@
 <?php
 session_start();
-if(!isset($_SESSION['username'])){ header("Location: ../auth/login.php"); exit(); }
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
+include '../config/upload_helper.php';
 
 $id = (int)($_GET['id'] ?? 0);
-$data = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM galeri WHERE id_galeri=$id"));
+$stmt = $conn->prepare("SELECT * FROM galeri WHERE id_galeri = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$data = $stmt->get_result()->fetch_assoc();
 if(!$data){ header("Location: data_galeri.php"); exit(); }
 
 $error = '';
 if($_SERVER['REQUEST_METHOD']==='POST'){
-    $judul     = mysqli_real_escape_string($conn, trim($_POST['judul']));
-    $deskripsi = mysqli_real_escape_string($conn, trim($_POST['deskripsi']));
-    $kategori  = mysqli_real_escape_string($conn, $_POST['kategori']);
+    $judul     = trim($_POST['judul'] ?? '');
+    $deskripsi = trim($_POST['deskripsi'] ?? '');
+    $kategori  = $_POST['kategori'] ?? '';
 
     if(!$judul){
         $error = "Judul foto wajib diisi!";
@@ -20,30 +25,36 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 
         // Kalau ada foto baru diupload, ganti yang lama
         if(isset($_FILES['foto']) && $_FILES['foto']['error'] === 0){
-            $namaFotoBaru = time()."_".basename($_FILES['foto']['name']);
-            $tujuan = "../assets/img/galeri/".$namaFotoBaru;
-            if(!is_dir("../assets/img/galeri")){ mkdir("../assets/img/galeri", 0777, true); }
+            $upload = upload_gambar($_FILES['foto'], '../assets/img/galeri/');
 
-            if(move_uploaded_file($_FILES['foto']['tmp_name'], $tujuan)){
+            if(!$upload['success']){
+                $error = $upload['error'];
+            } else {
                 if($namaFoto && file_exists("../assets/img/galeri/".$namaFoto)){
                     unlink("../assets/img/galeri/".$namaFoto);
                 }
-                $namaFoto = $namaFotoBaru;
+                $namaFoto = $upload['filename'];
             }
         }
 
-        mysqli_query($conn,
-            "UPDATE galeri SET judul='$judul', deskripsi='$deskripsi', kategori='$kategori', foto='$namaFoto' WHERE id_galeri=$id");
-        include 'success_overlay.php';
-        tampilkan_sukses([
-            'proses_judul' => 'Memperbarui Foto…',
-            'proses_sub'   => 'Sedang menyimpan perubahan foto galeri',
-            'sukses_judul' => 'Foto Berhasil Diperbarui!',
-            'sukses_sub'   => '"'.htmlspecialchars($judul).'" telah diperbarui',
-            'redirect'     => 'data_galeri.php',
-            'tombol_label' => 'Lanjutkan ke Data Galeri',
-        ]);
-        exit;
+        if(!$error){
+            $stmt2 = $conn->prepare(
+                "UPDATE galeri SET judul=?, deskripsi=?, kategori=?, foto=? WHERE id_galeri=?"
+            );
+            $stmt2->bind_param("ssssi", $judul, $deskripsi, $kategori, $namaFoto, $id);
+            $stmt2->execute();
+
+            include 'success_overlay.php';
+            tampilkan_sukses([
+                'proses_judul' => 'Memperbarui Foto…',
+                'proses_sub'   => 'Sedang menyimpan perubahan foto galeri',
+                'sukses_judul' => 'Foto Berhasil Diperbarui!',
+                'sukses_sub'   => '"'.htmlspecialchars($judul).'" telah diperbarui',
+                'redirect'     => 'data_galeri.php',
+                'tombol_label' => 'Lanjutkan ke Data Galeri',
+            ]);
+            exit;
+        }
     }
 }
 ?>

@@ -1,0 +1,252 @@
+/* ==================== PREMIUM ENTRY ANIMATION ====================
+   Muncul HANYA saat user yang sudah login benar-benar memulai sesi
+   baru di tab/browser (lihat js inline di index.php untuk logikanya).
+=================================================================== */
+
+html.yz-lock,
+html.yz-lock body {
+  overflow: hidden !important;
+  height: 100%;
+}
+
+.yz-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* Dua panel "tirai" yang membuka ke kiri & kanan saat animasi selesai */
+.yz-intro-panel {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(212,175,55,0.20), transparent 55%),
+    radial-gradient(circle at 80% 80%, rgba(232,160,191,0.12), transparent 50%),
+    linear-gradient(160deg, #241611 0%, #3b2417 45%, #201310 100%);
+  transition: transform 1.05s cubic-bezier(0.76, 0, 0.24, 1);
+  will-change: transform;
+}
+
+.yz-intro-panel-left { left: 0; }
+.yz-intro-panel-right { right: 0; }
+
+/* Garis emas tipis di tengah pertemuan tirai */
+.yz-intro-panel-left::after,
+.yz-intro-panel-right::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(212,175,55,0.55), transparent);
+}
+.yz-intro-panel-left::after { right: 0; }
+.yz-intro-panel-right::after { left: 0; }
+
+.yz-intro-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.yz-intro-particles span {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--gold, #D4AF37);
+  opacity: .5;
+  filter: blur(0.5px);
+  animation: yzParticleFloat 4.5s ease-in-out infinite;
+}
+.yz-intro-particles span:nth-child(1){ top:18%; left:12%; animation-delay:0s; }
+.yz-intro-particles span:nth-child(2){ top:70%; left:20%; animation-delay:.6s; }
+.yz-intro-particles span:nth-child(3){ top:30%; left:82%; animation-delay:1.1s; }
+.yz-intro-particles span:nth-child(4){ top:78%; left:78%; animation-delay:1.6s; }
+.yz-intro-particles span:nth-child(5){ top:50%; left:8%;  animation-delay:2.0s; }
+.yz-intro-particles span:nth-child(6){ top:12%; left:60%; animation-delay:.3s; }
+.yz-intro-particles span:nth-child(7){ top:85%; left:50%; animation-delay:1.4s; }
+.yz-intro-particles span:nth-child(8){ top:45%; left:92%; animation-delay:.9s; }
+
+@keyframes yzParticleFloat {
+  0%, 100% { transform: translateY(0) scale(1); opacity: .35; }
+  50%      { transform: translateY(-22px) scale(1.4); opacity: .9; }
+}
+
+/* ---- Konten tengah: ring + logo + judul ---- */
+.yz-intro-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: opacity .7s ease, transform .7s cubic-bezier(0.4,0,0.2,1);
+}
+
+.yz-intro-ring {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 26px;
+  opacity: 0;
+  animation: yzLogoPop .85s cubic-bezier(0.34,1.56,0.64,1) .15s forwards;
+}
+
+.yz-intro-ring-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.yz-intro-ring-track {
+  fill: none;
+  stroke: rgba(212,175,55,0.18);
+  stroke-width: 2.5;
+}
+
+.yz-intro-ring-progress {
+  fill: none;
+  stroke: var(--gold, #D4AF37);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 439.8;
+  stroke-dashoffset: 439.8;
+  animation: yzRingDraw 1.6s cubic-bezier(0.65,0,0.35,1) .25s forwards;
+  filter: drop-shadow(0 0 6px rgba(212,175,55,0.55));
+}
+
+.yz-intro-logo {
+  width: 74px;
+  height: 74px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: #fff3e0;
+  padding: 6px;
+  box-shadow: 0 0 24px rgba(212,175,55,0.35);
+}
+
+@keyframes yzLogoPop {
+  0%   { opacity: 0; transform: scale(0.55); }
+  65%  { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.yz-intro-title {
+  display: flex;
+  gap: 2px;
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 6vw, 46px);
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: #FFF3E0;
+}
+
+.yz-intro-title span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(22px) rotateX(50deg);
+  animation: yzFadeUpLetter .6s cubic-bezier(0.2,0.65,0.3,1) forwards;
+}
+.yz-intro-title span:nth-child(1){ animation-delay: .45s; }
+.yz-intro-title span:nth-child(2){ animation-delay: .50s; }
+.yz-intro-title span:nth-child(3){ animation-delay: .55s; }
+.yz-intro-title span:nth-child(4){ animation-delay: .60s; }
+.yz-intro-title span:nth-child(5){ animation-delay: .65s; }
+.yz-intro-title span:nth-child(6){ animation-delay: .70s; }
+.yz-intro-title span:nth-child(7){ animation-delay: .75s; }
+.yz-intro-title span:nth-child(8){ animation-delay: .80s; }
+.yz-intro-title span:nth-child(9){ animation-delay: .85s; }
+
+@keyframes yzFadeUpLetter {
+  to { opacity: 1; transform: translateY(0) rotateX(0); }
+}
+
+.yz-intro-tagline {
+  margin: 10px 0 0;
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,243,224,0.65);
+  opacity: 0;
+  animation: yzFadeIn .7s ease 1.05s forwards;
+}
+
+.yz-intro-line {
+  width: 0;
+  height: 2px;
+  margin: 20px 0 16px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold, #D4AF37), transparent);
+  background-size: 200% 100%;
+  opacity: 0;
+  animation:
+    yzLineGrow .7s ease 1.25s forwards,
+    yzShimmer 1.8s linear 2s infinite;
+}
+
+@keyframes yzLineGrow {
+  from { width: 0; opacity: 0; }
+  to   { width: 120px; opacity: 1; }
+}
+
+@keyframes yzShimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.yz-intro-welcome {
+  margin: 0;
+  font-size: 14px;
+  color: rgba(255,243,224,0.55);
+  opacity: 0;
+  animation: yzFadeIn .7s ease 1.45s forwards;
+}
+
+/* ---- Kondisi keluar (curtain terbuka) ---- */
+.yz-intro-exit .yz-intro-panel-left  { transform: translateX(-100%); }
+.yz-intro-exit .yz-intro-panel-right { transform: translateX(100%); }
+.yz-intro-exit .yz-intro-content {
+  opacity: 0;
+  transform: scale(1.06) translateY(-8px);
+}
+
+/* ---- Kondisi tidak perlu animasi sama sekali (langsung sembunyi) ---- */
+.yz-intro-skip {
+  display: none !important;
+}
+
+/* Setelah animasi selesai sepenuhnya, lepas dari DOM flow */
+.yz-intro-hidden {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  .yz-intro-ring { width: 104px; height: 104px; }
+  .yz-intro-logo { width: 58px; height: 58px; }
+  .yz-intro-title { letter-spacing: 2px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .yz-intro-panel { transition: none; }
+  .yz-intro-ring, .yz-intro-title span, .yz-intro-tagline,
+  .yz-intro-line, .yz-intro-welcome, .yz-intro-particles span {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

@@ -1,8 +1,11 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 include 'success_overlay.php';
 
-$id = $_GET['id'];
+$id = (int)($_GET['id'] ?? 0);
 $stmt = $conn->prepare("SELECT * FROM produk WHERE id_produk = ?");
 
 $stmt->bind_param("i", $id);
@@ -13,14 +16,13 @@ $produk = $result->fetch_assoc();
 
 $nama_produk = $produk['nama_produk'] ?? 'Produk';
 
-if(file_exists("../assets/img/produk/".$produk['foto'])){
+if(!empty($produk['foto']) && file_exists("../assets/img/produk/".$produk['foto'])){
     unlink("../assets/img/produk/".$produk['foto']);
 }
 
-mysqli_query(
-    $conn,
-    "DELETE FROM produk WHERE id_produk='$id'"
-);
+$del = $conn->prepare("DELETE FROM produk WHERE id_produk = ?");
+$del->bind_param("i", $id);
+$del->execute();
 
 tampilkan_sukses([
     'proses_judul' => 'Menghapus Produk…',

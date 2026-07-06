@@ -1,5 +1,26 @@
 <?php
 session_start();
+require_once '../config/koneksi.php';
+
+// Ambil foto Highlights Menu & Produk Unggulan dari database (bisa diubah lewat dashboard > Foto Menu & Highlight)
+function ambil_foto_menu_section($conn, $section){
+    $rows = [];
+    $stmt = $conn->prepare("SELECT card_index,slide_index,foto_path FROM menu_highlight_foto WHERE section=?");
+    $stmt->bind_param("s", $section);
+    $stmt->execute();
+    $q = $stmt->get_result();
+    while($r = mysqli_fetch_assoc($q)){
+        $rows[(int)$r['card_index']][(int)$r['slide_index']] = $r['foto_path'];
+    }
+    $stmt->close();
+    return $rows;
+}
+function foto_menu($arr, $card, $slide, $default){
+    $path = $arr[$card][$slide] ?? null;
+    return $path ? '../'.$path : $default;
+}
+$fotoHighlight = ambil_foto_menu_section($conn, 'highlight');
+$fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -129,6 +150,30 @@ session_start();
       color: #D4AF37;
       font-size: 0.75em;
       letter-spacing: 4px;
+    }
+
+    .hero-cta-row {
+      position: relative;
+      z-index: 2;
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeSlideDown 0.9s forwards 1.3s;
+    }
+
+    .hero-cta-note {
+      position: relative;
+      z-index: 2;
+      margin-top: 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8em;
+      color: rgba(255,255,255,0.55);
+      opacity: 0;
+      animation: fadeSlideDown 0.9s forwards 1.5s;
     }
 
     @keyframes fadeSlideDown {
@@ -1539,6 +1584,7 @@ session_start();
     <div class="dark-btn" onclick="toggleDark()">🌙</div>
   </div>
   <div class="dropdown" id="dropdown">
+    <p onclick="window.location.href='../pemesanan/menuu.php'">🍰 Pesan Sekarang</p>
     <p onclick="window.location.href='../about.php#story'">Back Story</p>
     <p onclick="window.location.href='menu.php#Product'">Featured Product</p>
     <p onclick="window.location.href='menu.php#promo'">Promo</p>
@@ -1561,6 +1607,11 @@ session_start();
       <span class="diamond">✦ ✦ ✦</span>
       <span></span>
     </div>
+    <div class="hero-cta-row">
+      <a href="../pemesanan/menuu.php" class="booking-btn-main">🍰 Pesan Sekarang</a>
+      <a href="#booking" class="booking-btn-wa">📅 Booking Meja (Opsional)</a>
+    </div>
+    <p class="hero-cta-note">💡 Kamu bisa langsung pesan tanpa reservasi meja. Booking hanya diperlukan kalau ingin memastikan tempat duduk.</p>
   </div>
 </div>
 
@@ -1578,9 +1629,9 @@ session_start();
     <div class="menu-card fade" data-menu-carousel="0">
       <div class="menu-card-photo">
         <div class="photo-carousel" id="menu-carousel-0">
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Doughnut.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Tiramisu_Doughnut.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Matcha_Doughnut.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoHighlight,0,0,'../assets/img/produk/Doughnut.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoHighlight,0,1,'../assets/img/produk/Tiramisu_Doughnut.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoHighlight,0,2,'../assets/img/produk/Matcha_Doughnut.jpeg'); ?>')"></div>
         </div>
         <div class="menu-carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="menuCarouselMove(0,-1,event)">‹</button>
@@ -1604,9 +1655,9 @@ session_start();
     <div class="menu-card fade" data-menu-carousel="1">
       <div class="menu-card-photo">
         <div class="photo-carousel" id="menu-carousel-1">
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Iced Palm Sugar Coffee Latte.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Coffee_Latte.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Coffee_Latte_2.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoHighlight,1,0,'../assets/img/produk/Iced Palm Sugar Coffee Latte.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoHighlight,1,1,'../assets/img/produk/Coffee_Latte.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoHighlight,1,2,'../assets/img/produk/Coffee_Latte_2.jpeg'); ?>')"></div>
         </div>
         <div class="menu-carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="menuCarouselMove(1,-1,event)">‹</button>
@@ -1630,9 +1681,9 @@ session_start();
     <div class="menu-card fade" data-menu-carousel="2">
       <div class="menu-card-photo">
         <div class="photo-carousel" id="menu-carousel-2">
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Iced_Chocolate.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Matcha_Latte.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Lychee_Iced_Tea.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoHighlight,2,0,'../assets/img/produk/Iced_Chocolate.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoHighlight,2,1,'../assets/img/produk/Matcha_Latte.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoHighlight,2,2,'../assets/img/produk/Lychee_Iced_Tea.jpeg'); ?>')"></div>
         </div>
         <div class="menu-carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="menuCarouselMove(2,-1,event)">‹</button>
@@ -1656,9 +1707,9 @@ session_start();
     <div class="menu-card fade" data-menu-carousel="3">
       <div class="menu-card-photo">
         <div class="photo-carousel" id="menu-carousel-3">
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Boutique_Lantai_2.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Boutique_Lantai_2_1.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Boutique_Lantai_2_2.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoHighlight,3,0,'../assets/img/produk/Boutique_Lantai_2.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoHighlight,3,1,'../assets/img/produk/Boutique_Lantai_2_1.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoHighlight,3,2,'../assets/img/produk/Boutique_Lantai_2_2.jpeg'); ?>')"></div>
         </div>
         <div class="menu-carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="menuCarouselMove(3,-1,event)">‹</button>
@@ -1702,9 +1753,9 @@ session_start();
       <div class="product-card-photo">
         <!-- Carousel Track -->
         <div class="photo-carousel" id="carousel-0">
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Chocolate_Indulgence.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Klepon_Cake.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Red_Velvet_Cake.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoUnggulan,0,0,'../assets/img/produk/Chocolate_Indulgence.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoUnggulan,0,1,'../assets/img/produk/Klepon_Cake.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoUnggulan,0,2,'../assets/img/produk/Red_Velvet_Cake.jpeg'); ?>')"></div>
         </div>
         <!-- Shimmer overlay (keeps original effect) -->
         <div class="carousel-shimmer"></div>
@@ -1741,9 +1792,9 @@ session_start();
     <div class="product-card fade" data-carousel="1">
       <div class="product-card-photo">
         <div class="photo-carousel" id="carousel-1">
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Iced_Palm_Sugar_Coffee_Latte.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Iced_Brown_Sugar_Coffee_Latte.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Matcha_Latte.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoUnggulan,1,0,'../assets/img/produk/Iced_Palm_Sugar_Coffee_Latte.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoUnggulan,1,1,'../assets/img/produk/Iced_Brown_Sugar_Coffee_Latte.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoUnggulan,1,2,'../assets/img/produk/Matcha_Latte.jpeg'); ?>')"></div>
         </div>
         <div class="carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="carouselMove(1,-1,event)">‹</button>
@@ -1773,9 +1824,9 @@ session_start();
     <div class="product-card fade" data-carousel="2">
       <div class="product-card-photo">
         <div class="photo-carousel" id="carousel-2">
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Strawberry_Doughnut.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Classic_Chocolate_Doughnut.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Red_Velvet_Doughnut.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoUnggulan,2,0,'../assets/img/produk/Strawberry_Doughnut.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoUnggulan,2,1,'../assets/img/produk/Classic_Chocolate_Doughnut.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoUnggulan,2,2,'../assets/img/produk/Red_Velvet_Doughnut.jpeg'); ?>')"></div>
         </div>
         <div class="carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="carouselMove(2,-1,event)">‹</button>
@@ -1805,9 +1856,9 @@ session_start();
     <div class="product-card fade" data-carousel="3">
       <div class="product-card-photo">
         <div class="photo-carousel" id="carousel-3">
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Boutique_Collection.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Baju.jpeg')"></div>
-          <div class="photo-carousel-slide" style="background-image:url('../assets/img/produk/Celana.jpeg')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoUnggulan,3,0,'../assets/img/produk/Boutique_Collection.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoUnggulan,3,1,'../assets/img/produk/Baju.jpeg'); ?>')"></div>
+          <div class="photo-carousel-slide" style="background-image:url('<?php echo foto_menu($fotoUnggulan,3,2,'../assets/img/produk/Celana.jpeg'); ?>')"></div>
         </div>
         <div class="carousel-shimmer"></div>
         <button class="carousel-btn prev" onclick="carouselMove(3,-1,event)">‹</button>
@@ -1852,6 +1903,9 @@ session_start();
         Nikmati pengalaman tak terlupakan bersama keluarga dan sahabat.
         Reservasi meja lebih awal agar momen spesial Anda di YOLAZCAKE
         selalu terjamin dan nyaman.
+      </p>
+      <p style="font-size:0.85em;color:rgba(255,255,255,0.55);margin-top:-6px;">
+        💡 Booking meja bersifat opsional. Mau langsung pesan tanpa reservasi? Klik <a href="../pemesanan/menuu.php" style="color:#D4AF37;text-decoration:underline;">Pesan Sekarang</a>.
       </p>
 
       <div class="booking-features">

@@ -1,7 +1,11 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
+include '../config/upload_helper.php';
 
-$id = $_GET['id'];
+$id = (int)($_GET['id'] ?? 0);
 $stmt = $conn->prepare("SELECT * FROM produk WHERE id_produk = ?");
 
 $stmt->bind_param("i", $id);
@@ -10,59 +14,70 @@ $stmt->execute();
 $result = $stmt->get_result();
 $produk = $result->fetch_assoc();
 
+$error_msg = '';
 
-if(isset($_POST['update'])){
+// Ambil daftar kategori untuk dropdown
+$kategori_list = mysqli_query($conn, "SELECT id_kategori, nama_kategori, icon FROM kategori ORDER BY nama_kategori ASC");
 
-    $nama_produk = $_POST['nama_produk'];
-    $harga = $_POST['harga'];
-    $deskripsi = $_POST['deskripsi'];
-    $stok = $_POST['stok'];
+if($produk && isset($_POST['update'])){
 
-    if($_FILES['foto']['name'] != ''){
+    $nama_produk = trim($_POST['nama_produk'] ?? '');
+    $harga = $_POST['harga'] ?? '';
+    $deskripsi = trim($_POST['deskripsi'] ?? '');
+    $stok = $_POST['stok'] ?? '';
+    $id_kategori = $_POST['id_kategori'] ?? '';
+    $id_kategori = ($id_kategori === '') ? null : (int)$id_kategori;
 
-        $foto = $_FILES['foto']['name'];
-        $tmp = $_FILES['foto']['tmp_name'];
+    if($nama_produk === '' || !is_numeric($harga) || $harga < 0 || !is_numeric($stok) || $stok < 0){
+        $error_msg = 'Data yang dimasukkan tidak valid. Pastikan nama, harga, dan stok terisi dengan benar.';
+    } else {
 
-        move_uploaded_file(
-            $tmp,
-            "../assets/img/produk/".$foto
-        );
+        $fotoBaru = null;
 
-        mysqli_query($conn,"
-            UPDATE produk
-            SET
-            nama_produk='$nama_produk',
-            harga='$harga',
-            deskripsi='$deskripsi',
-            stok='$stok',
-            foto='$foto'
-            WHERE id_produk='$id'
-        ");
+        if(!empty($_FILES['foto']['name'])){
+            $upload = upload_gambar($_FILES['foto'], '../assets/img/produk/');
+            if(!$upload['success']){
+                $error_msg = $upload['error'];
+            } else {
+                $fotoBaru = $upload['filename'];
+            }
+        }
 
-    }else{
+        if($error_msg === ''){
 
-        mysqli_query($conn,"
-            UPDATE produk
-            SET
-            nama_produk='$nama_produk',
-            harga='$harga',
-            deskripsi='$deskripsi',
-            stok='$stok'
-            WHERE id_produk='$id'
-        ");
+            if($fotoBaru !== null){
+                // Hapus foto lama supaya tidak menumpuk file yatim di server
+                if(!empty($produk['foto']) && file_exists("../assets/img/produk/".$produk['foto'])){
+                    @unlink("../assets/img/produk/".$produk['foto']);
+                }
 
+                $stmt2 = $conn->prepare(
+                    "UPDATE produk SET nama_produk=?, harga=?, deskripsi=?, stok=?, foto=?, id_kategori=? WHERE id_produk=?"
+                );
+                $stmt2->bind_param("sdsisii", $nama_produk, $harga, $deskripsi, $stok, $fotoBaru, $id_kategori, $id);
+            } else {
+                $stmt2 = $conn->prepare(
+                    "UPDATE produk SET nama_produk=?, harga=?, deskripsi=?, stok=?, id_kategori=? WHERE id_produk=?"
+                );
+                $stmt2->bind_param("sdsiii", $nama_produk, $harga, $deskripsi, $stok, $id_kategori, $id);
+            }
+
+            if($stmt2->execute()){
+                include 'success_overlay.php';
+                tampilkan_sukses([
+                    'proses_judul' => 'Memperbarui Produk…',
+                    'proses_sub'   => 'Sedang menyimpan perubahan data produk',
+                    'sukses_judul' => 'Produk Berhasil Diperbarui!',
+                    'sukses_sub'   => 'Perubahan pada "'.htmlspecialchars($nama_produk).'" telah tersimpan',
+                    'redirect'     => 'data_produk.php',
+                    'tombol_label' => 'Lanjutkan ke Data Produk',
+                ]);
+                exit;
+            } else {
+                $error_msg = 'Gagal menyimpan perubahan ke database.';
+            }
+        }
     }
-
-    include 'success_overlay.php';
-    tampilkan_sukses([
-        'proses_judul' => 'Memperbarui Produk…',
-        'proses_sub'   => 'Sedang menyimpan perubahan data produk',
-        'sukses_judul' => 'Produk Berhasil Diperbarui!',
-        'sukses_sub'   => 'Perubahan pada "'.htmlspecialchars($nama_produk).'" telah tersimpan',
-        'redirect'     => 'data_produk.php',
-        'tombol_label' => 'Lanjutkan ke Data Produk',
-    ]);
-    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -274,6 +289,15 @@ if(isset($_POST['update'])){
     }
     .form-textarea{resize:vertical;min-height:100px;line-height:1.6;}
 
+    select.form-input{
+      cursor:pointer;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath fill='%23D4AF37' d='M1 1l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;
+      background-position:right 18px center;
+      padding-right:44px;
+    }
+    select.form-input option{background:#1e0e3a;color:#fff;}
+
     /* ── ROW 2-COL ── */
     .form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
     @media(max-width:560px){.form-row{grid-template-columns:1fr;}}
@@ -448,6 +472,12 @@ if(isset($_POST['update'])){
 
       <div class="form-body">
 
+        <?php if($error_msg): ?>
+        <div style="background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.4);color:#ffb3b3;padding:12px 16px;border-radius:12px;font-size:.85em;">
+          ⚠️ <?= htmlspecialchars($error_msg); ?>
+        </div>
+        <?php endif; ?>
+
         <!-- Nama Produk -->
         <div class="form-group">
           <label class="form-label">
@@ -460,6 +490,24 @@ if(isset($_POST['update'])){
             value="<?= htmlspecialchars($produk['nama_produk']); ?>"
             required
           >
+        </div>
+
+        <!-- Kategori -->
+        <div class="form-group">
+          <label class="form-label">
+            <span class="lbl-icon">🏷️</span> Kategori Produk
+          </label>
+          <select name="id_kategori" class="form-input">
+            <option value="">— Tanpa Kategori (Lainnya) —</option>
+            <?php if($kategori_list && mysqli_num_rows($kategori_list) > 0): mysqli_data_seek($kategori_list, 0); ?>
+              <?php while($kat = mysqli_fetch_assoc($kategori_list)): ?>
+                <option value="<?= (int)$kat['id_kategori']; ?>" <?= ((int)($produk['id_kategori'] ?? 0) === (int)$kat['id_kategori']) ? 'selected' : ''; ?>>
+                  <?= htmlspecialchars($kat['icon'] ? $kat['icon'].' ' : '').htmlspecialchars($kat['nama_kategori']); ?>
+                </option>
+              <?php endwhile; ?>
+            <?php endif; ?>
+          </select>
+          <span class="form-hint">Pilih kategori supaya produk tampil rapi di menu customer. Belum ada kategori? Kelola di halaman <a href="../kategori/data_kategori.php" style="color:#D4AF37;">Kategori Produk</a>.</span>
         </div>
 
         <!-- Harga & Stok (2 kolom) -->

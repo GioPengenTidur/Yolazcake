@@ -48,7 +48,13 @@ if ($result->num_rows > 0) {
 if ($valid) {
 
     $_SESSION['username'] = $username;
-    $_SESSION['role'] = $user['role'] ?? 'kasir';
+    $_SESSION['role'] = $user['role'] ?? 'pengunjung';
+    $_SESSION['email'] = $user['email'] ?? null;
+    $_SESSION['user_id'] = $user['id'] ?? null;
+
+    // Semua role (termasuk admin/kasir) kembali ke halaman utama website
+    // dulu setelah login. Untuk masuk ke panel, admin membuka dropdown akun
+    // di navbar lalu menekan "Dashboard" -> dashboard_awal.php (mode dasar).
     respond($is_ajax, true, 'Login berhasil.', '../index.php');
 
 } else {

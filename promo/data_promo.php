@@ -1,13 +1,23 @@
 <?php
 session_start();
-if(!isset($_SESSION['username'])){ header("Location: ../auth/login.php"); exit(); }
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 
 // Handle hapus
 if(isset($_GET['hapus'])){
     $id = (int)$_GET['hapus'];
-    $p = mysqli_fetch_assoc(mysqli_query($conn,"SELECT kode_promo FROM promo WHERE id_promo=$id"));
-    mysqli_query($conn, "DELETE FROM promo WHERE id_promo=$id");
+
+    $stmt = $conn->prepare("SELECT kode_promo FROM promo WHERE id_promo=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $p = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    $stmt = $conn->prepare("DELETE FROM promo WHERE id_promo=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
 
     include 'success_overlay.php';
     tampilkan_sukses([
@@ -24,11 +34,20 @@ if(isset($_GET['hapus'])){
 // Toggle status aktif/nonaktif
 if(isset($_GET['toggle'])){
     $id = (int)$_GET['toggle'];
-    $d  = mysqli_fetch_assoc(mysqli_query($conn,"SELECT kode_promo,status FROM promo WHERE id_promo=$id"));
+
+    $stmt = $conn->prepare("SELECT kode_promo,status FROM promo WHERE id_promo=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $d = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
     $baru = null;
     if($d){
         $baru = $d['status']==='Aktif' ? 'Nonaktif' : 'Aktif';
-        mysqli_query($conn, "UPDATE promo SET status='$baru' WHERE id_promo=$id");
+        $stmt = $conn->prepare("UPDATE promo SET status=? WHERE id_promo=?");
+        $stmt->bind_param("si", $baru, $id);
+        $stmt->execute();
+        $stmt->close();
     }
 
     include 'success_overlay.php';
@@ -45,21 +64,29 @@ if(isset($_GET['toggle'])){
 
 // Tambah
 if(isset($_POST['tambah'])){
-    $kode      = mysqli_real_escape_string($conn, strtoupper(trim($_POST['kode_promo'])));
-    $judul     = mysqli_real_escape_string($conn, trim($_POST['judul']));
-    $deskripsi = mysqli_real_escape_string($conn, trim($_POST['deskripsi']));
+    $kode      = strtoupper(trim($_POST['kode_promo']));
+    $judul     = trim($_POST['judul']);
+    $deskripsi = trim($_POST['deskripsi']);
     $diskon    = (int)$_POST['diskon_persen'];
     $minbel    = (int)$_POST['min_belanja'];
     $poin      = (int)$_POST['poin_bonus'];
-    $mulai     = mysqli_real_escape_string($conn, $_POST['tanggal_mulai']);
-    $selesai   = mysqli_real_escape_string($conn, $_POST['tanggal_selesai']);
+    $mulai     = $_POST['tanggal_mulai'];
+    $selesai   = $_POST['tanggal_selesai'];
 
     if($kode && $judul){
-        $cek = mysqli_fetch_assoc(mysqli_query($conn,"SELECT id_promo FROM promo WHERE kode_promo='$kode'"));
+        $stmt = $conn->prepare("SELECT id_promo FROM promo WHERE kode_promo=?");
+        $stmt->bind_param("s", $kode);
+        $stmt->execute();
+        $cek = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+
         if(!$cek){
-            mysqli_query($conn,
+            $stmt = $conn->prepare(
                 "INSERT INTO promo (kode_promo,judul,deskripsi,diskon_persen,min_belanja,poin_bonus,tanggal_mulai,tanggal_selesai,status)
-                 VALUES ('$kode','$judul','$deskripsi',$diskon,$minbel,$poin,'$mulai','$selesai','Aktif')");
+                 VALUES (?,?,?,?,?,?,?,?,'Aktif')");
+            $stmt->bind_param("sssiiiss", $kode, $judul, $deskripsi, $diskon, $minbel, $poin, $mulai, $selesai);
+            $stmt->execute();
+            $stmt->close();
         }
     }
 
@@ -78,20 +105,23 @@ if(isset($_POST['tambah'])){
 // Edit
 if(isset($_POST['edit'])){
     $id        = (int)$_POST['id_promo'];
-    $kode      = mysqli_real_escape_string($conn, strtoupper(trim($_POST['kode_promo'])));
-    $judul     = mysqli_real_escape_string($conn, trim($_POST['judul']));
-    $deskripsi = mysqli_real_escape_string($conn, trim($_POST['deskripsi']));
+    $kode      = strtoupper(trim($_POST['kode_promo']));
+    $judul     = trim($_POST['judul']);
+    $deskripsi = trim($_POST['deskripsi']);
     $diskon    = (int)$_POST['diskon_persen'];
     $minbel    = (int)$_POST['min_belanja'];
     $poin      = (int)$_POST['poin_bonus'];
-    $mulai     = mysqli_real_escape_string($conn, $_POST['tanggal_mulai']);
-    $selesai   = mysqli_real_escape_string($conn, $_POST['tanggal_selesai']);
+    $mulai     = $_POST['tanggal_mulai'];
+    $selesai   = $_POST['tanggal_selesai'];
 
     if($kode && $judul){
-        mysqli_query($conn,
-            "UPDATE promo SET kode_promo='$kode', judul='$judul', deskripsi='$deskripsi',
-             diskon_persen=$diskon, min_belanja=$minbel, poin_bonus=$poin,
-             tanggal_mulai='$mulai', tanggal_selesai='$selesai' WHERE id_promo=$id");
+        $stmt = $conn->prepare(
+            "UPDATE promo SET kode_promo=?, judul=?, deskripsi=?,
+             diskon_persen=?, min_belanja=?, poin_bonus=?,
+             tanggal_mulai=?, tanggal_selesai=? WHERE id_promo=?");
+        $stmt->bind_param("sssiiissi", $kode, $judul, $deskripsi, $diskon, $minbel, $poin, $mulai, $selesai, $id);
+        $stmt->execute();
+        $stmt->close();
     }
 
     include 'success_overlay.php';
@@ -131,7 +161,7 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
       background:radial-gradient(ellipse at 20% 30%,rgba(212,175,55,.10) 0%,transparent 55%),
                  radial-gradient(ellipse at 80% 70%,rgba(232,160,191,.10) 0%,transparent 55%);}
     .page-hero{position:relative;height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;
-      background:linear-gradient(135deg,#1a0a2e 0%,#3d1a6e 50%,#1a0a2e 100%);z-index:1;}
+      background:linear-gradient(135deg,#2b1a11 0%,#4a2c1a 40%,#6d3e26 70%,#3a1f0e 100%);z-index:1;}
     .page-hero::before{content:'';position:absolute;inset:0;
       background:radial-gradient(ellipse at 30% 50%,rgba(212,175,55,.18) 0%,transparent 60%),
                  radial-gradient(ellipse at 75% 40%,rgba(232,160,191,.15) 0%,transparent 55%);

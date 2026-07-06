@@ -1,28 +1,43 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
+
+$error_msg = '';
 
 if(isset($_POST['simpan'])){
 
-    $nama   = $_POST['nama'];
-    $email  = $_POST['email'];
-    $no_hp  = $_POST['no_hp'];
-    $alamat = $_POST['alamat'];
+    $nama   = trim($_POST['nama'] ?? '');
+    $email  = trim($_POST['email'] ?? '');
+    $no_hp  = trim($_POST['no_hp'] ?? '');
+    $alamat = trim($_POST['alamat'] ?? '');
 
-    mysqli_query($conn,"
-        INSERT INTO member (nama,email,no_hp,alamat,poin)
-        VALUES ('$nama','$email','$no_hp','$alamat',0)
-    ");
+    if($nama === ''){
+        $error_msg = 'Nama member wajib diisi.';
+    } elseif($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)){
+        $error_msg = 'Format email tidak valid.';
+    } else {
+        $stmt = $conn->prepare(
+            "INSERT INTO member (nama, email, no_hp, alamat, poin) VALUES (?, ?, ?, ?, 0)"
+        );
+        $stmt->bind_param("ssss", $nama, $email, $no_hp, $alamat);
 
-    include 'success_overlay.php';
-    tampilkan_sukses([
-        'proses_judul' => 'Menyimpan Member…',
-        'proses_sub'   => 'Sedang mendaftarkan member baru',
-        'sukses_judul' => 'Member Berhasil Ditambahkan!',
-        'sukses_sub'   => '"'.htmlspecialchars($nama).'" kini terdaftar sebagai member',
-        'redirect'     => 'data_member.php',
-        'tombol_label' => 'Lanjutkan ke Data Member',
-    ]);
-    exit;
+        if($stmt->execute()){
+            include 'success_overlay.php';
+            tampilkan_sukses([
+                'proses_judul' => 'Menyimpan Member…',
+                'proses_sub'   => 'Sedang mendaftarkan member baru',
+                'sukses_judul' => 'Member Berhasil Ditambahkan!',
+                'sukses_sub'   => '"'.htmlspecialchars($nama).'" kini terdaftar sebagai member',
+                'redirect'     => 'data_member.php',
+                'tombol_label' => 'Lanjutkan ke Data Member',
+            ]);
+            exit;
+        } else {
+            $error_msg = 'Gagal menyimpan data member ke database.';
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -303,6 +318,12 @@ if(isset($_POST['simpan'])){
     <div class="gold-rule-h"><span>✦ ✦ ✦</span></div>
 
     <form method="POST">
+
+      <?php if($error_msg): ?>
+      <div style="background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.4);color:#ffb3b3;padding:12px 16px;border-radius:12px;font-size:.85em;margin-bottom:16px;">
+        ⚠️ <?= htmlspecialchars($error_msg); ?>
+      </div>
+      <?php endif; ?>
 
       <div class="field-group">
         <div class="field">

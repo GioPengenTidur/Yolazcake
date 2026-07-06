@@ -1,18 +1,27 @@
 <?php
 session_start();
-if(!isset($_SESSION['username'])){
-    header("Location: ../auth/login.php"); exit();
-}
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 
 // Handle hapus
 if(isset($_GET['hapus'])){
     $id = (int)$_GET['hapus'];
-    $d = mysqli_fetch_assoc(mysqli_query($conn,"SELECT foto,judul FROM galeri WHERE id_galeri=$id"));
+
+    $stmt = $conn->prepare("SELECT foto,judul FROM galeri WHERE id_galeri=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $d = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
     if($d && $d['foto'] && file_exists("../assets/img/galeri/".$d['foto'])){
         unlink("../assets/img/galeri/".$d['foto']);
     }
-    mysqli_query($conn, "DELETE FROM galeri WHERE id_galeri=$id");
+
+    $stmt = $conn->prepare("DELETE FROM galeri WHERE id_galeri=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
 
     include 'success_overlay.php';
     tampilkan_sukses([
@@ -26,9 +35,15 @@ if(isset($_GET['hapus'])){
     exit;
 }
 
-$filter = mysqli_real_escape_string($conn, $_GET['filter'] ?? '');
-$where  = $filter ? "WHERE kategori='$filter'" : '';
-$query  = mysqli_query($conn, "SELECT * FROM galeri $where ORDER BY created_at DESC");
+$filter = $_GET['filter'] ?? '';
+if($filter){
+    $stmt = $conn->prepare("SELECT * FROM galeri WHERE kategori=? ORDER BY created_at DESC");
+    $stmt->bind_param("s", $filter);
+    $stmt->execute();
+    $query = $stmt->get_result();
+} else {
+    $query = $conn->query("SELECT * FROM galeri ORDER BY created_at DESC");
+}
 $total  = mysqli_num_rows($query);
 $stats  = mysqli_fetch_assoc(mysqli_query($conn,
     "SELECT COUNT(*) as total,
@@ -62,10 +77,10 @@ $stats  = mysqli_fetch_assoc(mysqli_query($conn,
 
     .page-hero{position:relative;height:240px;display:flex;flex-direction:column;
       align-items:center;justify-content:center;overflow:hidden;
-      background:linear-gradient(135deg,#1a0a2e 0%,#3d1a6e 40%,#2d1560 70%,#1a0a2e 100%);z-index:1;}
+      background:linear-gradient(135deg,#2b1a11 0%,#4a2c1a 40%,#6d3e26 70%,#3a1f0e 100%);z-index:1;}
     .page-hero::before{content:'';position:absolute;inset:0;
       background:radial-gradient(ellipse at 30% 50%,rgba(212,175,55,.18) 0%,transparent 60%),
-                 radial-gradient(ellipse at 75% 40%,rgba(138,43,226,.15) 0%,transparent 55%);
+                 radial-gradient(ellipse at 75% 40%,rgba(232,160,191,.15) 0%,transparent 55%);
       animation:heroAurora 8s ease-in-out infinite alternate;}
     @keyframes heroAurora{0%{opacity:.6;transform:scale(1);}100%{opacity:1;transform:scale(1.08) translateX(10px);}}
     .sparkle{position:absolute;border-radius:50%;pointer-events:none;animation:floatDot linear infinite;}

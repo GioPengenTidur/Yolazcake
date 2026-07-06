@@ -1,4 +1,7 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 require_once '../config/koneksi.php';
 
 $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
@@ -352,8 +355,8 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
 
   <!-- top bar -->
   <div class="top-bar">
+    <a href="../dashboard.php" class="btn-back">← Dashboard</a>
     <span class="section-eyebrow">✦ Daftar Booking</span>
-    <a href="../dashboard.php" class="btn-back">🏠 Kembali ke Dashboard</a>
   </div>
 
   <!-- stats -->

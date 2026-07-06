@@ -1,11 +1,12 @@
 <?php
+session_start();
 require_once '../config/koneksi.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $nama_pemesan = mysqli_real_escape_string($conn, $_POST['nama_pemesan']);
-    $no_hp = mysqli_real_escape_string($conn, $_POST['no_hp']);
-    $tanggal_booking = $_POST['tanggal_booking'];
+    $nama_pemesan = trim($_POST['nama_pemesan'] ?? '');
+    $no_hp = trim($_POST['no_hp'] ?? '');
+    $tanggal_booking = $_POST['tanggal_booking'] ?? '';
 
     date_default_timezone_set('Asia/Jakarta');
 
@@ -25,35 +26,57 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error_msg = 'Booking hanya dapat dilakukan pada jam operasional YOLAZCAKE (08:00 - 22:00).';
         } else {
 
-            $cek_booking = mysqli_query(
-                $conn,
+            $stmtCek = $conn->prepare(
                 "SELECT COUNT(*) AS total
                  FROM booking
-                 WHERE tanggal_booking = '$tanggal_booking'
-                 AND jam_booking = '$jam_booking'
+                 WHERE tanggal_booking = ?
+                 AND jam_booking = ?
                  AND status != 'Dibatalkan'"
             );
-            $hasil = mysqli_fetch_assoc($cek_booking);
+            $stmtCek->bind_param("ss", $tanggal_booking, $jam_booking);
+            $stmtCek->execute();
+            $hasil = $stmtCek->get_result()->fetch_assoc();
+            $stmtCek->close();
 
             if ($hasil['total'] >= 5) {
                 $error_type = 'penuh';
                 $error_msg = 'Maaf, slot booking pada tanggal dan jam tersebut sudah penuh.';
             } else {
 
-                $jumlah_orang = $_POST['jumlah_orang'];
-                $catatan = mysqli_real_escape_string($conn, $_POST['catatan']);
+                $jumlah_orang = (int) $_POST['jumlah_orang'];
+                $catatan = trim($_POST['catatan'] ?? '');
+                $has_user = isset($_SESSION['user_id']) && $_SESSION['user_id'];
+                $id_user  = $has_user ? (int) $_SESSION['user_id'] : 0;
 
-                $query = "INSERT INTO booking (
-                                nama_pemesan, no_hp, tanggal_booking,
-                                jam_booking, jumlah_orang, catatan
-                            ) VALUES (
-                                '$nama_pemesan', '$no_hp', '$tanggal_booking',
-                                '$jam_booking', '$jumlah_orang', '$catatan'
-                            )";
+                if ($has_user) {
+                    $stmtInsert = $conn->prepare(
+                        "INSERT INTO booking (
+                            nama_pemesan, no_hp, tanggal_booking,
+                            jam_booking, jumlah_orang, catatan, id_user
+                        ) VALUES (?, ?, ?, ?, ?, ?, ?)"
+                    );
+                    $stmtInsert->bind_param(
+                        "ssssisi",
+                        $nama_pemesan, $no_hp, $tanggal_booking,
+                        $jam_booking, $jumlah_orang, $catatan, $id_user
+                    );
+                } else {
+                    $stmtInsert = $conn->prepare(
+                        "INSERT INTO booking (
+                            nama_pemesan, no_hp, tanggal_booking,
+                            jam_booking, jumlah_orang, catatan, id_user
+                        ) VALUES (?, ?, ?, ?, ?, ?, NULL)"
+                    );
+                    $stmtInsert->bind_param(
+                        "ssssis",
+                        $nama_pemesan, $no_hp, $tanggal_booking,
+                        $jam_booking, $jumlah_orang, $catatan
+                    );
+                }
 
-                if (mysqli_query($conn, $query)) {
-                    $id_booking = mysqli_insert_id($conn);
-                    session_start();
+                if ($stmtInsert->execute()) {
+                    $id_booking = $stmtInsert->insert_id;
+                    $stmtInsert->close();
                     $_SESSION['id_booking'] = $id_booking;
                     $_SESSION['nama_pemesan'] = $nama_pemesan;
                     $_SESSION['no_hp'] = $no_hp;

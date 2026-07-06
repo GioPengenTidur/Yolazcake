@@ -1,8 +1,11 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 include 'success_overlay.php';
 
-$id = $_GET['id'] ?? 0;
+$id = (int)($_GET['id'] ?? 0);
 
 $stmt = $conn->prepare("SELECT * FROM pemesanan WHERE id_pemesanan = ?");
 $stmt->bind_param("i", $id);
@@ -12,17 +15,13 @@ $data = $result->fetch_assoc();
 
 $kode_pesanan = $data['kode_pesanan'] ?? 'Pesanan';
 
-mysqli_query(
-$conn,
-"DELETE FROM detail_pemesanan
-WHERE id_pemesanan='$id'"
-);
+$del1 = $conn->prepare("DELETE FROM detail_pemesanan WHERE id_pemesanan = ?");
+$del1->bind_param("i", $id);
+$del1->execute();
 
-mysqli_query(
-$conn,
-"DELETE FROM pemesanan
-WHERE id_pemesanan='$id'"
-);
+$del2 = $conn->prepare("DELETE FROM pemesanan WHERE id_pemesanan = ?");
+$del2->bind_param("i", $id);
+$del2->execute();
 
 tampilkan_sukses([
     'proses_judul' => 'Menghapus Pemesanan…',

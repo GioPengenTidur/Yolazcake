@@ -1,4 +1,7 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 
 $query = mysqli_query($conn,
@@ -86,18 +89,20 @@ if(!$query){ die(mysqli_error($conn)); }
     /* ── BACK LINK ── */
     .back-link{
       position:relative;z-index:2;
-      display:inline-flex;align-items:center;gap:8px;
-      margin:32px auto 0;padding:0 32px;max-width:1300px;width:100%;
+      display:flex;justify-content:flex-start;
+      width:100%;margin-bottom:20px;
     }
     .back-link a{
-      font-size:.82em;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;
-      color:rgba(212,175,55,.85);text-decoration:none;
-      border:1px solid rgba(212,175,55,.3);padding:7px 18px;border-radius:999px;
-      transition:all .3s;background:rgba(212,175,55,.06);
+      display:inline-flex;align-items:center;gap:8px;
+      font-size:.82em;font-weight:600;letter-spacing:1px;
+      color:#D4AF37;text-decoration:none;
+      border:1px solid rgba(212,175,55,.3);padding:10px 22px;border-radius:999px;
+      transition:transform .25s,box-shadow .3s,background .3s;background:rgba(212,175,55,.1);
     }
     .back-link a:hover{
-      background:rgba(212,175,55,.16);border-color:rgba(212,175,55,.7);
-      box-shadow:0 0 18px rgba(212,175,55,.25);color:#D4AF37;
+      transform:translateX(-3px);
+      background:rgba(212,175,55,.2);
+      box-shadow:0 6px 20px rgba(212,175,55,.25);
     }
 
     /* ── PAGE WRAPPER ── */
@@ -410,12 +415,12 @@ if(!$query){ die(mysqli_error($conn)); }
   </div>
 </div>
 
-<div class="back-link">
-  <a href="../index.php">← Kembali ke Beranda</a>
-</div>
-
 <!-- PAGE WRAPPER -->
 <div class="page-wrapper">
+
+  <div class="back-link">
+    <a href="../dashboard.php">← Dashboard</a>
+  </div>
 
   <!-- TOP BAR -->
   <div class="top-bar">
@@ -503,7 +508,12 @@ if(!$query){ die(mysqli_error($conn)); }
           <td><span class="kode-badge"><?= htmlspecialchars($data['kode_pesanan']) ?></span></td>
           <td class="nama-cell"><?= htmlspecialchars($data['nama_pemesan']) ?></td>
           <td><?= htmlspecialchars($data['tanggal']) ?></td>
-          <td class="harga-cell">Rp <?= number_format($data['total_harga'],0,',','.') ?></td>
+          <td class="harga-cell">
+            Rp <?= number_format($data['total_harga'],0,',','.') ?>
+            <?php if(!empty($data['kode_promo'])): ?>
+              <br><span style="font-size:.7em;color:#6efabc;">🏷️ <?= htmlspecialchars($data['kode_promo']) ?> (-Rp<?= number_format($data['diskon_nominal'] ?? 0,0,',','.') ?>)</span>
+            <?php endif; ?>
+          </td>
           <td><span class="metode-badge"><?= htmlspecialchars($data['metode_pembayaran']) ?></span></td>
           <td>
             <?php

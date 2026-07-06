@@ -1,4 +1,7 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 
 $id = $_GET['id'] ?? 0;
@@ -16,8 +19,12 @@ if(!$member){
 
 // total riwayat pemesanan member (jika ada relasi id_member di tabel pemesanan)
 $total_pesanan = 0;
-$cek = @mysqli_query($conn,"SELECT COUNT(*) AS total FROM pemesanan WHERE id_member='$id'");
-if($cek){ $total_pesanan = mysqli_fetch_assoc($cek)['total']; }
+$stmt2 = $conn->prepare("SELECT COUNT(*) AS total FROM pemesanan WHERE id_member=?");
+$stmt2->bind_param("i", $id);
+$stmt2->execute();
+$cek = $stmt2->get_result();
+if($cek){ $total_pesanan = $cek->fetch_assoc()['total']; }
+$stmt2->close();
 ?>
 <!DOCTYPE html>
 <html lang="id">

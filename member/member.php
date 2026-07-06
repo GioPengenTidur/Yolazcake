@@ -5,6 +5,70 @@ if(!isset($_SESSION['username'])){
     header("Location: ../auth/login.php");
     exit();
 }
+
+require_once '../config/koneksi.php';
+require_once '../config/member_helper.php';
+
+$member = get_current_member($conn);
+
+// Belum jadi member (belum menyentuh syarat minimal transaksi) -> tampilkan
+// halaman progres, bukan dashboard loyalti penuh.
+if ($member === null) {
+    $id_user_sess = $_SESSION['user_id'] ?? null;
+    $progres      = $id_user_sess ? get_visit_count($conn, (int) $id_user_sess) : 0;
+    $syarat       = MEMBER_MIN_VISITS;
+    $sisa         = max(0, $syarat - $progres);
+    $persen       = (int) round(min(100, ($progres / $syarat) * 100));
+    include 'belum_member.php';
+    exit;
+}
+
+$poin   = (int) ($member['poin'] ?? 0);
+$tier   = get_member_tier($poin);
+
+// Bulan bergabung dihitung dari tanggal member terdaftar
+$bulan_bergabung = 0;
+if (!empty($member['created_at'])) {
+    $joined = new DateTime($member['created_at']);
+    $now    = new DateTime();
+    $diff   = $joined->diff($now);
+    $bulan_bergabung = ($diff->y * 12) + $diff->m;
+}
+
+// Poin masuk/keluar bulan ini (dari riwayat_poin, kalau ada)
+$poin_bulan_ini = 0;
+if (!empty($member['id_member'])) {
+    $stmtR = $conn->prepare(
+        "SELECT COALESCE(SUM(CASE WHEN jenis='Masuk' THEN poin ELSE -poin END),0) AS total
+         FROM riwayat_poin
+         WHERE id_member = ? AND MONTH(created_at) = MONTH(CURDATE()) AND YEAR(created_at) = YEAR(CURDATE())"
+    );
+    $stmtR->bind_param("i", $member['id_member']);
+    $stmtR->execute();
+    $rowR = $stmtR->get_result()->fetch_assoc();
+    $stmtR->close();
+    $poin_bulan_ini = (int) ($rowR['total'] ?? 0);
+}
+
+// Promo aktif untuk ditampilkan di kartu promo member (real dari tabel promo)
+$today = date('Y-m-d');
+$promo_aktif = [];
+$stmtPromo = $conn->prepare("SELECT * FROM promo WHERE status='Aktif' AND (tanggal_selesai IS NULL OR tanggal_selesai >= ?) ORDER BY id_promo DESC LIMIT 3");
+$stmtPromo->bind_param("s", $today);
+$stmtPromo->execute();
+$resPromo = $stmtPromo->get_result();
+if ($resPromo) {
+    while ($row = mysqli_fetch_assoc($resPromo)) {
+        $promo_aktif[] = $row;
+    }
+}
+
+$reward_milestones = [
+    ['poin' => 100, 'icon' => '🎁', 'nama' => 'Diskon 5%'],
+    ['poin' => 200, 'icon' => '☕', 'nama' => 'Gratis Kopi'],
+    ['poin' => 250, 'icon' => '🥐', 'nama' => 'Gratis Croissant'],
+    ['poin' => 500, 'icon' => '🎂', 'nama' => 'Gratis Cake'],
+];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -976,7 +1040,7 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
   </a>
 
   <div class="nav-premium-badge">
-    👑 Gold Member
+    👑 <?= htmlspecialchars($tier['name']) ?> Member
   </div>
 
   <div class="nav-right">
@@ -1034,15 +1098,21 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
         </div>
       </div>
       <div class="wc-badges">
-        <div class="badge-gold">✦ Gold Member ✦</div>
+        <div class="badge-gold">✦ <?= htmlspecialchars($tier['name']) ?> Member ✦</div>
         <div class="badge-verified">✓ Akun Terverifikasi</div>
       </div>
     </div>
 
     <div class="tier-progress">
       <div class="tier-labels">
-        <span>Gold Member · <strong>250 Poin</strong></span>
-        <span>250 poin lagi menuju <strong style="color:var(--rose)">Platinum</strong></span>
+        <span><?= htmlspecialchars($tier['name']) ?> Member · <strong><?= $poin ?> Poin</strong></span>
+        <span>
+          <?php if ($tier['next_name']): ?>
+            <?= $tier['sisa'] ?> poin lagi menuju <strong style="color:var(--rose)"><?= htmlspecialchars($tier['next_name']) ?></strong>
+          <?php else: ?>
+            🎉 Anda sudah di tier tertinggi!
+          <?php endif; ?>
+        </span>
       </div>
       <div class="tier-bar-bg">
         <div class="tier-bar-fill" id="tierBarFill"></div>
@@ -1055,17 +1125,17 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
   <div class="stats-row">
     <div class="stat-card stat-card-1">
       <div class="stat-icon-wrap">⭐</div>
-      <div class="stat-val" data-count="250">250</div>
+      <div class="stat-val" data-count="<?= $poin ?>"><?= $poin ?></div>
       <div class="stat-lbl">Poin Terkumpul</div>
     </div>
     <div class="stat-card stat-card-2">
       <div class="stat-icon-wrap">🎯</div>
-      <div class="stat-val">Gold</div>
+      <div class="stat-val"><?= htmlspecialchars($tier['name']) ?></div>
       <div class="stat-lbl">Level Member</div>
     </div>
     <div class="stat-card stat-card-3">
       <div class="stat-icon-wrap">📅</div>
-      <div class="stat-val" data-count="6">6</div>
+      <div class="stat-val" data-count="<?= $bulan_bergabung ?>"><?= $bulan_bergabung ?></div>
       <div class="stat-lbl">Bulan Bergabung</div>
     </div>
   </div>
@@ -1085,12 +1155,12 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
       <div class="status-box">
         <span class="sb-icon">🎯</span>
         <h3>Tier</h3>
-        <p>Gold Member</p>
+        <p><?= htmlspecialchars($tier['name']) ?> Member</p>
       </div>
       <div class="status-box">
         <span class="sb-icon">🗓️</span>
         <h3>Bergabung</h3>
-        <p>6 Bulan Lalu</p>
+        <p><?= $bulan_bergabung ?> Bulan Lalu</p>
       </div>
     </div>
   </div>
@@ -1132,24 +1202,16 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
       <div class="section-title">Promo Khusus Member</div>
     </div>
     <div class="promo-grid">
+      <?php if (empty($promo_aktif)): ?>
+        <p style="color:var(--text-muted);">Belum ada promo aktif saat ini. Pantau terus halaman ini ya!</p>
+      <?php else: foreach ($promo_aktif as $p): ?>
       <div class="promo-box">
-        <div class="promo-tag">Aktif Sekarang</div>
-        <div class="promo-code">YOLA10</div>
-        <p>Diskon 10% untuk semua produk bakery pilihan.</p>
-        <button class="promo-copy-btn" onclick="copyCode(this, 'YOLA10')">📋 Salin Kode</button>
+        <div class="promo-tag"><?= $p['min_belanja'] > 0 ? 'Min. Rp'.number_format($p['min_belanja'],0,',','.') : 'Aktif Sekarang' ?></div>
+        <div class="promo-code"><?= htmlspecialchars($p['kode_promo']) ?></div>
+        <p><?= htmlspecialchars($p['deskripsi'] ?: ($p['diskon_persen'].'% diskon untuk pembelian ini.')) ?></p>
+        <button class="promo-copy-btn" onclick="copyCode(this, '<?= htmlspecialchars($p['kode_promo'], ENT_QUOTES) ?>')">📋 Salin Kode</button>
       </div>
-      <div class="promo-box">
-        <div class="promo-tag">Terbatas</div>
-        <div class="promo-code">FREECOFFEE</div>
-        <p>Gratis 1 kopi untuk pembelian di atas Rp50.000.</p>
-        <button class="promo-copy-btn" onclick="copyCode(this, 'FREECOFFEE')">📋 Salin Kode</button>
-      </div>
-      <div class="promo-box">
-        <div class="promo-tag">Hot Deal</div>
-        <div class="promo-code">BUY2GET1</div>
-        <p>Beli 2 roti premium, gratis 1 roti pilihan Anda.</p>
-        <button class="promo-copy-btn" onclick="copyCode(this, 'BUY2GET1')">📋 Salin Kode</button>
-      </div>
+      <?php endforeach; endif; ?>
     </div>
   </div>
 
@@ -1160,34 +1222,21 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
       <div class="section-title">Poin & Reward</div>
     </div>
     <div class="points-hero">
-      <div class="points-number">250</div>
+      <div class="points-number"><?= $poin ?></div>
       <div class="points-lbl">Total Poin Terkumpul</div>
       <div class="points-mini-bar-bg">
         <div class="points-mini-bar-fill"></div>
       </div>
     </div>
     <div class="reward-grid">
-      <div class="reward-box unlocked">
-        <div class="reward-icon">🎁</div>
-        <div class="reward-poin">100 Poin</div>
-        <div class="reward-name">Diskon 5%</div>
+      <?php foreach ($reward_milestones as $r): $unlocked = $poin >= $r['poin']; ?>
+      <div class="reward-box <?= $unlocked ? 'unlocked' : 'locked' ?>">
+        <?php if (!$unlocked): ?><span class="lock-overlay">🔒</span><?php endif; ?>
+        <div class="reward-icon"><?= $r['icon'] ?></div>
+        <div class="reward-poin"><?= $r['poin'] ?> Poin</div>
+        <div class="reward-name"><?= htmlspecialchars($r['nama']) ?></div>
       </div>
-      <div class="reward-box unlocked">
-        <div class="reward-icon">☕</div>
-        <div class="reward-poin">200 Poin</div>
-        <div class="reward-name">Gratis Kopi</div>
-      </div>
-      <div class="reward-box unlocked">
-        <div class="reward-icon">🥐</div>
-        <div class="reward-poin">250 Poin</div>
-        <div class="reward-name">Gratis Croissant</div>
-      </div>
-      <div class="reward-box locked">
-        <span class="lock-overlay">🔒</span>
-        <div class="reward-icon">🎂</div>
-        <div class="reward-poin">500 Poin</div>
-        <div class="reward-name">Gratis Cake</div>
-      </div>
+      <?php endforeach; ?>
     </div>
   </div>
 
@@ -1207,12 +1256,12 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
         <p>Aktif ✅</p>
       </div>
       <div class="history-item">
-        <h3>Total Kunjungan</h3>
-        <p>15 Kali</p>
+        <h3>Bergabung Sejak</h3>
+        <p><?= !empty($member['created_at']) ? date("d F Y", strtotime($member['created_at'])) : '-' ?></p>
       </div>
       <div class="history-item">
         <h3>Poin Didapat Bulan Ini</h3>
-        <p>+50 Poin</p>
+        <p><?= $poin_bulan_ini >= 0 ? '+' : '' ?><?= $poin_bulan_ini ?> Poin</p>
       </div>
     </div>
   </div>
@@ -1257,7 +1306,7 @@ window.addEventListener('load', () => {
   setTimeout(() => {
     const fill = document.getElementById('tierBarFill');
     const glow = document.getElementById('tierBarGlow');
-    const pct  = 50; /* 250/500 = 50% to platinum */
+    const pct  = <?= (int) $tier['pct'] ?>; /* dihitung dari poin member yang sebenarnya */
     if(fill){ fill.style.width = pct + '%'; }
     if(glow){ glow.style.right = (100 - pct) + '%'; }
   }, 1400);

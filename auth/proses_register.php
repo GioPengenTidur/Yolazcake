@@ -76,10 +76,11 @@ if ($cekEmail->num_rows > 0) {
 }
 $cekEmail->close();
 
-// Simpan akun baru. Password di-hash, role default 'kasir'
-// (role 'admin' tidak diberikan lewat pendaftaran mandiri).
+// Simpan akun baru. Password di-hash, role default 'pengunjung'
+// (akun 'admin'/'kasir' hanya boleh dibuat oleh admin lewat panel user,
+// tidak lewat pendaftaran mandiri di halaman publik ini).
 $hashed = password_hash($password, PASSWORD_DEFAULT);
-$role   = 'kasir';
+$role   = 'pengunjung';
 
 $stmt = $conn->prepare("INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)");
 $stmt->bind_param("ssss", $username, $email, $hashed, $role);

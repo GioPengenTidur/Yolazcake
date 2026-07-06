@@ -1,7 +1,10 @@
 <?php
+session_start();
+require_once __DIR__.'/../config/staff_guard.php';
+require_staff_login();
 include '../config/koneksi.php';
 
-$id = $_GET['id'];
+$id = (int)($_GET['id'] ?? 0);
 $stmt = $conn->prepare("SELECT * FROM member WHERE id_member= ?");
 
 $stmt->bind_param("i", $id);
@@ -10,35 +13,43 @@ $stmt->execute();
 $result = $stmt->get_result();
 $member = $result->fetch_assoc();
 
-if(isset($_POST['update'])){
+$error_msg = '';
 
-    $nama   = $_POST['nama'];
-    $email  = $_POST['email'];
-    $no_hp  = $_POST['no_hp'];
-    $alamat = $_POST['alamat'];
-    $poin   = $_POST['poin'];
+if($member && isset($_POST['update'])){
 
-    mysqli_query($conn,"
-        UPDATE member
-        SET
-        nama='$nama',
-        email='$email',
-        no_hp='$no_hp',
-        alamat='$alamat',
-        poin='$poin'
-        WHERE id_member='$id'
-    ");
+    $nama   = trim($_POST['nama'] ?? '');
+    $email  = trim($_POST['email'] ?? '');
+    $no_hp  = trim($_POST['no_hp'] ?? '');
+    $alamat = trim($_POST['alamat'] ?? '');
+    $poin   = $_POST['poin'] ?? 0;
 
-    include 'success_overlay.php';
-    tampilkan_sukses([
-        'proses_judul' => 'Memperbarui Member…',
-        'proses_sub'   => 'Sedang menyimpan perubahan data member',
-        'sukses_judul' => 'Member Berhasil Diperbarui!',
-        'sukses_sub'   => 'Data "'.htmlspecialchars($nama).'" telah diperbarui',
-        'redirect'     => 'data_member.php',
-        'tombol_label' => 'Lanjutkan ke Data Member',
-    ]);
-    exit;
+    if($nama === ''){
+        $error_msg = 'Nama member wajib diisi.';
+    } elseif($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)){
+        $error_msg = 'Format email tidak valid.';
+    } elseif(!is_numeric($poin) || $poin < 0){
+        $error_msg = 'Poin harus berupa angka positif.';
+    } else {
+        $stmt2 = $conn->prepare(
+            "UPDATE member SET nama=?, email=?, no_hp=?, alamat=?, poin=? WHERE id_member=?"
+        );
+        $stmt2->bind_param("ssssii", $nama, $email, $no_hp, $alamat, $poin, $id);
+
+        if($stmt2->execute()){
+            include 'success_overlay.php';
+            tampilkan_sukses([
+                'proses_judul' => 'Memperbarui Member…',
+                'proses_sub'   => 'Sedang menyimpan perubahan data member',
+                'sukses_judul' => 'Member Berhasil Diperbarui!',
+                'sukses_sub'   => 'Data "'.htmlspecialchars($nama).'" telah diperbarui',
+                'redirect'     => 'data_member.php',
+                'tombol_label' => 'Lanjutkan ke Data Member',
+            ]);
+            exit;
+        } else {
+            $error_msg = 'Gagal menyimpan perubahan ke database.';
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -519,6 +530,12 @@ if(isset($_POST['update'])){
     <div class="gold-rule-h"><span>✦ ✦ ✦</span></div>
 
     <form method="POST">
+
+      <?php if($error_msg): ?>
+      <div style="background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.4);color:#ffb3b3;padding:12px 16px;border-radius:12px;font-size:.85em;margin-bottom:16px;">
+        ⚠️ <?= htmlspecialchars($error_msg); ?>
+      </div>
+      <?php endif; ?>
 
       <div class="field-group">
         <div class="field">
