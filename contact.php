@@ -1,6 +1,9 @@
 <?php
 session_start();
 require_once 'config/koneksi.php';
+require_once 'config/ig_stats_helper.php';
+
+$ig_stats = ambil_ig_stats($conn);
 
 $msg_kontak  = '';
 $err_kontak  = '';
@@ -33,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Contact - YOLAZCAKE Sintang</title>
@@ -808,7 +812,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
   <div class="nav-right">
 <?php if(isset($_SESSION['username'])){ ?>
     <div class="account-dropdown">
-      <button class="account-btn">👤 <?php echo htmlspecialchars($_SESSION['username']); ?> ▼</button>
+      <button class="account-btn"><i data-lucide="user" class="lucide-ic"></i> <?php echo htmlspecialchars($_SESSION['username']); ?> ▼</button>
       <div class="account-menu">
         <a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'dashboard.php' : 'member/member.php'; ?>"><?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'Dashboard' : 'Member'; ?></a>
         <a href="auth/logout.php">Logout</a>
@@ -817,8 +821,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
 <?php } else { ?>
     <button class="login-btn" onclick="window.location.href='auth/login.php'">Login</button>
 <?php } ?>
-    <div class="hamburger" onclick="toggleMenu()" id="hamburger">☰</div>
-    <div class="dark-btn" onclick="toggleDark()">🌙</div>
+    <div class="hamburger" onclick="toggleMenu()" id="hamburger"><i data-lucide="menu" class="lucide-ic"></i></div>
+    <div class="dark-btn" onclick="toggleDark()"><i data-lucide="moon" class="lucide-ic"></i></div>
   </div>
   <div class="dropdown" id="dropdown">
     <p onclick="window.location.href='about.php#story'">Back Story</p>
@@ -836,12 +840,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
 <div class="contact-hero" id="contactHero">
   <!-- Sparkle dots injected via JS -->
   <div class="contact-hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Hubungi Kami</h1>
-    <p class="hero-sub">Kami senang mendengar dari Anda — pesan, reservasi, atau sekadar sapa 🎂</p>
+    <p class="hero-sub">Kami senang mendengar dari Anda — pesan, reservasi, atau sekadar sapa <i data-lucide="cake" class="lucide-ic"></i></p>
     <div class="hero-divider">
       <span></span>
-      <span class="diamond">✦ ✦ ✦</span>
+      <span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span>
       <span></span>
     </div>
   </div>
@@ -851,9 +855,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
 <section id="location">
 
   <div class="section-label fade">
-    <span class="eyebrow">✦ Temukan Kami</span>
+    <span class="eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Temukan Kami</span>
     <h2>Lokasi &amp; Jam Operasional</h2>
-    <div class="gold-rule"><span>✦ ✦ ✦</span></div>
+    <div class="gold-rule"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
   </div>
 
   <div class="loc-grid">
@@ -861,7 +865,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
     <!-- Alamat card -->
     <div class="loc-card fade">
       <div class="loc-card-header">
-        <div class="loc-card-icon">📍</div>
+        <div class="loc-card-icon"><i data-lucide="map-pin" class="lucide-ic"></i></div>
         <h3>Alamat Kami</h3>
       </div>
       <div class="loc-card-body">
@@ -870,11 +874,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
           width="100%" height="230" style="border:0;" allowfullscreen="" loading="lazy">
         </iframe>
         <div class="info-row">
-          <span class="info-icon">🏠</span>
+          <span class="info-icon"><i data-lucide="home" class="lucide-ic"></i></span>
           <span>Jl. Lintas Melawi, Ladang, Kec. Sintang,<br>Kabupaten Sintang, Kalimantan Barat</span>
         </div>
         <div class="info-row">
-          <span class="info-icon">📞</span>
+          <span class="info-icon"><i data-lucide="phone" class="lucide-ic"></i></span>
           <span><strong>WA:</strong> 0815-7815-7888</span>
         </div>
       </div>
@@ -883,11 +887,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
     <!-- Jam Buka card -->
     <div class="loc-card fade">
       <div class="loc-card-header">
-        <div class="loc-card-icon">🕐</div>
+        <div class="loc-card-icon"><i data-lucide="clock" class="lucide-ic"></i></div>
         <h3>Jam Operasional</h3>
       </div>
       <div class="loc-card-body">
-        <div class="hours-badge">🟢 Buka Setiap Hari</div>
+        <div class="hours-badge"><i data-lucide="circle" class="lucide-ic lucide-fill" style="color:#22c55e"></i> Buka Setiap Hari</div>
         <div class="day-grid">
           <div class="day-chip">
             <span class="day-label">Senin – Minggu</span>
@@ -899,7 +903,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
           </div>
         </div>
         <div class="info-row" style="margin-top:18px">
-          <span class="info-icon">ℹ️</span>
+          <span class="info-icon">ℹ</span>
           <span style="font-size:0.88em;color:#888">Boutique Lantai 2 tutup 1 jam lebih awal. Pemesanan kue dapat dilakukan setiap hari.</span>
         </div>
       </div>
@@ -916,9 +920,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
   <div id="particles"></div>
 
   <div class="section-label fade">
-    <span class="eyebrow">✦ Terhubung Dengan Kami</span>
+    <span class="eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Terhubung Dengan Kami</span>
     <h2>Media Sosial &amp; Kontak</h2>
-    <div class="gold-rule"><span>✦ ✦ ✦</span></div>
+    <div class="gold-rule"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
   </div>
 
   <div class="socmed-layout">
@@ -927,7 +931,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
     <div class="ig-premium-card fade">
       <div class="ig-banner">
         <div class="ig-avatar-wrap">
-          <div class="ig-avatar-inner">📸</div>
+          <div class="ig-avatar-inner"><i data-lucide="camera" class="lucide-ic"></i></div>
         </div>
         <div class="ig-handle">@yolazcake.stg</div>
         <div class="ig-tagline">Cake • Bakery • Boutique — Sintang</div>
@@ -935,23 +939,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
       <div class="ig-body">
         <div class="ig-stat-row">
           <div class="ig-stat">
-            <span class="num">✦</span>
+            <span class="num"><?= format_angka_ig((int) $ig_stats['posts']) ?></span>
             <span class="lbl">Posts</span>
           </div>
           <div class="ig-stat">
-            <span class="num">✦</span>
+            <span class="num"><?= format_angka_ig((int) $ig_stats['followers']) ?></span>
             <span class="lbl">Followers</span>
           </div>
           <div class="ig-stat">
-            <span class="num">✦</span>
+            <span class="num"><?= format_angka_ig((int) $ig_stats['following']) ?></span>
             <span class="lbl">Following</span>
           </div>
         </div>
         <p class="ig-desc">
-          Ikuti kami untuk update menu terbaru, promo spesial, dan inspirasi kue setiap hari! 🎂
+          Ikuti kami untuk update menu terbaru, promo spesial, dan inspirasi kue setiap hari! <i data-lucide="cake" class="lucide-ic"></i>
         </p>
         <a href="https://www.instagram.com/yolazcake.stg/" target="_blank" class="ig-btn">
-          ✦ &nbsp;Follow di Instagram
+          <i data-lucide="sparkle" class="lucide-ic"></i> &nbsp;Follow di Instagram
         </a>
       </div>
     </div>
@@ -959,23 +963,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
     <!-- CONTACT FORM — simpan ke database -->
     <div class="wa-premium-card fade">
       <div class="wa-card-header">
-        <div class="wa-icon-badge">✉️</div>
+        <div class="wa-icon-badge"><i data-lucide="mail" class="lucide-ic"></i></div>
         <div class="wa-card-header-text">
           <h3>Kirim Pesan ke Kami</h3>
-          <p>Pesan Anda akan langsung kami terima dan balas ⚡</p>
+          <p>Pesan Anda akan langsung kami terima dan balas <i data-lucide="zap" class="lucide-ic"></i></p>
         </div>
       </div>
       <div class="wa-form-body">
 
         <?php if ($msg_kontak): ?>
         <div style="background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.35);color:#6ee7b7;padding:14px 18px;border-radius:12px;margin-bottom:18px;font-size:.9em;">
-          ✅ <?= htmlspecialchars($msg_kontak) ?>
+          <i data-lucide="check-circle" class="lucide-ic"></i> <?= htmlspecialchars($msg_kontak) ?>
         </div>
         <?php endif; ?>
 
         <?php if ($err_kontak): ?>
         <div style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#fca5a5;padding:14px 18px;border-radius:12px;margin-bottom:18px;font-size:.9em;">
-          ⚠️ <?= htmlspecialchars($err_kontak) ?>
+          <i data-lucide="alert-triangle" class="lucide-ic"></i> <?= htmlspecialchars($err_kontak) ?>
         </div>
         <?php endif; ?>
 
@@ -1007,12 +1011,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
 
           <div style="display:flex;gap:12px;flex-wrap:wrap;">
             <button type="submit" name="kirim_kontak" class="wa-send-btn" style="flex:1;">
-              <span>✉️</span>
+              <span><i data-lucide="mail" class="lucide-ic"></i></span>
               <span>Kirim Pesan</span>
             </button>
             <button type="button" class="wa-send-btn" onclick="sendWhatsApp()"
               style="flex:1;background:linear-gradient(135deg,#25D366,#128C7E);">
-              <span>💬</span>
+              <span><i data-lucide="message-circle" class="lucide-ic"></i></span>
               <span>Via WhatsApp</span>
             </button>
           </div>
@@ -1084,12 +1088,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
     const pesan = document.getElementById('wa_pesan').value.trim();
 
     if(!nama || !nomor || !pesan){
-      alert('Mohon isi semua kolom terlebih dahulu 😊');
+      alert('Mohon isi semua kolom terlebih dahulu <i data-lucide="smile" class="lucide-ic"></i>');
       return;
     }
 
     const msg = encodeURIComponent(
-      `Halo YOLAZCAKE! 👋\n\n*Nama:* ${nama}\n*No. WA:* ${nomor}\n\n*Pesan:*\n${pesan}`
+      `Halo YOLAZCAKE! <i data-lucide="hand" class="lucide-ic"></i>\n\n*Nama:* ${nama}\n*No. WA:* ${nomor}\n\n*Pesan:*\n${pesan}`
     );
     window.open(`https://wa.me/6281578157888?text=${msg}`, '_blank');
   }
@@ -1097,6 +1101,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
 </script>
 
 <?php include 'status_fab.php'; ?>
+<?php include 'rating_fab.php'; ?>
+<?php include 'chatbot_fab.php'; ?>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

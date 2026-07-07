@@ -21,14 +21,15 @@ $total_pengunjung = $stats['p'] ?? 0;
 
 // Kategori peran yang tersedia untuk dropdown ubah pangkat
 $role_options = [
-    'pengunjung' => ['label' => 'Pengunjung', 'icon' => '👁️'],
-    'kasir'      => ['label' => 'Kasir',      'icon' => '🧑‍🍳'],
-    'admin'      => ['label' => 'Admin',      'icon' => '👑'],
+    'pengunjung' => ['label' => 'Pengunjung', 'icon' => '<i data-lucide="eye" class="lucide-ic"></i>'],
+    'kasir'      => ['label' => 'Kasir',      'icon' => '<i data-lucide="user-round" class="lucide-ic"></i>‍<i data-lucide="chef-hat" class="lucide-ic"></i>'],
+    'admin'      => ['label' => 'Admin',      'icon' => '<i data-lucide="crown" class="lucide-ic"></i>'],
 ];
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kelola Akun – YOLAZCAKE</title>
@@ -591,22 +592,22 @@ $role_options = [
 <!-- HERO -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Kelola Akun</h1>
     <p class="hero-sub">Atur akun staff: ubah peran atau hapus akun</p>
     <div class="hero-divider">
-      <span></span><span class="diamond">✦ ✦ ✦</span><span></span>
+      <span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span>
     </div>
   </div>
 </div>
 
 <div class="page-wrapper">
 
-  <a href="../dashboard.php" class="back-link">← Dashboard</a>
+  <a href="../dashboard.php" class="back-link"><i data-lucide="arrow-left" class="lucide-ic"></i> Dashboard</a>
 
   <!-- top bar -->
   <div class="top-bar">
-    <span class="section-eyebrow">✦ Daftar Akun</span>
+    <span class="section-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Daftar Akun</span>
     <button type="button" class="btn-tambah" onclick="bukaModalTambah()">+ Tambah Akun</button>
   </div>
 
@@ -614,23 +615,23 @@ $role_options = [
     <div class="flash-msg flash-ok">
       <?php
         $msgs = [
-          'role'   => '✓ Peran akun berhasil diubah.',
-          'hapus'  => '✓ Akun berhasil dihapus.',
-          'edit'   => '✓ Data akun berhasil diperbarui.',
-          'tambah' => '✓ Akun baru berhasil dibuat.',
+          'role'   => '<i data-lucide="check" class="lucide-ic"></i> Peran akun berhasil diubah.',
+          'hapus'  => '<i data-lucide="check" class="lucide-ic"></i> Akun berhasil dihapus.',
+          'edit'   => '<i data-lucide="check" class="lucide-ic"></i> Data akun berhasil diperbarui.',
+          'tambah' => '<i data-lucide="check" class="lucide-ic"></i> Akun baru berhasil dibuat.',
         ];
-        echo $msgs[$_GET['ok']] ?? '✓ Berhasil.';
+        echo $msgs[$_GET['ok']] ?? '<i data-lucide="check" class="lucide-ic"></i> Berhasil.';
       ?>
     </div>
   <?php elseif(isset($_GET['err'])): ?>
     <div class="flash-msg flash-err">
       <?php
         $errs = [
-          'self'      => '✕ Tidak bisa mengubah / menghapus akun yang sedang kamu pakai sendiri.',
-          'last_admin'=> '✕ Tidak bisa menghapus / menurunkan admin terakhir. Minimal harus ada 1 admin.',
-          'notfound'  => '✕ Akun tidak ditemukan.',
+          'self'      => '<i data-lucide="x" class="lucide-ic"></i> Tidak bisa mengubah / menghapus akun yang sedang kamu pakai sendiri.',
+          'last_admin'=> '<i data-lucide="x" class="lucide-ic"></i> Tidak bisa menghapus / menurunkan admin terakhir. Minimal harus ada 1 admin.',
+          'notfound'  => '<i data-lucide="x" class="lucide-ic"></i> Akun tidak ditemukan.',
         ];
-        echo $errs[$_GET['err']] ?? '✕ Terjadi kesalahan.';
+        echo $errs[$_GET['err']] ?? '<i data-lucide="x" class="lucide-ic"></i> Terjadi kesalahan.';
       ?>
     </div>
   <?php endif; ?>
@@ -638,28 +639,28 @@ $role_options = [
   <!-- stats -->
   <div class="stats-row">
     <div class="stat-card">
-      <span class="stat-icon">👤</span>
+      <span class="stat-icon"><i data-lucide="user" class="lucide-ic"></i></span>
       <div>
         <div class="stat-val"><?= $total_user; ?></div>
         <div class="stat-lbl">Total Akun</div>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">👑</span>
+      <span class="stat-icon"><i data-lucide="crown" class="lucide-ic"></i></span>
       <div>
         <div class="stat-val"><?= $total_admin; ?></div>
         <div class="stat-lbl">Admin</div>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">🧑‍🍳</span>
+      <span class="stat-icon"><i data-lucide="user-round" class="lucide-ic"></i>‍<i data-lucide="chef-hat" class="lucide-ic"></i></span>
       <div>
         <div class="stat-val"><?= $total_kasir; ?></div>
         <div class="stat-lbl">Kasir</div>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">👁️</span>
+      <span class="stat-icon"><i data-lucide="eye" class="lucide-ic"></i></span>
       <div>
         <div class="stat-val"><?= $total_pengunjung; ?></div>
         <div class="stat-lbl">Pengunjung</div>
@@ -707,7 +708,7 @@ $role_options = [
                 <?php endforeach; ?>
               </select>
               <?php if($is_me): ?>
-                <div class="role-locked">🔒 Akun sendiri</div>
+                <div class="role-locked"><i data-lucide="lock" class="lucide-ic"></i> Akun sendiri</div>
               <?php endif; ?>
             </div>
           </td>
@@ -715,12 +716,12 @@ $role_options = [
             <div class="action-cell">
               <button type="button"
                  class="btn-act btn-editakun"
-                 onclick="bukaModalEdit(<?= (int)$data['id']; ?>, <?= htmlspecialchars(json_encode($data['username']), ENT_QUOTES); ?>, <?= htmlspecialchars(json_encode($data['email'] ?? ''), ENT_QUOTES); ?>)">✏️ Edit</button>
+                 onclick="bukaModalEdit(<?= (int)$data['id']; ?>, <?= htmlspecialchars(json_encode($data['username']), ENT_QUOTES); ?>, <?= htmlspecialchars(json_encode($data['email'] ?? ''), ENT_QUOTES); ?>)"><i data-lucide="pencil" class="lucide-ic"></i> Edit</button>
 
               <button type="button"
                  class="btn-act btn-hapus"
                  <?= $is_me ? 'disabled' : ''; ?>
-                 onclick="hapusAkun(<?= (int)$data['id']; ?>, <?= htmlspecialchars(json_encode($data['username']), ENT_QUOTES); ?>)">🗑️ Hapus</button>
+                 onclick="hapusAkun(<?= (int)$data['id']; ?>, <?= htmlspecialchars(json_encode($data['username']), ENT_QUOTES); ?>)"><i data-lucide="trash-2" class="lucide-ic"></i> Hapus</button>
             </div>
           </td>
         </tr>
@@ -728,7 +729,7 @@ $role_options = [
         <tr>
           <td colspan="5">
             <div class="empty-state">
-              <div class="es-icon">👤</div>
+              <div class="es-icon"><i data-lucide="user" class="lucide-ic"></i></div>
               <p>Belum ada akun</p>
             </div>
           </td>
@@ -769,7 +770,7 @@ $role_options = [
 
       <div class="modal-actions">
         <button type="button" class="btn-modal-cancel" id="btnModalCancel">Batal</button>
-        <button type="submit" class="btn-modal-save" id="btnModalSave">💾 Simpan Perubahan</button>
+        <button type="submit" class="btn-modal-save" id="btnModalSave"><i data-lucide="save" class="lucide-ic"></i> Simpan Perubahan</button>
       </div>
     </form>
   </div>
@@ -810,7 +811,7 @@ $role_options = [
 
       <div class="modal-actions">
         <button type="button" class="btn-modal-cancel" id="btnModalTambahCancel">Batal</button>
-        <button type="submit" class="btn-modal-save" id="btnModalTambahSave">✦ Buat Akun</button>
+        <button type="submit" class="btn-modal-save" id="btnModalTambahSave"><i data-lucide="sparkle" class="lucide-ic"></i> Buat Akun</button>
       </div>
     </form>
   </div>
@@ -1148,5 +1149,8 @@ $role_options = [
       });
   }
 </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

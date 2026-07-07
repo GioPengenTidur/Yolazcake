@@ -15,6 +15,7 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gallery - YOLAZCAKE Sintang</title>
@@ -848,7 +849,7 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
 <?php if(isset($_SESSION['username'])){ ?>
 <div class="account-dropdown">
 <button class="account-btn">
-👤 <?php echo htmlspecialchars($_SESSION['username']); ?> ▼
+<i data-lucide="user" class="lucide-ic"></i> <?php echo htmlspecialchars($_SESSION['username']); ?> ▼
 </button>
 <div class="account-menu">
 <a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'dashboard.php' : 'member/member.php'; ?>"><?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'Dashboard' : 'Member'; ?></a>
@@ -858,8 +859,8 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
 <?php } else { ?>
 <button class="login-btn" onclick="window.location.href='auth/login.php'">Login</button>
 <?php } ?>
-<div class="hamburger" onclick="toggleMenu()" id="hamburger">☰</div>
-<div class="dark-btn" onclick="toggleDark()">🌙</div>
+<div class="hamburger" onclick="toggleMenu()" id="hamburger"><i data-lucide="menu" class="lucide-ic"></i></div>
+<div class="dark-btn" onclick="toggleDark()"><i data-lucide="moon" class="lucide-ic"></i></div>
   </div>
   <div class="dropdown" id="dropdown">
     <p onclick="window.location.href='about.php#story'">Back Story</p>
@@ -877,12 +878,12 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
 <div class="gallery-hero">
   <div class="sparkle-wrap" id="sparkleWrap"></div>
   <div class="gallery-hero-content">
-    <p class="gallery-hero-eyebrow">✦ Koleksi Visual Kami ✦</p>
+    <p class="gallery-hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Koleksi Visual Kami <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Galeri <span>YOLAZCAKE</span></h1>
-    <p style="font-family:'Inter',sans-serif;color:rgba(255,255,255,0.75);margin-top:14px;font-size:1em;opacity:0;animation:fadeInDown 0.9s forwards 0.9s;">Setiap sudut menyimpan cerita rasa &amp; keindahan 📸</p>
+    <p style="font-family:'Inter',sans-serif;color:rgba(255,255,255,0.75);margin-top:14px;font-size:1em;opacity:0;animation:fadeInDown 0.9s forwards 0.9s;">Setiap sudut menyimpan cerita rasa &amp; keindahan <i data-lucide="camera" class="lucide-ic"></i></p>
     <div class="gallery-hero-divider">
       <span></span>
-      <span class="hero-diamond">✦ ✦ ✦</span>
+      <span class="hero-diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span>
       <span></span>
     </div>
   </div>
@@ -907,7 +908,7 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
 
   <!-- Compact header + tabs in one tight block -->
   <div class="gallery-tabs-header fade">
-    <p class="eyebrow">✦ Koleksi Visual ✦</p>
+    <p class="eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Koleksi Visual <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h2>Galeri YOLAZCAKE</h2>
     <div class="subtitle-row">Sintang, Kalimantan Barat</div>
   </div>
@@ -928,7 +929,7 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
 
     <?php if (empty($galeri_all)): ?>
     <div style="grid-column:1/-1;text-align:center;padding:80px 20px;color:rgba(255,255,255,.4);">
-      <div style="font-size:3em;margin-bottom:12px;">🖼️</div>
+      <div style="font-size:3em;margin-bottom:12px;"><i data-lucide="image" class="lucide-ic"></i></div>
       <p>Belum ada foto di galeri. Tambahkan melalui panel admin.</p>
       <?php if(isset($_SESSION['username'])): ?>
       <a href="galeri/tambah_galeri.php" style="display:inline-block;margin-top:16px;padding:10px 24px;background:rgba(212,175,55,.2);border:1px solid rgba(212,175,55,.4);color:#D4AF37;border-radius:999px;text-decoration:none;font-size:.9em;">+ Tambah Foto</a>
@@ -965,7 +966,7 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
 <section id="Rating">
   <h2>Rating &amp; Testimoni</h2>
   <div id="Ulasan">
-    <h3 id="Stars">4,8 <span class="rating-stars">★★★★★</span></h3>
+    <h3 id="Stars">4,8 <span class="rating-stars"><i data-lucide="star" class="lucide-ic lucide-fill"></i><i data-lucide="star" class="lucide-ic lucide-fill"></i><i data-lucide="star" class="lucide-ic lucide-fill"></i><i data-lucide="star" class="lucide-ic lucide-fill"></i><i data-lucide="star" class="lucide-ic lucide-fill"></i></span></h3>
     <p id="JumlahUlasan">(26 ulasan)</p>
     <p><strong style="color:var(--gold)">Toko Roti • Rp 25.000 – 50.000</strong></p>
     <p id="JamBuka">Buka setiap hari • Tutup pukul 22.00 WIB</p>
@@ -1001,7 +1002,7 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
     </div>
   </div>
   <button class="lightbox-arrow next" onclick="nextPhoto()">&#8594;</button>
-  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="lightbox-close" onclick="closeLightbox()"><i data-lucide="x" class="lucide-ic"></i></button>
 </div>
 
 <script src="js/style.js"></script>
@@ -1101,7 +1102,7 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
     if(e.key === 'ArrowRight') nextPhoto();
   });
 
-  /* ---- SCROLL REVEAL (same as style.js .fade → .show) ---- */
+  /* ---- SCROLL REVEAL (same as style.js .fade <i data-lucide="arrow-right" class="lucide-ic"></i> .show) ---- */
   const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
       if(entry.isIntersecting){
@@ -1118,6 +1119,11 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
 </script>
 
 <?php include 'status_fab.php'; ?>
+<?php include 'rating_fab.php'; ?>
+<?php include 'chatbot_fab.php'; ?>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

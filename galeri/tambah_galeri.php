@@ -47,6 +47,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tambah Foto Galeri – YOLAZCAKE</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -103,13 +104,13 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 <body>
 <div class="page-hero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ Admin Panel ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Admin Panel <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Tambah Foto Galeri</h1>
   </div>
 </div>
 <div class="wrapper">
-  <a href="data_galeri.php" class="btn-back">← Kembali</a>
-  <?php if($error): ?><div class="alert-err">⚠️ <?= $error ?></div><?php endif; ?>
+  <a href="data_galeri.php" class="btn-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali</a>
+  <?php if($error): ?><div class="alert-err"><i data-lucide="alert-triangle" class="lucide-ic"></i> <?= $error ?></div><?php endif; ?>
   <div class="form-card">
     <form method="POST" enctype="multipart/form-data">
       <div class="form-group">
@@ -123,19 +124,22 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
       <div class="form-group">
         <label>Kategori</label>
         <select name="kategori" required>
-          <option value="interior">🏠 Interior</option>
-          <option value="kue">🍰 Kue & Pastry</option>
-          <option value="coffee">☕ Coffee</option>
-          <option value="boutique">👗 Boutique</option>
+          <option value="interior"><i data-lucide="home" class="lucide-ic"></i> Interior</option>
+          <option value="kue"><i data-lucide="cake-slice" class="lucide-ic"></i> Kue & Pastry</option>
+          <option value="coffee"><i data-lucide="coffee" class="lucide-ic"></i> Coffee</option>
+          <option value="boutique"><i data-lucide="shirt" class="lucide-ic"></i> Boutique</option>
         </select>
       </div>
       <div class="form-group">
         <label>Upload Foto</label>
         <input type="file" name="foto" accept="image/*" required>
       </div>
-      <button type="submit" class="btn-submit">🖼️ Simpan Foto</button>
+      <button type="submit" class="btn-submit"><i data-lucide="image" class="lucide-ic"></i> Simpan Foto</button>
     </form>
   </div>
 </div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

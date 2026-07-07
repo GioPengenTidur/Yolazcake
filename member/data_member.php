@@ -9,6 +9,7 @@ $query = mysqli_query($conn, "SELECT * FROM member ORDER BY id_member DESC");
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Member – YOLAZCAKE</title>
@@ -322,22 +323,22 @@ $query = mysqli_query($conn, "SELECT * FROM member ORDER BY id_member DESC");
 <!-- HERO -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Data Member</h1>
     <p class="hero-sub">Kelola member setia YOLAZCAKE dengan mudah</p>
     <div class="hero-divider">
-      <span></span><span class="diamond">✦ ✦ ✦</span><span></span>
+      <span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span>
     </div>
   </div>
 </div>
 
 <div class="page-wrapper">
 
-  <a href="../dashboard.php" class="btn-back">← Dashboard</a>
+  <a href="../dashboard.php" class="btn-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Dashboard</a>
 
   <!-- top bar -->
   <div class="top-bar">
-    <span class="section-eyebrow">✦ Daftar Member</span>
+    <span class="section-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Daftar Member</span>
     <a href="tambah_member.php" class="btn-tambah">+ Tambah Member</a>
   </div>
 
@@ -350,21 +351,21 @@ $query = mysqli_query($conn, "SELECT * FROM member ORDER BY id_member DESC");
   ?>
   <div class="stats-row">
     <div class="stat-card">
-      <span class="stat-icon">👥</span>
+      <span class="stat-icon"><i data-lucide="users" class="lucide-ic"></i></span>
       <div>
         <div class="stat-val"><?= $total_member; ?></div>
         <div class="stat-lbl">Total Member</div>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">⭐</span>
+      <span class="stat-icon"><i data-lucide="star" class="lucide-ic lucide-fill"></i></span>
       <div>
         <div class="stat-val"><?= number_format($total_poin); ?></div>
         <div class="stat-lbl">Total Poin Beredar</div>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">🏆</span>
+      <span class="stat-icon"><i data-lucide="trophy" class="lucide-ic"></i></span>
       <div>
         <div class="stat-val"><?= $total_member > 0 ? number_format($total_poin/$total_member,0) : 0; ?></div>
         <div class="stat-lbl">Rata-rata Poin/Member</div>
@@ -398,15 +399,15 @@ $query = mysqli_query($conn, "SELECT * FROM member ORDER BY id_member DESC");
           <td style="color:rgba(255,255,255,0.6);"><?= htmlspecialchars($data['email']); ?></td>
           <td style="color:rgba(255,255,255,0.6);"><?= htmlspecialchars($data['no_hp']); ?></td>
           <td>
-            <span class="poin-badge td-poin">⭐ <?= number_format($data['poin']); ?></span>
+            <span class="poin-badge td-poin"><i data-lucide="star" class="lucide-ic lucide-fill"></i> <?= number_format($data['poin']); ?></span>
           </td>
           <td>
             <div class="action-cell">
-              <a href="detail_member.php?id=<?= $data['id_member']; ?>" class="btn-act btn-detail">🔍 Detail</a>
-              <a href="edit_member.php?id=<?= $data['id_member']; ?>" class="btn-act btn-edit">✏️ Edit</a>
+              <a href="detail_member.php?id=<?= $data['id_member']; ?>" class="btn-act btn-detail"><i data-lucide="search" class="lucide-ic"></i> Detail</a>
+              <a href="edit_member.php?id=<?= $data['id_member']; ?>" class="btn-act btn-edit"><i data-lucide="pencil" class="lucide-ic"></i> Edit</a>
               <a href="hapus_member.php?id=<?= $data['id_member']; ?>"
                  class="btn-act btn-hapus"
-                 onclick="return confirm('Yakin ingin menghapus member <?= htmlspecialchars($data['nama']); ?>?')">🗑️ Hapus</a>
+                 onclick="return confirm('Yakin ingin menghapus member <?= htmlspecialchars($data['nama']); ?>?')"><i data-lucide="trash-2" class="lucide-ic"></i> Hapus</a>
             </div>
           </td>
         </tr>
@@ -414,7 +415,7 @@ $query = mysqli_query($conn, "SELECT * FROM member ORDER BY id_member DESC");
         <tr>
           <td colspan="6">
             <div class="empty-state">
-              <div class="es-icon">👥</div>
+              <div class="es-icon"><i data-lucide="users" class="lucide-ic"></i></div>
               <p>Belum ada data member</p>
             </div>
           </td>
@@ -450,5 +451,8 @@ $query = mysqli_query($conn, "SELECT * FROM member ORDER BY id_member DESC");
     }
   })();
 </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

@@ -150,6 +150,7 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kelola Promo – YOLAZCAKE</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -271,27 +272,27 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
 <div id="particles"></div>
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Kelola Promo</h1>
     <p class="hero-sub">Atur kode promo & diskon untuk pelanggan</p>
-    <div class="hero-divider"><span></span><span class="diamond">✦ ✦ ✦</span><span></span></div>
+    <div class="hero-divider"><span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span></div>
   </div>
 </div>
 
 <div class="page-wrapper">
-  <a href="../dashboard.php" class="btn-back">← Dashboard</a>
+  <a href="../dashboard.php" class="btn-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Dashboard</a>
 
   <div class="top-bar">
-    <span class="section-eyebrow" style="font-size:.72em;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:#D4AF37;">✦ Daftar Promo</span>
+    <span class="section-eyebrow" style="font-size:.72em;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:#D4AF37;"><i data-lucide="sparkle" class="lucide-ic"></i> Daftar Promo</span>
     <button class="btn-tambah" onclick="openAdd()">+ Tambah Promo</button>
   </div>
 
   <div class="stats-row">
-    <div class="stat-card"><span class="stat-icon">🏷️</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="tag" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= $stats['total'] ?: 0 ?></div><div class="stat-lbl">Total Promo</div></div></div>
-    <div class="stat-card"><span class="stat-icon">✅</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="check-circle" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= $stats['aktif'] ?: 0 ?></div><div class="stat-lbl">Aktif</div></div></div>
-    <div class="stat-card"><span class="stat-icon">⛔</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="circle-slash" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= $stats['nonaktif'] ?: 0 ?></div><div class="stat-lbl">Nonaktif</div></div></div>
   </div>
 
@@ -299,34 +300,34 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
     <?php if($total > 0): while($d = mysqli_fetch_assoc($query)): ?>
     <div class="promo-card <?= $d['status']==='Nonaktif'?'nonaktif':'' ?>">
       <div class="promo-top">
-        <span class="promo-kode">🏷️ <?= htmlspecialchars($d['kode_promo']) ?></span>
+        <span class="promo-kode"><i data-lucide="tag" class="lucide-ic"></i> <?= htmlspecialchars($d['kode_promo']) ?></span>
         <span class="promo-diskon"><?= $d['diskon_persen'] ?>% OFF</span>
       </div>
       <div class="promo-judul"><?= htmlspecialchars($d['judul']) ?></div>
       <div class="promo-desc"><?= $d['deskripsi'] ? htmlspecialchars($d['deskripsi']) : '-' ?></div>
       <div class="promo-meta">
-        <span>💰 Min. Rp <?= number_format($d['min_belanja'],0,',','.') ?></span>
-        <?php if($d['poin_bonus'] > 0): ?><span>⭐ +<?= $d['poin_bonus'] ?> poin</span><?php endif; ?>
+        <span><i data-lucide="wallet" class="lucide-ic"></i> Min. Rp <?= number_format($d['min_belanja'],0,',','.') ?></span>
+        <?php if($d['poin_bonus'] > 0): ?><span><i data-lucide="star" class="lucide-ic lucide-fill"></i> +<?= $d['poin_bonus'] ?> poin</span><?php endif; ?>
         <?php if($d['tanggal_mulai'] || $d['tanggal_selesai']): ?>
-        <span>📅 <?= $d['tanggal_mulai'] ? date('d/m/y',strtotime($d['tanggal_mulai'])) : '...' ?> – <?= $d['tanggal_selesai'] ? date('d/m/y',strtotime($d['tanggal_selesai'])) : '...' ?></span>
+        <span><i data-lucide="calendar" class="lucide-ic"></i> <?= $d['tanggal_mulai'] ? date('d/m/y',strtotime($d['tanggal_mulai'])) : '...' ?> – <?= $d['tanggal_selesai'] ? date('d/m/y',strtotime($d['tanggal_selesai'])) : '...' ?></span>
         <?php endif; ?>
       </div>
 
       <a href="?toggle=<?= $d['id_promo'] ?>" style="text-decoration:none;">
         <span class="status-badge <?= $d['status']==='Aktif'?'s-aktif':'s-nonaktif' ?>">
-          <?= $d['status']==='Aktif' ? '✅ Aktif' : '⛔ Nonaktif' ?>
+          <?= $d['status']==='Aktif' ? '<i data-lucide="check-circle" class="lucide-ic"></i> Aktif' : '<i data-lucide="circle-slash" class="lucide-ic"></i> Nonaktif' ?>
         </span>
       </a>
       <?php if($d['kadaluarsa']): ?><span class="badge-expired">Kadaluarsa</span><?php endif; ?>
 
       <div class="promo-actions">
-        <button class="btn-act btn-edit" onclick='openEdit(<?= json_encode($d) ?>)'>✏️ Edit</button>
+        <button class="btn-act btn-edit" onclick='openEdit(<?= json_encode($d) ?>)'><i data-lucide="pencil" class="lucide-ic"></i> Edit</button>
         <a href="?hapus=<?= $d['id_promo'] ?>" class="btn-act btn-hapus"
-           onclick="return confirm('Hapus promo <?= htmlspecialchars($d['kode_promo']) ?>?')">🗑️ Hapus</a>
+           onclick="return confirm('Hapus promo <?= htmlspecialchars($d['kode_promo']) ?>?')"><i data-lucide="trash-2" class="lucide-ic"></i> Hapus</a>
       </div>
     </div>
     <?php endwhile; else: ?>
-    <div class="empty-state"><div class="es-icon">🏷️</div><p>Belum ada promo. Klik "+ Tambah Promo" untuk membuat yang pertama.</p></div>
+    <div class="empty-state"><div class="es-icon"><i data-lucide="tag" class="lucide-ic"></i></div><p>Belum ada promo. Klik "+ Tambah Promo" untuk membuat yang pertama.</p></div>
     <?php endif; ?>
   </div>
 </div>
@@ -334,8 +335,8 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
 <!-- ADD MODAL -->
 <div class="modal-overlay" id="addModal">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal('addModal')">✕</button>
-    <h3>➕ Tambah Promo</h3>
+    <button class="modal-close" onclick="closeModal('addModal')"><i data-lucide="x" class="lucide-ic"></i></button>
+    <h3><i data-lucide="plus" class="lucide-ic"></i> Tambah Promo</h3>
     <form method="POST">
       <div class="form-row">
         <div class="form-group"><label>Kode Promo</label><input type="text" name="kode_promo" placeholder="YOLA25" required style="text-transform:uppercase;"></div>
@@ -351,7 +352,7 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
         <div class="form-group"><label>Tanggal Mulai</label><input type="date" name="tanggal_mulai"></div>
         <div class="form-group"><label>Tanggal Selesai</label><input type="date" name="tanggal_selesai"></div>
       </div>
-      <button type="submit" name="tambah" class="btn-submit">✅ Simpan Promo</button>
+      <button type="submit" name="tambah" class="btn-submit"><i data-lucide="check-circle" class="lucide-ic"></i> Simpan Promo</button>
     </form>
   </div>
 </div>
@@ -359,8 +360,8 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
 <!-- EDIT MODAL -->
 <div class="modal-overlay" id="editModal">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal('editModal')">✕</button>
-    <h3>✏️ Edit Promo</h3>
+    <button class="modal-close" onclick="closeModal('editModal')"><i data-lucide="x" class="lucide-ic"></i></button>
+    <h3><i data-lucide="pencil" class="lucide-ic"></i> Edit Promo</h3>
     <form method="POST">
       <input type="hidden" name="id_promo" id="e_id">
       <div class="form-row">
@@ -377,7 +378,7 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
         <div class="form-group"><label>Tanggal Mulai</label><input type="date" name="tanggal_mulai" id="e_mulai"></div>
         <div class="form-group"><label>Tanggal Selesai</label><input type="date" name="tanggal_selesai" id="e_selesai"></div>
       </div>
-      <button type="submit" name="edit" class="btn-submit">💾 Simpan Perubahan</button>
+      <button type="submit" name="edit" class="btn-submit"><i data-lucide="save" class="lucide-ic"></i> Simpan Perubahan</button>
     </form>
   </div>
 </div>
@@ -412,5 +413,8 @@ document.querySelectorAll('.modal-overlay').forEach(function(ov){
   }
 })();
 </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

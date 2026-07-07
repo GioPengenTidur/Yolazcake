@@ -28,11 +28,12 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
             SUM(section='unggulan') as unggulan
      FROM menu_highlight_foto"));
 
-$labelSection = ['highlight'=>'✦ Highlights Menu','unggulan'=>'✦ Produk Unggulan'];
+$labelSection = ['highlight'=>'<i data-lucide="sparkle" class="lucide-ic"></i> Highlights Menu','unggulan'=>'<i data-lucide="sparkle" class="lucide-ic"></i> Produk Unggulan'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Foto Menu – YOLAZCAKE</title>
@@ -148,34 +149,34 @@ $labelSection = ['highlight'=>'✦ Highlights Menu','unggulan'=>'✦ Produk Ungg
 <body>
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Foto Menu &amp; Highlight</h1>
     <p class="hero-sub">Kelola foto pada bagian Highlights Menu &amp; Produk Unggulan di halaman Menu</p>
-    <div class="hero-divider"><span></span><span class="diamond">✦ ✦ ✦</span><span></span></div>
+    <div class="hero-divider"><span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span></div>
   </div>
 </div>
 
 <div class="page-wrapper">
 
-  <a href="../dashboard.php" class="btn-back">← Dashboard</a>
+  <a href="../dashboard.php" class="btn-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Dashboard</a>
 
   <div class="top-bar">
-    <span class="section-eyebrow">✦ Daftar Foto Menu</span>
+    <span class="section-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Daftar Foto Menu</span>
   </div>
 
   <div class="stats-row">
-    <div class="stat-card"><span class="stat-icon">🖼️</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="image" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= $stats['total'] ?: 0 ?></div><div class="stat-lbl">Total Slot Foto</div></div></div>
-    <div class="stat-card"><span class="stat-icon">✦</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="sparkle" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= $stats['highlight'] ?: 0 ?></div><div class="stat-lbl">Highlights Menu</div></div></div>
-    <div class="stat-card"><span class="stat-icon">👑</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="crown" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= $stats['unggulan'] ?: 0 ?></div><div class="stat-lbl">Produk Unggulan</div></div></div>
   </div>
 
   <div class="filter-row">
     <a href="data_menu_foto.php" class="filter-chip <?= !$filter?'active':'' ?>">Semua</a>
-    <a href="?section=highlight" class="filter-chip <?= $filter==='highlight'?'active':'' ?>">✦ Highlights Menu</a>
-    <a href="?section=unggulan" class="filter-chip <?= $filter==='unggulan'?'active':'' ?>">👑 Produk Unggulan</a>
+    <a href="?section=highlight" class="filter-chip <?= $filter==='highlight'?'active':'' ?>"><i data-lucide="sparkle" class="lucide-ic"></i> Highlights Menu</a>
+    <a href="?section=unggulan" class="filter-chip <?= $filter==='unggulan'?'active':'' ?>"><i data-lucide="crown" class="lucide-ic"></i> Produk Unggulan</a>
   </div>
 
   <?php if($total > 0): ?>
@@ -195,7 +196,7 @@ $labelSection = ['highlight'=>'✦ Highlights Menu','unggulan'=>'✦ Produk Ungg
               <span class="slide-num"><?= $slideIndex+1 ?></span>
               <img src="../<?= htmlspecialchars($s['foto_path']) ?>" alt="<?= htmlspecialchars($s['nama_kartu']) ?>" loading="lazy">
               <a href="edit_menu_foto.php?id=<?= $s['id_foto'] ?>" class="slide-edit">
-                <span class="slide-edit-btn">✏️ Ganti Foto</span>
+                <span class="slide-edit-btn"><i data-lucide="pencil" class="lucide-ic"></i> Ganti Foto</span>
               </a>
             </div>
             <?php endforeach; ?>
@@ -206,7 +207,7 @@ $labelSection = ['highlight'=>'✦ Highlights Menu','unggulan'=>'✦ Produk Ungg
     </div>
     <?php endforeach; ?>
   <?php else: ?>
-    <div class="empty-state"><div class="es-icon">🖼️</div><p>Belum ada data foto menu. Jalankan migrasi database terlebih dahulu.</p></div>
+    <div class="empty-state"><div class="es-icon"><i data-lucide="image" class="lucide-ic"></i></div><p>Belum ada data foto menu. Jalankan migrasi database terlebih dahulu.</p></div>
   <?php endif; ?>
 
 </div>
@@ -223,5 +224,8 @@ $labelSection = ['highlight'=>'✦ Highlights Menu','unggulan'=>'✦ Produk Ungg
   }
 })();
 </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

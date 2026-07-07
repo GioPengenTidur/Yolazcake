@@ -4,6 +4,7 @@ session_start();
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="assets/css/lucide-icons.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>YOLAZCAKE Sintang - Cafe • Bakery • Boutique</title>
@@ -123,7 +124,7 @@ $__yzUsername = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['usern
 <div class="account-dropdown">
 
 <button class="account-btn">
-👤 <?php echo htmlspecialchars($_SESSION['username']); ?> ▼
+<i data-lucide="user" class="lucide-ic"></i> <?php echo htmlspecialchars($_SESSION['username']); ?> ▼
 </button>
 
 <div class="account-menu">
@@ -149,8 +150,8 @@ Login
 
 <?php } ?>
 
-<div class="hamburger" onclick="toggleMenu()" id="hamburger">☰</div>
-<div class="dark-btn" onclick="toggleDark()">🌙</div>
+<div class="hamburger" onclick="toggleMenu()" id="hamburger"><i data-lucide="menu" class="lucide-ic"></i></div>
+<div class="dark-btn" onclick="toggleDark()"><i data-lucide="moon" class="lucide-ic"></i></div>
 
 </div>
 
@@ -169,8 +170,8 @@ Login
     Promo
   </p>
 
-  <p onclick="window.location.href='gallery.php#Rating'">
-    Rating
+  <p onclick="window.location.href='ulasan/tempat.php'">
+    <i data-lucide="star" class="lucide-ic lucide-fill"></i> Rating Tempat & Makanan
   </p>
 
   <p onclick="window.location.href='gallery.php#gallery'">
@@ -219,7 +220,7 @@ Login
       <!-- Content -->
       <div class="hero-content fade-up">
         <div class="hero-badge">
-          <span class="sparkle-icon">✦</span>
+          <span class="sparkle-icon"><i data-lucide="sparkle" class="lucide-ic"></i></span>
           <span>SINTANG'S PREMIER DESTINATION</span>
         </div>
 
@@ -641,7 +642,7 @@ Login
       <!-- Content -->
       <div class="boutique-content fade-in-left">
         <div class="boutique-badge">
-          <span class="sparkle-icon">✦</span>
+          <span class="sparkle-icon"><i data-lucide="sparkle" class="lucide-ic"></i></span>
           <span>Fashion Boutique</span>
         </div>
         
@@ -1099,6 +1100,11 @@ Login
 <script src="js/landing.js"></script>
 
 <?php include 'status_fab.php'; ?>
+<?php include 'rating_fab.php'; ?>
+<?php include 'chatbot_fab.php'; ?>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

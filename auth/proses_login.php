@@ -45,6 +45,13 @@ if ($result->num_rows > 0) {
     $valid = password_verify($password, $user['password']) || $password === $user['password'];
 }
 
+require_once '../config/safe_redirect.php';
+
+// Redirect tujuan opsional (mis. balik ke booking.php setelah login berhasil).
+// Divalidasi ketat lewat safe_redirect_target() supaya tidak bisa
+// disalahgunakan untuk open-redirect ke domain luar.
+$redirectTarget = safe_redirect_target($_POST['redirect'] ?? null);
+
 if ($valid) {
 
     $_SESSION['username'] = $username;
@@ -52,10 +59,13 @@ if ($valid) {
     $_SESSION['email'] = $user['email'] ?? null;
     $_SESSION['user_id'] = $user['id'] ?? null;
 
-    // Semua role (termasuk admin/kasir) kembali ke halaman utama website
-    // dulu setelah login. Untuk masuk ke panel, admin membuka dropdown akun
-    // di navbar lalu menekan "Dashboard" -> dashboard_awal.php (mode dasar).
-    respond($is_ajax, true, 'Login berhasil.', '../index.php');
+    // Semua role (termasuk admin/kasir) mendarat di halaman utama dulu
+    // setelah login, sama seperti pengunjung biasa. Untuk masuk ke panel,
+    // staff tinggal klik dropdown akun di navbar -> "Dashboard", yang akan
+    // mengarah ke dashboard_awal.php (Mode Dasar) seperti biasa dari sana.
+    $defaultTarget = '../index.php';
+
+    respond($is_ajax, true, 'Login berhasil.', $redirectTarget ?? $defaultTarget);
 
 } else {
 

@@ -43,6 +43,7 @@ if(isset($_POST['simpan'])){
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tambah Member – YOLAZCAKE</title>
@@ -297,31 +298,31 @@ if(isset($_POST['simpan'])){
 <!-- HERO -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Tambah Member Baru</h1>
     <div class="hero-divider">
-      <span></span><span class="diamond">✦ ✦ ✦</span><span></span>
+      <span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span>
     </div>
   </div>
 </div>
 
 <div class="back-link">
-  <a href="data_member.php">← Kembali ke Data Member</a>
+  <a href="data_member.php"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali ke Data Member</a>
 </div>
 
 <div class="page-wrapper">
   <div class="form-card">
 
-    <div class="new-badge">✨ Member Baru</div>
+    <div class="new-badge"><i data-lucide="sparkles" class="lucide-ic"></i> Member Baru</div>
     <h2 class="card-title">Daftarkan Member Baru</h2>
     <p class="card-sub">Isi data dengan lengkap untuk mendaftarkan member baru</p>
-    <div class="gold-rule-h"><span>✦ ✦ ✦</span></div>
+    <div class="gold-rule-h"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
 
     <form method="POST">
 
       <?php if($error_msg): ?>
       <div style="background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.4);color:#ffb3b3;padding:12px 16px;border-radius:12px;font-size:.85em;margin-bottom:16px;">
-        ⚠️ <?= htmlspecialchars($error_msg); ?>
+        <i data-lucide="alert-triangle" class="lucide-ic"></i> <?= htmlspecialchars($error_msg); ?>
       </div>
       <?php endif; ?>
 
@@ -329,14 +330,14 @@ if(isset($_POST['simpan'])){
         <div class="field">
           <label>Nama Lengkap</label>
           <div class="field-icon-wrap">
-            <span class="field-icon">👤</span>
+            <span class="field-icon"><i data-lucide="user" class="lucide-ic"></i></span>
             <input type="text" name="nama" placeholder="Nama lengkap member" required>
           </div>
         </div>
         <div class="field">
           <label>Email</label>
           <div class="field-icon-wrap">
-            <span class="field-icon">✉️</span>
+            <span class="field-icon"><i data-lucide="mail" class="lucide-ic"></i></span>
             <input type="email" name="email" placeholder="email@domain.com" required>
           </div>
         </div>
@@ -346,13 +347,13 @@ if(isset($_POST['simpan'])){
         <div class="field">
           <label>No. Handphone</label>
           <div class="field-icon-wrap">
-            <span class="field-icon">📱</span>
+            <span class="field-icon"><i data-lucide="smartphone" class="lucide-ic"></i></span>
             <input type="text" name="no_hp" placeholder="08xxxxxxxxxx" required>
           </div>
         </div>
         <div class="field">
           <label>Poin Awal</label>
-          <div class="poin-note">⭐ Poin awal otomatis dimulai dari 0</div>
+          <div class="poin-note"><i data-lucide="star" class="lucide-ic lucide-fill"></i> Poin awal otomatis dimulai dari 0</div>
         </div>
       </div>
 
@@ -360,15 +361,15 @@ if(isset($_POST['simpan'])){
         <div class="field">
           <label>Alamat</label>
           <div class="field-icon-wrap textarea-wrap">
-            <span class="field-icon">📍</span>
+            <span class="field-icon"><i data-lucide="map-pin" class="lucide-ic"></i></span>
             <textarea name="alamat" placeholder="Alamat lengkap member..."></textarea>
           </div>
         </div>
       </div>
 
       <div class="btn-row">
-        <a href="data_member.php" class="btn-premium btn-cancel">✕ Batal</a>
-        <button type="submit" name="simpan" class="btn-premium btn-save">✦ Daftarkan Member</button>
+        <a href="data_member.php" class="btn-premium btn-cancel"><i data-lucide="x" class="lucide-ic"></i> Batal</a>
+        <button type="submit" name="simpan" class="btn-premium btn-save"><i data-lucide="sparkle" class="lucide-ic"></i> Daftarkan Member</button>
       </div>
 
     </form>
@@ -398,5 +399,8 @@ if(isset($_POST['simpan'])){
     }
   })();
 </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

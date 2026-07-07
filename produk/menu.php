@@ -25,6 +25,7 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menu - YOLAZCAKE Sintang</title>
@@ -1557,7 +1558,7 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
 <!-- NAVBAR -->
 <nav>
   <div class="nav-left">
-    <img src="assets/img/Yolazcake.png" alt="YOLAZCAKE Logo">
+    <img src="../assets/img/Yolazcake.png" alt="YOLAZCAKE Logo">
     <h2>YOLAZCAKE</h2>
   </div>
   
@@ -1571,7 +1572,7 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
   <div class="nav-right">
 <?php if(isset($_SESSION['username'])){ ?>
     <div class="account-dropdown">
-      <button class="account-btn">👤 <?php echo htmlspecialchars($_SESSION['username']); ?> ▼</button>
+      <button class="account-btn"><i data-lucide="user" class="lucide-ic"></i> <?php echo htmlspecialchars($_SESSION['username']); ?> ▼</button>
       <div class="account-menu">
         <a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? '../dashboard.php' : '../member/member.php'; ?>"><?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'Dashboard' : 'Member'; ?></a>
         <a href="../auth/logout.php">Logout</a>
@@ -1580,11 +1581,11 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
 <?php } else { ?>
     <button class="login-btn" onclick="window.location.href='../auth/login.php'">Login</button>
 <?php } ?>
-    <div class="hamburger" onclick="toggleMenu()" id="hamburger">☰</div>
-    <div class="dark-btn" onclick="toggleDark()">🌙</div>
+    <div class="hamburger" onclick="toggleMenu()" id="hamburger"><i data-lucide="menu" class="lucide-ic"></i></div>
+    <div class="dark-btn" onclick="toggleDark()"><i data-lucide="moon" class="lucide-ic"></i></div>
   </div>
   <div class="dropdown" id="dropdown">
-    <p onclick="window.location.href='../pemesanan/menuu.php'">🍰 Pesan Sekarang</p>
+    <p onclick="window.location.href='../pemesanan/menuu.php'"><i data-lucide="cake-slice" class="lucide-ic"></i> Pesan Sekarang</p>
     <p onclick="window.location.href='../about.php#story'">Back Story</p>
     <p onclick="window.location.href='menu.php#Product'">Featured Product</p>
     <p onclick="window.location.href='menu.php#promo'">Promo</p>
@@ -1599,19 +1600,19 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
 <!-- ========== PREMIUM HERO BANNER ========== -->
 <div class="menu-hero" id="menuHero">
   <div class="menu-hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Menu Kami</h1>
-    <p class="hero-sub">Cake • Coffee • Dessert — Cita Rasa Premium di Setiap Sajian ☕🎂</p>
+    <p class="hero-sub">Cake • Coffee • Dessert — Cita Rasa Premium di Setiap Sajian <i data-lucide="coffee" class="lucide-ic"></i><i data-lucide="cake" class="lucide-ic"></i></p>
     <div class="hero-divider">
       <span></span>
-      <span class="diamond">✦ ✦ ✦</span>
+      <span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span>
       <span></span>
     </div>
     <div class="hero-cta-row">
-      <a href="../pemesanan/menuu.php" class="booking-btn-main">🍰 Pesan Sekarang</a>
-      <a href="#booking" class="booking-btn-wa">📅 Booking Meja (Opsional)</a>
+      <a href="../pemesanan/menuu.php" class="booking-btn-main"><i data-lucide="cake-slice" class="lucide-ic"></i> Pesan Sekarang</a>
+      <a href="#booking" class="booking-btn-wa"><i data-lucide="calendar" class="lucide-ic"></i> Booking Meja (Opsional)</a>
     </div>
-    <p class="hero-cta-note">💡 Kamu bisa langsung pesan tanpa reservasi meja. Booking hanya diperlukan kalau ingin memastikan tempat duduk.</p>
+    <p class="hero-cta-note"><i data-lucide="lightbulb" class="lucide-ic"></i> Kamu bisa langsung pesan tanpa reservasi meja. Booking hanya diperlukan kalau ingin memastikan tempat duduk.</p>
   </div>
 </div>
 
@@ -1619,9 +1620,9 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
 <section id="menu">
 
   <div class="section-label fade">
-    <span class="eyebrow">✦ Koleksi Spesial</span>
+    <span class="eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Koleksi Spesial</span>
     <h2>Highlights Menu</h2>
-    <div class="gold-rule"><span>✦ ✦ ✦</span></div>
+    <div class="gold-rule"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
   </div>
 
   <div class="menu-grid">
@@ -1643,8 +1644,8 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
         </div>
         <div class="carousel-counter" id="menu-counter-0">1 / 3</div>
         <div class="carousel-progress" id="menu-progress-0" style="width:33.33%"></div>
-        <div class="swipe-hint">👆 Geser</div>
-        <span class="menu-card-badge">✦ Homemade</span>
+        <div class="swipe-hint"><i data-lucide="pointer" class="lucide-ic"></i> Geser</div>
+        <span class="menu-card-badge"><i data-lucide="sparkle" class="lucide-ic"></i> Homemade</span>
       </div>
       <div class="menu-card-body">
         <h3>Donut</h3>
@@ -1669,8 +1670,8 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
         </div>
         <div class="carousel-counter" id="menu-counter-1">1 / 3</div>
         <div class="carousel-progress" id="menu-progress-1" style="width:33.33%"></div>
-        <div class="swipe-hint">👆 Geser</div>
-        <span class="menu-card-badge">✦ Specialty</span>
+        <div class="swipe-hint"><i data-lucide="pointer" class="lucide-ic"></i> Geser</div>
+        <span class="menu-card-badge"><i data-lucide="sparkle" class="lucide-ic"></i> Specialty</span>
       </div>
       <div class="menu-card-body">
         <h3>Specialty Coffee</h3>
@@ -1695,8 +1696,8 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
         </div>
         <div class="carousel-counter" id="menu-counter-2">1 / 3</div>
         <div class="carousel-progress" id="menu-progress-2" style="width:33.33%"></div>
-        <div class="swipe-hint">👆 Geser</div>
-        <span class="menu-card-badge">✦ Signature</span>
+        <div class="swipe-hint"><i data-lucide="pointer" class="lucide-ic"></i> Geser</div>
+        <span class="menu-card-badge"><i data-lucide="sparkle" class="lucide-ic"></i> Signature</span>
       </div>
       <div class="menu-card-body">
         <h3>Dessert &amp; Minuman</h3>
@@ -1721,8 +1722,8 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
         </div>
         <div class="carousel-counter" id="menu-counter-3">1 / 3</div>
         <div class="carousel-progress" id="menu-progress-3" style="width:33.33%"></div>
-        <div class="swipe-hint">👆 Geser</div>
-        <span class="menu-card-badge">✦ Boutique</span>
+        <div class="swipe-hint"><i data-lucide="pointer" class="lucide-ic"></i> Geser</div>
+        <span class="menu-card-badge"><i data-lucide="sparkle" class="lucide-ic"></i> Boutique</span>
       </div>
       <div class="menu-card-body">
         <h3>Boutique Lantai 2</h3>
@@ -1741,9 +1742,9 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
   <div id="productParticles"></div>
 
   <div class="section-label fade">
-    <span class="eyebrow">✦ Best Seller</span>
+    <span class="eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Best Seller</span>
     <h2>Produk Unggulan</h2>
-    <div class="gold-rule"><span>✦ ✦ ✦</span></div>
+    <div class="gold-rule"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
   </div>
 
   <div class="product-grid">
@@ -1773,17 +1774,17 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
         <!-- Progress bar -->
         <div class="carousel-progress" id="progress-0" style="width:33.33%"></div>
         <!-- Swipe hint -->
-        <div class="swipe-hint">👆 Geser</div>
+        <div class="swipe-hint"><i data-lucide="pointer" class="lucide-ic"></i> Geser</div>
         <!-- Badge -->
-        <span class="product-card-badge">✦ Best Seller</span>
+        <span class="product-card-badge"><i data-lucide="sparkle" class="lucide-ic"></i> Best Seller</span>
       </div>
       <div class="product-card-body">
         <h3>Trio Cake</h3>
         <p>Chocolate Indulgence, Klepon Cake, Red Velvet — trio terbaik kami.</p>
         <div class="product-tag-row">
-          <span class="product-tag">🎂 Custom</span>
-          <span class="product-tag">🍫 Premium</span>
-          <span class="product-tag">💛 Favorit</span>
+          <span class="product-tag"><i data-lucide="cake" class="lucide-ic"></i> Custom</span>
+          <span class="product-tag"><i data-lucide="candy" class="lucide-ic"></i> Premium</span>
+          <span class="product-tag"><i data-lucide="heart" class="lucide-ic"></i> Favorit</span>
         </div>
       </div>
     </div>
@@ -1806,16 +1807,16 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
         </div>
         <div class="carousel-counter" id="counter-1">1 / 3</div>
         <div class="carousel-progress" id="progress-1" style="width:33.33%"></div>
-        <div class="swipe-hint">👆 Geser</div>
-        <span class="product-card-badge">✦ Signature</span>
+        <div class="swipe-hint"><i data-lucide="pointer" class="lucide-ic"></i> Geser</div>
+        <span class="product-card-badge"><i data-lucide="sparkle" class="lucide-ic"></i> Signature</span>
       </div>
       <div class="product-card-body">
         <h3>Signature Latte</h3>
         <p>Dibuat dengan biji kopi pilihan dan susu premium untuk citarasa sempurna.</p>
         <div class="product-tag-row">
-          <span class="product-tag">☕ Latte Art</span>
-          <span class="product-tag">🫘 Specialty</span>
-          <span class="product-tag">✨ Premium</span>
+          <span class="product-tag"><i data-lucide="coffee" class="lucide-ic"></i> Latte Art</span>
+          <span class="product-tag"><i data-lucide="bean" class="lucide-ic"></i> Specialty</span>
+          <span class="product-tag"><i data-lucide="sparkles" class="lucide-ic"></i> Premium</span>
         </div>
       </div>
     </div>
@@ -1838,16 +1839,16 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
         </div>
         <div class="carousel-counter" id="counter-2">1 / 3</div>
         <div class="carousel-progress" id="progress-2" style="width:33.33%"></div>
-        <div class="swipe-hint">👆 Geser</div>
-        <span class="product-card-badge">✦ Homemade</span>
+        <div class="swipe-hint"><i data-lucide="pointer" class="lucide-ic"></i> Geser</div>
+        <span class="product-card-badge"><i data-lucide="sparkle" class="lucide-ic"></i> Homemade</span>
       </div>
       <div class="product-card-body">
         <h3>Donat Premium</h3>
         <p>Donat homemade lembut dengan topping berlimpah dan bahan terbaik.</p>
         <div class="product-tag-row">
-          <span class="product-tag">🍩 Topping</span>
-          <span class="product-tag">💛 Homemade</span>
-          <span class="product-tag">🎁 Gift</span>
+          <span class="product-tag"><i data-lucide="donut" class="lucide-ic"></i> Topping</span>
+          <span class="product-tag"><i data-lucide="heart" class="lucide-ic"></i> Homemade</span>
+          <span class="product-tag"><i data-lucide="gift" class="lucide-ic"></i> Gift</span>
         </div>
       </div>
     </div>
@@ -1870,16 +1871,16 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
         </div>
         <div class="carousel-counter" id="counter-3">1 / 3</div>
         <div class="carousel-progress" id="progress-3" style="width:33.33%"></div>
-        <div class="swipe-hint">👆 Geser</div>
-        <span class="product-card-badge">✦ Style</span>
+        <div class="swipe-hint"><i data-lucide="pointer" class="lucide-ic"></i> Geser</div>
+        <span class="product-card-badge"><i data-lucide="sparkle" class="lucide-ic"></i> Style</span>
       </div>
       <div class="product-card-body">
         <h3>Boutique Collection</h3>
         <p>Perpaduan style, elegance, dan confidence untuk tampil memukau.</p>
         <div class="product-tag-row">
-          <span class="product-tag">👗 Fashion</span>
-          <span class="product-tag">💄 Style</span>
-          <span class="product-tag">✨ Aesthetic</span>
+          <span class="product-tag"><i data-lucide="shirt" class="lucide-ic"></i> Fashion</span>
+          <span class="product-tag"><i data-lucide="paintbrush" class="lucide-ic"></i> Style</span>
+          <span class="product-tag"><i data-lucide="sparkles" class="lucide-ic"></i> Aesthetic</span>
         </div>
       </div>
     </div>
@@ -1897,7 +1898,7 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
 
     <!-- KIRI: teks & CTA -->
     <div class="booking-left">
-      <span class="eyebrow">✦ Table Reservation</span>
+      <span class="eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Table Reservation</span>
       <h2>Reserve Your<br>Favorite Table</h2>
       <p>
         Nikmati pengalaman tak terlupakan bersama keluarga dan sahabat.
@@ -1905,34 +1906,34 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
         selalu terjamin dan nyaman.
       </p>
       <p style="font-size:0.85em;color:rgba(255,255,255,0.55);margin-top:-6px;">
-        💡 Booking meja bersifat opsional. Mau langsung pesan tanpa reservasi? Klik <a href="../pemesanan/menuu.php" style="color:#D4AF37;text-decoration:underline;">Pesan Sekarang</a>.
+        <i data-lucide="lightbulb" class="lucide-ic"></i> Booking meja bersifat opsional. Mau langsung pesan tanpa reservasi? Klik <a href="../pemesanan/menuu.php" style="color:#D4AF37;text-decoration:underline;">Pesan Sekarang</a>.
       </p>
 
       <div class="booking-features">
         <div class="booking-feature-item">
-          <div class="booking-feature-icon">🍰</div>
+          <div class="booking-feature-icon"><i data-lucide="cake-slice" class="lucide-ic"></i></div>
           <span>Sajian cake &amp; dessert premium langsung di meja Anda</span>
         </div>
         <div class="booking-feature-item">
-          <div class="booking-feature-icon">☕</div>
+          <div class="booking-feature-icon"><i data-lucide="coffee" class="lucide-ic"></i></div>
           <span>Specialty coffee diseduh saat reservasi dikonfirmasi</span>
         </div>
         <div class="booking-feature-item">
-          <div class="booking-feature-icon">🎉</div>
+          <div class="booking-feature-icon"><i data-lucide="party-popper" class="lucide-ic"></i></div>
           <span>Cocok untuk gathering, ulang tahun &amp; acara spesial</span>
         </div>
         <div class="booking-feature-item">
-          <div class="booking-feature-icon">📍</div>
+          <div class="booking-feature-icon"><i data-lucide="map-pin" class="lucide-ic"></i></div>
           <span>Tersedia indoor &amp; outdoor — pemandangan kota Sintang</span>
         </div>
       </div>
 
       <div class="booking-cta-row">
         <a href="../booking/booking.php" class="booking-btn-main">
-          📅 Booking Sekarang
+          <i data-lucide="calendar" class="lucide-ic"></i> Booking Sekarang
         </a>
         <a href="https://wa.me/6281578157888" class="booking-btn-wa" target="_blank">
-          💬 Tanya via WA
+          <i data-lucide="message-circle" class="lucide-ic"></i> Tanya via WA
         </a>
       </div>
     </div>
@@ -1942,7 +1943,7 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
       <div class="booking-card-visual">
 
         <div class="booking-card-top">
-          <span class="booking-card-logo">✦ YOLAZCAKE</span>
+          <span class="booking-card-logo"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE</span>
           <span class="booking-status-badge">
             <span class="booking-status-dot"></span>
             Tersedia Hari Ini
@@ -1992,13 +1993,13 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
 <section id="promo">
 
   <div class="section-label fade">
-    <span class="eyebrow">✦ Penawaran Eksklusif</span>
+    <span class="eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Penawaran Eksklusif</span>
     <h2>Promo Spesial</h2>
-    <div class="gold-rule"><span>✦ ✦ ✦</span></div>
+    <div class="gold-rule"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
   </div>
 
   <div class="promo-card-premium fade">
-    <span class="promo-icon">🎉</span>
+    <span class="promo-icon"><i data-lucide="party-popper" class="lucide-ic"></i></span>
     <h3>Diskon 25% untuk Setiap Pembelian<br>di Atas Rp150.000</h3>
     <p>
       Berlaku untuk cake, dessert, dan minuman pilihan.
@@ -2006,13 +2007,13 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
       sajian premium YOLAZCAKE dengan harga spesial.
     </p>
     <div class="promo-badges">
-      <span class="promo-badge">🎂 Cake & Dessert</span>
-      <span class="promo-badge">☕ Minuman Pilihan</span>
-      <span class="promo-badge">📅 Akhir Pekan</span>
-      <span class="promo-badge">💸 Hemat 25%</span>
+      <span class="promo-badge"><i data-lucide="cake" class="lucide-ic"></i> Cake & Dessert</span>
+      <span class="promo-badge"><i data-lucide="coffee" class="lucide-ic"></i> Minuman Pilihan</span>
+      <span class="promo-badge"><i data-lucide="calendar" class="lucide-ic"></i> Akhir Pekan</span>
+      <span class="promo-badge"><i data-lucide="banknote" class="lucide-ic"></i> Hemat 25%</span>
     </div>
     <button class="promo-btn-premium" onclick="window.location.href='../promo.php'">
-      ✦ Ambil Promo Sekarang ✦
+      <i data-lucide="sparkle" class="lucide-ic"></i> Ambil Promo Sekarang <i data-lucide="sparkle" class="lucide-ic"></i>
     </button>
   </div>
 
@@ -2299,6 +2300,11 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
 
 
 <?php $statusFabBase = '../'; include '../status_fab.php'; ?>
+<?php $ratingFabBase = '../'; include '../rating_fab.php'; ?>
+<?php $chatbotFabBase = '../'; include '../chatbot_fab.php'; ?>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

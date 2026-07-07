@@ -3,6 +3,18 @@ session_start();
 require_once __DIR__.'/../config/staff_guard.php';
 require_staff_login();
 include '../config/koneksi.php';
+require_once '../config/ulasan_helper.php';
+
+// Moderasi: admin bisa menghapus ulasan langsung dari halaman ini
+if (isset($_GET['hapus_ulasan'])) {
+    $idUlasan = (int)$_GET['hapus_ulasan'];
+    $stmtHapus = $conn->prepare("DELETE FROM ulasan_produk WHERE id_ulasan=?");
+    $stmtHapus->bind_param("i", $idUlasan);
+    $stmtHapus->execute();
+    $stmtHapus->close();
+    header("Location: detail_produk.php?id=".(int)($_GET['id'] ?? 0));
+    exit();
+}
 
 $id = (int)($_GET['id'] ?? 0);
 $stmt = $conn->prepare(
@@ -23,6 +35,9 @@ if(!$produk){
     exit();
 }
 
+$ringkasan_rating = get_ringkasan_rating_produk($conn, $id);
+$daftar_ulasan     = get_ulasan_produk($conn, $id);
+
 $stok = (int)$produk['stok'];
 if($stok <= 0){
     $stok_class = 'stok-habis'; $stok_label = 'Habis';
@@ -35,6 +50,7 @@ if($stok <= 0){
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Detail Produk – YOLAZCAKE</title>
@@ -350,6 +366,40 @@ if($stok <= 0){
       .detail-name{font-size:1.5em;}
       .detail-price{font-size:1.3em;}
     }
+
+    /* ── ULASAN PRODUK (MODERASI) ── */
+    .review-card{
+      width:100%;margin-top:24px;
+      background:rgba(255,255,255,.05);backdrop-filter:blur(20px);
+      border:1px solid rgba(255,255,255,.1);border-radius:24px;
+      padding:24px 28px;position:relative;overflow:hidden;
+    }
+    .review-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,#D4AF37,#ee2a7b,#D4AF37);
+      background-size:200% 100%;animation:goldSlide 4s linear infinite;
+    }
+    .review-card h3{
+      font-family:'Playfair Display',serif;color:#D4AF37;font-size:1.2em;
+      margin-bottom:6px;display:flex;align-items:center;gap:8px;
+    }
+    .review-summary{font-size:.85em;color:rgba(255,255,255,.55);margin-bottom:18px;}
+    .review-item{
+      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+      border-radius:14px;padding:14px 16px;margin-bottom:10px;
+    }
+    .review-item-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
+    .review-item-name{font-weight:700;color:#fff;font-size:.9em;}
+    .review-item-date{font-size:.72em;color:rgba(255,255,255,.4);}
+    .review-item-stars{margin:4px 0;font-size:.85em;}
+    .review-item-text{font-size:.85em;color:rgba(255,255,255,.7);line-height:1.6;margin-top:4px;}
+    .review-item-del{
+      display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:4px 10px;border-radius:7px;
+      font-size:.72em;font-weight:600;text-decoration:none;
+      background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#fca5a5;
+    }
+    .review-item-del:hover{background:rgba(239,68,68,.25);}
+    .review-empty{text-align:center;padding:24px;color:rgba(255,255,255,.4);font-size:.88em;}
   </style>
 </head>
 <body>
@@ -359,30 +409,30 @@ if($stok <= 0){
 <!-- HERO -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Detail Produk</h1>
     <p class="hero-sub">Informasi lengkap mengenai produk pilihan Anda</p>
     <div class="hero-divider">
-      <span></span><span class="diamond">✦ ✦ ✦</span><span></span>
+      <span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span>
     </div>
   </div>
 </div>
 
 <div class="back-link">
-  <a href="data_produk.php">← Kembali ke Data Produk</a>
+  <a href="data_produk.php"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali ke Data Produk</a>
 </div>
 
 <div class="page-wrapper">
 
   <div class="top-bar">
     <div>
-      <div class="new-badge">🔍 Manajemen Produk</div>
+      <div class="new-badge"><i data-lucide="search" class="lucide-ic"></i> Manajemen Produk</div>
       <h2 class="section-title" style="margin-top:10px;">Informasi Produk</h2>
     </div>
   </div>
 
   <div class="main-card">
-    <div class="gold-rule-h"><span>✦ ✦ ✦</span></div>
+    <div class="gold-rule-h"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
 
     <div class="detail-body">
 
@@ -399,27 +449,27 @@ if($stok <= 0){
         <div class="detail-price">Rp <?= number_format($produk['harga'],0,',','.'); ?></div>
 
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <div class="stok-badge <?= $stok_class; ?>">📦 <?= $stok_label; ?></div>
+          <div class="stok-badge <?= $stok_class; ?>"><i data-lucide="package" class="lucide-ic"></i> <?= $stok_label; ?></div>
           <div class="stok-badge" style="background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.3);color:#D4AF37;">
-            <?= htmlspecialchars($produk['kategori_icon'] ?? '🍽️'); ?> <?= htmlspecialchars($produk['nama_kategori']); ?>
+            <?= htmlspecialchars($produk['kategori_icon'] ?? '<i data-lucide="utensils" class="lucide-ic"></i>'); ?> <?= htmlspecialchars($produk['nama_kategori']); ?>
           </div>
         </div>
 
         <div class="detail-divider"></div>
 
         <div>
-          <div class="detail-desc-label"><span>📝</span> Deskripsi</div>
+          <div class="detail-desc-label"><span><i data-lucide="file-text" class="lucide-ic"></i></span> Deskripsi</div>
           <div class="detail-desc-text" style="margin-top:8px;">
             <?= nl2br(htmlspecialchars($produk['deskripsi'])); ?>
           </div>
         </div>
 
         <div class="detail-actions">
-          <a href="edit_produk.php?id=<?= $produk['id_produk']; ?>" class="btn-premium btn-edit">✏️ Edit Produk</a>
+          <a href="edit_produk.php?id=<?= $produk['id_produk']; ?>" class="btn-premium btn-edit"><i data-lucide="pencil" class="lucide-ic"></i> Edit Produk</a>
           <a href="hapus.php?id=<?= $produk['id_produk']; ?>"
              class="btn-premium btn-hapus"
-             onclick="return confirm('Yakin ingin menghapus produk ini?')">🗑 Hapus</a>
-          <a href="data_produk.php" class="btn-premium btn-back">← Kembali</a>
+             onclick="return confirm('Yakin ingin menghapus produk ini?')"><i data-lucide="trash-2" class="lucide-ic"></i> Hapus</a>
+          <a href="data_produk.php" class="btn-premium btn-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali</a>
         </div>
 
       </div>
@@ -427,6 +477,37 @@ if($stok <= 0){
     </div>
 
   </div><!-- /.main-card -->
+
+  <!-- ULASAN PRODUK (MODERASI) -->
+  <div class="review-card">
+    <h3><i data-lucide="star" class="lucide-ic lucide-fill"></i> Ulasan Pelanggan</h3>
+    <div class="review-summary">
+      Rata-rata <strong style="color:#D4AF37;"><?= number_format($ringkasan_rating['avg'],1) ?></strong> / 5
+      dari <?= $ringkasan_rating['jumlah'] ?> ulasan.
+      Ulasan baru masuk otomatis lewat halaman menu / detail produk publik pelanggan.
+    </div>
+
+    <?php if (!empty($daftar_ulasan)): foreach ($daftar_ulasan as $u): ?>
+      <div class="review-item">
+        <div class="review-item-head">
+          <span class="review-item-name"><i data-lucide="user" class="lucide-ic"></i> <?= htmlspecialchars($u['nama_reviewer']) ?></span>
+          <span class="review-item-date"><?= date('d M Y H:i', strtotime($u['created_at'])) ?></span>
+        </div>
+        <div class="review-item-stars">
+          <?php for($s=1;$s<=5;$s++): ?>
+            <span style="color:<?= $s <= $u['rating'] ? '#D4AF37' : 'rgba(255,255,255,.2)' ?>;"><i data-lucide="star" class="lucide-ic lucide-fill"></i></span>
+          <?php endfor; ?>
+        </div>
+        <?php if (!empty($u['komentar'])): ?>
+          <div class="review-item-text"><?= nl2br(htmlspecialchars($u['komentar'])) ?></div>
+        <?php endif; ?>
+        <a href="?id=<?= $id ?>&hapus_ulasan=<?= $u['id_ulasan'] ?>" class="review-item-del"
+           onclick="return confirm('Hapus ulasan ini?')"><i data-lucide="trash-2" class="lucide-ic"></i> Hapus Ulasan</a>
+      </div>
+    <?php endforeach; else: ?>
+      <div class="review-empty"><i data-lucide="inbox" class="lucide-ic"></i> Belum ada ulasan untuk produk ini.</div>
+    <?php endif; ?>
+  </div>
 
 </div><!-- /.page-wrapper -->
 
@@ -463,5 +544,8 @@ if($stok <= 0){
   })();
 </script>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

@@ -1,11 +1,26 @@
 <?php
 session_start();
 include "../config/koneksi.php";
+require_once '../config/safe_redirect.php';
 
 $username         = trim($_POST['username'] ?? '');
 $email            = trim($_POST['email'] ?? '');
 $password         = $_POST['password'] ?? '';
 $confirm_password = $_POST['confirm_password'] ?? '';
+
+// Redirect tujuan opsional yang terbawa dari login.php (mis. booking.php),
+// supaya setelah akun berhasil dibuat, halaman login yang dituju masih
+// "ingat" mau mengarahkan user ke mana setelah dia login.
+$carryRedirect = safe_redirect_target($_POST['redirect'] ?? null);
+
+/** Susun query string tujuan balik ke login.php, sambil bawa redirect kalau ada. */
+function build_login_target(?string $carryRedirect, string $baseQs = ''): string {
+    $qs = $baseQs;
+    if ($carryRedirect) {
+        $qs .= ($qs === '' ? '' : '&') . 'redirect=' . urlencode($carryRedirect) . '&notice=booking';
+    }
+    return 'login.php?' . $qs;
+}
 
 // Deteksi apakah request datang dari AJAX (fetch) atau submit form biasa
 $is_ajax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
@@ -31,6 +46,10 @@ function respond_register($is_ajax, $success, $message, $redirect = null, $error
         }
         if ($email !== '') {
             $qs .= '&email=' . urlencode($email);
+        }
+        global $carryRedirect;
+        if (!empty($carryRedirect)) {
+            $qs .= '&redirect=' . urlencode($carryRedirect);
         }
         header("Location: register.php?$qs");
     }
@@ -86,7 +105,7 @@ $stmt = $conn->prepare("INSERT INTO users (username, email, password, role) VALU
 $stmt->bind_param("ssss", $username, $email, $hashed, $role);
 
 if ($stmt->execute()) {
-    respond_register($is_ajax, true, 'Akun berhasil dibuat.', 'login.php?registered=1');
+    respond_register($is_ajax, true, 'Akun berhasil dibuat.', build_login_target($carryRedirect, 'registered=1'));
 } else {
     respond_register($is_ajax, false, 'Terjadi kesalahan, coba lagi.', null, 'taken', $username, $email);
 }

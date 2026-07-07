@@ -18,6 +18,7 @@ function tampilkan_sukses($opsi = []){
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= htmlspecialchars($suksesJudul); ?> – YOLAZCAKE</title>
@@ -242,7 +243,7 @@ function tampilkan_sukses($opsi = []){
 <div id="particles"></div>
 
 <div class="success-card">
-  <p class="eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+  <p class="eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
 
   <div class="icon-wrap" id="iconWrap">
     <div class="spinner-ring" id="spinnerRing"></div>
@@ -262,10 +263,10 @@ function tampilkan_sukses($opsi = []){
     <div class="progress-bar" id="progressBar"></div>
   </div>
 
-  <div class="gold-rule" id="goldRule"><span>✦ ✦ ✦</span></div>
+  <div class="gold-rule" id="goldRule"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
 
   <a href="<?= htmlspecialchars($redirect); ?>" class="btn-continue" id="continueBtn">
-    ✦ <?= htmlspecialchars($tombolLabel); ?>
+    <i data-lucide="sparkle" class="lucide-ic"></i> <?= htmlspecialchars($tombolLabel); ?>
   </a>
   <p class="redirect-note" id="redirectNote">Mengalihkan otomatis…</p>
 </div>
@@ -344,6 +345,9 @@ function tampilkan_sukses($opsi = []){
   }, DELAY_REDIRECT);
 </script>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>
 <?php

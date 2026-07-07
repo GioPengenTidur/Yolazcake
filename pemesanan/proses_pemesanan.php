@@ -555,6 +555,15 @@ unset($_SESSION['checkout_promo']);
       box-shadow:0 8px 28px rgba(99,250,180,.3);
     }
 
+    .btn-invoice{
+      background:linear-gradient(135deg,rgba(238,42,123,.22),rgba(212,175,55,.12));
+      border:1px solid rgba(238,42,123,.4);color:#ee2a7b;
+    }
+    .btn-invoice:hover{
+      background:linear-gradient(135deg,rgba(238,42,123,.32),rgba(212,175,55,.2));
+      box-shadow:0 8px 28px rgba(238,42,123,.3);
+    }
+
     .btn-outline{
       background:rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);
@@ -854,7 +863,7 @@ unset($_SESSION['checkout_promo']);
   <!-- ACTION BUTTONS -->
   <div class="actions">
     <a href="../index.php" class="btn-premium btn-gold">🏠 Kembali ke Beranda</a>
-    <a href="detail_pemesanan.php?id=<?= $id_pemesanan ?>" class="btn-premium btn-green">🔍 Lihat Detail Pesanan</a>
+    <a href="invoice_pdf.php?id=<?= $id_pemesanan ?>&kode=<?= urlencode($kode_pesanan) ?>" target="_blank" class="btn-premium btn-invoice">📄 Unduh Invoice PDF</a>
     <a href="menuu.php" class="btn-premium btn-outline">🎂 Pesan Lagi</a>
   </div>
 

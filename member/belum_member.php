@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Menuju Member – YOLAZCAKE</title>
@@ -72,7 +73,7 @@
 </head>
 <body>
   <div class="card">
-    <div class="icon">🎯</div>
+    <div class="icon"><i data-lucide="target" class="lucide-ic"></i></div>
     <h1>Menuju Member YOLAZCAKE</h1>
     <p class="sub">
       Member itu bukan cuma daftar akun — buktikan dulu langgananmu!
@@ -95,10 +96,13 @@
     </div>
 
     <div class="actions">
-      <a href="../booking/booking.php" class="btn btn-gold">🪑 Booking Meja Sekarang</a>
-      <a href="../pemesanan/menuu.php" class="btn btn-gold">🛒 Pesan Menu Sekarang</a>
-      <a href="../index.php" class="btn btn-outline">🏠 Kembali ke Beranda</a>
+      <a href="../booking/booking.php" class="btn btn-gold"><i data-lucide="armchair" class="lucide-ic"></i> Booking Meja Sekarang</a>
+      <a href="../pemesanan/menuu.php" class="btn btn-gold"><i data-lucide="shopping-cart" class="lucide-ic"></i> Pesan Menu Sekarang</a>
+      <a href="../index.php" class="btn btn-outline"><i data-lucide="home" class="lucide-ic"></i> Kembali ke Beranda</a>
     </div>
   </div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

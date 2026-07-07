@@ -63,6 +63,7 @@ $total_bayar = $total - $diskon_nominal;
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkout – YOLAZCAKE</title>
@@ -444,7 +445,7 @@ $total_bayar = $total - $diskon_nominal;
       box-shadow:0 0 12px rgba(212,175,55,.4);
     }
     .pay-method.selected .pay-method-check::after{
-      content:'✓';color:#1e0e3a;font-size:.75em;font-weight:900;
+      content:'<i data-lucide="check" class="lucide-ic"></i>';color:#1e0e3a;font-size:.75em;font-weight:900;
     }
 
     /* ── SUBMIT BTN ── */
@@ -555,11 +556,11 @@ $total_bayar = $total - $diskon_nominal;
 <!-- ═══════════════ HERO ═══════════════ -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Checkout</h1>
     <p class="hero-sub">Satu langkah lagi untuk menikmati hidangan kami</p>
     <div class="hero-divider">
-      <span></span><span class="diamond">✦ ✦ ✦</span><span></span>
+      <span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span>
     </div>
   </div>
 </div>
@@ -578,12 +579,12 @@ $total_bayar = $total - $diskon_nominal;
 <!-- STEP INDICATOR -->
 <div class="steps-bar">
   <div class="step done">
-    <div class="step-circle">✓</div>
+    <div class="step-circle"><i data-lucide="check" class="lucide-ic"></i></div>
     <div class="step-label">Menu</div>
   </div>
   <div class="step-line done"></div>
   <div class="step done">
-    <div class="step-circle">✓</div>
+    <div class="step-circle"><i data-lucide="check" class="lucide-ic"></i></div>
     <div class="step-label">Keranjang</div>
   </div>
   <div class="step-line done"></div>
@@ -613,7 +614,7 @@ $total_bayar = $total - $diskon_nominal;
     <div class="premium-card card-left">
 
       <div class="card-header">
-        <div class="card-header-icon">🛍️</div>
+        <div class="card-header-icon"><i data-lucide="shopping-bag" class="lucide-ic"></i></div>
         <div>
           <div class="card-title">Ringkasan Pesanan</div>
           <div class="card-subtitle"><?= count($items) ?> item dalam pesananmu</div>
@@ -648,21 +649,21 @@ $total_bayar = $total - $diskon_nominal;
           <input
             type="text"
             name="kode_promo"
-            placeholder="✦ Punya kode promo?"
+            placeholder="<i data-lucide="sparkle" class="lucide-ic"></i> Punya kode promo?"
             style="text-transform:uppercase;"
             value="<?= $promo_aktif ? htmlspecialchars($promo_aktif['kode_promo']) : '' ?>"
             <?= $promo_aktif ? 'readonly' : '' ?>
             <?= $promo_aktif ? '' : 'required' ?>>
           <?php if($promo_aktif): ?>
-            <button type="submit" name="hapus_promo" value="1" class="btn-hapus">✕ Hapus</button>
+            <button type="submit" name="hapus_promo" value="1" class="btn-hapus"><i data-lucide="x" class="lucide-ic"></i> Hapus</button>
           <?php else: ?>
             <button type="submit" name="terapkan_promo" value="1">Terapkan</button>
           <?php endif; ?>
         </form>
         <?php if($promo_error): ?>
-          <div class="promo-msg error">⚠️ <?= htmlspecialchars($promo_error) ?></div>
+          <div class="promo-msg error"><i data-lucide="alert-triangle" class="lucide-ic"></i> <?= htmlspecialchars($promo_error) ?></div>
         <?php elseif($promo_aktif): ?>
-          <div class="promo-msg success">✓ Kode <strong><?= htmlspecialchars($promo_aktif['kode_promo']) ?></strong> diterapkan — diskon <?= (int)$promo_aktif['diskon_persen'] ?>%.</div>
+          <div class="promo-msg success"><i data-lucide="check" class="lucide-ic"></i> Kode <strong><?= htmlspecialchars($promo_aktif['kode_promo']) ?></strong> diterapkan — diskon <?= (int)$promo_aktif['diskon_persen'] ?>%.</div>
         <?php endif; ?>
       </div>
 
@@ -702,7 +703,7 @@ $total_bayar = $total - $diskon_nominal;
       <div class="premium-card card-right" style="margin-bottom:20px;">
 
         <div class="card-header">
-          <div class="card-header-icon">👤</div>
+          <div class="card-header-icon"><i data-lucide="user" class="lucide-ic"></i></div>
           <div>
             <div class="card-title">Informasi Pemesan</div>
             <div class="card-subtitle">Lengkapi data dirimu</div>
@@ -716,7 +717,7 @@ $total_bayar = $total - $diskon_nominal;
             <?php if($ada_booking): ?>
             <!-- SUDAH ADA BOOKING -->
             <div class="booking-notice">
-              <div class="icon">✅</div>
+              <div class="icon"><i data-lucide="check-circle" class="lucide-ic"></i></div>
               <p>Data pemesanan sudah terhubung dengan booking <strong>#<?= htmlspecialchars($_SESSION['id_booking']) ?></strong>. Langsung lanjutkan ke pembayaran.</p>
             </div>
             <input type="hidden" name="id_booking" value="<?= htmlspecialchars($_SESSION['id_booking']) ?>">
@@ -724,9 +725,9 @@ $total_bayar = $total - $diskon_nominal;
             <?php else: ?>
             <!-- INPUT NAMA -->
             <div class="form-group">
-              <label class="form-label" for="nama">✦ Nama Lengkap</label>
+              <label class="form-label" for="nama"><i data-lucide="sparkle" class="lucide-ic"></i> Nama Lengkap</label>
               <div class="input-wrap">
-                <span class="input-icon">👤</span>
+                <span class="input-icon"><i data-lucide="user" class="lucide-ic"></i></span>
                 <input
                   type="text"
                   id="nama"
@@ -741,9 +742,9 @@ $total_bayar = $total - $diskon_nominal;
 
             <!-- INPUT NO HP -->
             <div class="form-group">
-              <label class="form-label" for="hp">✦ Nomor WhatsApp</label>
+              <label class="form-label" for="hp"><i data-lucide="sparkle" class="lucide-ic"></i> Nomor WhatsApp</label>
               <div class="input-wrap">
-                <span class="input-icon">📱</span>
+                <span class="input-icon"><i data-lucide="smartphone" class="lucide-ic"></i></span>
                 <input
                   type="tel"
                   id="hp"
@@ -761,9 +762,9 @@ $total_bayar = $total - $diskon_nominal;
 
             <!-- METODE PEMBAYARAN -->
             <div class="form-group">
-              <label class="form-label">✦ Metode Pembayaran</label>
+              <label class="form-label"><i data-lucide="sparkle" class="lucide-ic"></i> Metode Pembayaran</label>
               <div class="pay-method selected" onclick="selectPay(this)">
-                <div class="pay-method-icon">📷</div>
+                <div class="pay-method-icon"><i data-lucide="camera" class="lucide-ic"></i></div>
                 <div class="pay-method-info">
                   <div class="name">QRIS</div>
                   <div class="desc">Scan QR — semua e-wallet & mobile banking</div>
@@ -777,13 +778,13 @@ $total_bayar = $total - $diskon_nominal;
           <div style="padding:0 26px 26px;">
             <!-- SUBMIT -->
             <button type="submit" class="btn-submit" id="submitBtn">
-              <span>✦ Lanjut ke Pembayaran</span>
-              <span class="arrow">→</span>
+              <span><i data-lucide="sparkle" class="lucide-ic"></i> Lanjut ke Pembayaran</span>
+              <span class="arrow"><i data-lucide="arrow-right" class="lucide-ic"></i></span>
             </button>
 
             <!-- BACK -->
             <a href="keranjang.php" class="btn-back">
-              ← Kembali ke Keranjang
+              <i data-lucide="arrow-left" class="lucide-ic"></i> Kembali ke Keranjang
             </a>
           </div>
 
@@ -794,10 +795,10 @@ $total_bayar = $total - $diskon_nominal;
       <!-- SECURE CARD -->
       <div class="premium-card" style="animation-delay:.7s;">
         <div class="secure-row">
-          <div class="secure-badge"><span>🔒</span> Transaksi Aman</div>
-          <div class="secure-badge"><span>⚡</span> Proses Cepat</div>
-          <div class="secure-badge"><span>✅</span> Terverifikasi</div>
-          <div class="secure-badge"><span>📞</span> CS Siap Bantu</div>
+          <div class="secure-badge"><span><i data-lucide="lock" class="lucide-ic"></i></span> Transaksi Aman</div>
+          <div class="secure-badge"><span><i data-lucide="zap" class="lucide-ic"></i></span> Proses Cepat</div>
+          <div class="secure-badge"><span><i data-lucide="check-circle" class="lucide-ic"></i></span> Terverifikasi</div>
+          <div class="secure-badge"><span><i data-lucide="phone" class="lucide-ic"></i></span> CS Siap Bantu</div>
         </div>
       </div>
 
@@ -854,5 +855,8 @@ $total_bayar = $total - $diskon_nominal;
   });
 </script>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

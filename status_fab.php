@@ -116,7 +116,7 @@ if ($adaBookingAtauPesanan):
      title="Cek Status Booking & Pesanan">
     <span class="status-fab-ring"></span>
     <span class="status-fab-ring ring-delay"></span>
-    📋
+    <i data-lucide="clipboard-list" class="lucide-ic"></i>
     <span class="status-fab-badge"></span>
   </a>
 </div>

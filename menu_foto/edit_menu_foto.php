@@ -53,6 +53,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Foto Menu – YOLAZCAKE</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -109,18 +110,18 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 <body>
 <div class="page-hero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ Admin Panel ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Admin Panel <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Ganti Foto Menu</h1>
   </div>
 </div>
 <div class="wrapper">
-  <a href="data_menu_foto.php" class="btn-back">← Kembali</a>
+  <a href="data_menu_foto.php" class="btn-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali</a>
   <div class="info-row">
     <span class="info-chip"><?= htmlspecialchars($labelSection[$data['section']] ?? $data['section']) ?></span>
     <span class="info-chip"><?= htmlspecialchars($data['nama_kartu']) ?></span>
     <span class="info-chip"><?= htmlspecialchars($data['label_slide'] ?? ('Slide '.($data['slide_index']+1))) ?></span>
   </div>
-  <?php if($error): ?><div class="alert-err">⚠️ <?= $error ?></div><?php endif; ?>
+  <?php if($error): ?><div class="alert-err"><i data-lucide="alert-triangle" class="lucide-ic"></i> <?= $error ?></div><?php endif; ?>
   <div class="form-card">
     <img class="preview" src="../<?= htmlspecialchars($data['foto_path']) ?>" alt="">
     <form method="POST" enctype="multipart/form-data">
@@ -129,9 +130,12 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
         <input type="file" name="foto" accept="image/*" required>
         <p class="hint">Foto ini akan menggantikan gambar yang tampil pada kartu «<?= htmlspecialchars($data['nama_kartu']) ?>» di halaman Menu.</p>
       </div>
-      <button type="submit" class="btn-submit">💾 Simpan Perubahan</button>
+      <button type="submit" class="btn-submit"><i data-lucide="save" class="lucide-ic"></i> Simpan Perubahan</button>
     </form>
   </div>
 </div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

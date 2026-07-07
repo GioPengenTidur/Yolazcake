@@ -9,6 +9,7 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Booking – YOLAZCAKE</title>
@@ -342,11 +343,11 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
 <!-- HERO -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Data Booking</h1>
     <p class="hero-sub">Kelola reservasi meja pelanggan YOLAZCAKE</p>
     <div class="hero-divider">
-      <span></span><span class="diamond">✦ ✦ ✦</span><span></span>
+      <span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span>
     </div>
   </div>
 </div>
@@ -355,8 +356,8 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
 
   <!-- top bar -->
   <div class="top-bar">
-    <a href="../dashboard.php" class="btn-back">← Dashboard</a>
-    <span class="section-eyebrow">✦ Daftar Booking</span>
+    <a href="../dashboard.php" class="btn-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Dashboard</a>
+    <span class="section-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Daftar Booking</span>
   </div>
 
   <!-- stats -->
@@ -377,7 +378,7 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
   ?>
   <div class="stats-row">
     <div class="stat-card">
-      <span class="stat-icon">📋</span>
+      <span class="stat-icon"><i data-lucide="clipboard-list" class="lucide-ic"></i></span>
       <div>
         <div class="stat-val"><?= $total_booking; ?></div>
         <div class="stat-lbl">Total Booking</div>
@@ -391,14 +392,14 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">✅</span>
+      <span class="stat-icon"><i data-lucide="check-circle" class="lucide-ic"></i></span>
       <div>
         <div class="stat-val"><?= $total_konfirmasi; ?></div>
         <div class="stat-lbl">Dikonfirmasi</div>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon">🚫</span>
+      <span class="stat-icon"><i data-lucide="ban" class="lucide-ic"></i></span>
       <div>
         <div class="stat-val"><?= $total_batal; ?></div>
         <div class="stat-lbl">Dibatalkan</div>
@@ -433,8 +434,8 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
             $status = $data['status'];
             $statusClass = 'status-pending';
             $statusIcon  = '⏳';
-            if($status === 'Dikonfirmasi'){ $statusClass = 'status-dikonfirmasi'; $statusIcon = '✅'; }
-            elseif($status === 'Dibatalkan'){ $statusClass = 'status-dibatalkan'; $statusIcon = '🚫'; }
+            if($status === 'Dikonfirmasi'){ $statusClass = 'status-dikonfirmasi'; $statusIcon = '<i data-lucide="check-circle" class="lucide-ic"></i>'; }
+            elseif($status === 'Dibatalkan'){ $statusClass = 'status-dibatalkan'; $statusIcon = '<i data-lucide="ban" class="lucide-ic"></i>'; }
         ?>
         <tr>
           <td class="td-no"><?= $no++; ?></td>
@@ -442,7 +443,7 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
           <td style="color:rgba(255,255,255,0.6);"><?= htmlspecialchars($data['no_hp']); ?></td>
           <td style="color:rgba(255,255,255,0.6);"><?= htmlspecialchars($data['tanggal_booking']); ?></td>
           <td style="color:rgba(255,255,255,0.6);"><?= htmlspecialchars($data['jam_booking']); ?></td>
-          <td><span class="badge-orang">👥 <?= htmlspecialchars($data['jumlah_orang']); ?></span></td>
+          <td><span class="badge-orang"><i data-lucide="users" class="lucide-ic"></i> <?= htmlspecialchars($data['jumlah_orang']); ?></span></td>
           <td class="td-catatan"><?= $data['catatan'] !== '' ? htmlspecialchars($data['catatan']) : '<span class="td-dash">—</span>'; ?></td>
           <td>
             <span class="status-badge <?= $statusClass; ?>"><?= $statusIcon; ?> <?= htmlspecialchars($status); ?></span>
@@ -452,15 +453,15 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
               <?php if ($status == 'Pending') : ?>
                 <a href="ubah_status.php?id=<?= $data['id_booking']; ?>&status=Dikonfirmasi"
                    class="btn-act btn-konfirmasi"
-                   onclick="return confirm('Konfirmasi booking ini?')">✅ Konfirmasi</a>
+                   onclick="return confirm('Konfirmasi booking ini?')"><i data-lucide="check-circle" class="lucide-ic"></i> Konfirmasi</a>
 
                 <a href="ubah_status.php?id=<?= $data['id_booking']; ?>&status=Dibatalkan"
                    class="btn-act btn-batalkan"
-                   onclick="return confirm('Batalkan booking ini?')">🚫 Batalkan</a>
+                   onclick="return confirm('Batalkan booking ini?')"><i data-lucide="ban" class="lucide-ic"></i> Batalkan</a>
 
                 <a href="hapus_booking.php?id=<?= $data['id_booking']; ?>"
                    class="btn-act btn-hapus"
-                   onclick="return confirm('Yakin ingin menghapus data booking ini?')">🗑️ Hapus</a>
+                   onclick="return confirm('Yakin ingin menghapus data booking ini?')"><i data-lucide="trash-2" class="lucide-ic"></i> Hapus</a>
               <?php else : ?>
                 <span class="td-dash">—</span>
               <?php endif; ?>
@@ -471,7 +472,7 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
         <tr>
           <td colspan="9">
             <div class="empty-state">
-              <div class="es-icon">📋</div>
+              <div class="es-icon"><i data-lucide="clipboard-list" class="lucide-ic"></i></div>
               <p>Belum ada data booking</p>
             </div>
           </td>
@@ -509,5 +510,8 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
   })();
 </script>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

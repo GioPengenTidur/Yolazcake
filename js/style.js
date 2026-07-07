@@ -17,7 +17,10 @@ function toggleMenu(){
   dropdown.classList.toggle("show");
   burger.classList.toggle("active");
 
-  burger.innerHTML = burger.classList.contains("active") ? "✖" : "☰";
+  burger.innerHTML = burger.classList.contains("active")
+    ? '<i data-lucide="x" class="lucide-ic"></i>'
+    : '<i data-lucide="menu" class="lucide-ic"></i>';
+  if(window.lucide){ lucide.createIcons(); }
 }
 
 window.addEventListener("load", ()=>{
@@ -40,7 +43,8 @@ document.querySelectorAll(".dropdown p").forEach(item => {
     dropdown.classList.remove("show");
     burger.classList.remove("active");
 
-    burger.innerHTML = "☰";
+    burger.innerHTML = '<i data-lucide="menu" class="lucide-ic"></i>';
+    if(window.lucide){ lucide.createIcons(); }
 
   });
 

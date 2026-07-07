@@ -82,6 +82,7 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pesan Kontak – YOLAZCAKE</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -230,50 +231,50 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
 <div id="particles"></div>
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Pesan Kontak</h1>
     <p class="hero-sub">Pesan masuk dari pengunjung website</p>
-    <div class="hero-divider"><span></span><span class="diamond">✦ ✦ ✦</span><span></span></div>
+    <div class="hero-divider"><span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span></div>
   </div>
 </div>
 
 <div class="page-wrapper">
-  <a href="../dashboard.php" class="btn-back">← Dashboard</a>
+  <a href="../dashboard.php" class="btn-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Dashboard</a>
 
   <?php if(isset($_GET['ok'])): ?>
     <div class="alert alert-success">
       <?php
-        $okMsgs = [ 'balas' => '✅ Balasan berhasil dikirim ke email pelanggan.' ];
-        echo $okMsgs[$_GET['ok']] ?? '✅ Berhasil.';
+        $okMsgs = [ 'balas' => '<i data-lucide="check-circle" class="lucide-ic"></i> Balasan berhasil dikirim ke email pelanggan.' ];
+        echo $okMsgs[$_GET['ok']] ?? '<i data-lucide="check-circle" class="lucide-ic"></i> Berhasil.';
       ?>
     </div>
   <?php elseif(isset($_GET['err'])): ?>
     <div class="alert" style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#fca5a5;">
       <?php
-        $errMsgs = [ 'notfound' => '✕ Pesan tidak ditemukan.' ];
-        echo $errMsgs[$_GET['err']] ?? '✕ Terjadi kesalahan.';
+        $errMsgs = [ 'notfound' => '<i data-lucide="x" class="lucide-ic"></i> Pesan tidak ditemukan.' ];
+        echo $errMsgs[$_GET['err']] ?? '<i data-lucide="x" class="lucide-ic"></i> Terjadi kesalahan.';
       ?>
     </div>
   <?php endif; ?>
 
   <div class="stats-row">
-    <div class="stat-card"><span class="stat-icon">✉️</span><div><div class="stat-val"><?= $stats['total'] ?></div><div class="stat-lbl">Total Pesan</div></div></div>
-    <div class="stat-card"><span class="stat-icon">🟡</span><div><div class="stat-val"><?= $stats['belum'] ?></div><div class="stat-lbl">Belum Dibaca</div></div></div>
-    <div class="stat-card"><span class="stat-icon">🔑</span><div><div class="stat-val"><?= $stats['akun'] ?></div><div class="stat-lbl">Bantuan Akun</div></div></div>
-    <div class="stat-card"><span class="stat-icon">✅</span><div><div class="stat-val"><?= $stats['dibalas'] ?></div><div class="stat-lbl">Dibalas</div></div></div>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="mail" class="lucide-ic"></i></span><div><div class="stat-val"><?= $stats['total'] ?></div><div class="stat-lbl">Total Pesan</div></div></div>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="circle" class="lucide-ic lucide-fill" style="color:#D4AF37"></i></span><div><div class="stat-val"><?= $stats['belum'] ?></div><div class="stat-lbl">Belum Dibaca</div></div></div>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="key" class="lucide-ic"></i></span><div><div class="stat-val"><?= $stats['akun'] ?></div><div class="stat-lbl">Bantuan Akun</div></div></div>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="check-circle" class="lucide-ic"></i></span><div><div class="stat-val"><?= $stats['dibalas'] ?></div><div class="stat-lbl">Dibalas</div></div></div>
   </div>
 
   <div class="filter-tabs">
     <a href="data_kontak.php" class="filter-tab <?= !$filter?'active':'' ?>">Semua</a>
-    <a href="?filter=Belum Dibaca<?= $kategori?'&kategori='.urlencode($kategori):'' ?>" class="filter-tab <?= $filter==='Belum Dibaca'?'active':'' ?>">🟡 Belum Dibaca <span class="tab-badge"><?= $stats['belum'] ?></span></a>
-    <a href="?filter=Sudah Dibaca<?= $kategori?'&kategori='.urlencode($kategori):'' ?>" class="filter-tab <?= $filter==='Sudah Dibaca'?'active':'' ?>">🟣 Sudah Dibaca</a>
-    <a href="?filter=Dibalas<?= $kategori?'&kategori='.urlencode($kategori):'' ?>" class="filter-tab <?= $filter==='Dibalas'?'active':'' ?>">✅ Dibalas</a>
+    <a href="?filter=Belum Dibaca<?= $kategori?'&kategori='.urlencode($kategori):'' ?>" class="filter-tab <?= $filter==='Belum Dibaca'?'active':'' ?>"><i data-lucide="circle" class="lucide-ic lucide-fill" style="color:#D4AF37"></i> Belum Dibaca <span class="tab-badge"><?= $stats['belum'] ?></span></a>
+    <a href="?filter=Sudah Dibaca<?= $kategori?'&kategori='.urlencode($kategori):'' ?>" class="filter-tab <?= $filter==='Sudah Dibaca'?'active':'' ?>"><i data-lucide="circle" class="lucide-ic lucide-fill" style="color:#a78bfa"></i> Sudah Dibaca</a>
+    <a href="?filter=Dibalas<?= $kategori?'&kategori='.urlencode($kategori):'' ?>" class="filter-tab <?= $filter==='Dibalas'?'active':'' ?>"><i data-lucide="check-circle" class="lucide-ic"></i> Dibalas</a>
   </div>
 
   <div class="filter-tabs">
     <a href="?<?= $filter?'filter='.urlencode($filter):'' ?>" class="filter-tab <?= !$kategori?'active':'' ?>">Semua Kategori</a>
-    <a href="?kategori=Bantuan Akun<?= $filter?'&filter='.urlencode($filter):'' ?>" class="filter-tab <?= $kategori==='Bantuan Akun'?'active':'' ?>">🔑 Bantuan Akun <?php if($stats['akun_belum']>0): ?><span class="tab-badge"><?= $stats['akun_belum'] ?></span><?php endif; ?></a>
-    <a href="?kategori=Umum<?= $filter?'&filter='.urlencode($filter):'' ?>" class="filter-tab <?= $kategori==='Umum'?'active':'' ?>">💬 Umum</a>
+    <a href="?kategori=Bantuan Akun<?= $filter?'&filter='.urlencode($filter):'' ?>" class="filter-tab <?= $kategori==='Bantuan Akun'?'active':'' ?>"><i data-lucide="key" class="lucide-ic"></i> Bantuan Akun <?php if($stats['akun_belum']>0): ?><span class="tab-badge"><?= $stats['akun_belum'] ?></span><?php endif; ?></a>
+    <a href="?kategori=Umum<?= $filter?'&filter='.urlencode($filter):'' ?>" class="filter-tab <?= $kategori==='Umum'?'active':'' ?>"><i data-lucide="message-circle" class="lucide-ic"></i> Umum</a>
   </div>
 
   <div class="table-card">
@@ -288,7 +289,7 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
           <?= $d['status']==='Belum Dibaca'?'<span class="unread-dot"></span>':'' ?>
           <?= htmlspecialchars($d['nama']) ?>
           <?php if(!empty($d['username_terkait'])): ?>
-            <div class="td-username">👤 <?= htmlspecialchars($d['username_terkait']) ?></div>
+            <div class="td-username"><i data-lucide="user" class="lucide-ic"></i> <?= htmlspecialchars($d['username_terkait']) ?></div>
           <?php endif; ?>
         </td>
         <td style="font-size:.8em;color:rgba(255,255,255,.55);">
@@ -297,9 +298,9 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
         </td>
         <td>
           <?php if(($d['kategori'] ?? 'Umum') === 'Bantuan Akun'): ?>
-            <span class="k-badge k-akun">🔑 Bantuan Akun</span>
+            <span class="k-badge k-akun"><i data-lucide="key" class="lucide-ic"></i> Bantuan Akun</span>
           <?php else: ?>
-            <span class="k-badge k-umum">💬 Umum</span>
+            <span class="k-badge k-umum"><i data-lucide="message-circle" class="lucide-ic"></i> Umum</span>
           <?php endif; ?>
         </td>
         <td class="td-subjek"><?= $d['subjek']?htmlspecialchars($d['subjek']):'—' ?></td>
@@ -310,17 +311,17 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
         </td>
         <td>
           <div class="action-cell">
-            <button class="btn-act btn-baca" onclick="bacaPesan(<?= htmlspecialchars(json_encode($d)) ?>)">👁️ Baca</button>
+            <button class="btn-act btn-baca" onclick="bacaPesan(<?= htmlspecialchars(json_encode($d)) ?>)"><i data-lucide="eye" class="lucide-ic"></i> Baca</button>
             <?php if($d['status']!=='Dibalas'): ?>
-            <button class="btn-act btn-balas" onclick="bukaBalas(<?= htmlspecialchars(json_encode($d)) ?>)">✉️ Balas</button>
+            <button class="btn-act btn-balas" onclick="bukaBalas(<?= htmlspecialchars(json_encode($d)) ?>)"><i data-lucide="mail" class="lucide-ic"></i> Balas</button>
             <?php endif; ?>
             <a href="?hapus=<?= $d['id_kontak'] ?>" class="btn-act btn-hapus"
-               onclick="return confirm('Hapus pesan ini?')">🗑️</a>
+               onclick="return confirm('Hapus pesan ini?')"><i data-lucide="trash-2" class="lucide-ic"></i></a>
           </div>
         </td>
       </tr>
       <?php endwhile; else: ?>
-      <tr><td colspan="8"><div class="empty-state">📭 Tidak ada pesan</div></td></tr>
+      <tr><td colspan="8"><div class="empty-state"><i data-lucide="inbox" class="lucide-ic"></i> Tidak ada pesan</div></td></tr>
       <?php endif; ?>
       </tbody>
     </table>
@@ -331,7 +332,7 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
 <!-- DETAIL MODAL -->
 <div class="modal-overlay" id="detailModal">
   <div class="modal">
-    <button class="modal-close" onclick="closeDetail()">✕</button>
+    <button class="modal-close" onclick="closeDetail()"><i data-lucide="x" class="lucide-ic"></i></button>
     <h3 id="mSubjek">Subjek</h3>
     <div class="meta-row">
       <div class="meta-item"><label>Nama</label><p id="mNama"></p></div>
@@ -344,9 +345,9 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
     <div class="pesan-box" id="mPesan"></div>
     <p class="baca-status-note" id="mBacaStatus" style="display:none;"></p>
     <div class="modal-actions">
-      <button type="button" id="mBtnBalas" class="btn-modal btn-modal-balas" onclick="bukaBalasDariDetail()">✉️ Balas Pesan Ini</button>
-      <a id="mBtnAkun" href="../user/data_user.php" target="_blank" class="btn-modal btn-modal-akun" style="display:none;">🔑 Buka Kelola Akun</a>
-      <a id="mBtnHapus" href="#" class="btn-modal btn-modal-hapus" onclick="return confirm('Hapus pesan ini?')">🗑️ Hapus</a>
+      <button type="button" id="mBtnBalas" class="btn-modal btn-modal-balas" onclick="bukaBalasDariDetail()"><i data-lucide="mail" class="lucide-ic"></i> Balas Pesan Ini</button>
+      <a id="mBtnAkun" href="../user/data_user.php" target="_blank" class="btn-modal btn-modal-akun" style="display:none;"><i data-lucide="key" class="lucide-ic"></i> Buka Kelola Akun</a>
+      <a id="mBtnHapus" href="#" class="btn-modal btn-modal-hapus" onclick="return confirm('Hapus pesan ini?')"><i data-lucide="trash-2" class="lucide-ic"></i> Hapus</a>
     </div>
   </div>
 </div>
@@ -354,7 +355,7 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
 <!-- REPLY MODAL -->
 <div class="modal-overlay" id="replyModal">
   <div class="modal">
-    <button class="modal-close" onclick="closeBalas()">✕</button>
+    <button class="modal-close" onclick="closeBalas()"><i data-lucide="x" class="lucide-ic"></i></button>
     <h3>Balas Pesan</h3>
     <p class="reply-sub">Balasan akan dikirim ke email <strong id="rEmail">-</strong> atas nama <strong id="rNama">-</strong></p>
     <div class="form-error" id="replyError" style="display:none;"></div>
@@ -362,7 +363,7 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
     <textarea id="replyPesan" class="reply-textarea" placeholder="Tulis balasan Anda untuk pelanggan ini…" rows="6"></textarea>
     <div class="modal-actions">
       <button type="button" class="btn-modal" id="btnReplyCancel" onclick="closeBalas()">Batal</button>
-      <button type="button" class="btn-modal btn-modal-balas" id="btnReplySend" onclick="kirimBalasan()">📨 Kirim Balasan</button>
+      <button type="button" class="btn-modal btn-modal-balas" id="btnReplySend" onclick="kirimBalasan()"><i data-lucide="send" class="lucide-ic"></i> Kirim Balasan</button>
     </div>
   </div>
 </div>
@@ -378,7 +379,7 @@ function openDetail(d){
   document.getElementById('mHp').textContent     = d.no_hp || '—';
   document.getElementById('mPesan').textContent  = d.pesan;
   document.getElementById('mTgl').textContent    = d.created_at;
-  document.getElementById('mKategori').textContent = (d.kategori === 'Bantuan Akun') ? '🔑 Bantuan Akun' : '💬 Umum';
+  document.getElementById('mKategori').textContent = (d.kategori === 'Bantuan Akun') ? '<i data-lucide="key" class="lucide-ic"></i> Bantuan Akun' : '<i data-lucide="message-circle" class="lucide-ic"></i> Umum';
   document.getElementById('mBtnHapus').href      = '?hapus='+d.id_kontak;
 
   const btnBalas = document.getElementById('mBtnBalas');
@@ -406,7 +407,7 @@ function openDetail(d){
 function closeDetail(){ document.getElementById('detailModal').classList.remove('open'); }
 document.getElementById('detailModal').addEventListener('click',function(e){if(e.target===this)closeDetail();});
 
-/* ══════════════════ Baca Pesan → notifikasi email otomatis ══════════════════ */
+/* ══════════════════ Baca Pesan <i data-lucide="arrow-right" class="lucide-ic"></i> notifikasi email otomatis ══════════════════ */
 function bacaPesan(d){
   openDetail(d);
   if (d.status !== 'Belum Dibaca') return;
@@ -414,7 +415,7 @@ function bacaPesan(d){
   const noteEl = document.getElementById('mBacaStatus');
   noteEl.style.display = '';
   noteEl.className = 'baca-status-note pending';
-  noteEl.textContent = '📧 Mengirim notifikasi otomatis ke email pelanggan…';
+  noteEl.textContent = '<i data-lucide="mail" class="lucide-ic"></i> Mengirim notifikasi otomatis ke email pelanggan…';
 
   fetch('baca_kontak.php', {
     method: 'POST',
@@ -424,14 +425,14 @@ function bacaPesan(d){
   .then(res => res.json())
   .then(data => {
     noteEl.className = 'baca-status-note ' + (data.email_sent ? 'ok' : 'warn');
-    noteEl.textContent = (data.email_sent ? '✅ ' : '⚠️ ') + data.message;
+    noteEl.textContent = (data.email_sent ? '<i data-lucide="check-circle" class="lucide-ic"></i> ' : '<i data-lucide="alert-triangle" class="lucide-ic"></i> ') + data.message;
     d.status = 'Sudah Dibaca';
     currentDetail = d;
     updateRowStatus(d.id_kontak, 'Sudah Dibaca');
   })
   .catch(() => {
     noteEl.className = 'baca-status-note warn';
-    noteEl.textContent = '⚠️ Gagal terhubung ke server saat mengirim notifikasi.';
+    noteEl.textContent = '<i data-lucide="alert-triangle" class="lucide-ic"></i> Gagal terhubung ke server saat mengirim notifikasi.';
   });
 }
 
@@ -449,7 +450,7 @@ function updateRowStatus(id, status){
   }
 }
 
-/* ══════════════════ Balas Pesan → admin ketik sendiri, kirim email ══════════════════ */
+/* ══════════════════ Balas Pesan <i data-lucide="arrow-right" class="lucide-ic"></i> admin ketik sendiri, kirim email ══════════════════ */
 let replyTargetId = null;
 
 function bukaBalas(d){
@@ -462,7 +463,7 @@ function bukaBalas(d){
 
   const sendBtn = document.getElementById('btnReplySend');
   sendBtn.disabled = false;
-  sendBtn.textContent = '📨 Kirim Balasan';
+  sendBtn.textContent = '<i data-lucide="send" class="lucide-ic"></i> Kirim Balasan';
   if (!d.email) {
     showReplyError('Pelanggan ini tidak mencantumkan alamat email, balasan tidak bisa dikirim.');
     sendBtn.disabled = true;
@@ -508,13 +509,13 @@ function kirimBalasan(){
     } else {
       showReplyError(data.message || 'Gagal mengirim balasan.');
       btn.disabled = false;
-      btn.textContent = '📨 Kirim Balasan';
+      btn.textContent = '<i data-lucide="send" class="lucide-ic"></i> Kirim Balasan';
     }
   })
   .catch(() => {
     showReplyError('Gagal terhubung ke server. Coba lagi.');
     btn.disabled = false;
-    btn.textContent = '📨 Kirim Balasan';
+    btn.textContent = '<i data-lucide="send" class="lucide-ic"></i> Kirim Balasan';
   });
 }
 
@@ -529,5 +530,8 @@ function kirimBalasan(){
   }
 })();
 </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

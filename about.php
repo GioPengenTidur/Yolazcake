@@ -4,6 +4,7 @@ session_start();
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About - YOLAZCAKE Sintang</title>
@@ -665,7 +666,7 @@ session_start();
   <div class="nav-right">
 <?php if(isset($_SESSION['username'])){ ?>
     <div class="account-dropdown">
-      <button class="account-btn">👤 <?php echo htmlspecialchars($_SESSION['username']); ?> ▼</button>
+      <button class="account-btn"><i data-lucide="user" class="lucide-ic"></i> <?php echo htmlspecialchars($_SESSION['username']); ?> ▼</button>
       <div class="account-menu">
         <a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'dashboard.php' : 'member/member.php'; ?>"><?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'Dashboard' : 'Member'; ?></a>
         <a href="auth/logout.php">Logout</a>
@@ -674,8 +675,8 @@ session_start();
 <?php } else { ?>
     <button class="login-btn" onclick="window.location.href='auth/login.php'">Login</button>
 <?php } ?>
-    <div class="hamburger" onclick="toggleMenu()" id="hamburger">☰</div>
-    <div class="dark-btn" onclick="toggleDark()">🌙</div>
+    <div class="hamburger" onclick="toggleMenu()" id="hamburger"><i data-lucide="menu" class="lucide-ic"></i></div>
+    <div class="dark-btn" onclick="toggleDark()"><i data-lucide="moon" class="lucide-ic"></i></div>
   </div>
   <div class="dropdown" id="dropdown">
     <p onclick="window.location.href='about.php#story'">Back Story</p>
@@ -692,12 +693,12 @@ session_start();
 <!-- ========== PREMIUM HERO BANNER ========== -->
 <div class="about-hero" id="aboutHero">
   <div class="about-hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Tentang Kami</h1>
-    <p class="hero-sub">Cafe • Bakery • Boutique — Rasa, Gaya &amp; Cerita di Satu Tempat 🎂</p>
+    <p class="hero-sub">Cafe • Bakery • Boutique — Rasa, Gaya &amp; Cerita di Satu Tempat <i data-lucide="cake" class="lucide-ic"></i></p>
     <div class="hero-divider">
       <span></span>
-      <span class="diamond">✦ ✦ ✦</span>
+      <span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span>
       <span></span>
     </div>
   </div>
@@ -707,15 +708,15 @@ session_start();
 <section id="about">
 
   <div class="section-label fade">
-    <span class="eyebrow">✦ Siapa Kami</span>
+    <span class="eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Siapa Kami</span>
     <h2>Tentang YOLAZCAKE Sintang</h2>
-    <div class="gold-rule"><span>✦ ✦ ✦</span></div>
+    <div class="gold-rule"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
   </div>
 
   <div class="about-intro-grid">
 
     <div class="about-intro-card fade">
-      <div class="about-card-icon">🎂</div>
+      <div class="about-card-icon"><i data-lucide="cake" class="lucide-ic"></i></div>
       <h3>Kuliner Premium</h3>
       <p>
         YOLAZCAKE Sintang adalah destinasi unik yang menggabungkan pengalaman kuliner premium
@@ -725,7 +726,7 @@ session_start();
     </div>
 
     <div class="about-intro-card fade">
-      <div class="about-card-icon">👗</div>
+      <div class="about-card-icon"><i data-lucide="shirt" class="lucide-ic"></i></div>
       <h3>Boutique Modern</h3>
       <p>
         Di lantai 2, nikmati boutique pakaian wanita yang stylish dan kurasi koleksi fashion
@@ -735,7 +736,7 @@ session_start();
     </div>
 
     <div class="about-intro-card fade">
-      <div class="about-card-icon">📍</div>
+      <div class="about-card-icon"><i data-lucide="map-pin" class="lucide-ic"></i></div>
       <h3>Lokasi Strategis</h3>
       <p>
         Terletak di Jl. Lintas Melawi, Ladang, Sintang — kami hadir untuk warga Sintang dan
@@ -745,7 +746,7 @@ session_start();
     </div>
 
     <div class="about-intro-card fade">
-      <div class="about-card-icon">✨</div>
+      <div class="about-card-icon"><i data-lucide="sparkles" class="lucide-ic"></i></div>
       <h3>Pengalaman Berkesan</h3>
       <p>
         Dari cita rasa hingga estetika ruang, kami merawat setiap detail. Setiap sudut dirancang
@@ -765,9 +766,9 @@ session_start();
   <div id="storyParticles"></div>
 
   <div class="section-label fade">
-    <span class="eyebrow">✦ Perjalanan Kami</span>
+    <span class="eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Perjalanan Kami</span>
     <h2>Cerita di Balik YOLAZCAKE</h2>
-    <div class="gold-rule"><span>✦ ✦ ✦</span></div>
+    <div class="gold-rule"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
   </div>
 
   <div class="story-card fade">
@@ -784,11 +785,11 @@ session_start();
       yang tak terlupakan.
     </p>
     <div class="story-badges">
-      <span class="story-badge">🎂 Homemade Cake</span>
-      <span class="story-badge">☕ Specialty Coffee</span>
-      <span class="story-badge">👗 Fashion Boutique</span>
-      <span class="story-badge">💛 Made with Love</span>
-      <span class="story-badge">📍 Sintang, Kalbar</span>
+      <span class="story-badge"><i data-lucide="cake" class="lucide-ic"></i> Homemade Cake</span>
+      <span class="story-badge"><i data-lucide="coffee" class="lucide-ic"></i> Specialty Coffee</span>
+      <span class="story-badge"><i data-lucide="shirt" class="lucide-ic"></i> Fashion Boutique</span>
+      <span class="story-badge"><i data-lucide="heart" class="lucide-ic"></i> Made with Love</span>
+      <span class="story-badge"><i data-lucide="map-pin" class="lucide-ic"></i> Sintang, Kalbar</span>
     </div>
   </div>
 
@@ -798,9 +799,9 @@ session_start();
 <section id="team">
 
   <div class="section-label fade">
-    <span class="eyebrow">✦ Orang-Orang Hebat</span>
+    <span class="eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Orang-Orang Hebat</span>
     <h2>Tim YOLAZCAKE</h2>
-    <div class="gold-rule"><span>✦ ✦ ✦</span></div>
+    <div class="gold-rule"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
   </div>
 
   <div class="team-grid">
@@ -809,16 +810,16 @@ session_start();
       <div class="team-card-photo"
         style="background-image:url('assets/img/produk/Chef_Baker.jpeg')">
         <div class="team-card-photo-overlay">
-          <span class="team-photo-badge">✦ Pastry Expert</span>
+          <span class="team-photo-badge"><i data-lucide="sparkle" class="lucide-ic"></i> Pastry Expert</span>
         </div>
       </div>
       <div class="team-card-body">
         <h3>Chef Baker</h3>
         <p>Spesialis kue homemade premium dengan teknik baking terbaik.</p>
         <div class="team-tag-row">
-          <span class="team-tag">🎂 Custom Cake</span>
-          <span class="team-tag">🍰 Dessert</span>
-          <span class="team-tag">🥐 Pastry</span>
+          <span class="team-tag"><i data-lucide="cake" class="lucide-ic"></i> Custom Cake</span>
+          <span class="team-tag"><i data-lucide="cake-slice" class="lucide-ic"></i> Dessert</span>
+          <span class="team-tag"><i data-lucide="croissant" class="lucide-ic"></i> Pastry</span>
         </div>
       </div>
     </div>
@@ -827,16 +828,16 @@ session_start();
       <div class="team-card-photo"
         style="background-image:url('assets/img/produk/Barista.jpeg')">
         <div class="team-card-photo-overlay">
-          <span class="team-photo-badge">✦ Coffee Artisan</span>
+          <span class="team-photo-badge"><i data-lucide="sparkle" class="lucide-ic"></i> Coffee Artisan</span>
         </div>
       </div>
       <div class="team-card-body">
         <h3>Barista</h3>
         <p>Ahli latte art & specialty coffee dengan cita rasa internasional.</p>
         <div class="team-tag-row">
-          <span class="team-tag">☕ Latte Art</span>
-          <span class="team-tag">🫘 Specialty</span>
-          <span class="team-tag">🥤 Minuman</span>
+          <span class="team-tag"><i data-lucide="coffee" class="lucide-ic"></i> Latte Art</span>
+          <span class="team-tag"><i data-lucide="bean" class="lucide-ic"></i> Specialty</span>
+          <span class="team-tag"><i data-lucide="cup-soda" class="lucide-ic"></i> Minuman</span>
         </div>
       </div>
     </div>
@@ -845,16 +846,16 @@ session_start();
       <div class="team-card-photo"
         style="background-image:url('assets/img/produk/Fashion_Stylist.jpeg')">
         <div class="team-card-photo-overlay">
-          <span class="team-photo-badge">✦ Style Curator</span>
+          <span class="team-photo-badge"><i data-lucide="sparkle" class="lucide-ic"></i> Style Curator</span>
         </div>
       </div>
       <div class="team-card-body">
         <h3>Fashion Stylist</h3>
         <p>Kurator koleksi boutique dengan sentuhan gaya yang selalu trendi.</p>
         <div class="team-tag-row">
-          <span class="team-tag">👗 Fashion</span>
-          <span class="team-tag">💄 Style</span>
-          <span class="team-tag">✨ Boutique</span>
+          <span class="team-tag"><i data-lucide="shirt" class="lucide-ic"></i> Fashion</span>
+          <span class="team-tag"><i data-lucide="paintbrush" class="lucide-ic"></i> Style</span>
+          <span class="team-tag"><i data-lucide="sparkles" class="lucide-ic"></i> Boutique</span>
         </div>
       </div>
     </div>
@@ -937,7 +938,12 @@ session_start();
 </script>
 
 <?php include 'status_fab.php'; ?>
+<?php include 'rating_fab.php'; ?>
+<?php include 'chatbot_fab.php'; ?>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>
 

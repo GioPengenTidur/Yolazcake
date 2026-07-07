@@ -44,6 +44,7 @@ if(isset($_POST['update'])){
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Pemesanan – YOLAZCAKE</title>
@@ -329,47 +330,47 @@ if(isset($_POST['update'])){
 <!-- HERO -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Edit Pemesanan</h1>
     <div class="hero-divider">
-      <span></span><span class="diamond">✦ ✦ ✦</span><span></span>
+      <span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span>
     </div>
   </div>
 </div>
 
 <div class="back-link">
-  <a href="data_pemesanan.php">← Kembali ke Data Pemesanan</a>
+  <a href="data_pemesanan.php"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali ke Data Pemesanan</a>
 </div>
 
 <div class="page-wrapper">
   <div class="form-card">
 
-    <div class="kode-badge-lg">✦ <?= htmlspecialchars($data['kode_pesanan']) ?> ✦</div>
+    <div class="kode-badge-lg"><i data-lucide="sparkle" class="lucide-ic"></i> <?= htmlspecialchars($data['kode_pesanan']) ?> <i data-lucide="sparkle" class="lucide-ic"></i></div>
     <h2 class="card-title">Perbarui Status Pesanan</h2>
     <p class="card-sub">Ubah status pesanan &amp; pembayaran pelanggan</p>
 
-    <div class="gold-rule-h"><span>✦ ✦ ✦</span></div>
+    <div class="gold-rule-h"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
 
     <!-- INFO READ-ONLY -->
     <div class="info-box">
       <div class="info-line">
-        <span class="info-key">👤 Nama Pemesan</span>
+        <span class="info-key"><i data-lucide="user" class="lucide-ic"></i> Nama Pemesan</span>
         <span class="info-val"><?= htmlspecialchars($data['nama_pemesan']) ?></span>
       </div>
       <div class="info-line">
-        <span class="info-key">📱 No. HP</span>
+        <span class="info-key"><i data-lucide="smartphone" class="lucide-ic"></i> No. HP</span>
         <span class="info-val"><?= htmlspecialchars($data['no_hp']) ?></span>
       </div>
       <div class="info-line">
-        <span class="info-key">📅 Tanggal</span>
+        <span class="info-key"><i data-lucide="calendar" class="lucide-ic"></i> Tanggal</span>
         <span class="info-val"><?= htmlspecialchars($data['tanggal']) ?></span>
       </div>
       <div class="info-line">
-        <span class="info-key">💳 Metode Bayar</span>
+        <span class="info-key"><i data-lucide="credit-card" class="lucide-ic"></i> Metode Bayar</span>
         <span class="info-val gold"><?= htmlspecialchars($data['metode_pembayaran'] ?? '-') ?></span>
       </div>
       <div class="info-line">
-        <span class="info-key">💰 Total Harga</span>
+        <span class="info-key"><i data-lucide="wallet" class="lucide-ic"></i> Total Harga</span>
         <span class="info-val green">Rp <?= number_format($data['total_harga'],0,',','.') ?></span>
       </div>
     </div>
@@ -380,7 +381,7 @@ if(isset($_POST['update'])){
         <div class="field">
           <label>Status Pesanan</label>
           <div class="field-icon-wrap">
-            <span class="field-icon">📦</span>
+            <span class="field-icon"><i data-lucide="package" class="lucide-ic"></i></span>
             <select name="status_pesanan" required>
               <?php
               $opsi_pesanan = ['Menunggu','Diproses','Siap Diambil','Selesai','Dibatalkan'];
@@ -397,7 +398,7 @@ if(isset($_POST['update'])){
         <div class="field">
           <label>Status Pembayaran</label>
           <div class="field-icon-wrap">
-            <span class="field-icon">🔖</span>
+            <span class="field-icon"><i data-lucide="bookmark" class="lucide-ic"></i></span>
             <select name="status_pembayaran" required>
               <?php
               $opsi_bayar = ['Menunggu','Lunas','Gagal'];
@@ -413,8 +414,8 @@ if(isset($_POST['update'])){
       </div>
 
       <div class="btn-row">
-        <a href="data_pemesanan.php" class="btn-premium btn-cancel">✕ Batal</a>
-        <button type="submit" name="update" class="btn-premium btn-save">✦ Simpan Perubahan</button>
+        <a href="data_pemesanan.php" class="btn-premium btn-cancel"><i data-lucide="x" class="lucide-ic"></i> Batal</a>
+        <button type="submit" name="update" class="btn-premium btn-save"><i data-lucide="sparkle" class="lucide-ic"></i> Simpan Perubahan</button>
       </div>
 
     </form>
@@ -448,5 +449,8 @@ if(isset($_POST['update'])){
     }
   })();
 </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

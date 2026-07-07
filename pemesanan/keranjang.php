@@ -60,6 +60,7 @@ unset($_SESSION['checkout_error']);
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Keranjang Belanja – YOLAZCAKE</title>
@@ -436,17 +437,17 @@ unset($_SESSION['checkout_error']);
 <!-- ═══════════════ HERO ═══════════════ -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Keranjang Belanja</h1>
     <p class="hero-sub">Periksa pesananmu sebelum melanjutkan ke pembayaran</p>
     <div class="hero-divider">
-      <span></span><span class="diamond">✦ ✦ ✦</span><span></span>
+      <span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span>
     </div>
   </div>
 </div>
 
 <div class="back-link">
-  <a href="menuu.php">← Kembali ke Menu</a>
+  <a href="menuu.php"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali ke Menu</a>
 </div>
 
 <!-- ═══════════════ PAGE WRAPPER ═══════════════ -->
@@ -454,7 +455,7 @@ unset($_SESSION['checkout_error']);
 
   <?php if($checkout_error): ?>
   <div style="background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.35);color:#ff8080;padding:14px 20px;border-radius:14px;margin-bottom:20px;font-size:.85em;line-height:1.6;">
-    ⚠️ <?= htmlspecialchars($checkout_error) ?>
+    <i data-lucide="alert-triangle" class="lucide-ic"></i> <?= htmlspecialchars($checkout_error) ?>
   </div>
   <?php endif; ?>
 
@@ -462,16 +463,16 @@ unset($_SESSION['checkout_error']);
   <div class="top-bar">
     <div>
       <?php if(!empty($items)): ?>
-      <div class="new-badge">🛒 <?= $total_keranjang ?> Item</div>
+      <div class="new-badge"><i data-lucide="shopping-cart" class="lucide-ic"></i> <?= $total_keranjang ?> Item</div>
       <?php else: ?>
-      <div class="new-badge">🛒 Keranjang Kosong</div>
+      <div class="new-badge"><i data-lucide="shopping-cart" class="lucide-ic"></i> Keranjang Kosong</div>
       <?php endif; ?>
       <h2 class="section-title" style="margin-top:10px;">Daftar Pesanan Kamu</h2>
     </div>
-    <a href="menuu.php" class="btn-premium btn-green">🎂 Tambah Menu</a>
+    <a href="menuu.php" class="btn-premium btn-green"><i data-lucide="cake" class="lucide-ic"></i> Tambah Menu</a>
   </div>
 
-  <div class="gold-rule"><span>✦ ✦ ✦</span></div>
+  <div class="gold-rule"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
 
   <?php if(!empty($items)): ?>
 
@@ -481,7 +482,7 @@ unset($_SESSION['checkout_error']);
     <div class="cart-card-inner">
 
       <!-- Image -->
-      <div class="cart-img-placeholder">🎂</div>
+      <div class="cart-img-placeholder"><i data-lucide="cake" class="lucide-ic"></i></div>
 
       <!-- Info -->
       <div class="cart-info">
@@ -496,7 +497,7 @@ unset($_SESSION['checkout_error']);
           <a href="keranjang.php?hapus=<?= $item['id_produk'] ?>"
              class="del-btn"
              onclick="return confirm('Hapus <?= htmlspecialchars($item['nama_produk']) ?> dari keranjang?')">
-            ✕ Hapus
+            <i data-lucide="x" class="lucide-ic"></i> Hapus
           </a>
         </div>
       </div>
@@ -513,7 +514,7 @@ unset($_SESSION['checkout_error']);
 
   <!-- ─── ORDER SUMMARY ─── -->
   <div class="summary-card">
-    <div class="summary-title">📋 Ringkasan Pesanan</div>
+    <div class="summary-title"><i data-lucide="clipboard-list" class="lucide-ic"></i> Ringkasan Pesanan</div>
     <?php foreach($items as $item): ?>
     <div class="summary-row">
       <span><?= htmlspecialchars($item['nama_produk']) ?> ×<?= $item['jumlah'] ?></span>
@@ -528,7 +529,7 @@ unset($_SESSION['checkout_error']);
 
   <!-- ─── CHECKOUT FORM ─── -->
   <div class="checkout-card">
-    <div class="checkout-title">✦ Informasi Pemesan</div>
+    <div class="checkout-title"><i data-lucide="sparkle" class="lucide-ic"></i> Informasi Pemesan</div>
     <form action="qris.php" method="POST">
       <div class="form-row">
         <div class="form-group">
@@ -548,10 +549,10 @@ unset($_SESSION['checkout_error']);
       </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
         <button type="submit" class="btn-premium btn-gold" style="flex:1;min-width:200px;justify-content:center;">
-          ✦ Lanjut ke Pembayaran QRIS
+          <i data-lucide="sparkle" class="lucide-ic"></i> Lanjut ke Pembayaran QRIS
         </button>
         <a href="menuu.php" class="btn-premium btn-green" style="justify-content:center;">
-          🎂 Tambah Menu
+          <i data-lucide="cake" class="lucide-ic"></i> Tambah Menu
         </a>
       </div>
     </form>
@@ -561,10 +562,10 @@ unset($_SESSION['checkout_error']);
 
   <!-- ─── EMPTY STATE ─── -->
   <div class="empty-state">
-    <div class="empty-icon">🛒</div>
+    <div class="empty-icon"><i data-lucide="shopping-cart" class="lucide-ic"></i></div>
     <p>Keranjangmu masih kosong. Yuk pilih menu favoritmu!</p>
     <a href="menuu.php" class="btn-premium btn-gold" style="display:inline-flex;justify-content:center;">
-      🎂 Lihat Menu
+      <i data-lucide="cake" class="lucide-ic"></i> Lihat Menu
     </a>
   </div>
 
@@ -619,5 +620,8 @@ unset($_SESSION['checkout_error']);
   })();
 </script>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

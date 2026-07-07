@@ -64,15 +64,16 @@ if ($resPromo) {
 }
 
 $reward_milestones = [
-    ['poin' => 100, 'icon' => '🎁', 'nama' => 'Diskon 5%'],
-    ['poin' => 200, 'icon' => '☕', 'nama' => 'Gratis Kopi'],
-    ['poin' => 250, 'icon' => '🥐', 'nama' => 'Gratis Croissant'],
-    ['poin' => 500, 'icon' => '🎂', 'nama' => 'Gratis Cake'],
+    ['poin' => 100, 'icon' => '<i data-lucide="gift" class="lucide-ic"></i>', 'nama' => 'Diskon 5%'],
+    ['poin' => 200, 'icon' => '<i data-lucide="coffee" class="lucide-ic"></i>', 'nama' => 'Gratis Kopi'],
+    ['poin' => 250, 'icon' => '<i data-lucide="croissant" class="lucide-ic"></i>', 'nama' => 'Gratis Croissant'],
+    ['poin' => 500, 'icon' => '<i data-lucide="cake" class="lucide-ic"></i>', 'nama' => 'Gratis Cake'],
 ];
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Member Area – YOLAZCAKE</title>
@@ -262,6 +263,9 @@ body.light .nav-btn {
   transform: rotate(90deg) scale(1.12);
   background: rgba(212,175,55,0.15); color: var(--gold);
 }
+#hamburger .icon-close { display: none; }
+#hamburger.active .icon-menu { display: none; }
+#hamburger.active .icon-close { display: inline-block; }
 #darkBtn { display: flex; align-items: center; justify-content: center; }
 #darkBtn svg { width: 19px; height: 19px; color: var(--gold); filter: drop-shadow(0 0 3px rgba(212,175,55,0.5)); }
 #darkBtn .icon-sun { display: none; }
@@ -844,10 +848,9 @@ body.light .promo-box { background: rgba(0,0,0,0.03); border-color: rgba(238,42,
   transition: box-shadow 0.35s;
 }
 .points-hero:hover { box-shadow: 0 0 50px rgba(212,175,55,0.22); }
-.points-hero::before {
-  content: '⭐';
+.points-hero-bg-icon {
   position: absolute; top: -20px; right: 24px;
-  font-size: 7em; opacity: 0.05; pointer-events: none;
+  font-size: 7em; opacity: 0.05; pointer-events: none; color: #D4AF37;
   animation: starFloat 6s ease-in-out infinite;
 }
 @keyframes starFloat {
@@ -1040,22 +1043,22 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
   </a>
 
   <div class="nav-premium-badge">
-    👑 <?= htmlspecialchars($tier['name']) ?> Member
+    <i data-lucide="crown" class="lucide-ic"></i> <?= htmlspecialchars($tier['name']) ?> Member
   </div>
 
   <div class="nav-right">
     <button class="nav-btn" id="darkBtn" onclick="toggleDark()" title="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="4.5"></line><line x1="12" y1="19.5" x2="12" y2="22"></line><line x1="4.2" y1="4.2" x2="5.9" y2="5.9"></line><line x1="18.1" y1="18.1" x2="19.8" y2="19.8"></line><line x1="2" y1="12" x2="4.5" y2="12"></line><line x1="19.5" y1="12" x2="22" y2="12"></line><line x1="4.2" y1="19.8" x2="5.9" y2="18.1"></line><line x1="18.1" y1="5.9" x2="19.8" y2="4.2"></line></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 14.4a9 9 0 0 1-11.24-11.24 1 1 0 0 0-1.3-1.22A10.07 10.07 0 0 0 2 12.1 10 10 0 0 0 12 22a10.07 10.07 0 0 0 9.06-6.3 1 1 0 0 0-1.22-1.3z"></path><circle cx="18.5" cy="5.5" r="1.1"></circle><circle cx="20.5" cy="9" r="0.6"></circle></svg></button>
-    <button class="nav-btn" id="hamburger" onclick="toggleMenu()" title="Menu">☰</button>
+    <button class="nav-btn" id="hamburger" onclick="toggleMenu()" title="Menu"><i data-lucide="menu" class="lucide-ic icon-menu"></i><i data-lucide="x" class="lucide-ic icon-close"></i></button>
   </div>
 
   <div class="dropdown" id="dropdown">
-    <a onclick="window.location.href='../index.php'">🏠 Home</a>
-    <a onclick="window.location.href='../produk/menu.php'">☕ Menu</a>
-    <a onclick="window.location.href='../gallery.php'">🖼️ Gallery</a>
-    <a onclick="window.location.href='../about.php'">✨ About</a>
-    <a onclick="window.location.href='../contact.php'">📞 Contact</a>
+    <a onclick="window.location.href='../index.php'"><i data-lucide="home" class="lucide-ic"></i> Home</a>
+    <a onclick="window.location.href='../produk/menu.php'"><i data-lucide="coffee" class="lucide-ic"></i> Menu</a>
+    <a onclick="window.location.href='../gallery.php'"><i data-lucide="image" class="lucide-ic"></i> Gallery</a>
+    <a onclick="window.location.href='../about.php'"><i data-lucide="sparkles" class="lucide-ic"></i> About</a>
+    <a onclick="window.location.href='../contact.php'"><i data-lucide="phone" class="lucide-ic"></i> Contact</a>
     <div class="dd-divider"></div>
-    <a onclick="window.location.href='../auth/logout.php'" class="dd-logout">🚪 Logout</a>
+    <a onclick="window.location.href='../auth/logout.php'" class="dd-logout"><i data-lucide="log-out" class="lucide-ic"></i> Logout</a>
   </div>
 </nav>
 
@@ -1064,12 +1067,12 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
   <div class="hero-mesh"></div>
   <div class="hero-grid"></div>
   <div class="hero-inner">
-    <div class="hero-crown">👑 Exclusive Member Area</div>
+    <div class="hero-crown"><i data-lucide="crown" class="lucide-ic"></i> Exclusive Member Area</div>
     <h1 class="hero-title"><span>Member Dashboard</span></h1>
     <p class="hero-sub">Selamat datang di ruang eksklusif YOLAZCAKE Sintang</p>
     <div class="hero-divider-line">
       <span></span>
-      <span class="hero-gems">✦ ✦ ✦</span>
+      <span class="hero-gems"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span>
       <span></span>
     </div>
   </div>
@@ -1081,14 +1084,14 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
   <!-- TOP BAR -->
   <div class="top-bar">
     <div class="eyebrow">Member Dashboard</div>
-    <a href="../index.php" class="btn-home">🏠 Kembali ke Website</a>
+    <a href="../index.php" class="btn-home"><i data-lucide="home" class="lucide-ic"></i> Kembali ke Website</a>
   </div>
 
   <!-- WELCOME CARD -->
   <div class="welcome-card">
     <div class="wc-top">
       <div class="wc-left">
-        <div class="wc-avatar">👑</div>
+        <div class="wc-avatar"><i data-lucide="crown" class="lucide-ic"></i></div>
         <div class="wc-greeting">Selamat Datang Kembali</div>
         <div class="wc-name">
           <?php echo htmlspecialchars($_SESSION['username']); ?>
@@ -1098,8 +1101,8 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
         </div>
       </div>
       <div class="wc-badges">
-        <div class="badge-gold">✦ <?= htmlspecialchars($tier['name']) ?> Member ✦</div>
-        <div class="badge-verified">✓ Akun Terverifikasi</div>
+        <div class="badge-gold"><i data-lucide="sparkle" class="lucide-ic"></i> <?= htmlspecialchars($tier['name']) ?> Member <i data-lucide="sparkle" class="lucide-ic"></i></div>
+        <div class="badge-verified"><i data-lucide="check" class="lucide-ic"></i> Akun Terverifikasi</div>
       </div>
     </div>
 
@@ -1110,7 +1113,7 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
           <?php if ($tier['next_name']): ?>
             <?= $tier['sisa'] ?> poin lagi menuju <strong style="color:var(--rose)"><?= htmlspecialchars($tier['next_name']) ?></strong>
           <?php else: ?>
-            🎉 Anda sudah di tier tertinggi!
+            <i data-lucide="party-popper" class="lucide-ic"></i> Anda sudah di tier tertinggi!
           <?php endif; ?>
         </span>
       </div>
@@ -1124,17 +1127,17 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
   <!-- STATS ROW -->
   <div class="stats-row">
     <div class="stat-card stat-card-1">
-      <div class="stat-icon-wrap">⭐</div>
+      <div class="stat-icon-wrap"><i data-lucide="star" class="lucide-ic lucide-fill"></i></div>
       <div class="stat-val" data-count="<?= $poin ?>"><?= $poin ?></div>
       <div class="stat-lbl">Poin Terkumpul</div>
     </div>
     <div class="stat-card stat-card-2">
-      <div class="stat-icon-wrap">🎯</div>
+      <div class="stat-icon-wrap"><i data-lucide="target" class="lucide-ic"></i></div>
       <div class="stat-val"><?= htmlspecialchars($tier['name']) ?></div>
       <div class="stat-lbl">Level Member</div>
     </div>
     <div class="stat-card stat-card-3">
-      <div class="stat-icon-wrap">📅</div>
+      <div class="stat-icon-wrap"><i data-lucide="calendar" class="lucide-ic"></i></div>
       <div class="stat-val" data-count="<?= $bulan_bergabung ?>"><?= $bulan_bergabung ?></div>
       <div class="stat-lbl">Bulan Bergabung</div>
     </div>
@@ -1143,22 +1146,22 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
   <!-- STATUS SECTION -->
   <div class="section-card d1">
     <div class="section-header">
-      <div class="section-icon">✅</div>
+      <div class="section-icon"><i data-lucide="check-circle" class="lucide-ic"></i></div>
       <div class="section-title">Status Member Anda</div>
     </div>
     <div class="status-grid">
       <div class="status-box">
-        <span class="sb-icon">✅</span>
+        <span class="sb-icon"><i data-lucide="check-circle" class="lucide-ic"></i></span>
         <h3>Status</h3>
         <p>Member Aktif</p>
       </div>
       <div class="status-box">
-        <span class="sb-icon">🎯</span>
+        <span class="sb-icon"><i data-lucide="target" class="lucide-ic"></i></span>
         <h3>Tier</h3>
         <p><?= htmlspecialchars($tier['name']) ?> Member</p>
       </div>
       <div class="status-box">
-        <span class="sb-icon">🗓️</span>
+        <span class="sb-icon"><i data-lucide="calendar-days" class="lucide-ic"></i></span>
         <h3>Bergabung</h3>
         <p><?= $bulan_bergabung ?> Bulan Lalu</p>
       </div>
@@ -1168,7 +1171,7 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
   <!-- BENEFITS SECTION (NEW) -->
   <div class="section-card d2">
     <div class="section-header">
-      <div class="section-icon">💎</div>
+      <div class="section-icon"><i data-lucide="gem" class="lucide-ic"></i></div>
       <div class="section-title">Keistimewaan Gold Member</div>
     </div>
     <div class="benefits-grid">
@@ -1198,7 +1201,7 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
   <!-- PROMO SECTION -->
   <div class="section-card d2">
     <div class="section-header">
-      <div class="section-icon">🎁</div>
+      <div class="section-icon"><i data-lucide="gift" class="lucide-ic"></i></div>
       <div class="section-title">Promo Khusus Member</div>
     </div>
     <div class="promo-grid">
@@ -1209,7 +1212,7 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
         <div class="promo-tag"><?= $p['min_belanja'] > 0 ? 'Min. Rp'.number_format($p['min_belanja'],0,',','.') : 'Aktif Sekarang' ?></div>
         <div class="promo-code"><?= htmlspecialchars($p['kode_promo']) ?></div>
         <p><?= htmlspecialchars($p['deskripsi'] ?: ($p['diskon_persen'].'% diskon untuk pembelian ini.')) ?></p>
-        <button class="promo-copy-btn" onclick="copyCode(this, '<?= htmlspecialchars($p['kode_promo'], ENT_QUOTES) ?>')">📋 Salin Kode</button>
+        <button class="promo-copy-btn" onclick="copyCode(this, '<?= htmlspecialchars($p['kode_promo'], ENT_QUOTES) ?>')"><i data-lucide="clipboard-list" class="lucide-ic"></i> Salin Kode</button>
       </div>
       <?php endforeach; endif; ?>
     </div>
@@ -1218,10 +1221,11 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
   <!-- POINTS SECTION -->
   <div class="section-card d3">
     <div class="section-header">
-      <div class="section-icon">⭐</div>
+      <div class="section-icon"><i data-lucide="star" class="lucide-ic lucide-fill"></i></div>
       <div class="section-title">Poin & Reward</div>
     </div>
     <div class="points-hero">
+      <i data-lucide="star" class="lucide-ic lucide-fill points-hero-bg-icon"></i>
       <div class="points-number"><?= $poin ?></div>
       <div class="points-lbl">Total Poin Terkumpul</div>
       <div class="points-mini-bar-bg">
@@ -1231,7 +1235,7 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
     <div class="reward-grid">
       <?php foreach ($reward_milestones as $r): $unlocked = $poin >= $r['poin']; ?>
       <div class="reward-box <?= $unlocked ? 'unlocked' : 'locked' ?>">
-        <?php if (!$unlocked): ?><span class="lock-overlay">🔒</span><?php endif; ?>
+        <?php if (!$unlocked): ?><span class="lock-overlay"><i data-lucide="lock" class="lucide-ic"></i></span><?php endif; ?>
         <div class="reward-icon"><?= $r['icon'] ?></div>
         <div class="reward-poin"><?= $r['poin'] ?> Poin</div>
         <div class="reward-name"><?= htmlspecialchars($r['nama']) ?></div>
@@ -1243,7 +1247,7 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
   <!-- HISTORY SECTION -->
   <div class="section-card d4">
     <div class="section-header">
-      <div class="section-icon">📋</div>
+      <div class="section-icon"><i data-lucide="clipboard-list" class="lucide-ic"></i></div>
       <div class="section-title">Riwayat & Aktivitas</div>
     </div>
     <div class="history-grid">
@@ -1253,7 +1257,7 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
       </div>
       <div class="history-item">
         <h3>Status Hari Ini</h3>
-        <p>Aktif ✅</p>
+        <p>Aktif <i data-lucide="check-circle" class="lucide-ic"></i></p>
       </div>
       <div class="history-item">
         <h3>Bergabung Sejak</h3>
@@ -1273,11 +1277,11 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
   <div class="footer-brand">YOLAZCAKE</div>
   © 2026 YOLAZCAKE Sintang · Cafe · Bakery · Boutique<br>
   Jl. Lintas Melawi, Ladang, Sintang, Kalimantan Barat<br>
-  📱 WA: 0815-7815-7888
+  <i data-lucide="smartphone" class="lucide-ic"></i> WA: 0815-7815-7888
 </div>
 
 <!-- TOAST -->
-<div class="toast" id="toast">✅ Kode disalin!</div>
+<div class="toast" id="toast"><i data-lucide="check-circle" class="lucide-ic"></i> Kode disalin!</div>
 
 <script>
 /* ══ HERO SPARKLES ══ */
@@ -1313,22 +1317,30 @@ window.addEventListener('load', () => {
 });
 
 /* ══ COPY PROMO CODE ══ */
+/* Helper: ganti isi elemen dengan markup icon lucide lalu render ulang jadi SVG.
+   (Sebelumnya pakai textContent sehingga kode <i data-lucide="..."> tampil
+   sebagai teks mentah, bukan icon.) */
+function setIconHTML(el, html){
+  el.innerHTML = html;
+  if (window.lucide) lucide.createIcons();
+}
+
 function copyCode(btn, code){
   navigator.clipboard.writeText(code).then(() => {
-    btn.textContent = '✅ Tersalin!';
+    setIconHTML(btn, '<i data-lucide="check-circle" class="lucide-ic"></i> Tersalin!');
     btn.classList.add('copied');
     showToast('Kode "' + code + '" berhasil disalin!');
     setTimeout(() => {
-      btn.textContent = '📋 Salin Kode';
+      setIconHTML(btn, '<i data-lucide="clipboard-list" class="lucide-ic"></i> Salin Kode');
       btn.classList.remove('copied');
     }, 2500);
   }).catch(() => {
     /* fallback */
-    btn.textContent = '✅ Tersalin!';
+    setIconHTML(btn, '<i data-lucide="check-circle" class="lucide-ic"></i> Tersalin!');
     btn.classList.add('copied');
     showToast('Kode "' + code + '" berhasil disalin!');
     setTimeout(() => {
-      btn.textContent = '📋 Salin Kode';
+      setIconHTML(btn, '<i data-lucide="clipboard-list" class="lucide-ic"></i> Salin Kode');
       btn.classList.remove('copied');
     }, 2500);
   });
@@ -1336,7 +1348,7 @@ function copyCode(btn, code){
 
 function showToast(msg){
   const t = document.getElementById('toast');
-  t.textContent = '✅ ' + msg;
+  setIconHTML(t, '<i data-lucide="check-circle" class="lucide-ic"></i> ' + msg);
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
 }
@@ -1347,7 +1359,6 @@ function toggleMenu(){
   const btn = document.getElementById('hamburger');
   const open = dd.classList.toggle('show');
   btn.classList.toggle('active', open);
-  btn.textContent = open ? '✖' : '☰';
 }
 
 document.querySelectorAll('.dropdown a, .dropdown p').forEach(item => {
@@ -1356,7 +1367,6 @@ document.querySelectorAll('.dropdown a, .dropdown p').forEach(item => {
     const btn = document.getElementById('hamburger');
     dd.classList.remove('show');
     btn.classList.remove('active');
-    btn.textContent = '☰';
   });
 });
 
@@ -1366,7 +1376,6 @@ document.addEventListener('click', (e) => {
   if (!dd.contains(e.target) && !btn.contains(e.target)){
     dd.classList.remove('show');
     btn.classList.remove('active');
-    btn.textContent = '☰';
   }
 });
 
@@ -1416,5 +1425,8 @@ window.addEventListener('load', () => {
   }, 1300);
 });
 </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

@@ -46,9 +46,9 @@ if ($do_search && $no_hp !== '') {
 function badge_booking($status) {
     switch ($status) {
         case 'Pending':       return ['status-menunggu', '⏳ Pending'];
-        case 'Dikonfirmasi':  return ['status-diproses', '✅ Dikonfirmasi'];
-        case 'Selesai':       return ['status-selesai',  '🎉 Selesai'];
-        case 'Dibatalkan':    return ['status-batal',    '✖ Dibatalkan'];
+        case 'Dikonfirmasi':  return ['status-diproses', '<i data-lucide="check-circle" class="lucide-ic"></i> Dikonfirmasi'];
+        case 'Selesai':       return ['status-selesai',  '<i data-lucide="party-popper" class="lucide-ic"></i> Selesai'];
+        case 'Dibatalkan':    return ['status-batal',    '<i data-lucide="x" class="lucide-ic"></i> Dibatalkan'];
         default:              return ['status-menunggu', htmlspecialchars($status)];
     }
 }
@@ -56,18 +56,18 @@ function badge_booking($status) {
 function badge_pesanan($status) {
     switch ($status) {
         case 'Menunggu':     return ['status-menunggu', '⏳ Menunggu'];
-        case 'Diproses':     return ['status-diproses', '👩‍🍳 Diproses'];
-        case 'Siap Diambil': return ['status-siap',      '📦 Siap Diambil'];
-        case 'Selesai':      return ['status-selesai',   '🎉 Selesai'];
-        case 'Dibatalkan':   return ['status-batal',     '✖ Dibatalkan'];
+        case 'Diproses':     return ['status-diproses', '<i data-lucide="user-round" class="lucide-ic"></i>‍<i data-lucide="chef-hat" class="lucide-ic"></i> Diproses'];
+        case 'Siap Diambil': return ['status-siap',      '<i data-lucide="package" class="lucide-ic"></i> Siap Diambil'];
+        case 'Selesai':      return ['status-selesai',   '<i data-lucide="party-popper" class="lucide-ic"></i> Selesai'];
+        case 'Dibatalkan':   return ['status-batal',     '<i data-lucide="x" class="lucide-ic"></i> Dibatalkan'];
         default:             return ['status-menunggu', htmlspecialchars($status)];
     }
 }
 
 function badge_bayar($status) {
     switch ($status) {
-        case 'Lunas':    return ['pay-lunas',    '✓ Lunas'];
-        case 'Gagal':    return ['pay-gagal',    '✖ Gagal'];
+        case 'Lunas':    return ['pay-lunas',    '<i data-lucide="check" class="lucide-ic"></i> Lunas'];
+        case 'Gagal':    return ['pay-gagal',    '<i data-lucide="x" class="lucide-ic"></i> Gagal'];
         default:         return ['pay-menunggu', '⏳ Menunggu'];
     }
 }
@@ -75,6 +75,7 @@ function badge_bayar($status) {
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="assets/css/lucide-icons.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cek Status Booking & Pesanan – YOLAZCAKE</title>
@@ -290,10 +291,10 @@ function badge_bayar($status) {
 <!-- HERO -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Cek Status Booking & Pesanan</h1>
     <p class="hero-sub">Pantau status reservasi meja dan pesanan makanan Anda secara langsung</p>
-    <div class="hero-divider"><span></span><span class="diamond">✦ ✦ ✦</span><span></span></div>
+    <div class="hero-divider"><span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span></div>
   </div>
 </div>
 
@@ -302,11 +303,11 @@ function badge_bayar($status) {
 
   <!-- SEARCH -->
   <div class="search-card">
-    <div class="search-title">🔍 Cari Berdasarkan Nomor HP</div>
+    <div class="search-title"><i data-lucide="search" class="lucide-ic"></i> Cari Berdasarkan Nomor HP</div>
     <p class="search-desc">Masukkan nomor HP yang Anda gunakan saat booking meja atau memesan makanan & minuman untuk melihat status terbaru.</p>
     <form class="search-form" method="GET" action="status.php">
       <input type="text" name="no_hp" placeholder="Contoh: 0815-7815-7888" value="<?= htmlspecialchars($no_hp) ?>" required>
-      <button type="submit" class="btn-cari">🔍 Cek Status</button>
+      <button type="submit" class="btn-cari"><i data-lucide="search" class="lucide-ic"></i> Cek Status</button>
     </form>
   </div>
 
@@ -314,7 +315,7 @@ function badge_bayar($status) {
 
     <?php if (empty($bookings) && empty($pemesanans)): ?>
       <div class="empty-state">
-        <div class="e-icon">🗒️</div>
+        <div class="e-icon"><i data-lucide="notebook-text" class="lucide-ic"></i></div>
         <h3>Belum Ada Data Ditemukan</h3>
         <p>Tidak ada booking maupun pesanan dengan nomor HP <strong>"<?= htmlspecialchars($no_hp) ?>"</strong>. Pastikan nomor yang dimasukkan sama persis dengan saat booking/pemesanan.</p>
       </div>
@@ -322,24 +323,24 @@ function badge_bayar($status) {
 
       <?php if (!empty($bookings)): ?>
       <div class="result-section">
-        <div class="result-section-title">📅 Booking Meja Anda <span class="count"><?= count($bookings) ?></span></div>
+        <div class="result-section-title"><i data-lucide="calendar" class="lucide-ic"></i> Booking Meja Anda <span class="count"><?= count($bookings) ?></span></div>
         <?php foreach ($bookings as $b): list($cls, $label) = badge_booking($b['status']); ?>
         <div class="item-card">
           <div class="item-top">
-            <div class="item-id">🎫 #<?= str_pad($b['id_booking'], 4, '0', STR_PAD_LEFT) ?></div>
+            <div class="item-id"><i data-lucide="ticket" class="lucide-ic"></i> #<?= str_pad($b['id_booking'], 4, '0', STR_PAD_LEFT) ?></div>
             <span class="status-badge <?= $cls ?>"><?= $label ?></span>
           </div>
           <div class="item-meta">
-            <span>👤 <b><?= htmlspecialchars($b['nama_pemesan']) ?></b></span>
-            <span>📅 <b><?= date('d M Y', strtotime($b['tanggal_booking'])) ?></b></span>
-            <span>🕐 <b><?= date('H:i', strtotime($b['jam_booking'])) ?> WIB</b></span>
-            <span>👥 <b><?= htmlspecialchars($b['jumlah_orang']) ?> orang</b></span>
+            <span><i data-lucide="user" class="lucide-ic"></i> <b><?= htmlspecialchars($b['nama_pemesan']) ?></b></span>
+            <span><i data-lucide="calendar" class="lucide-ic"></i> <b><?= date('d M Y', strtotime($b['tanggal_booking'])) ?></b></span>
+            <span><i data-lucide="clock" class="lucide-ic"></i> <b><?= date('H:i', strtotime($b['jam_booking'])) ?> WIB</b></span>
+            <span><i data-lucide="users" class="lucide-ic"></i> <b><?= htmlspecialchars($b['jumlah_orang']) ?> orang</b></span>
             <?php if (!empty($b['nomor_meja_terdaftar'])): ?>
-            <span>🪑 <b>Meja <?= htmlspecialchars($b['nomor_meja_terdaftar']) ?></b></span>
+            <span><i data-lucide="armchair" class="lucide-ic"></i> <b>Meja <?= htmlspecialchars($b['nomor_meja_terdaftar']) ?></b></span>
             <?php endif; ?>
           </div>
           <?php if (!empty($b['catatan'])): ?>
-          <div class="item-bottom"><span style="font-size:.82em;color:rgba(255,255,255,.5);">📝 <?= htmlspecialchars($b['catatan']) ?></span></div>
+          <div class="item-bottom"><span style="font-size:.82em;color:rgba(255,255,255,.5);"><i data-lucide="file-text" class="lucide-ic"></i> <?= htmlspecialchars($b['catatan']) ?></span></div>
           <?php endif; ?>
         </div>
         <?php endforeach; ?>
@@ -348,24 +349,24 @@ function badge_bayar($status) {
 
       <?php if (!empty($pemesanans)): ?>
       <div class="result-section">
-        <div class="result-section-title">🛍️ Pesanan Makanan & Minuman Anda <span class="count"><?= count($pemesanans) ?></span></div>
+        <div class="result-section-title"><i data-lucide="shopping-bag" class="lucide-ic"></i> Pesanan Makanan & Minuman Anda <span class="count"><?= count($pemesanans) ?></span></div>
         <?php foreach ($pemesanans as $p): list($cls, $label) = badge_pesanan($p['status_pesanan']); list($pcls, $plabel) = badge_bayar($p['status_pembayaran']); ?>
         <div class="item-card">
           <div class="item-top">
-            <div class="item-id">📦 <?= htmlspecialchars($p['kode_pesanan']) ?></div>
+            <div class="item-id"><i data-lucide="package" class="lucide-ic"></i> <?= htmlspecialchars($p['kode_pesanan']) ?></div>
             <span class="status-badge <?= $cls ?>"><?= $label ?></span>
           </div>
           <div class="item-meta">
-            <span>👤 <b><?= htmlspecialchars($p['nama_pemesan']) ?></b></span>
-            <span>📅 <b><?= date('d M Y, H:i', strtotime($p['tanggal'])) ?> WIB</b></span>
+            <span><i data-lucide="user" class="lucide-ic"></i> <b><?= htmlspecialchars($p['nama_pemesan']) ?></b></span>
+            <span><i data-lucide="calendar" class="lucide-ic"></i> <b><?= date('d M Y, H:i', strtotime($p['tanggal'])) ?> WIB</b></span>
             <span class="pay-tag <?= $pcls ?>"><?= $plabel ?></span>
             <?php if (!empty($p['nomor_meja'])): ?>
-            <span>🪑 <b>Meja <?= htmlspecialchars($p['nomor_meja']) ?></b></span>
+            <span><i data-lucide="armchair" class="lucide-ic"></i> <b>Meja <?= htmlspecialchars($p['nomor_meja']) ?></b></span>
             <?php endif; ?>
           </div>
           <div class="item-bottom">
-            <span class="item-total">💰 Rp <?= number_format($p['total_harga'], 0, ',', '.') ?></span>
-            <a href="pemesanan/detail_pemesanan.php?id=<?= $p['id_pemesanan'] ?>" class="item-link">Lihat Detail →</a>
+            <span class="item-total"><i data-lucide="wallet" class="lucide-ic"></i> Rp <?= number_format($p['total_harga'], 0, ',', '.') ?></span>
+            <a href="pemesanan/detail_pemesanan.php?id=<?= $p['id_pemesanan'] ?>" class="item-link">Lihat Detail <i data-lucide="arrow-right" class="lucide-ic"></i></a>
           </div>
         </div>
         <?php endforeach; ?>
@@ -376,16 +377,16 @@ function badge_bayar($status) {
 
   <?php else: ?>
     <div class="hint-state">
-      <div class="e-icon">✨</div>
+      <div class="e-icon"><i data-lucide="sparkles" class="lucide-ic"></i></div>
       <p>Masukkan nomor HP Anda di atas untuk melihat status booking meja<br>dan pesanan makanan & minuman secara real-time.</p>
     </div>
   <?php endif; ?>
 
   <!-- ACTIONS -->
   <div class="actions" style="margin-top:32px;">
-    <a href="index.php" class="btn-premium btn-outline">🏠 Kembali ke Beranda</a>
-    <a href="booking/booking.php" class="btn-premium btn-outline">📅 Booking Meja</a>
-    <a href="pemesanan/menuu.php" class="btn-premium btn-green">🍰 Pesan Makanan</a>
+    <a href="index.php" class="btn-premium btn-outline"><i data-lucide="home" class="lucide-ic"></i> Kembali ke Beranda</a>
+    <a href="booking/booking.php" class="btn-premium btn-outline"><i data-lucide="calendar" class="lucide-ic"></i> Booking Meja</a>
+    <a href="pemesanan/menuu.php" class="btn-premium btn-green"><i data-lucide="cake-slice" class="lucide-ic"></i> Pesan Makanan</a>
   </div>
 
 </div>
@@ -420,5 +421,8 @@ function badge_bayar($status) {
 })();
 </script>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

@@ -2,6 +2,13 @@
 session_start();
 require_once '../config/koneksi.php';
 
+// Jaga-jaga: kalau ada yang coba POST langsung ke sini tanpa lewat form
+// booking.php (yang sudah dijaga login), tetap tolak di sini juga.
+if (!isset($_SESSION['username'])) {
+    header("Location: ../auth/login.php?notice=booking&redirect=" . urlencode('../booking/booking.php'));
+    exit();
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $nama_pemesan = trim($_POST['nama_pemesan'] ?? '');
@@ -97,6 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Proses Booking – YOLAZCAKE</title>
@@ -612,7 +620,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!-- ===== LOADING SCREEN ===== -->
 <div id="loadingScreen">
-  <div class="loading-logo">✦ YOLAZCAKE</div>
+  <div class="loading-logo"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE</div>
 
   <!-- Spinner (sembunyikan saat done) -->
   <div class="spinner-wrap" id="spinnerWrap">
@@ -661,49 +669,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <h2 class="result-title success">Booking Berhasil!</h2>
-    <p class="result-sub">Meja Anda telah berhasil dipesan. Kami menunggu kehadiran Anda di YOLAZCAKE ✦</p>
+    <p class="result-sub">Meja Anda telah berhasil dipesan. Kami menunggu kehadiran Anda di YOLAZCAKE <i data-lucide="sparkle" class="lucide-ic"></i></p>
 
     <div class="booking-id-badge">
-      🎫 ID Booking <strong>#<?= str_pad($id_booking, 4, '0', STR_PAD_LEFT) ?></strong>
+      <i data-lucide="ticket" class="lucide-ic"></i> ID Booking <strong>#<?= str_pad($id_booking, 4, '0', STR_PAD_LEFT) ?></strong>
     </div>
 
     <div class="booking-detail">
-      <div class="detail-title">✦ &nbsp;Detail Reservasi</div>
+      <div class="detail-title"><i data-lucide="sparkle" class="lucide-ic"></i> &nbsp;Detail Reservasi</div>
       <div class="detail-row">
-        <span class="dk">👤 Nama</span>
+        <span class="dk"><i data-lucide="user" class="lucide-ic"></i> Nama</span>
         <span class="dv"><?= htmlspecialchars($nama_pemesan) ?></span>
       </div>
       <div class="detail-row">
-        <span class="dk">📱 No. HP</span>
+        <span class="dk"><i data-lucide="smartphone" class="lucide-ic"></i> No. HP</span>
         <span class="dv"><?= htmlspecialchars($no_hp) ?></span>
       </div>
       <div class="detail-row">
-        <span class="dk">📅 Tanggal</span>
+        <span class="dk"><i data-lucide="calendar" class="lucide-ic"></i> Tanggal</span>
         <span class="dv"><?= $tanggal_fmt ?></span>
       </div>
       <div class="detail-row">
-        <span class="dk">🕐 Jam</span>
+        <span class="dk"><i data-lucide="clock" class="lucide-ic"></i> Jam</span>
         <span class="dv"><?= htmlspecialchars($jam_booking) ?> WIB</span>
       </div>
       <div class="detail-row">
-        <span class="dk">👥 Jumlah Orang</span>
+        <span class="dk"><i data-lucide="users" class="lucide-ic"></i> Jumlah Orang</span>
         <span class="dv"><?= htmlspecialchars($jumlah_orang) ?> orang</span>
       </div>
       <?php if (!empty($catatan)): ?>
       <div class="detail-row">
-        <span class="dk">📝 Catatan</span>
+        <span class="dk"><i data-lucide="file-text" class="lucide-ic"></i> Catatan</span>
         <span class="dv" style="max-width:60%;word-break:break-word;"><?= htmlspecialchars($catatan) ?></span>
       </div>
       <?php endif; ?>
     </div>
 
     <div class="question-box">
-      <p>Ingin melengkapi kunjungan Anda? <strong>Pesan makanan & minuman</strong> sekarang dan nikmati kemudahan tanpa antri saat tiba! 🍰</p>
+      <p>Ingin melengkapi kunjungan Anda? <strong>Pesan makanan & minuman</strong> sekarang dan nikmati kemudahan tanpa antri saat tiba! <i data-lucide="cake-slice" class="lucide-ic"></i></p>
     </div>
 
     <div class="btn-row">
-      <a href="../index.php" class="btn-prem btn-ghost">🏠 Kembali ke Beranda</a>
-      <a href="../pemesanan/menuu.php?id_booking=<?= $id_booking ?>" class="btn-prem btn-gold">🍰 Pesan Makanan</a>
+      <a href="../index.php" class="btn-prem btn-ghost"><i data-lucide="home" class="lucide-ic"></i> Kembali ke Beranda</a>
+      <a href="../pemesanan/menuu.php?id_booking=<?= $id_booking ?>" class="btn-prem btn-gold"><i data-lucide="cake-slice" class="lucide-ic"></i> Pesan Makanan</a>
     </div>
 
   </div>
@@ -713,17 +721,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <div class="result-card error">
 
     <div class="icon-wrap error">
-      <span class="icon-emoji">⚠️</span>
+      <span class="icon-emoji"><i data-lucide="alert-triangle" class="lucide-ic"></i></span>
     </div>
 
     <h2 class="result-title error">Booking Gagal</h2>
     <p class="result-sub"><?= htmlspecialchars($error_msg ?? 'Terjadi kesalahan yang tidak diketahui.') ?></p>
 
-    <div class="gold-rule"><span>✦ ✦ ✦</span></div>
+    <div class="gold-rule"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
 
     <div class="btn-row" style="opacity:1;animation:none;margin-top:8px;">
-      <a href="booking.php" class="btn-prem btn-danger">← Coba Lagi</a>
-      <a href="../index.php" class="btn-prem btn-ghost">🏠 Beranda</a>
+      <a href="booking.php" class="btn-prem btn-danger"><i data-lucide="arrow-left" class="lucide-ic"></i> Coba Lagi</a>
+      <a href="../index.php" class="btn-prem btn-ghost"><i data-lucide="home" class="lucide-ic"></i> Beranda</a>
     </div>
   </div>
 
@@ -768,7 +776,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   setTimeout(() => {
     clearInterval(txtInterval);
 
-    // Tampilkan animasi done (spinner → centang)
+    // Tampilkan animasi done (spinner <i data-lucide="arrow-right" class="lucide-ic"></i> centang)
     textEl.textContent = isSuccess ? 'Booking berhasil diproses!' : 'Selesai diproses…';
     spinnerWrap.style.transition = 'opacity .3s, transform .3s';
     spinnerWrap.style.opacity = '0';
@@ -864,5 +872,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 })();
 </script>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

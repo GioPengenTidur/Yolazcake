@@ -8,6 +8,7 @@ if(isset($_SESSION['username'])){
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lupa Password – YOLAZCAKE Sintang</title>
@@ -321,6 +322,9 @@ if(isset($_SESSION['username'])){
     .toggle-eye:hover { opacity: 0.85; background: rgba(255,255,255,0.06); }
     .toggle-eye:active { transform: translateY(-50%) scale(0.9); }
     .toggle-eye.active { opacity: 1; color: #D4AF37; }
+    .toggle-eye .icon-eye-off { display: none; }
+    .toggle-eye.active .icon-eye { display: none; }
+    .toggle-eye.active .icon-eye-off { display: inline-block; }
 
     .field-hint {
       display: none;
@@ -530,7 +534,7 @@ if(isset($_SESSION['username'])){
     }
     .back-link:hover { color: #D4AF37; transform: translateX(-4px); }
 
-    /* ══════════════════ Status overlay (proses → hasil) — sama seperti login.php ══════════════════ */
+    /* ══════════════════ Status overlay (proses <i data-lucide="arrow-right" class="lucide-ic"></i> hasil) — sama seperti login.php ══════════════════ */
     .status-overlay {
       position: fixed;
       inset: 0;
@@ -653,7 +657,7 @@ if(isset($_SESSION['username'])){
     <div class="login-card">
 
       <div class="login-brand">
-        <span class="eyebrow">🔑 Reset Akses</span>
+        <span class="eyebrow"><i data-lucide="key" class="lucide-ic"></i> Reset Akses</span>
         <h1>Lupa Password</h1>
         <span class="subtitle">Ikuti langkah berikut untuk mengatur ulang password</span>
       </div>
@@ -678,13 +682,13 @@ if(isset($_SESSION['username'])){
             <label for="resetEmail">Email Gmail</label>
             <div class="input-wrap">
               <input type="email" id="resetEmail" name="email" placeholder="contoh: nama@gmail.com" autocomplete="email" required>
-              <span class="field-icon">✉️</span>
+              <span class="field-icon"><i data-lucide="mail" class="lucide-ic"></i></span>
             </div>
           </div>
 
           <button type="submit" class="btn-login" id="btnKirimOtp">
             <span class="btn-text">Kirim Kode OTP</span>
-            <span class="btn-icon">→</span>
+            <span class="btn-icon"><i data-lucide="arrow-right" class="lucide-ic"></i></span>
           </button>
         </div>
       </form>
@@ -709,7 +713,7 @@ if(isset($_SESSION['username'])){
 
           <button type="submit" class="btn-login" id="btnVerifOtp">
             <span class="btn-text">Verifikasi Kode</span>
-            <span class="btn-icon">→</span>
+            <span class="btn-icon"><i data-lucide="arrow-right" class="lucide-ic"></i></span>
           </button>
           <button type="button" class="btn-ghost" id="btnBackStep1">&#8592; Ganti Email</button>
         </div>
@@ -724,8 +728,8 @@ if(isset($_SESSION['username'])){
             <label for="newPassword">Password Baru</label>
             <div class="input-wrap">
               <input type="password" id="newPassword" name="password" placeholder="Buat password baru (min. 6 karakter)" autocomplete="new-password" required>
-              <span class="field-icon">🔒</span>
-              <button type="button" class="toggle-eye" id="toggleNewPassword" tabindex="-1" aria-label="Tampilkan password">👁️</button>
+              <span class="field-icon"><i data-lucide="lock" class="lucide-ic"></i></span>
+              <button type="button" class="toggle-eye" id="toggleNewPassword" tabindex="-1" aria-label="Tampilkan password"><i data-lucide="eye" class="lucide-ic icon-eye"></i><i data-lucide="eye-off" class="lucide-ic icon-eye-off"></i></button>
             </div>
             <ul class="pwd-checklist" id="pwdChecklist">
               <li id="chkLength"><span class="chk-icon"></span>Minimal 6 karakter</li>
@@ -736,8 +740,8 @@ if(isset($_SESSION['username'])){
             <label for="confirmNewPassword">Konfirmasi Password</label>
             <div class="input-wrap">
               <input type="password" id="confirmNewPassword" name="confirm_password" placeholder="Ulangi password baru" autocomplete="new-password" required>
-              <span class="field-icon">🔐</span>
-              <button type="button" class="toggle-eye" id="toggleConfirmNewPassword" tabindex="-1" aria-label="Tampilkan password">👁️</button>
+              <span class="field-icon"><i data-lucide="lock-keyhole" class="lucide-ic"></i></span>
+              <button type="button" class="toggle-eye" id="toggleConfirmNewPassword" tabindex="-1" aria-label="Tampilkan password"><i data-lucide="eye" class="lucide-ic icon-eye"></i><i data-lucide="eye-off" class="lucide-ic icon-eye-off"></i></button>
             </div>
             <div class="field-hint" id="matchHint">
               <span class="chk-icon"></span><span class="hint-text"></span>
@@ -746,7 +750,7 @@ if(isset($_SESSION['username'])){
 
           <button type="submit" class="btn-login" id="btnResetPassword">
             <span class="btn-text">Simpan Password Baru</span>
-            <span class="btn-icon">→</span>
+            <span class="btn-icon"><i data-lucide="arrow-right" class="lucide-ic"></i></span>
           </button>
         </div>
       </form>
@@ -1004,7 +1008,6 @@ if(isset($_SESSION['username'])){
       btn.addEventListener('click', () => {
         const willShow = input.type === 'password';
         input.type = willShow ? 'text' : 'password';
-        btn.textContent = willShow ? '🙈' : '👁️';
         btn.classList.toggle('active', willShow);
       });
     }
@@ -1064,5 +1067,8 @@ if(isset($_SESSION['username'])){
       }
     });
   </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

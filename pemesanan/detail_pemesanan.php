@@ -313,6 +313,15 @@ $stmtItems->close();
       box-shadow:0 8px 28px rgba(99,250,180,.25);
     }
 
+    .btn-invoice{
+      background:linear-gradient(135deg,rgba(212,175,55,.25),rgba(238,42,123,.12));
+      border:1px solid rgba(212,175,55,.4);color:#D4AF37;
+    }
+    .btn-invoice:hover{
+      background:linear-gradient(135deg,rgba(212,175,55,.35),rgba(238,42,123,.2));
+      box-shadow:0 8px 28px rgba(212,175,55,.3);
+    }
+
     /* ── PARTICLES ── */
     .particle{position:fixed;border-radius:50%;pointer-events:none;animation:particleFloat linear infinite;z-index:0;}
     @keyframes particleFloat{
@@ -497,6 +506,7 @@ $stmtItems->close();
   <!-- ACTIONS -->
   <div class="actions">
     <a href="../index.php" class="btn-premium btn-home">🏠 Kembali ke Beranda</a>
+    <a href="invoice_pdf.php?id=<?= $id_pemesanan ?>" target="_blank" class="btn-premium btn-invoice">🧾 Cetak Invoice PDF</a>
   </div>
 
 </div>

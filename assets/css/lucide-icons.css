@@ -1,0 +1,19 @@
+/* ==========================================================
+   Lucide Icons — global sizing & alignment
+   Makes <i data-lucide="..."> behave like inline glyphs,
+   scaling with font-size the same way the old emoji did.
+   ========================================================== */
+[data-lucide]{
+  width: 1em;
+  height: 1em;
+  stroke-width: 2;
+  vertical-align: -0.15em;
+  flex-shrink: 0;
+}
+.lucide-ic{
+  display: inline-block;
+  line-height: 0;
+}
+.lucide-fill{
+  fill: currentColor;
+}

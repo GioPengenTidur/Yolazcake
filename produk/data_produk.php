@@ -14,6 +14,7 @@ $query = mysqli_query($conn,
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Produk – YOLAZCAKE</title>
@@ -367,11 +368,11 @@ $query = mysqli_query($conn,
 <!-- HERO -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Data Produk</h1>
     <p class="hero-sub">Kelola seluruh menu dan produk YOLAZCAKE dengan mudah</p>
     <div class="hero-divider">
-      <span></span><span class="diamond">✦ ✦ ✦</span><span></span>
+      <span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span>
     </div>
   </div>
 </div>
@@ -379,19 +380,19 @@ $query = mysqli_query($conn,
 <div class="page-wrapper">
 
   <div class="back-link">
-    <a href="../dashboard.php">← Dashboard</a>
+    <a href="../dashboard.php"><i data-lucide="arrow-left" class="lucide-ic"></i> Dashboard</a>
   </div>
 
   <div class="top-bar">
     <div>
-      <div class="new-badge">🎂 Manajemen Produk</div>
+      <div class="new-badge"><i data-lucide="cake" class="lucide-ic"></i> Manajemen Produk</div>
       <h2 class="section-title" style="margin-top:10px;">Daftar Semua Produk</h2>
     </div>
-    <a href="tambah_produk.php" class="btn-premium btn-add">✦ Tambah Produk</a>
+    <a href="tambah_produk.php" class="btn-premium btn-add"><i data-lucide="sparkle" class="lucide-ic"></i> Tambah Produk</a>
   </div>
 
   <div class="main-card">
-    <div class="gold-rule-h"><span>✦ ✦ ✦</span></div>
+    <div class="gold-rule-h"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
 
     <div class="table-wrap">
       <table>
@@ -432,18 +433,18 @@ $query = mysqli_query($conn,
             <td><span class="prod-name"><?= htmlspecialchars($data['nama_produk']); ?></span></td>
             <td>
               <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.3);color:#D4AF37;padding:4px 12px;border-radius:999px;font-size:.78em;white-space:nowrap;">
-                <?= htmlspecialchars($data['kategori_icon'] ?? '🍽️'); ?> <?= htmlspecialchars($data['nama_kategori']); ?>
+                <?= htmlspecialchars($data['kategori_icon'] ?? '<i data-lucide="utensils" class="lucide-ic"></i>'); ?> <?= htmlspecialchars($data['nama_kategori']); ?>
               </span>
             </td>
             <td><span class="prod-price">Rp <?= number_format($data['harga'],0,',','.'); ?></span></td>
             <td><span class="stok-badge <?= $stok_class; ?>"><?= $stok_label; ?></span></td>
             <td>
               <div class="action-wrap">
-                <a href="detail_produk.php?id=<?= $data['id_produk']; ?>" class="btn-act btn-detail">🔍 Detail</a>
-                <a href="edit_produk.php?id=<?= $data['id_produk']; ?>" class="btn-act btn-edit">✏️ Edit</a>
+                <a href="detail_produk.php?id=<?= $data['id_produk']; ?>" class="btn-act btn-detail"><i data-lucide="search" class="lucide-ic"></i> Detail</a>
+                <a href="edit_produk.php?id=<?= $data['id_produk']; ?>" class="btn-act btn-edit"><i data-lucide="pencil" class="lucide-ic"></i> Edit</a>
                 <a href="hapus.php?id=<?= $data['id_produk']; ?>"
                    class="btn-act btn-hapus"
-                   onclick="return confirm('Yakin ingin menghapus produk ini?')">🗑 Hapus</a>
+                   onclick="return confirm('Yakin ingin menghapus produk ini?')"><i data-lucide="trash-2" class="lucide-ic"></i> Hapus</a>
               </div>
             </td>
           </tr>
@@ -453,7 +454,7 @@ $query = mysqli_query($conn,
           <tr>
             <td colspan="7">
               <div class="empty-state">
-                <div class="empty-icon">🎂</div>
+                <div class="empty-icon"><i data-lucide="cake" class="lucide-ic"></i></div>
                 <p>Belum ada produk. Tambahkan produk pertama Anda!</p>
               </div>
             </td>
@@ -500,5 +501,8 @@ $query = mysqli_query($conn,
   })();
 </script>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

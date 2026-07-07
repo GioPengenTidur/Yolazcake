@@ -155,6 +155,49 @@ if(!$query){ die(mysqli_error($conn)); }
     }
     .btn-gold:hover{box-shadow:0 12px 40px rgba(212,175,55,.55),0 0 60px rgba(212,175,55,.3);}
 
+    .btn-green{
+      background:linear-gradient(135deg,#2ee6a0 0%,#1aa878 50%,#2ee6a0 100%);
+      background-size:200% 100%;color:#0b2e22;
+      animation:goldSlide 3s linear infinite;
+      box-shadow:0 8px 28px rgba(46,230,160,.3),0 0 40px rgba(46,230,160,.15);
+    }
+    .btn-green:hover{box-shadow:0 12px 40px rgba(46,230,160,.5),0 0 60px rgba(46,230,160,.25);}
+
+    /* ── EXPORT PANEL ── */
+    .export-panel{
+      width:100%;background:rgba(46,230,160,.05);
+      border:1px solid rgba(46,230,160,.25);border-radius:18px;
+      padding:20px 22px;margin-bottom:28px;
+      opacity:0;animation:fadeSlideDown .8s forwards .3s;
+    }
+    .export-panel-label{
+      font-size:.85em;font-weight:700;letter-spacing:1px;color:#2ee6a0;margin-bottom:14px;
+    }
+    .export-panel-fields{
+      display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;
+    }
+    .export-field{display:flex;flex-direction:column;gap:6px;}
+    .export-field label{
+      font-size:.7em;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;
+    }
+    .export-field input,.export-field select{
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(212,175,55,.25);
+      border-radius:10px;padding:9px 14px;
+      color:#fff;font-family:'Inter',sans-serif;font-size:.85em;
+      outline:none;cursor:pointer;
+      transition:border-color .3s;
+      color-scheme:dark;
+    }
+    .export-field input:focus,.export-field select:focus{border-color:rgba(212,175,55,.6);}
+    .export-field select option{background:#2d1560;color:#fff;}
+    .export-panel-hint{
+      margin-top:12px;font-size:.75em;color:rgba(255,255,255,.4);
+    }
+    @media(max-width:580px){
+      .export-panel-fields{flex-direction:column;align-items:stretch;}
+    }
+
     /* ── GOLD RULE ── */
     .gold-rule{display:flex;align-items:center;gap:12px;width:100%;margin-bottom:28px;}
     .gold-rule::before,.gold-rule::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,55,.4));}
@@ -342,6 +385,15 @@ if(!$query){ die(mysqli_error($conn)); }
       box-shadow:0 6px 20px rgba(99,149,250,.3);
     }
 
+    .btn-invoice{
+      background:linear-gradient(135deg,rgba(212,175,55,.25),rgba(238,42,123,.12));
+      border:1px solid rgba(212,175,55,.4);color:#D4AF37;
+    }
+    .btn-invoice:hover{
+      background:linear-gradient(135deg,rgba(212,175,55,.35),rgba(238,42,123,.2));
+      box-shadow:0 6px 20px rgba(212,175,55,.3);
+    }
+
     .btn-hapus{
       background:linear-gradient(135deg,rgba(255,80,80,.2),rgba(255,80,80,.08));
       border:1px solid rgba(255,80,80,.35);color:#ff6060;
@@ -430,6 +482,34 @@ if(!$query){ die(mysqli_error($conn)); }
     </div>
     <a href="menuu.php" class="btn-premium btn-gold">🎂 Menu Pemesanan</a>
   </div>
+
+  <!-- EXPORT PANEL -->
+  <form class="export-panel" method="get" action="export_excel.php" target="_blank">
+    <div class="export-panel-label">📊 Export Laporan Penjualan ke Excel</div>
+    <div class="export-panel-fields">
+      <div class="export-field">
+        <label>Dari Tanggal</label>
+        <input type="date" name="tanggal_mulai">
+      </div>
+      <div class="export-field">
+        <label>Sampai Tanggal</label>
+        <input type="date" name="tanggal_akhir">
+      </div>
+      <div class="export-field">
+        <label>Status Pesanan</label>
+        <select name="status">
+          <option value="">Semua Status</option>
+          <option value="Menunggu">Menunggu</option>
+          <option value="Diproses">Diproses</option>
+          <option value="Siap Diambil">Siap Diambil</option>
+          <option value="Selesai">Selesai</option>
+          <option value="Dibatalkan">Dibatalkan</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-premium btn-green">📥 Export ke Excel</button>
+    </div>
+    <p class="export-panel-hint">Kosongkan tanggal untuk mengekspor seluruh data yang ada.</p>
+  </form>
 
   <!-- GOLD RULE -->
   <div class="gold-rule"><span>✦ ✦ ✦</span></div>
@@ -528,6 +608,7 @@ if(!$query){ die(mysqli_error($conn)); }
           <td>
             <div class="aksi-cell">
               <a class="btn-aksi btn-detail" href="detail_pemesanan.php?id=<?= $data['id_pemesanan'] ?>">🔍 Detail</a>
+              <a class="btn-aksi btn-invoice" href="invoice_pdf.php?id=<?= $data['id_pemesanan'] ?>" target="_blank">🧾 Invoice</a>
               <a class="btn-aksi btn-edit" href="edit_pemesanan.php?id=<?= $data['id_pemesanan'] ?>">✏️ Edit</a>
               <a class="btn-aksi btn-hapus" href="hapus_pemesanan.php?id=<?= $data['id_pemesanan'] ?>" onclick="return confirm('Yakin ingin hapus pesanan ini?')">🗑️ Hapus</a>
             </div>

@@ -29,6 +29,7 @@ $stmt2->close();
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Detail Member – YOLAZCAKE</title>
@@ -348,17 +349,17 @@ $stmt2->close();
 <!-- HERO -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Detail Member</h1>
     <p class="hero-sub">Informasi lengkap keanggotaan pelanggan</p>
     <div class="hero-divider">
-      <span></span><span class="diamond">✦ ✦ ✦</span><span></span>
+      <span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span>
     </div>
   </div>
 </div>
 
 <div class="back-link">
-  <a href="data_member.php">← Kembali ke Data Member</a>
+  <a href="data_member.php"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali ke Data Member</a>
 </div>
 
 <!-- PAGE WRAPPER -->
@@ -367,13 +368,13 @@ $stmt2->close();
   <!-- TOP BAR -->
   <div class="top-bar">
     <div>
-      <div class="new-badge">👤 Profil Member</div>
+      <div class="new-badge"><i data-lucide="user" class="lucide-ic"></i> Profil Member</div>
       <h2 class="section-title" style="margin-top:10px;">Detail Member</h2>
     </div>
   </div>
 
   <!-- GOLD RULE -->
-  <div class="gold-rule"><span>✦ ✦ ✦</span></div>
+  <div class="gold-rule"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
 
   <!-- MEMBER BANNER -->
   <div class="kode-banner">
@@ -384,39 +385,39 @@ $stmt2->close();
         <div class="kode-value"><?= htmlspecialchars($member['nama']) ?></div>
       </div>
     </div>
-    <div style="font-size:2em;opacity:.4;">✦</div>
+    <div style="font-size:2em;opacity:.4;"><i data-lucide="sparkle" class="lucide-ic"></i></div>
   </div>
 
   <!-- DETAIL CARD -->
   <div class="detail-card">
     <div class="detail-card-header">
-      <span style="font-size:1.3em;">🪪</span>
+      <span style="font-size:1.3em;"><i data-lucide="id-card" class="lucide-ic"></i></span>
       <h3>Informasi Member</h3>
     </div>
 
     <div class="detail-row">
-      <div class="detail-label"><span class="row-icon">👤</span>Nama</div>
+      <div class="detail-label"><span class="row-icon"><i data-lucide="user" class="lucide-ic"></i></span>Nama</div>
       <div class="detail-val"><?= htmlspecialchars($member['nama']) ?></div>
     </div>
 
     <div class="detail-row">
-      <div class="detail-label"><span class="row-icon">✉️</span>Email</div>
+      <div class="detail-label"><span class="row-icon"><i data-lucide="mail" class="lucide-ic"></i></span>Email</div>
       <div class="detail-val"><?= htmlspecialchars($member['email'] ?? '-') ?></div>
     </div>
 
     <div class="detail-row">
-      <div class="detail-label"><span class="row-icon">📱</span>No. HP</div>
+      <div class="detail-label"><span class="row-icon"><i data-lucide="smartphone" class="lucide-ic"></i></span>No. HP</div>
       <div class="detail-val gold-text"><?= htmlspecialchars($member['no_hp'] ?? '-') ?></div>
     </div>
 
     <div class="detail-row">
-      <div class="detail-label"><span class="row-icon">📍</span>Alamat</div>
+      <div class="detail-label"><span class="row-icon"><i data-lucide="map-pin" class="lucide-ic"></i></span>Alamat</div>
       <div class="detail-val"><?= nl2br(htmlspecialchars($member['alamat'] ?? '-')) ?></div>
     </div>
 
     <?php if(!empty($member['created_at'])): ?>
     <div class="detail-row">
-      <div class="detail-label"><span class="row-icon">📅</span>Bergabung Sejak</div>
+      <div class="detail-label"><span class="row-icon"><i data-lucide="calendar" class="lucide-ic"></i></span>Bergabung Sejak</div>
       <div class="detail-val"><?= htmlspecialchars($member['created_at']) ?></div>
     </div>
     <?php endif; ?>
@@ -425,12 +426,12 @@ $stmt2->close();
   <!-- STATS -->
   <div class="stats-row">
     <div class="stat-card">
-      <div class="stat-icon">🛍️</div>
+      <div class="stat-icon"><i data-lucide="shopping-bag" class="lucide-ic"></i></div>
       <div class="stat-label">Total Pesanan</div>
       <div class="stat-value gold"><?= (int) $total_pesanan ?></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon">⭐</div>
+      <div class="stat-icon"><i data-lucide="star" class="lucide-ic lucide-fill"></i></div>
       <div class="stat-label">Poin Saat Ini</div>
       <div class="stat-value gold"><?= (int) $member['poin'] ?></div>
     </div>
@@ -439,16 +440,16 @@ $stmt2->close();
   <!-- SUMMARY BOX -->
   <div class="summary-box">
     <div>
-      <div class="summary-label">⭐ Total Poin Member</div>
+      <div class="summary-label"><i data-lucide="star" class="lucide-ic lucide-fill"></i> Total Poin Member</div>
       <div class="summary-amount"><?= number_format((int)$member['poin'],0,',','.') ?> Poin</div>
     </div>
-    <div style="opacity:.3;font-size:3em;">✦</div>
+    <div style="opacity:.3;font-size:3em;"><i data-lucide="sparkle" class="lucide-ic"></i></div>
   </div>
 
   <!-- ACTIONS -->
   <div class="actions">
-    <a href="edit_member.php?id=<?= $member['id_member'] ?>" class="btn-premium btn-edit">✏️ Edit Member</a>
-    <a href="data_member.php" class="btn-premium btn-back">← Kembali ke Data Member</a>
+    <a href="edit_member.php?id=<?= $member['id_member'] ?>" class="btn-premium btn-edit"><i data-lucide="pencil" class="lucide-ic"></i> Edit Member</a>
+    <a href="data_member.php" class="btn-premium btn-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali ke Data Member</a>
   </div>
 
 </div>
@@ -486,5 +487,8 @@ $stmt2->close();
   })();
 </script>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

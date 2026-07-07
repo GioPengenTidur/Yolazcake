@@ -43,6 +43,7 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tambah Meja – YOLAZCAKE</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -99,13 +100,13 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
 <body>
 <div class="page-hero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ Admin Panel ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Admin Panel <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Tambah Meja</h1>
   </div>
 </div>
 <div class="wrapper">
-  <a href="data_meja.php" class="btn-back">← Kembali</a>
-  <?php if($error): ?><div class="alert-err">⚠️ <?= $error ?></div><?php endif; ?>
+  <a href="data_meja.php" class="btn-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali</a>
+  <?php if($error): ?><div class="alert-err"><i data-lucide="alert-triangle" class="lucide-ic"></i> <?= $error ?></div><?php endif; ?>
   <div class="form-card">
     <form method="POST">
       <div class="form-row">
@@ -121,17 +122,20 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
       <div class="form-group">
         <label>Status Awal</label>
         <select name="status">
-          <option value="Tersedia">✅ Tersedia</option>
-          <option value="Tidak Aktif">🚫 Tidak Aktif</option>
+          <option value="Tersedia"><i data-lucide="check-circle" class="lucide-ic"></i> Tersedia</option>
+          <option value="Tidak Aktif"><i data-lucide="ban" class="lucide-ic"></i> Tidak Aktif</option>
         </select>
       </div>
       <div class="form-group">
         <label>Keterangan</label>
         <textarea name="keterangan" placeholder="Contoh: Meja dekat jendela, VIP corner, dll..."></textarea>
       </div>
-      <button type="submit" class="btn-submit">🪑 Simpan Meja</button>
+      <button type="submit" class="btn-submit"><i data-lucide="armchair" class="lucide-ic"></i> Simpan Meja</button>
     </form>
   </div>
 </div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

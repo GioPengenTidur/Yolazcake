@@ -56,6 +56,7 @@ $stats  = mysqli_fetch_assoc(mysqli_query($conn,
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Galeri – YOLAZCAKE</title>
@@ -177,41 +178,41 @@ $stats  = mysqli_fetch_assoc(mysqli_query($conn,
 <body>
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Manajemen Galeri</h1>
     <p class="hero-sub">Kelola foto yang tampil di halaman Gallery</p>
-    <div class="hero-divider"><span></span><span class="diamond">✦ ✦ ✦</span><span></span></div>
+    <div class="hero-divider"><span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span></div>
   </div>
 </div>
 
 <div class="page-wrapper">
 
-  <a href="../dashboard.php" class="btn-back">← Dashboard</a>
+  <a href="../dashboard.php" class="btn-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Dashboard</a>
 
   <div class="top-bar">
-    <span class="section-eyebrow">✦ Daftar Foto Galeri</span>
+    <span class="section-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Daftar Foto Galeri</span>
     <a href="tambah_galeri.php" class="btn-tambah">+ Tambah Foto</a>
   </div>
 
   <div class="stats-row">
-    <div class="stat-card"><span class="stat-icon">🖼️</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="image" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= $stats['total'] ?: 0 ?></div><div class="stat-lbl">Total Foto</div></div></div>
-    <div class="stat-card"><span class="stat-icon">🏠</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="home" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= $stats['interior'] ?: 0 ?></div><div class="stat-lbl">Interior</div></div></div>
-    <div class="stat-card"><span class="stat-icon">🍰</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="cake-slice" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= $stats['kue'] ?: 0 ?></div><div class="stat-lbl">Kue & Pastry</div></div></div>
-    <div class="stat-card"><span class="stat-icon">☕</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="coffee" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= $stats['coffee'] ?: 0 ?></div><div class="stat-lbl">Coffee</div></div></div>
-    <div class="stat-card"><span class="stat-icon">👗</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="shirt" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= $stats['boutique'] ?: 0 ?></div><div class="stat-lbl">Boutique</div></div></div>
   </div>
 
   <div class="filter-row">
     <a href="data_galeri.php" class="filter-chip <?= !$filter?'active':'' ?>">Semua</a>
-    <a href="?filter=interior" class="filter-chip <?= $filter==='interior'?'active':'' ?>">🏠 Interior</a>
-    <a href="?filter=kue" class="filter-chip <?= $filter==='kue'?'active':'' ?>">🍰 Kue & Pastry</a>
-    <a href="?filter=coffee" class="filter-chip <?= $filter==='coffee'?'active':'' ?>">☕ Coffee</a>
-    <a href="?filter=boutique" class="filter-chip <?= $filter==='boutique'?'active':'' ?>">👗 Boutique</a>
+    <a href="?filter=interior" class="filter-chip <?= $filter==='interior'?'active':'' ?>"><i data-lucide="home" class="lucide-ic"></i> Interior</a>
+    <a href="?filter=kue" class="filter-chip <?= $filter==='kue'?'active':'' ?>"><i data-lucide="cake-slice" class="lucide-ic"></i> Kue & Pastry</a>
+    <a href="?filter=coffee" class="filter-chip <?= $filter==='coffee'?'active':'' ?>"><i data-lucide="coffee" class="lucide-ic"></i> Coffee</a>
+    <a href="?filter=boutique" class="filter-chip <?= $filter==='boutique'?'active':'' ?>"><i data-lucide="shirt" class="lucide-ic"></i> Boutique</a>
   </div>
 
   <div class="galeri-grid">
@@ -225,14 +226,14 @@ $stats  = mysqli_fetch_assoc(mysqli_query($conn,
         <div class="galeri-desc"><?= $d['deskripsi'] ? htmlspecialchars($d['deskripsi']) : '-' ?></div>
         <span class="kategori-badge"><?= htmlspecialchars($d['kategori']) ?></span>
         <div class="galeri-actions">
-          <a href="edit_galeri.php?id=<?= $d['id_galeri'] ?>" class="btn-act btn-edit">✏️ Edit</a>
+          <a href="edit_galeri.php?id=<?= $d['id_galeri'] ?>" class="btn-act btn-edit"><i data-lucide="pencil" class="lucide-ic"></i> Edit</a>
           <a href="?hapus=<?= $d['id_galeri'] ?>" class="btn-act btn-hapus"
-             onclick="return confirm('Yakin hapus foto «<?= htmlspecialchars($d['judul']) ?>»?')">🗑️ Hapus</a>
+             onclick="return confirm('Yakin hapus foto «<?= htmlspecialchars($d['judul']) ?>»?')"><i data-lucide="trash-2" class="lucide-ic"></i> Hapus</a>
         </div>
       </div>
     </div>
     <?php endwhile; else: ?>
-    <div class="empty-state"><div class="es-icon">🖼️</div><p>Belum ada foto di kategori ini</p></div>
+    <div class="empty-state"><div class="es-icon"><i data-lucide="image" class="lucide-ic"></i></div><p>Belum ada foto di kategori ini</p></div>
     <?php endif; ?>
   </div>
 
@@ -250,5 +251,8 @@ $stats  = mysqli_fetch_assoc(mysqli_query($conn,
   }
 })();
 </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

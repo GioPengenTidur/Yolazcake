@@ -1,6 +1,7 @@
 <?php
 session_start();
 include '../config/koneksi.php';
+require_once '../config/ulasan_helper.php';
 
 // Query produk dengan JOIN ke kategori
 $query = mysqli_query($conn,
@@ -17,6 +18,10 @@ while ($row = mysqli_fetch_assoc($query)) {
     $produk_list[] = $row;
 }
 
+// Ringkasan rating (rata-rata + jumlah ulasan) untuk semua produk sekaligus,
+// dipakai untuk menampilkan badge bintang di tiap kartu menu.
+$rating_produk_map = get_ringkasan_rating_produk_batch($conn, array_column($produk_list, 'id_produk'));
+
 // Ambil daftar kategori untuk filter
 $kat_query = mysqli_query($conn, "SELECT * FROM kategori ORDER BY nama_kategori ASC");
 
@@ -32,6 +37,7 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Menu Pemesanan – YOLAZCAKE</title>
@@ -538,6 +544,17 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
       transition:color .3s;
     }
     .prod-card:hover .prod-name { color:var(--gold-pale); }
+    .prod-name-link { text-decoration:none; display:block; }
+
+    /* Rating badge */
+    .prod-rating {
+      display:flex; align-items:center; gap:6px; margin-bottom:10px;
+      font-size:.78em; color:rgba(255,255,255,.55);
+    }
+    .prod-rating .stars { color:#D4AF37; letter-spacing:1px; }
+    .prod-rating .stars .off { color:rgba(255,255,255,.2); }
+    .prod-rating .count { color:rgba(255,255,255,.45); }
+    .prod-rating.no-rating { color:rgba(255,255,255,.35); font-style:italic; }
 
     /* Price with shimmer */
     .prod-price {
@@ -750,19 +767,19 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
   <div class="hero-orb" style="width:140px;height:140px;top:30px;right:20%;animation-duration:11s;animation-delay:1.5s;background:radial-gradient(circle,rgba(99,250,180,.14),transparent 70%);"></div>
 
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Menu Pemesanan</h1>
     <p class="hero-sub">Pilih hidangan favoritmu &amp; nikmati setiap momen bersama kami</p>
     <div class="hero-divider">
       <span class="line"></span>
-      <span class="diamond">✦ ✦ ✦</span>
+      <span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span>
       <span class="line"></span>
     </div>
   </div>
 </div>
 
 <div class="back-link">
-  <a href="../index.php">← Kembali ke Beranda</a>
+  <a href="../index.php"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali ke Beranda</a>
 </div>
 
 <!-- ═══════════ PAGE WRAPPER ═══════════ -->
@@ -777,7 +794,7 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <span class="badge-live"><span class="blip"></span>Menu Tersedia</span>
       <a href="keranjang.php" class="btn-premium btn-green">
-        🛒 Keranjang
+        <i data-lucide="shopping-cart" class="lucide-ic"></i> Keranjang
         <?php if($total_keranjang > 0): ?>
         <span style="background:rgba(238,42,123,.88);color:#fff;border-radius:999px;padding:1px 9px;font-size:.78em;"><?= $total_keranjang ?></span>
         <?php endif; ?>
@@ -801,21 +818,21 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
   <!-- STATS BAR -->
   <div class="stats-bar">
     <div class="stat-pill">
-      <span class="stat-icon">🎂</span>
+      <span class="stat-icon"><i data-lucide="cake" class="lucide-ic"></i></span>
       <div>
         <div class="stat-val"><?= $total_produk ?></div>
         <div class="stat-lbl">Total Menu</div>
       </div>
     </div>
     <div class="stat-pill">
-      <span class="stat-icon">✅</span>
+      <span class="stat-icon"><i data-lucide="check-circle" class="lucide-ic"></i></span>
       <div>
         <div class="stat-val"><?= $total_tersedia ?></div>
         <div class="stat-lbl">Tersedia</div>
       </div>
     </div>
     <div class="stat-pill">
-      <span class="stat-icon">🏷️</span>
+      <span class="stat-icon"><i data-lucide="tag" class="lucide-ic"></i></span>
       <div>
         <div class="stat-val"><?= $total_kategori_unik ?></div>
         <div class="stat-lbl">Kategori</div>
@@ -823,7 +840,7 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
     </div>
     <?php if($total_keranjang > 0): ?>
     <div class="stat-pill">
-      <span class="stat-icon">🛒</span>
+      <span class="stat-icon"><i data-lucide="shopping-cart" class="lucide-ic"></i></span>
       <div>
         <div class="stat-val"><?= $total_keranjang ?></div>
         <div class="stat-lbl">Di Keranjang</div>
@@ -836,21 +853,21 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
   <?php if($total_keranjang > 0): ?>
   <div class="cart-bar">
     <div class="cart-bar-info">
-      🛍️ Kamu sudah memilih <strong><?= $total_keranjang ?> item</strong> di keranjang
+      <i data-lucide="shopping-bag" class="lucide-ic"></i> Kamu sudah memilih <strong><?= $total_keranjang ?> item</strong> di keranjang
     </div>
     <a href="keranjang.php" class="btn-premium btn-gold" style="padding:10px 24px;font-size:.78em;">
-      ✦ Lanjut ke Keranjang
+      <i data-lucide="sparkle" class="lucide-ic"></i> Lanjut ke Keranjang
     </a>
   </div>
   <?php endif; ?>
 
   <!-- SEARCH BAR -->
   <div class="search-wrap">
-    <span class="search-icon">🔍</span>
+    <span class="search-icon"><i data-lucide="search" class="lucide-ic"></i></span>
     <input type="text" class="search-input" id="searchInput"
            placeholder="Cari menu atau produk favorit kamu…"
            autocomplete="off">
-    <button class="search-clear" id="searchClear" title="Hapus pencarian">✕</button>
+    <button class="search-clear" id="searchClear" title="Hapus pencarian"><i data-lucide="x" class="lucide-ic"></i></button>
   </div>
 
   <!-- CATEGORY FILTER -->
@@ -864,12 +881,12 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
     $total_all = count($produk_list);
   ?>
   <div class="filter-section">
-    <div class="filter-label">✦ Filter Kategori ✦</div>
+    <div class="filter-label"><i data-lucide="sparkle" class="lucide-ic"></i> Filter Kategori <i data-lucide="sparkle" class="lucide-ic"></i></div>
     <div class="filter-track">
 
       <!-- Semua -->
       <a href="menuu.php" class="filter-pill <?= ($filter_kat === 0) ? 'active' : '' ?>">
-        <span class="pill-icon">🍽️</span>
+        <span class="pill-icon"><i data-lucide="utensils" class="lucide-ic"></i></span>
         Semua
         <span class="pill-count"><?= $total_all ?></span>
       </a>
@@ -880,7 +897,7 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
         $isAct = ($filter_kat === $kid);
       ?>
       <a href="?kat=<?= $kid ?>" class="filter-pill <?= $isAct ? 'active' : '' ?>">
-        <span class="pill-icon"><?= htmlspecialchars($k['icon'] ?? '🍰') ?></span>
+        <span class="pill-icon"><?= htmlspecialchars($k['icon'] ?? '<i data-lucide="cake-slice" class="lucide-ic"></i>') ?></span>
         <?= htmlspecialchars($k['nama_kategori']) ?>
         <span class="pill-count"><?= $cnt ?></span>
       </a>
@@ -891,7 +908,7 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
   <?php endif; ?>
 
   <!-- GOLD RULE -->
-  <div class="gold-rule"><span>✦ ✦ ✦</span></div>
+  <div class="gold-rule"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
 
   <?php
   // Filter produk berdasar kategori
@@ -903,13 +920,13 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
 
   // Nama & icon kategori aktif
   $active_cat_name = 'Semua Menu';
-  $active_cat_icon = '🍽️';
+  $active_cat_icon = '<i data-lucide="utensils" class="lucide-ic"></i>';
   if($filter_kat && $kat_query){
     mysqli_data_seek($kat_query,0);
     while($k = mysqli_fetch_assoc($kat_query)){
       if((int)$k['id_kategori'] === $filter_kat){
         $active_cat_name = htmlspecialchars($k['nama_kategori']);
-        $active_cat_icon = htmlspecialchars($k['icon'] ?? '🍰');
+        $active_cat_icon = htmlspecialchars($k['icon'] ?? '<i data-lucide="cake-slice" class="lucide-ic"></i>');
         break;
       }
     }
@@ -964,7 +981,27 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
 
       <!-- BODY -->
       <div class="card-body">
-        <div class="prod-name"><?= htmlspecialchars($p['nama_produk']); ?></div>
+        <a href="../produk/lihat_produk.php?id=<?= $p['id_produk']; ?>" class="prod-name-link" title="Lihat detail & ulasan">
+          <div class="prod-name"><?= htmlspecialchars($p['nama_produk']); ?></div>
+        </a>
+        <?php
+          $r = $rating_produk_map[$p['id_produk']] ?? null;
+        ?>
+        <a href="../produk/lihat_produk.php?id=<?= $p['id_produk']; ?>" style="text-decoration:none;">
+        <?php if ($r && $r['jumlah'] > 0): ?>
+          <div class="prod-rating">
+            <span class="stars">
+              <?php $penuh = round($r['avg']); for($s=1;$s<=5;$s++): ?>
+                <span class="<?= $s <= $penuh ? '' : 'off' ?>"><i data-lucide="star" class="lucide-ic lucide-fill"></i></span>
+              <?php endfor; ?>
+            </span>
+            <span><?= number_format($r['avg'],1) ?></span>
+            <span class="count">(<?= $r['jumlah'] ?> ulasan)</span>
+          </div>
+        <?php else: ?>
+          <div class="prod-rating no-rating">Belum ada ulasan · jadi yang pertama</div>
+        <?php endif; ?>
+        </a>
         <div class="prod-price">Rp <?= number_format($p['harga'],0,',','.'); ?></div>
         <div class="card-divider"></div>
 
@@ -979,11 +1016,11 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
             <input  type="number" class="qty-input" name="jumlah" value="1" min="1" max="<?= $stok ?>" readonly>
             <button type="button" class="qty-btn" onclick="changeQty(this,1)">+</button>
           </div>
-          <button type="submit" class="btn-cart btn-cart-gold">🛒 Tambah</button>
+          <button type="submit" class="btn-cart btn-cart-gold"><i data-lucide="shopping-cart" class="lucide-ic"></i> Tambah</button>
         </form>
         <?php else: ?>
         <div class="card-action">
-          <button class="btn-cart btn-cart-disabled" disabled>❌ Stok Habis</button>
+          <button class="btn-cart btn-cart-disabled" disabled><i data-lucide="x-circle" class="lucide-ic"></i> Stok Habis</button>
         </div>
         <?php endif; ?>
       </div>
@@ -994,13 +1031,13 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
 
   <!-- No search result box (hidden by default) -->
   <div class="no-search-result" id="noSearchResult">
-    <div class="ns-icon">🔍</div>
+    <div class="ns-icon"><i data-lucide="search" class="lucide-ic"></i></div>
     <p>Tidak ada produk yang cocok dengan pencarianmu.<br>Coba kata kunci lain.</p>
   </div>
 
   <?php else: ?>
   <div class="empty-state">
-    <div class="empty-icon">🎂</div>
+    <div class="empty-icon"><i data-lucide="cake" class="lucide-ic"></i></div>
     <h3>Belum ada produk</h3>
     <p>Tidak ada menu yang tersedia di kategori ini.<br>Coba pilih kategori lain.</p>
   </div>
@@ -1010,7 +1047,7 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
 
 <!-- ═══════════ FOOTER ═══════════ -->
 <div class="site-footer">
-  <span class="footer-brand">✦ YOLAZCAKE Sintang ✦</span>
+  <span class="footer-brand"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></span>
   <span class="footer-dots">· · ·</span><br>
   Cafe &bull; Bakery &bull; Boutique<br>
   Jl. Lintas Melawi, Ladang, Sintang, Kalimantan Barat<br>
@@ -1019,7 +1056,7 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
 
 <!-- ═══════════ FLOATING CART ═══════════ -->
 <a href="keranjang.php" class="float-cart" title="Lihat Keranjang">
-  🛒
+  <i data-lucide="shopping-cart" class="lucide-ic"></i>
   <?php if($total_keranjang > 0): ?>
   <div class="float-badge" id="cartBadge"><?= $total_keranjang ?></div>
   <?php else: ?>
@@ -1029,7 +1066,7 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
 
 <!-- ═══════════ TOAST ═══════════ -->
 <div class="toast" id="toast">
-  <span class="toast-icon">🎂</span>
+  <span class="toast-icon"><i data-lucide="cake" class="lucide-ic"></i></span>
   <div class="toast-text">
     <strong id="toast-name"></strong>
     <span>Berhasil ditambahkan ke keranjang!</span>
@@ -1171,5 +1208,8 @@ function onAddCart(e, form, name){
 }
 </script>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

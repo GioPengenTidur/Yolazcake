@@ -4,6 +4,7 @@ session_start();
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hubungi Admin – YOLAZCAKE Sintang</title>
@@ -176,7 +177,7 @@ session_start();
     .footer-link a { color: #D4AF37; text-decoration: none; font-weight: 500; transition: color 0.2s; }
     .footer-link a:hover { color: #FFE4B5; }
 
-    /* ══════════════════ Status overlay (proses → hasil) ══════════════════ */
+    /* ══════════════════ Status overlay (proses <i data-lucide="arrow-right" class="lucide-ic"></i> hasil) ══════════════════ */
     .status-overlay {
       position: fixed; inset: 0; z-index: 100;
       background: rgba(20,10,5,0.72);
@@ -234,13 +235,13 @@ session_start();
     <div class="card">
 
       <div class="brand">
-        <span class="eyebrow">✦ YOLAZCAKE Sintang ✦</span>
+        <span class="eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></span>
         <h1>Hubungi Admin</h1>
         <span class="subtitle">Lupa password, email tidak bisa diakses, atau kendala akun lainnya?<br>Kirim pesan, admin akan membantu Anda secara manual.</span>
       </div>
 
       <div class="info-box">
-        <span class="ii">💡</span>
+        <span class="ii"><i data-lucide="lightbulb" class="lucide-ic"></i></span>
         <span>Cara ini cocok kalau Anda <strong style="color:#FFE4B5;">tidak bisa pakai fitur "Lupa Password"</strong> (misalnya email sudah tidak aktif). Admin akan menghubungi Anda balik melalui email/WhatsApp yang Anda isi di bawah.</span>
       </div>
 
@@ -274,10 +275,10 @@ session_start();
           <label for="masalah">Kategori Masalah</label>
           <select id="masalah" name="masalah" required>
             <option value="" disabled selected>Pilih kategori masalah</option>
-            <option value="Lupa Password">🔑 Lupa Password</option>
-            <option value="Tidak Bisa Login">🚫 Tidak Bisa Login</option>
-            <option value="Email/Username Salah">✉️ Email / Username Salah</option>
-            <option value="Lainnya">❓ Lainnya</option>
+            <option value="Lupa Password"><i data-lucide="key" class="lucide-ic"></i> Lupa Password</option>
+            <option value="Tidak Bisa Login"><i data-lucide="ban" class="lucide-ic"></i> Tidak Bisa Login</option>
+            <option value="Email/Username Salah"><i data-lucide="mail" class="lucide-ic"></i> Email / Username Salah</option>
+            <option value="Lainnya"><i data-lucide="help-circle" class="lucide-ic"></i> Lainnya</option>
           </select>
         </div>
 
@@ -286,7 +287,7 @@ session_start();
           <textarea id="pesan" name="pesan" placeholder="Contoh: Saya lupa password akun dengan username 'budi123', mohon dibantu reset." required></textarea>
         </div>
 
-        <button type="submit" class="btn-send" id="btnSend">✉️ Kirim ke Admin</button>
+        <button type="submit" class="btn-send" id="btnSend"><i data-lucide="mail" class="lucide-ic"></i> Kirim ke Admin</button>
       </form>
 
       <div class="footer-link">
@@ -398,5 +399,8 @@ session_start();
     });
   </script>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

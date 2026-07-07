@@ -109,6 +109,7 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="assets/css/lucide-icons.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Promo Berhasil – YOLAZCAKE Sintang</title>
@@ -221,6 +222,9 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
     transform:rotate(180deg) scale(1.15);
     background:rgba(212,175,55,0.18); color:#D4AF37;
   }
+  #hamburger .icon-close { display:none; }
+  #hamburger.active .icon-menu { display:none; }
+  #hamburger.active .icon-close { display:inline-block; }
 
   /* ─── DROPDOWN ─── */
   .dropdown {
@@ -293,7 +297,8 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
     transition:opacity 0.28s, transform 0.28s;
   }
 
-  .account-dropdown:hover .account-menu { opacity:1; transform:translateY(0); pointer-events:auto; }
+  .account-dropdown:hover .account-menu,
+  .account-menu.show { opacity:1; transform:translateY(0); pointer-events:auto; }
 
   .account-menu a {
     display:block; padding:10px 20px; color:var(--drop-item);
@@ -483,9 +488,9 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
     background-size:200% 100%; animation:goldSlide 3.5s linear infinite;
   }
 
-  .code-card::after {
-    content:'🏷️'; position:absolute; bottom:-10px; right:20px;
-    font-size:7em; opacity:0.05; pointer-events:none;
+  .code-card-bg-icon {
+    position:absolute; bottom:-10px; right:20px;
+    font-size:7em; opacity:0.05; pointer-events:none; color:#D4AF37;
   }
 
   .code-label {
@@ -721,8 +726,8 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
   <div class="nav-right">
     <?php if(isset($_SESSION['username'])): ?>
     <div class="account-dropdown">
-      <button class="account-btn">👤 <?php echo htmlspecialchars($_SESSION['username']); ?> ▼</button>
-      <div class="account-menu">
+      <button class="account-btn" id="accountBtn" onclick="toggleAccountMenu(event)"><i data-lucide="user" class="lucide-ic"></i> <?php echo htmlspecialchars($_SESSION['username']); ?> ▼</button>
+      <div class="account-menu" id="accountMenu">
         <a href="<?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'dashboard.php' : 'member/member.php'; ?>"><?php echo (isset($_SESSION['role']) && $_SESSION['role']==='admin') ? 'Dashboard' : 'Member Area'; ?></a>
         <a href="auth/logout.php">Logout</a>
       </div>
@@ -730,34 +735,34 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
     <?php else: ?>
     <button class="login-btn" onclick="window.location.href='auth/login.php'">Login</button>
     <?php endif; ?>
-    <div class="hamburger" onclick="toggleMenu()" id="hamburger">☰</div>
+    <div class="hamburger" onclick="toggleMenu()" id="hamburger"><i data-lucide="menu" class="lucide-ic icon-menu"></i><i data-lucide="x" class="lucide-ic icon-close"></i></div>
     <div class="dark-btn" id="darkBtn" onclick="toggleDark()" title="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="4.5"></line><line x1="12" y1="19.5" x2="12" y2="22"></line><line x1="4.2" y1="4.2" x2="5.9" y2="5.9"></line><line x1="18.1" y1="18.1" x2="19.8" y2="19.8"></line><line x1="2" y1="12" x2="4.5" y2="12"></line><line x1="19.5" y1="12" x2="22" y2="12"></line><line x1="4.2" y1="19.8" x2="5.9" y2="18.1"></line><line x1="18.1" y1="5.9" x2="19.8" y2="4.2"></line></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 14.4a9 9 0 0 1-11.24-11.24 1 1 0 0 0-1.3-1.22A10.07 10.07 0 0 0 2 12.1 10 10 0 0 0 12 22a10.07 10.07 0 0 0 9.06-6.3 1 1 0 0 0-1.22-1.3z"></path><circle cx="18.5" cy="5.5" r="1.1"></circle><circle cx="20.5" cy="9" r="0.6"></circle></svg></div>
   </div>
 
   <div class="dropdown" id="dropdown">
-    <p onclick="window.location.href='index.php'">🏠 Home</p>
-    <p onclick="window.location.href='produk/menu.php'">☕ Menu</p>
-    <p onclick="window.location.href='gallery.php'">🖼️ Gallery</p>
-    <p onclick="window.location.href='about.php'">✨ About</p>
-    <p onclick="window.location.href='contact.php'">📞 Contact</p>
+    <p onclick="window.location.href='index.php'"><i data-lucide="home" class="lucide-ic"></i> Home</p>
+    <p onclick="window.location.href='produk/menu.php'"><i data-lucide="coffee" class="lucide-ic"></i> Menu</p>
+    <p onclick="window.location.href='gallery.php'"><i data-lucide="image" class="lucide-ic"></i> Gallery</p>
+    <p onclick="window.location.href='about.php'"><i data-lucide="sparkles" class="lucide-ic"></i> About</p>
+    <p onclick="window.location.href='contact.php'"><i data-lucide="phone" class="lucide-ic"></i> Contact</p>
     <div class="drop-divider"></div>
-    <p onclick="window.location.href='produk/menu.php#promo'">🏷️ Promo Lainnya</p>
+    <p onclick="window.location.href='produk/menu.php#promo'"><i data-lucide="tag" class="lucide-ic"></i> Promo Lainnya</p>
   </div>
 </nav>
 
 <!-- HERO -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <?php if ($syarat_terpenuhi): ?>
       <h1>Promo Berhasil!</h1>
-      <p class="hero-sub">Kode eksklusif Anda sudah siap digunakan 🎉</p>
+      <p class="hero-sub">Kode eksklusif Anda sudah siap digunakan <i data-lucide="party-popper" class="lucide-ic"></i></p>
     <?php else: ?>
       <h1>Syarat Belum Terpenuhi</h1>
       <p class="hero-sub">Lengkapi dulu syaratnya untuk mengambil promo ini</p>
     <?php endif; ?>
     <div class="hero-divider">
-      <span></span><span class="dmd">✦ ✦ ✦</span><span></span>
+      <span></span><span class="dmd"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span>
     </div>
   </div>
 </div>
@@ -768,7 +773,7 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
 
   <!-- SYARAT BELUM TERPENUHI -->
   <div class="badge-wrap">
-    <div class="badge-icon" id="badgeIcon">⚠️</div>
+    <div class="badge-icon" id="badgeIcon"><i data-lucide="alert-triangle" class="lucide-ic"></i></div>
   </div>
 
   <div class="headline-card">
@@ -779,7 +784,7 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
   </div>
 
   <div class="steps-card">
-    <div class="section-title">📋 Yang Perlu Dilengkapi</div>
+    <div class="section-title"><i data-lucide="clipboard-list" class="lucide-ic"></i> Yang Perlu Dilengkapi</div>
     <div class="steps-list">
       <?php foreach ($alasan_gagal as $i => $alasan): ?>
       <div class="step-item">
@@ -793,20 +798,20 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
   </div>
 
   <div class="cta-row">
-    <a href="produk/menu.php#Product" class="btn-primary">🛍️ Lihat Produk</a>
+    <a href="produk/menu.php#Product" class="btn-primary"><i data-lucide="shopping-bag" class="lucide-ic"></i> Lihat Produk</a>
     <?php if(!$is_logged_in): ?>
-    <a href="auth/login.php" class="btn-secondary">🔑 Login Dulu</a>
+    <a href="auth/login.php" class="btn-secondary"><i data-lucide="key" class="lucide-ic"></i> Login Dulu</a>
     <?php else: ?>
-    <a href="pemesanan/keranjang.php" class="btn-secondary">🛒 Ke Keranjang</a>
+    <a href="pemesanan/keranjang.php" class="btn-secondary"><i data-lucide="shopping-cart" class="lucide-ic"></i> Ke Keranjang</a>
     <?php endif; ?>
-    <a href="index.php" class="btn-secondary">🏠 Kembali ke Home</a>
+    <a href="index.php" class="btn-secondary"><i data-lucide="home" class="lucide-ic"></i> Kembali ke Home</a>
   </div>
 
 <?php else: ?>
 
   <!-- ICON BADGE -->
   <div class="badge-wrap">
-    <div class="badge-icon" id="badgeIcon">🎉</div>
+    <div class="badge-icon" id="badgeIcon"><i data-lucide="party-popper" class="lucide-ic"></i></div>
   </div>
 
   <!-- HEADLINE CARD -->
@@ -823,32 +828,33 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
 
   <!-- PROMO CODE CARD -->
   <div class="code-card">
-    <div class="code-label">✦ Kode Promo Eksklusif Anda ✦</div>
+    <i data-lucide="tag" class="lucide-ic code-card-bg-icon"></i>
+    <div class="code-label"><i data-lucide="sparkle" class="lucide-ic"></i> Kode Promo Eksklusif Anda <i data-lucide="sparkle" class="lucide-ic"></i></div>
     <div class="promo-code-display" id="promoCode" onclick="copyCode()" title="Klik untuk salin"><?= htmlspecialchars($promo['kode_promo']) ?></div>
-    <div class="copy-hint">⬆ Klik kode untuk menyalin</div>
-    <div class="code-copied" id="codeCopied">✅ Kode tersalin!</div>
+    <div class="copy-hint"><i data-lucide="arrow-up" class="lucide-ic"></i> Klik kode untuk menyalin</div>
+    <div class="code-copied" id="codeCopied"><i data-lucide="check-circle" class="lucide-ic"></i> Kode tersalin!</div>
     <div class="code-meta">
-      <div class="meta-pill">💰 Diskon <span><?= $promo['diskon_persen'] ?>%</span></div>
-      <div class="meta-pill">🛒 Min. belanja <span>Rp<?= number_format($promo['min_belanja'],0,',','.') ?></span></div>
-      <div class="meta-pill">📅 Berlaku <span><?= $promo['tanggal_selesai'] ? 'S/d '.date('d M Y',strtotime($promo['tanggal_selesai'])) : 'Tanpa batas' ?></span></div>
-      <div class="meta-pill">⭐ Poin Bonus <span>+<?= $promo['poin_bonus'] ?></span></div>
+      <div class="meta-pill"><i data-lucide="wallet" class="lucide-ic"></i> Diskon <span><?= $promo['diskon_persen'] ?>%</span></div>
+      <div class="meta-pill"><i data-lucide="shopping-cart" class="lucide-ic"></i> Min. belanja <span>Rp<?= number_format($promo['min_belanja'],0,',','.') ?></span></div>
+      <div class="meta-pill"><i data-lucide="calendar" class="lucide-ic"></i> Berlaku <span><?= $promo['tanggal_selesai'] ? 'S/d '.date('d M Y',strtotime($promo['tanggal_selesai'])) : 'Tanpa batas' ?></span></div>
+      <div class="meta-pill"><i data-lucide="star" class="lucide-ic lucide-fill"></i> Poin Bonus <span>+<?= $promo['poin_bonus'] ?></span></div>
     </div>
   </div>
 
   <!-- BENEFIT CARDS -->
   <div class="benefits-row">
     <div class="benefit-card">
-      <div class="benefit-icon">🏷️</div>
+      <div class="benefit-icon"><i data-lucide="tag" class="lucide-ic"></i></div>
       <div class="benefit-title">Judul Promo</div>
       <div class="benefit-val"><?= htmlspecialchars($promo['judul']) ?></div>
     </div>
     <div class="benefit-card">
-      <div class="benefit-icon">💸</div>
+      <div class="benefit-icon"><i data-lucide="banknote" class="lucide-ic"></i></div>
       <div class="benefit-title">Diskon</div>
       <div class="benefit-val"><?= $promo['diskon_persen'] ?>% dari total belanja</div>
     </div>
     <div class="benefit-card">
-      <div class="benefit-icon">⭐</div>
+      <div class="benefit-icon"><i data-lucide="star" class="lucide-ic lucide-fill"></i></div>
       <div class="benefit-title">Poin Bonus</div>
       <div class="benefit-val"><?= $sudah_diklaim ? 'Sudah pernah diklaim' : '+'.$promo['poin_bonus'].' Poin Member (sudah ditambahkan)' ?></div>
     </div>
@@ -856,7 +862,7 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
 
   <!-- STEPS CARD -->
   <div class="steps-card">
-    <div class="section-title">📋 Cara Menggunakan Promo</div>
+    <div class="section-title"><i data-lucide="clipboard-list" class="lucide-ic"></i> Cara Menggunakan Promo</div>
     <div class="steps-list">
       <div class="step-item">
         <div class="step-num">1</div>
@@ -891,10 +897,10 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
 
   <!-- CTA BUTTONS -->
   <div class="cta-row">
-    <a href="produk/menu.php#Product" class="btn-primary">🛍️ Lihat Produk</a>
-    <a href="index.php" class="btn-secondary">🏠 Kembali ke Home</a>
+    <a href="produk/menu.php#Product" class="btn-primary"><i data-lucide="shopping-bag" class="lucide-ic"></i> Lihat Produk</a>
+    <a href="index.php" class="btn-secondary"><i data-lucide="home" class="lucide-ic"></i> Kembali ke Home</a>
     <?php if(isset($_SESSION['username'])): ?>
-    <a href="member/member.php" class="btn-secondary">👤 Member Area</a>
+    <a href="member/member.php" class="btn-secondary"><i data-lucide="user" class="lucide-ic"></i> Member Area</a>
     <?php endif; ?>
   </div>
 
@@ -977,20 +983,38 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
     });
   }
 
+  /* ── Account Dropdown ──
+     Sebelumnya dropdown ini hanya mengandalkan CSS :hover, yang di layar
+     sentuh butuh tap pertama untuk memicu "hover" dan tap kedua baru
+     benar-benar mengklik (tampak "tidak respon, harus berkali-kali tekan").
+     Sekarang pakai toggle class via klik supaya konsisten di HP maupun desktop. */
+  function toggleAccountMenu(e){
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('accountMenu');
+    if (menu) menu.classList.toggle('show');
+  }
+
+  document.addEventListener('click', (e) => {
+    const menu = document.getElementById('accountMenu');
+    const btn  = document.getElementById('accountBtn');
+    if (menu && menu.classList.contains('show') && !menu.contains(e.target) && (!btn || !btn.contains(e.target))){
+      menu.classList.remove('show');
+    }
+  });
+
   /* ── Hamburger / Dropdown ── */
   function toggleMenu(){
     const drop=document.getElementById('dropdown');
     const burg=document.getElementById('hamburger');
     drop.classList.toggle('show');
     burg.classList.toggle('active');
-    burg.innerHTML=burg.classList.contains('active')?'✖':'☰';
   }
 
   document.querySelectorAll('.dropdown p').forEach(item=>{
     item.addEventListener('click',()=>{
       const drop=document.getElementById('dropdown');
       const burg=document.getElementById('hamburger');
-      drop.classList.remove('show'); burg.classList.remove('active'); burg.innerHTML='☰';
+      drop.classList.remove('show'); burg.classList.remove('active');
     });
   });
 
@@ -998,7 +1022,7 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
     const drop=document.getElementById('dropdown');
     const burg=document.getElementById('hamburger');
     if(!drop.contains(e.target)&&!burg.contains(e.target)){
-      drop.classList.remove('show'); burg.classList.remove('active'); burg.innerHTML='☰';
+      drop.classList.remove('show'); burg.classList.remove('active');
     }
   });
 
@@ -1015,5 +1039,8 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
     }
   })();
 </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

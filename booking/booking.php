@@ -1,11 +1,21 @@
 <?php
+session_start();
 require_once '../config/koneksi.php';
+
+// Booking meja WAJIB login -- kalau belum, tampilkan peringatan di halaman
+// login lalu balik lagi otomatis ke sini setelah berhasil masuk.
+if (!isset($_SESSION['username'])) {
+    header("Location: ../auth/login.php?notice=booking&redirect=" . urlencode('../booking/booking.php'));
+    exit();
+}
+
 // Ambil meja yang masih Tersedia
 $meja_list = mysqli_query($conn, "SELECT * FROM meja WHERE status='Tersedia' ORDER BY nomor_meja ASC");
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Booking Meja – YOLAZCAKE</title>
@@ -271,29 +281,29 @@ $meja_list = mysqli_query($conn, "SELECT * FROM meja WHERE status='Tersedia' ORD
 <!-- HERO -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Booking Meja</h1>
     <p class="hero-sub">Reservasi meja Anda dan nikmati momen spesial di YOLAZCAKE</p>
     <div class="hero-divider">
-      <span></span><span class="diamond">✦ ✦ ✦</span><span></span>
+      <span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span>
     </div>
   </div>
 </div>
 
 <div class="back-link">
-  <a href="../index.php">← Kembali ke Beranda</a>
+  <a href="../index.php"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali ke Beranda</a>
 </div>
 
 <div class="page-wrapper">
   <div class="form-card">
 
-    <div class="new-badge">✨ Reservasi Baru</div>
+    <div class="new-badge"><i data-lucide="sparkles" class="lucide-ic"></i> Reservasi Baru</div>
     <h2 class="card-title">Pesan Meja Anda</h2>
     <p class="card-sub">Isi data dengan lengkap untuk mengamankan meja pilihan Anda</p>
-    <div class="gold-rule-h"><span>✦ ✦ ✦</span></div>
+    <div class="gold-rule-h"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
 
     <div class="info-strip">
-      <span class="ii">🕐</span>
+      <span class="ii"><i data-lucide="clock" class="lucide-ic"></i></span>
       <span>Jam operasional booking: <b>08:00 – 22:00</b> &nbsp;•&nbsp; Maksimal <b>5 booking</b> per slot jam</span>
     </div>
 
@@ -303,14 +313,14 @@ $meja_list = mysqli_query($conn, "SELECT * FROM meja WHERE status='Tersedia' ORD
         <div class="field">
           <label>Nama Pemesan</label>
           <div class="field-icon-wrap">
-            <span class="field-icon">👤</span>
+            <span class="field-icon"><i data-lucide="user" class="lucide-ic"></i></span>
             <input type="text" name="nama_pemesan" placeholder="Nama lengkap Anda" required>
           </div>
         </div>
         <div class="field">
           <label>Nomor HP</label>
           <div class="field-icon-wrap">
-            <span class="field-icon">📱</span>
+            <span class="field-icon"><i data-lucide="smartphone" class="lucide-ic"></i></span>
             <input type="text" name="no_hp" placeholder="08xxxxxxxxxx" required>
           </div>
         </div>
@@ -320,14 +330,14 @@ $meja_list = mysqli_query($conn, "SELECT * FROM meja WHERE status='Tersedia' ORD
         <div class="field">
           <label>Tanggal Booking</label>
           <div class="field-icon-wrap">
-            <span class="field-icon">📅</span>
+            <span class="field-icon"><i data-lucide="calendar" class="lucide-ic"></i></span>
             <input type="date" name="tanggal_booking" required>
           </div>
         </div>
         <div class="field">
           <label>Jam Booking</label>
           <div class="field-icon-wrap">
-            <span class="field-icon">🕐</span>
+            <span class="field-icon"><i data-lucide="clock" class="lucide-ic"></i></span>
             <input type="time" name="jam_booking" min="08:00" max="22:00" required>
           </div>
         </div>
@@ -337,14 +347,14 @@ $meja_list = mysqli_query($conn, "SELECT * FROM meja WHERE status='Tersedia' ORD
         <div class="field">
           <label>Jumlah Orang</label>
           <div class="field-icon-wrap">
-            <span class="field-icon">👥</span>
+            <span class="field-icon"><i data-lucide="users" class="lucide-ic"></i></span>
             <input type="number" name="jumlah_orang" min="1" placeholder="Contoh: 2" required>
           </div>
         </div>
         <div class="field">
           <label>Pilih Meja (Opsional)</label>
           <div class="field-icon-wrap">
-            <span class="field-icon">🪑</span>
+            <span class="field-icon"><i data-lucide="armchair" class="lucide-ic"></i></span>
             <select name="id_meja" style="width:100%;padding:14px 14px 14px 44px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);border-radius:12px;color:#fff;font-size:.95em;appearance:none;cursor:pointer;">
               <option value="" style="background:#1a0a2e;">-- Pilih meja (opsional) --</option>
               <?php if($meja_list && mysqli_num_rows($meja_list) > 0): ?>
@@ -365,15 +375,15 @@ $meja_list = mysqli_query($conn, "SELECT * FROM meja WHERE status='Tersedia' ORD
         <div class="field">
           <label>Catatan (Opsional)</label>
           <div class="field-icon-wrap textarea-wrap">
-            <span class="field-icon">📝</span>
+            <span class="field-icon"><i data-lucide="file-text" class="lucide-ic"></i></span>
             <textarea name="catatan" rows="4" placeholder="Permintaan khusus, alergi makanan, perayaan, dll..."></textarea>
           </div>
         </div>
       </div>
 
       <div class="btn-row">
-        <a href="../index.php" class="btn-premium btn-cancel">✕ Batal</a>
-        <button type="submit" class="btn-premium btn-save">✦ Booking Sekarang</button>
+        <a href="../index.php" class="btn-premium btn-cancel"><i data-lucide="x" class="lucide-ic"></i> Batal</a>
+        <button type="submit" class="btn-premium btn-save"><i data-lucide="sparkle" class="lucide-ic"></i> Booking Sekarang</button>
       </div>
 
     </form>
@@ -420,5 +430,8 @@ $meja_list = mysqli_query($conn, "SELECT * FROM meja WHERE status='Tersedia' ORD
   })();
 </script>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

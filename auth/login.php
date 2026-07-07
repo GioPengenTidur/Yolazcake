@@ -4,10 +4,22 @@ if(isset($_SESSION['username'])){
     header("Location: ../index.php");
     exit();
 }
+require_once '../config/safe_redirect.php';
+
+// Simpan redirect & notice (kalau ada & valid) supaya tetap terbawa
+// kalau user pindah ke halaman daftar akun dulu.
+$carryRedirect = safe_redirect_target($_GET['redirect'] ?? null);
+$carryNotice   = safe_login_notice($_GET['notice'] ?? null);
+
+$carryQuery = [];
+if ($carryRedirect) $carryQuery['redirect'] = $carryRedirect;
+if ($carryNotice)   $carryQuery['notice']   = $carryNotice;
+$registerLinkQs = $carryQuery ? ('?' . http_build_query($carryQuery)) : '';
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login – YOLAZCAKE Sintang</title>
@@ -354,6 +366,9 @@ if(isset($_SESSION['username'])){
       opacity: 1;
       color: #D4AF37;
     }
+    .toggle-eye .icon-eye-off { display: none; }
+    .toggle-eye.active .icon-eye { display: none; }
+    .toggle-eye.active .icon-eye-off { display: inline-block; }
 
     /* ── Indikator "password sesuai" (centang animasi) ── */
     .field-hint {
@@ -502,6 +517,20 @@ if(isset($_SESSION['username'])){
     }
     .success-msg.show { display: block; }
 
+    /* ── Notice message (mis. wajib login dulu) ── */
+    .notice-msg {
+      display: none;
+      background: rgba(99,149,250,0.15);
+      border: 1px solid rgba(99,149,250,0.4);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.85em;
+      color: #a9c2ff;
+      text-align: center;
+      animation: fadeUp 0.4s ease;
+    }
+    .notice-msg.show { display: block; }
+
     /* ── Footer link ── */
     .login-footer {
       margin-top: 24px;
@@ -542,7 +571,7 @@ if(isset($_SESSION['username'])){
       transform: translateX(-4px);
     }
 
-    /* ══════════════════ Status overlay (proses → hasil) ══════════════════ */
+    /* ══════════════════ Status overlay (proses <i data-lucide="arrow-right" class="lucide-ic"></i> hasil) ══════════════════ */
     .status-overlay {
       position: fixed;
       inset: 0;
@@ -693,23 +722,30 @@ if(isset($_SESSION['username'])){
     <div class="login-card">
 
       <div class="login-brand">
-        <span class="eyebrow">☕ Selamat Datang</span>
+        <span class="eyebrow"><i data-lucide="coffee" class="lucide-ic"></i> Selamat Datang</span>
         <h1>YOLAZCAKE</h1>
         <span class="subtitle">Masuk ke akun Anda untuk melanjutkan</span>
-        <div class="gold-divider"><span class="diamond">✦ ✦ ✦</span></div>
+        <div class="gold-divider"><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
+      </div>
+
+      <!-- Notice feedback (mis. harus login dulu sebelum booking) -->
+      <div class="notice-msg" id="noticeMsg">
+        <i data-lucide="info" class="lucide-ic"></i> Silakan login terlebih dahulu untuk melakukan booking meja.
       </div>
 
       <!-- Success feedback (after registering) -->
       <div class="success-msg" id="successMsg">
-        ✓ Akun berhasil dibuat. Silakan masuk.
+        <i data-lucide="check" class="lucide-ic"></i> Akun berhasil dibuat. Silakan masuk.
       </div>
 
       <!-- Error feedback -->
       <div class="error-msg" id="errorMsg">
-        ⚠ Username atau password tidak sesuai.
+        <i data-lucide="alert-triangle" class="lucide-ic"></i> Username atau password tidak sesuai.
       </div>
 
       <form class="login-form" action="proses_login.php" method="POST" id="loginForm" novalidate>
+
+        <input type="hidden" id="redirectInput" name="redirect" value="<?= htmlspecialchars($carryRedirect ?? '', ENT_QUOTES) ?>">
 
         <div class="field-group">
           <label for="username">Username atau Gmail</label>
@@ -722,7 +758,7 @@ if(isset($_SESSION['username'])){
               autocomplete="username"
               required
             >
-            <span class="field-icon">👤</span>
+            <span class="field-icon"><i data-lucide="user" class="lucide-ic"></i></span>
           </div>
         </div>
 
@@ -740,8 +776,8 @@ if(isset($_SESSION['username'])){
               autocomplete="current-password"
               required
             >
-            <span class="field-icon">🔒</span>
-            <button type="button" class="toggle-eye" id="togglePassword" tabindex="-1" aria-label="Tampilkan password">👁️</button>
+            <span class="field-icon"><i data-lucide="lock" class="lucide-ic"></i></span>
+            <button type="button" class="toggle-eye" id="togglePassword" tabindex="-1" aria-label="Tampilkan password"><i data-lucide="eye" class="lucide-ic icon-eye"></i><i data-lucide="eye-off" class="lucide-ic icon-eye-off"></i></button>
           </div>
 
           <div class="field-hint" id="passwordFilledHint">
@@ -751,13 +787,13 @@ if(isset($_SESSION['username'])){
 
         <button type="submit" class="btn-login" id="btnLogin">
           <span class="btn-text">Masuk</span>
-          <span class="btn-icon">→</span>
+          <span class="btn-icon"><i data-lucide="arrow-right" class="lucide-ic"></i></span>
         </button>
 
       </form>
 
       <div class="login-footer">
-        Belum punya akun? <a href="register.php">Buat Akun</a>
+        Belum punya akun? <a href="register.php<?= $registerLinkQs ?>">Buat Akun</a>
       </div>
       <div class="login-footer" style="margin-top:6px;">
         Tidak bisa masuk? <a href="hubungi_admin.php">Hubungi Admin</a>
@@ -814,7 +850,6 @@ if(isset($_SESSION['username'])){
       btn.addEventListener('click', () => {
         const willShow = input.type === 'password';
         input.type = willShow ? 'text' : 'password';
-        btn.textContent = willShow ? '🙈' : '👁️';
         btn.classList.toggle('active', willShow);
         btn.setAttribute('aria-label', willShow ? 'Sembunyikan password' : 'Tampilkan password');
       });
@@ -896,7 +931,7 @@ if(isset($_SESSION['username'])){
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-Requested-With': 'XMLHttpRequest'
           },
-          body: new URLSearchParams({ username: u, password: p })
+          body: new URLSearchParams({ username: u, password: p, redirect: document.getElementById('redirectInput').value })
         });
         const data = await res.json();
 
@@ -910,7 +945,8 @@ if(isset($_SESSION['username'])){
           setTimeout(() => {
             hideOverlay();
             btnLogin.disabled = false;
-            errorMsg.textContent = '⚠ ' + (data.message || 'Username atau password tidak sesuai.');
+            errorMsg.innerHTML = '<i data-lucide="alert-triangle" class="lucide-ic"></i> ' + (data.message || 'Username atau password tidak sesuai.');
+            if (window.lucide) lucide.createIcons();
             errorMsg.classList.add('show');
           }, 1500);
         }
@@ -932,6 +968,14 @@ if(isset($_SESSION['username'])){
     <?php if(isset($_GET['registered']) && $_GET['registered'] == 1): ?>
     document.getElementById('successMsg').classList.add('show');
     <?php endif; ?>
+
+    /* ── PHP notice flag (mis. wajib login dulu sebelum booking) ── */
+    <?php if($carryNotice === 'booking'): ?>
+    document.getElementById('noticeMsg').classList.add('show');
+    <?php endif; ?>
   </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

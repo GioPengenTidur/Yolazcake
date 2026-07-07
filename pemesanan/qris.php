@@ -43,6 +43,7 @@ $total_keranjang = $subtotal_keranjang - $diskon_nominal;
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pembayaran QRIS – YOLAZCAKE</title>
@@ -388,17 +389,17 @@ $total_keranjang = $subtotal_keranjang - $diskon_nominal;
 <!-- ═══════════════ HERO ═══════════════ -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Pembayaran QRIS</h1>
     <p class="hero-sub">Scan kode QR dan selesaikan pembayaranmu dengan mudah</p>
     <div class="hero-divider">
-      <span></span><span class="diamond">✦ ✦ ✦</span><span></span>
+      <span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span>
     </div>
   </div>
 </div>
 
 <div class="back-link">
-  <a href="keranjang.php">← Kembali ke Keranjang</a>
+  <a href="keranjang.php"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali ke Keranjang</a>
 </div>
 
 <!-- ═══════════════ PAGE WRAPPER ═══════════════ -->
@@ -415,7 +416,7 @@ $total_keranjang = $subtotal_keranjang - $diskon_nominal;
   <!-- INFO PEMESAN -->
   <?php if($nama || $no_hp): ?>
   <div class="info-card">
-    <div class="info-icon">👤</div>
+    <div class="info-icon"><i data-lucide="user" class="lucide-ic"></i></div>
     <div class="info-text">
       <div class="info-label">Nama Pemesan</div>
       <div class="info-name"><?= htmlspecialchars($nama ?: '–') ?></div>
@@ -431,30 +432,30 @@ $total_keranjang = $subtotal_keranjang - $diskon_nominal;
   </div>
   <?php endif; ?>
 
-  <div class="gold-rule"><span>✦ ✦ ✦</span></div>
+  <div class="gold-rule"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
 
   <!-- ─── STEPS ─── -->
   <div class="steps-row">
     <div class="step-card">
       <div class="step-num">1</div>
-      <div class="step-icon">📱</div>
+      <div class="step-icon"><i data-lucide="smartphone" class="lucide-ic"></i></div>
       <div class="step-label"><strong>Buka Aplikasi</strong>Buka aplikasi e-wallet atau mobile banking kamu</div>
     </div>
     <div class="step-card">
       <div class="step-num">2</div>
-      <div class="step-icon">📷</div>
+      <div class="step-icon"><i data-lucide="camera" class="lucide-ic"></i></div>
       <div class="step-label"><strong>Scan QRIS</strong>Arahkan kamera ke kode QR di bawah ini</div>
     </div>
     <div class="step-card">
       <div class="step-num">3</div>
-      <div class="step-icon">✅</div>
+      <div class="step-icon"><i data-lucide="check-circle" class="lucide-ic"></i></div>
       <div class="step-label"><strong>Konfirmasi</strong>Klik tombol "Saya Sudah Bayar" setelah berhasil</div>
     </div>
   </div>
 
   <!-- ─── QRIS CARD ─── -->
   <div class="qris-card">
-    <div class="qris-label">✦ Kode Pembayaran QRIS</div>
+    <div class="qris-label"><i data-lucide="sparkle" class="lucide-ic"></i> Kode Pembayaran QRIS</div>
     <div class="qris-sub">Berlaku untuk semua e-wallet & mobile banking</div>
 
     <div class="qr-frame">
@@ -463,7 +464,7 @@ $total_keranjang = $subtotal_keranjang - $diskon_nominal;
       <div class="qr-scan-line"></div>
       <img src="../assets/img/image.png"
            alt="QRIS YOLAZCAKE"
-           onerror="this.style.padding='24px';this.style.fontSize='5em';this.outerHTML='<div style=\'width:260px;height:260px;background:rgba(255,255,255,.1);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:5em;\'>📱</div>'">
+           onerror="this.style.padding='24px';this.style.fontSize='5em';this.outerHTML='<div style=\'width:260px;height:260px;background:rgba(255,255,255,.1);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:5em;\'><i data-lucide="smartphone" class="lucide-ic"></i></div>'">
     </div>
 
     <div class="qris-note">
@@ -475,32 +476,32 @@ $total_keranjang = $subtotal_keranjang - $diskon_nominal;
       <div style="font-size:.72em;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.5);">Total yang Harus Dibayar</div>
       <div style="font-family:'Playfair Display',serif;font-size:1.6em;font-weight:700;color:#D4AF37;margin-top:4px;">Rp <?= number_format($total_keranjang,0,',','.') ?></div>
       <?php if($kode_promo_aktif): ?>
-        <div style="font-size:.75em;color:#6efabc;margin-top:4px;">✓ Sudah termasuk diskon kode <?= htmlspecialchars($kode_promo_aktif) ?> (-Rp <?= number_format($diskon_nominal,0,',','.') ?>)</div>
+        <div style="font-size:.75em;color:#6efabc;margin-top:4px;"><i data-lucide="check" class="lucide-ic"></i> Sudah termasuk diskon kode <?= htmlspecialchars($kode_promo_aktif) ?> (-Rp <?= number_format($diskon_nominal,0,',','.') ?>)</div>
       <?php endif; ?>
     </div>
   </div>
 
   <!-- ─── CONFIRM CARD ─── -->
   <div class="confirm-card">
-    <div class="confirm-title">✦ Checklist Sebelum Konfirmasi</div>
+    <div class="confirm-title"><i data-lucide="sparkle" class="lucide-ic"></i> Checklist Sebelum Konfirmasi</div>
     <div class="confirm-checklist">
       <div class="confirm-check">
-        <span class="check-icon">✓</span>
+        <span class="check-icon"><i data-lucide="check" class="lucide-ic"></i></span>
         <span>Pastikan nominal pembayaran sudah benar sesuai total pesananmu</span>
       </div>
       <div class="confirm-check">
-        <span class="check-icon">✓</span>
+        <span class="check-icon"><i data-lucide="check" class="lucide-ic"></i></span>
         <span>Simpan bukti pembayaran dari aplikasimu sebagai referensi</span>
       </div>
       <div class="confirm-check">
-        <span class="check-icon">✓</span>
+        <span class="check-icon"><i data-lucide="check" class="lucide-ic"></i></span>
         <span>Tekan tombol di bawah setelah pembayaran berhasil dikonfirmasi</span>
       </div>
     </div>
     <form action="proses_pemesanan.php" method="POST">
       <button type="submit" name="bayar" class="btn-premium btn-gold"
               style="width:100%;justify-content:center;padding:16px 28px;font-size:.9em;">
-        ✓ &nbsp;Saya Sudah Bayar
+        <i data-lucide="check" class="lucide-ic"></i> &nbsp;Saya Sudah Bayar
       </button>
     </form>
   </div>
@@ -561,5 +562,8 @@ $total_keranjang = $subtotal_keranjang - $diskon_nominal;
   });
 </script>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

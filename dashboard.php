@@ -4,20 +4,32 @@ require_once __DIR__.'/config/staff_guard.php';
 require_staff_login('auth/login.php', 'member/member.php');
 require_once 'config/koneksi.php';
 
-/* ── TANDAI SUDAH PERNAH MASUK MODE SERIUS ──
+/* ── TANDAI SUDAH MASUK MODE SERIUS (di sesi ini saja) ──
    Sekali admin/kasir sampai di dashboard penuh ini (baik lewat tombol
-   "Mode Serius?" maupun link langsung), tandai di DB supaya kunjungan
-   berikutnya tidak lagi diarahkan ke dashboard_awal.php (Mode Dasar). */
-if (!empty($_SESSION['user_id'])) {
-  mysqli_query($conn, "UPDATE users SET sudah_mode_serius = 1 WHERE id = " . (int) $_SESSION['user_id'] . " AND sudah_mode_serius = 0");
-}
+   "Mode Serius?" maupun link langsung), tandai di session supaya
+   kunjungan berikutnya SELAMA SESI LOGIN INI MASIH AKTIF tidak lagi
+   diarahkan ke dashboard_awal.php (Mode Dasar). Begitu logout (session
+   hancur) dan login lagi, flag ini otomatis hilang dan Mode Dasar
+   tampil lagi dari awal. */
+$_SESSION['sudah_mode_serius'] = 1;
 
 /* ── STATS ── */
 $s_booking   = mysqli_fetch_assoc(mysqli_query($conn,"SELECT COUNT(*) AS t, SUM(status='Pending') AS p FROM booking"));
 $s_pesanan   = mysqli_fetch_assoc(mysqli_query($conn,"SELECT COUNT(*) AS t, SUM(status_pesanan='Menunggu') AS p FROM pemesanan"));
-$s_produk    = mysqli_fetch_assoc(mysqli_query($conn,"SELECT COUNT(*) AS t FROM produk"));
-$s_member    = mysqli_fetch_assoc(mysqli_query($conn,"SELECT COUNT(*) AS t FROM member"));
+$s_produk    = mysqli_fetch_assoc(mysqli_query($conn,"SELECT COUNT(*) AS t, SUM(stok<=0) AS habis, SUM(stok>0 AND stok<=5) AS menipis FROM produk"));
+$s_member    = mysqli_fetch_assoc(mysqli_query($conn,"SELECT COUNT(*) AS t, SUM(created_at >= NOW() - INTERVAL 1 DAY) AS p FROM member"));
 $s_kontak    = mysqli_fetch_assoc(mysqli_query($conn,"SELECT COUNT(*) AS t, SUM(status='Belum Dibaca') AS p FROM kontak"));
+
+/* Ulasan Produk & Ulasan Tempat butuh kolom `dibaca` (lihat
+   database/tambah_kolom_dibaca_ulasan.sql). Query dibungkus try/catch
+   ringan via @ supaya tidak fatal error kalau migrasi belum dijalankan. */
+$q_up = mysqli_query($conn,"SELECT COUNT(*) AS t, SUM(dibaca=0) AS p FROM ulasan_produk");
+$s_ulasan_produk = $q_up ? mysqli_fetch_assoc($q_up) : ['t'=>0,'p'=>0];
+$q_ut = mysqli_query($conn,"SELECT COUNT(*) AS t, SUM(dibaca=0) AS p FROM ulasan_tempat");
+$s_ulasan_tempat = $q_ut ? mysqli_fetch_assoc($q_ut) : ['t'=>0,'p'=>0];
+
+/* Total produk yang butuh perhatian (habis + menipis) */
+$s_stok_bermasalah = (int)($s_produk['habis'] ?? 0) + (int)($s_produk['menipis'] ?? 0);
 
 /* ── RECENT BOOKING (5) ── */
 $q_booking = mysqli_query($conn,"SELECT * FROM booking ORDER BY created_at DESC LIMIT 5");
@@ -89,14 +101,56 @@ while ($row = mysqli_fetch_assoc($q_produk_terlaris)) {
 
 /* ── HERO BACKGROUND VIDEO & MUSIK "MODE SERIUS" ──
    Taruh file video di assets/video/ (mp4/webm/mov) dan musik di
-   assets/audio/ (mp3/ogg/wav) — otomatis terpakai, tidak perlu nama file
-   tertentu (pakai file pertama yang ditemukan). */
-$hero_video = null;
+   assets/audio/ (mp3/ogg/wav) — otomatis terpakai.
+   Sekarang mendukung 2 video terpisah untuk 2 mode panel:
+     - hero-full.mp4  -> dipakai saat mode "Wallpaper Penuh"
+     - hero-half.mp4  -> dipakai saat mode "Panel Kiri"
+   Kalau file dengan nama itu tidak ada, sistem otomatis fallback
+   ke file pertama/kedua yang ditemukan di folder (urutan abjad),
+   supaya tetap jalan meski baru ada 1 video atau namanya beda. */
+$hero_video_full = null;
+$hero_video_half = null;
 $video_files = glob(__DIR__ . '/assets/video/*.{mp4,webm,mov,MP4,WEBM,MOV}', GLOB_BRACE);
-if (!empty($video_files)) { sort($video_files); $hero_video = 'assets/video/' . basename($video_files[0]); }
+if (!empty($video_files)) {
+  sort($video_files);
+  foreach ($video_files as $vf) {
+    $vname = strtolower(basename($vf));
+    if ($hero_video_full === null && (strpos($vname, 'full') !== false || strpos($vname, 'penuh') !== false)) {
+      $hero_video_full = 'assets/video/' . basename($vf);
+    }
+    if ($hero_video_half === null && (strpos($vname, 'half') !== false || strpos($vname, 'panel') !== false || strpos($vname, 'kiri') !== false)) {
+      $hero_video_half = 'assets/video/' . basename($vf);
+    }
+  }
+  // Fallback: kalau penamaan eksplisit tidak ditemukan, pakai urutan file
+  if ($hero_video_full === null) $hero_video_full = 'assets/video/' . basename($video_files[0]);
+  if ($hero_video_half === null) $hero_video_half = 'assets/video/' . basename($video_files[count($video_files) > 1 ? 1 : 0]);
+}
+// Dipakai di tempat lain (mis. render tombol toggle) sebagai penanda "ada video sama sekali"
+$hero_video = $hero_video_full;
 
 $hero_audio = null;
 $audio_name = 'Musik Latar';
+
+// ─── Spotify premium player — eksklusif untuk email tertentu ───
+// Widget Spotify hanya dirender kalau email akun yang sedang login cocok.
+// Admin lain (email berbeda) tetap dapat music-player lokal biasa di bawah.
+$spotify_owner_email   = 'yoonskyy63@gmail.com';
+$is_spotify_owner      = (($_SESSION['email'] ?? '') === $spotify_owner_email);
+$spotify_playlist_id   = '7F9a1MU6RVDJSp8ygPcPew';
+$spotify_playlist_meta = null;
+
+if ($is_spotify_owner) {
+    $oembed_url = 'https://open.spotify.com/oembed?url=' . urlencode('https://open.spotify.com/playlist/' . $spotify_playlist_id);
+    $ctx = stream_context_create(['http' => ['timeout' => 2]]);
+    $oembed_raw = @file_get_contents($oembed_url, false, $ctx);
+    if ($oembed_raw !== false) {
+        $decoded = json_decode($oembed_raw, true);
+        if (is_array($decoded)) {
+            $spotify_playlist_meta = $decoded; // berisi title, thumbnail_url, dll
+        }
+    }
+}
 $audio_files = glob(__DIR__ . '/assets/audio/*.{mp3,ogg,wav,MP3,OGG,WAV}', GLOB_BRACE);
 if (!empty($audio_files)) {
   sort($audio_files);
@@ -109,6 +163,7 @@ $masuk_mode_serius = isset($_GET['serius']) && $_GET['serius'] === '1';
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="assets/css/lucide-icons.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard Admin – YOLAZCAKE</title>
@@ -301,6 +356,10 @@ body::before{
   padding:2px 8px;border-radius:999px;min-width:20px;text-align:center;
   box-shadow:0 2px 10px rgba(238,42,123,.4);
 }
+.sb-link-badge.sb-link-badge-warn{
+  background:linear-gradient(135deg,#ff6060,#ffb432);
+  box-shadow:0 2px 10px rgba(255,140,50,.4);
+}
 
 .sb-link-new{
   margin-left:auto;
@@ -444,6 +503,10 @@ body::before{
   border:1px solid rgba(212,175,55,.15);
   animation:fadeUp .8s forwards .1s;opacity:0;
 }
+/* Mode Wallpaper Penuh butuh tinggi lebih lega supaya video latar tidak
+   ter-crop terlalu agresif oleh object-fit:cover (rasio lebar-vs-tinggi
+   panel jadi tidak terlalu ekstrem dibanding rasio asli video). */
+.dash-hero.media-full{min-height:340px;padding-top:56px;padding-bottom:56px;}
 .dash-hero::before{
   content:'';position:absolute;inset:0;
   background:
@@ -471,7 +534,7 @@ body::before{
   font-size:.68em;font-weight:700;letter-spacing:4px;text-transform:uppercase;
   color:var(--gold);margin-bottom:14px;
 }
-.dash-eyebrow::before{content:'✦';}
+.dash-eyebrow::before{content:'✨';}
 
 .dash-hero h1{
   font-family:'Playfair Display',serif;
@@ -513,8 +576,8 @@ body::before{
 .dash-hero-deco-img{
   position:absolute;right:48px;top:50%;transform:translateY(-50%);
   max-height:450px;width:auto;
-  opacity:.35;
-  filter:drop-shadow(0 0 30px rgba(212,175,55,.25));
+  opacity:.75;
+  filter:drop-shadow(0 0 30px rgba(212,175,55,.4));
   pointer-events:none;user-select:none;
   z-index:1;
 }
@@ -598,24 +661,37 @@ body::before{
   66%    {box-shadow:0 12px 40px rgba(0,0,0,.3),0 0 22px rgba(238,42,123,.16);}
 }
 
-/* ── HERO MEDIA (video latar) ── */
+/* ── HERO MEDIA (video latar) — kini 2 video terpisah per mode ── */
 .dash-hero{transition:padding .4s ease;}
 .dash-hero.media-half{display:flex;align-items:center;gap:30px;}
-.hero-media{border-radius:20px;overflow:hidden;}
-.dash-hero.media-full .hero-media{position:absolute;inset:0;z-index:0;border-radius:inherit;}
-.dash-hero.media-full .hero-media video{width:100%;height:100%;object-fit:cover;object-position:center 65%;opacity:.5;}
-.dash-hero.media-full .hero-media-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(120deg,rgba(13,5,32,.78) 0%,rgba(26,10,58,.55) 55%,rgba(13,5,32,.82) 100%);
-}
-.dash-hero.media-half .hero-media{position:relative;flex:0 0 300px;max-width:38%;min-height:230px;align-self:stretch;}
-.dash-hero.media-half .hero-media video{width:100%;height:100%;object-fit:cover;display:block;}
-.dash-hero.media-half .hero-media-overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(13,5,32,.35),transparent 40%);}
+.hero-media{border-radius:20px;overflow:hidden;display:none;}
 .hero-media-placeholder{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;
   font-size:.78em;color:rgba(255,255,255,.4);padding:14px;
   border:1px dashed rgba(255,255,255,.15);border-radius:inherit;background:rgba(255,255,255,.02);
 }
+
+/* Video khusus mode "Wallpaper Penuh" */
+.dash-hero.media-full .hero-media-full{
+  display:block;position:absolute;inset:0;z-index:0;border-radius:inherit;
+}
+.dash-hero.media-full .hero-media-full video{
+  width:100%;height:100%;object-fit:cover;object-position:center 50%;opacity:.75;
+}
+.dash-hero.media-full .hero-media-full .hero-media-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(120deg,rgba(13,5,32,.78) 0%,rgba(26,10,58,.55) 55%,rgba(13,5,32,.82) 100%);
+}
+
+/* Video khusus mode "Panel Kiri" */
+.dash-hero.media-half .hero-media-half{
+  display:block;position:relative;flex:0 0 300px;max-width:38%;min-height:230px;align-self:stretch;
+}
+.dash-hero.media-half .hero-media-half video{width:100%;height:100%;object-fit:cover;display:block;}
+.dash-hero.media-half .hero-media-half .hero-media-overlay{
+  position:absolute;inset:0;background:linear-gradient(0deg,rgba(13,5,32,.35),transparent 40%);
+}
+
 .dash-hero.media-half .dash-hero-inner{flex:1;}
 
 .hero-media-toggle{
@@ -702,6 +778,47 @@ body::before{
 }
 .mp-autoplay input:checked + .mp-autoplay-track .mp-autoplay-thumb{transform:translateX(15px);}
 .mp-autoplay-label{font-size:.68em;color:var(--muted);letter-spacing:.3px;white-space:nowrap;}
+
+/* ── SPOTIFY PREMIUM PLAYER (eksklusif) ── */
+.spotify-premium{
+  position:relative;overflow:hidden;
+  background:var(--glass);backdrop-filter:blur(20px);
+  border:1px solid rgba(212,175,55,.35);border-radius:18px;
+  padding:16px 18px;margin-bottom:32px;
+  opacity:0;animation:fadeUp .7s forwards .65s;
+  box-shadow:0 0 0 1px rgba(212,175,55,.06) inset,0 8px 30px rgba(0,0,0,.25);
+}
+.spotify-premium::before{
+  content:'';position:absolute;inset:-40%;z-index:0;pointer-events:none;
+  background:radial-gradient(circle at 15% 20%,rgba(212,175,55,.16),transparent 55%),
+             radial-gradient(circle at 85% 80%,rgba(157,78,221,.18),transparent 55%);
+  animation:spGlow 9s ease-in-out infinite alternate;
+}
+@keyframes spGlow{from{transform:rotate(0deg) scale(1);}to{transform:rotate(8deg) scale(1.08);}}
+.sp-head{position:relative;z-index:1;display:flex;align-items:center;gap:14px;margin-bottom:14px;}
+.sp-art{
+  width:56px;height:56px;border-radius:12px;flex-shrink:0;overflow:hidden;
+  background:linear-gradient(135deg,var(--purple),var(--rose));
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  box-shadow:0 4px 14px rgba(0,0,0,.35),0 0 0 1px rgba(212,175,55,.3);
+}
+.sp-art img{width:100%;height:100%;object-fit:cover;display:block;}
+.sp-meta{flex:1;min-width:0;}
+.sp-badge{
+  display:inline-flex;align-items:center;gap:5px;font-size:.62em;font-weight:700;
+  letter-spacing:.4px;text-transform:uppercase;color:var(--gold);
+  background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.3);
+  border-radius:99px;padding:3px 9px;margin-bottom:6px;
+}
+.sp-badge .lucide-ic{width:11px;height:11px;}
+.sp-title{font-size:.92em;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sp-sub{display:flex;align-items:center;gap:5px;font-size:.68em;color:var(--muted);}
+.sp-sub .lucide-ic{width:12px;height:12px;}
+.sp-embed-wrap{
+  position:relative;z-index:1;border-radius:14px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);
+}
+.sp-embed-wrap iframe{display:block;border-radius:14px;}
 
 /* ── MODAL "MODE SERIUS" ── */
 .serius-modal-overlay{
@@ -1168,7 +1285,7 @@ body::before{
 <!-- MODAL "MODE SERIUS" -->
 <div class="serius-modal-overlay" id="seriusModalOverlay">
   <div class="serius-modal">
-    <div class="serius-modal-icon">🔥</div>
+    <div class="serius-modal-icon"><i data-lucide="flame" class="lucide-ic"></i></div>
     <h2>Ngalamin masalah serius ya?</h2>
     <p>Oke silahkan laksanakan, yang mulia.</p>
     <button type="button" onclick="document.getElementById('seriusModalOverlay').classList.remove('show')">Lanjutkan</button>
@@ -1196,7 +1313,7 @@ body::before{
         <img src="assets/img/Yolazcake.png" alt="YOLAZCAKE">
         <span class="sb-logo-text">YOLAZCAKE</span>
       </a>
-      <div class="sb-badge">👑 Admin</div>
+      <div class="sb-badge"><i data-lucide="crown" class="lucide-ic"></i> Admin</div>
     </div>
 
     <!-- Nav -->
@@ -1205,81 +1322,102 @@ body::before{
       <!-- UTAMA -->
       <div class="sb-section-label">Utama</div>
       <a class="sb-link active" href="dashboard.php">
-        <span class="sb-link-icon">🏠</span> Dashboard
+        <span class="sb-link-icon"><i data-lucide="home" class="lucide-ic"></i></span> Dashboard
       </a>
       <a class="sb-link" href="index.php" target="_blank">
-        <span class="sb-link-icon">🌐</span> Lihat Website
+        <span class="sb-link-icon"><i data-lucide="globe" class="lucide-ic"></i></span> Lihat Website
       </a>
 
       <!-- KELOLA DATA -->
       <div class="sb-section-label">Kelola Data</div>
       <a class="sb-link" href="booking/admin_booking.php">
-        <span class="sb-link-icon">📋</span> Booking
+        <span class="sb-link-icon"><i data-lucide="clipboard-list" class="lucide-ic"></i></span> Booking
         <?php if(($s_booking['p'] ?? 0) > 0): ?>
           <span class="sb-link-badge"><?= $s_booking['p'] ?></span>
         <?php endif; ?>
       </a>
       <a class="sb-link" href="pemesanan/data_pemesanan.php">
-        <span class="sb-link-icon">🛍️</span> Pemesanan
+        <span class="sb-link-icon"><i data-lucide="shopping-bag" class="lucide-ic"></i></span> Pemesanan
         <?php if(($s_pesanan['p'] ?? 0) > 0): ?>
           <span class="sb-link-badge"><?= $s_pesanan['p'] ?></span>
         <?php endif; ?>
       </a>
       <a class="sb-link" href="produk/data_produk.php">
-        <span class="sb-link-icon">🍰</span> Produk
+        <span class="sb-link-icon"><i data-lucide="cake-slice" class="lucide-ic"></i></span> Produk
+        <?php if($s_stok_bermasalah > 0): ?>
+          <span class="sb-link-badge sb-link-badge-warn" title="<?= (int)($s_produk['habis'] ?? 0) ?> habis, <?= (int)($s_produk['menipis'] ?? 0) ?> menipis"><i data-lucide="alert-triangle" class="lucide-ic"></i> <?= $s_stok_bermasalah ?></span>
+        <?php endif; ?>
       </a>
       <a class="sb-link" href="member/data_member.php">
-        <span class="sb-link-icon">👥</span> Member
+        <span class="sb-link-icon"><i data-lucide="users" class="lucide-ic"></i></span> Member
+        <?php if(($s_member['p'] ?? 0) > 0): ?>
+          <span class="sb-link-badge"><?= $s_member['p'] ?></span>
+        <?php endif; ?>
       </a>
       <a class="sb-link" href="meja/data_meja.php">
-        <span class="sb-link-icon">🪑</span> Meja
+        <span class="sb-link-icon"><i data-lucide="armchair" class="lucide-ic"></i></span> Meja
       </a>
       <a class="sb-link" href="kategori/data_kategori.php">
-        <span class="sb-link-icon">🏷️</span> Kategori Produk
+        <span class="sb-link-icon"><i data-lucide="tag" class="lucide-ic"></i></span> Kategori Produk
       </a>
       <a class="sb-link" href="riwayat_poin/riwayat_poin.php">
-        <span class="sb-link-icon">⭐</span> Riwayat Poin
+        <span class="sb-link-icon"><i data-lucide="star" class="lucide-ic lucide-fill"></i></span> Riwayat Poin
       </a>
       <a class="sb-link" href="kontak/data_kontak.php">
-        <span class="sb-link-icon">✉️</span> Pesan Kontak
+        <span class="sb-link-icon"><i data-lucide="mail" class="lucide-ic"></i></span> Pesan Kontak
         <?php if(($s_kontak['p'] ?? 0) > 0): ?>
           <span class="sb-link-badge"><?= $s_kontak['p'] ?></span>
         <?php endif; ?>
       </a>
       <a class="sb-link" href="galeri/data_galeri.php">
-        <span class="sb-link-icon">🖼️</span> Galeri
+        <span class="sb-link-icon"><i data-lucide="image" class="lucide-ic"></i></span> Galeri
       </a>
       <a class="sb-link" href="menu_foto/data_menu_foto.php">
-        <span class="sb-link-icon">✨</span> Foto Menu & Highlight
+        <span class="sb-link-icon"><i data-lucide="sparkles" class="lucide-ic"></i></span> Foto Menu & Highlight
       </a>
       <a class="sb-link" href="promo/data_promo.php">
-        <span class="sb-link-icon">🎟️</span> Promo
+        <span class="sb-link-icon"><i data-lucide="ticket" class="lucide-ic"></i></span> Promo
+      </a>
+      <a class="sb-link" href="instagram/ig_stats.php">
+        <span class="sb-link-icon"><i data-lucide="camera" class="lucide-ic"></i></span> Statistik Instagram
+      </a>
+      <a class="sb-link" href="ulasan/data_ulasan_produk.php">
+        <span class="sb-link-icon"><i data-lucide="star" class="lucide-ic lucide-fill"></i></span> Ulasan Produk
+        <?php if(($s_ulasan_produk['p'] ?? 0) > 0): ?>
+          <span class="sb-link-badge"><?= $s_ulasan_produk['p'] ?></span>
+        <?php endif; ?>
+      </a>
+      <a class="sb-link" href="ulasan/data_ulasan_tempat.php">
+        <span class="sb-link-icon"><i data-lucide="home" class="lucide-ic"></i></span> Ulasan Tempat & Makanan
+        <?php if(($s_ulasan_tempat['p'] ?? 0) > 0): ?>
+          <span class="sb-link-badge"><?= $s_ulasan_tempat['p'] ?></span>
+        <?php endif; ?>
       </a>
 
       <?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
       <!-- ADMIN -->
       <div class="sb-section-label">Admin</div>
       <a class="sb-link" href="user/data_user.php">
-        <span class="sb-link-icon">🔐</span> Kelola Akun
+        <span class="sb-link-icon"><i data-lucide="lock-keyhole" class="lucide-ic"></i></span> Kelola Akun
       </a>
       <?php endif; ?>
 
       <!-- TAMBAH DATA -->
       <div class="sb-section-label">Tambah Data</div>
       <a class="sb-link add-link" href="produk/tambah_produk.php">
-        <span class="sb-link-icon">➕</span> Tambah Produk
+        <span class="sb-link-icon"><i data-lucide="plus" class="lucide-ic"></i></span> Tambah Produk
         <span class="sb-link-new">Baru</span>
       </a>
       <a class="sb-link add-link" href="member/tambah_member.php">
-        <span class="sb-link-icon">➕</span> Tambah Member
+        <span class="sb-link-icon"><i data-lucide="plus" class="lucide-ic"></i></span> Tambah Member
         <span class="sb-link-new">Baru</span>
       </a>
       <a class="sb-link add-link" href="meja/tambah_meja.php">
-        <span class="sb-link-icon">➕</span> Tambah Meja
+        <span class="sb-link-icon"><i data-lucide="plus" class="lucide-ic"></i></span> Tambah Meja
         <span class="sb-link-new">Baru</span>
       </a>
       <a class="sb-link add-link" href="galeri/tambah_galeri.php">
-        <span class="sb-link-icon">➕</span> Tambah Foto Galeri
+        <span class="sb-link-icon"><i data-lucide="plus" class="lucide-ic"></i></span> Tambah Foto Galeri
         <span class="sb-link-new">Baru</span>
       </a>
 
@@ -1288,7 +1426,7 @@ body::before{
     <!-- Footer / Logout -->
     <div class="sb-footer">
       <a class="sb-logout" href="auth/logout.php" onclick="return confirm('Yakin ingin keluar?')">
-        🚪 <span>Keluar</span>
+        <i data-lucide="log-out" class="lucide-ic"></i> <span>Keluar</span>
       </a>
     </div>
 
@@ -1301,12 +1439,12 @@ body::before{
     <!-- TOPBAR -->
     <div class="topbar">
       <div class="topbar-left">
-        <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()">☰</button>
+        <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()"><i data-lucide="menu" class="lucide-ic"></i></button>
         <div class="topbar-title">Dashboard Admin</div>
       </div>
       <div class="topbar-right">
         <span class="topbar-time" id="topbarTime"></span>
-        <a class="btn-website" href="index.php" target="_blank">🌐 Lihat Website</a>
+        <a class="btn-website" href="index.php" target="_blank"><i data-lucide="globe" class="lucide-ic"></i> Lihat Website</a>
         <div class="topbar-user">
           <div class="topbar-avatar">
             <?= strtoupper(substr($_SESSION['username'], 0, 1)) ?>
@@ -1323,12 +1461,19 @@ body::before{
       <div class="dash-hero" id="dashHero">
         <div class="dash-hero-grid"></div>
 
-        <!-- Video latar "Mode Serius" — dua opsi tampilan (wallpaper penuh / panel kiri).
-             Hanya dirender kalau ada file video di assets/video/, supaya tampilan hero
-             tidak berubah sebelum videonya ditaruh. -->
-        <?php if ($hero_video): ?>
-        <div class="hero-media" id="heroMedia">
-          <video id="heroVideo" src="<?= htmlspecialchars($hero_video) ?>" autoplay muted loop playsinline></video>
+        <!-- Video latar "Mode Serius" — 2 video terpisah untuk 2 mode tampilan
+             (wallpaper penuh / panel kiri). Hanya dirender kalau ada file video
+             di assets/video/, supaya tampilan hero tidak berubah sebelum videonya
+             ditaruh. -->
+        <?php if ($hero_video_full): ?>
+        <div class="hero-media hero-media-full" id="heroMediaFull">
+          <video id="heroVideoFull" src="<?= htmlspecialchars($hero_video_full) ?>" autoplay muted loop playsinline></video>
+          <div class="hero-media-overlay"></div>
+        </div>
+        <?php endif; ?>
+        <?php if ($hero_video_half): ?>
+        <div class="hero-media hero-media-half" id="heroMediaHalf">
+          <video id="heroVideoHalf" src="<?= htmlspecialchars($hero_video_half) ?>" autoplay muted loop playsinline></video>
           <div class="hero-media-overlay"></div>
         </div>
         <?php endif; ?>
@@ -1337,9 +1482,9 @@ body::before{
           <div class="dash-eyebrow flame-text">Panel Kontrol YOLAZCAKE</div>
           <h1><span>Selamat Datang, <?= htmlspecialchars($_SESSION['username']) ?>!</span></h1>
           <div class="dash-hero-sub">
-            <span>📅 <?= date("d F Y") ?></span>
+            <span><i data-lucide="calendar" class="lucide-ic"></i> <?= date("d F Y") ?></span>
             <span>⏰ <span id="heroTime"></span></span>
-            <span>✦ Sintang, Kalimantan Barat</span>
+            <span><i data-lucide="sparkle" class="lucide-ic"></i> Sintang, Kalimantan Barat</span>
           </div>
         </div>
         <?php
@@ -1361,17 +1506,43 @@ body::before{
 
         <?php if ($hero_video): ?>
         <div class="hero-media-toggle">
-          <button type="button" class="hmt-btn" data-mode="full">🖼️ Wallpaper Penuh</button>
-          <button type="button" class="hmt-btn" data-mode="half">📺 Panel Kiri</button>
+          <button type="button" class="hmt-btn" data-mode="full"><i data-lucide="image" class="lucide-ic"></i> Wallpaper Penuh</button>
+          <button type="button" class="hmt-btn" data-mode="half"><i data-lucide="tv" class="lucide-ic"></i> Panel Kiri</button>
         </div>
         <?php endif; ?>
       </div>
 
+      <?php if ($is_spotify_owner): ?>
+      <!-- ─── SPOTIFY PREMIUM PLAYER (eksklusif — hanya untuk akun ini) ─── -->
+      <div class="spotify-premium" id="spotifyPremium">
+        <div class="sp-head">
+          <div class="sp-art">
+            <?php if (!empty($spotify_playlist_meta['thumbnail_url'])): ?>
+              <img src="<?= htmlspecialchars($spotify_playlist_meta['thumbnail_url']) ?>" alt="Cover playlist">
+            <?php else: ?>
+              <i data-lucide="disc-3" class="lucide-ic"></i>
+            <?php endif; ?>
+          </div>
+          <div class="sp-meta">
+            <div class="sp-badge"><i data-lucide="lock" class="lucide-ic"></i> Private &mdash; hanya kamu</div>
+            <div class="sp-title"><?= htmlspecialchars($spotify_playlist_meta['title'] ?? 'Discover Weekly') ?></div>
+            <div class="sp-sub"><i data-lucide="shuffle" class="lucide-ic"></i> Shuffle otomatis dari Spotify</div>
+          </div>
+        </div>
+        <div class="sp-embed-wrap">
+          <iframe
+            src="https://open.spotify.com/embed/playlist/<?= htmlspecialchars($spotify_playlist_id) ?>?utm_source=generator&theme=0"
+            width="100%" height="152" frameborder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"></iframe>
+        </div>
+      </div>
+      <?php else: ?>
       <!-- ─── MUSIC PLAYER (gaya Spotify) ─── -->
       <div class="music-player" id="musicPlayer">
         <?php if ($hero_audio): ?>
           <audio id="heroAudio" src="<?= htmlspecialchars($hero_audio) ?>" loop></audio>
-          <div class="mp-art">🎵</div>
+          <div class="mp-art"><i data-lucide="music" class="lucide-ic"></i></div>
           <div class="mp-info">
             <div class="mp-title"><?= htmlspecialchars($audio_name) ?></div>
             <div class="mp-progress-wrap">
@@ -1387,15 +1558,16 @@ body::before{
             <span class="mp-autoplay-label">Auto-play</span>
           </label>
         <?php else: ?>
-          <div class="mp-art">🎵</div>
+          <div class="mp-art"><i data-lucide="music" class="lucide-ic"></i></div>
           <div class="mp-placeholder">Taruh file musik di <code>assets/audio/</code> untuk mengaktifkan pemutar ini.</div>
         <?php endif; ?>
       </div>
+      <?php endif; ?>
 
       <!-- ─── STATS ─── -->
       <div class="stats-grid">
         <div class="stat-card s1 flame-card">
-          <div class="stat-icon-wrap">📋</div>
+          <div class="stat-icon-wrap"><i data-lucide="clipboard-list" class="lucide-ic"></i></div>
           <div class="stat-val" data-count="<?= $s_booking['t'] ?? 0 ?>"><?= $s_booking['t'] ?? 0 ?></div>
           <div class="stat-lbl">Total Booking</div>
           <?php if(($s_booking['p'] ?? 0) > 0): ?>
@@ -1403,7 +1575,7 @@ body::before{
           <?php endif; ?>
         </div>
         <div class="stat-card s2 flame-card">
-          <div class="stat-icon-wrap">🛍️</div>
+          <div class="stat-icon-wrap"><i data-lucide="shopping-bag" class="lucide-ic"></i></div>
           <div class="stat-val" data-count="<?= $s_pesanan['t'] ?? 0 ?>"><?= $s_pesanan['t'] ?? 0 ?></div>
           <div class="stat-lbl">Total Pemesanan</div>
           <?php if(($s_pesanan['p'] ?? 0) > 0): ?>
@@ -1411,22 +1583,26 @@ body::before{
           <?php endif; ?>
         </div>
         <div class="stat-card s3 flame-card">
-          <div class="stat-icon-wrap">🍰</div>
+          <div class="stat-icon-wrap"><i data-lucide="cake-slice" class="lucide-ic"></i></div>
           <div class="stat-val" data-count="<?= $s_produk['t'] ?? 0 ?>"><?= $s_produk['t'] ?? 0 ?></div>
           <div class="stat-lbl">Total Produk</div>
-          <div class="stat-badge ok">✓ Aktif</div>
+          <?php if($s_stok_bermasalah > 0): ?>
+            <div class="stat-badge"><i data-lucide="alert-triangle" class="lucide-ic"></i> <?= $s_stok_bermasalah ?> Stok Habis/Menipis</div>
+          <?php else: ?>
+            <div class="stat-badge ok"><i data-lucide="check" class="lucide-ic"></i> Aktif</div>
+          <?php endif; ?>
         </div>
         <div class="stat-card s4 flame-card">
-          <div class="stat-icon-wrap">👥</div>
+          <div class="stat-icon-wrap"><i data-lucide="users" class="lucide-ic"></i></div>
           <div class="stat-val" data-count="<?= $s_member['t'] ?? 0 ?>"><?= $s_member['t'] ?? 0 ?></div>
           <div class="stat-lbl">Total Member</div>
-          <div class="stat-badge ok">✓ Terdaftar</div>
+          <div class="stat-badge ok"><i data-lucide="check" class="lucide-ic"></i> Terdaftar</div>
         </div>
       </div>
 
       <!-- ─── GRAFIK PENJUALAN ─── -->
       <div class="section-hd">
-        <div class="sh-icon">📊</div>
+        <div class="sh-icon"><i data-lucide="bar-chart-3" class="lucide-ic"></i></div>
         <h2>Grafik Penjualan</h2>
         <div class="section-hd-line"></div>
       </div>
@@ -1437,7 +1613,7 @@ body::before{
         <div class="chart-card">
           <div class="ac-head">
             <div class="ac-head-left">
-              <div class="ac-head-icon">📈</div>
+              <div class="ac-head-icon"><i data-lucide="trending-up" class="lucide-ic"></i></div>
               <div class="ac-head-title">Tren Penjualan</div>
             </div>
             <div class="chart-toggle" id="salesToggle">
@@ -1462,7 +1638,7 @@ body::before{
         <div class="chart-card">
           <div class="ac-head">
             <div class="ac-head-left">
-              <div class="ac-head-icon">🏆</div>
+              <div class="ac-head-icon"><i data-lucide="trophy" class="lucide-ic"></i></div>
               <div class="ac-head-title">Produk Terlaris</div>
             </div>
           </div>
@@ -1480,7 +1656,7 @@ body::before{
 
       <!-- ─── MANAGEMENT CARDS ─── -->
       <div class="section-hd">
-        <div class="sh-icon">⚙️</div>
+        <div class="sh-icon"><i data-lucide="settings" class="lucide-ic"></i></div>
         <h2>Manajemen Data</h2>
         <div class="section-hd-line"></div>
       </div>
@@ -1490,7 +1666,7 @@ body::before{
         <!-- Kelola Booking -->
         <div class="mgmt-card booking m1">
           <div class="mc-top">
-            <div class="mc-icon">📋</div>
+            <div class="mc-icon"><i data-lucide="clipboard-list" class="lucide-ic"></i></div>
             <div class="mc-count"><?= $s_booking['t'] ?? 0 ?></div>
           </div>
           <div class="mc-title">Kelola Booking</div>
@@ -1501,14 +1677,14 @@ body::before{
             <div class="pending-tag">⏳ <?= $s_booking['p'] ?> booking menunggu konfirmasi</div>
           <?php endif; ?>
           <div class="mc-actions" style="margin-top:18px;">
-            <a class="btn-primary" href="booking/admin_booking.php">📋 Lihat Semua</a>
+            <a class="btn-primary" href="booking/admin_booking.php"><i data-lucide="clipboard-list" class="lucide-ic"></i> Lihat Semua</a>
           </div>
         </div>
 
         <!-- Kelola Pemesanan -->
         <div class="mgmt-card pemesanan m2">
           <div class="mc-top">
-            <div class="mc-icon">🛍️</div>
+            <div class="mc-icon"><i data-lucide="shopping-bag" class="lucide-ic"></i></div>
             <div class="mc-count"><?= $s_pesanan['t'] ?? 0 ?></div>
           </div>
           <div class="mc-title">Kelola Pemesanan</div>
@@ -1519,30 +1695,33 @@ body::before{
             <div class="pending-tag">⏳ <?= $s_pesanan['p'] ?> pesanan menunggu diproses</div>
           <?php endif; ?>
           <div class="mc-actions" style="margin-top:18px;">
-            <a class="btn-primary" href="pemesanan/data_pemesanan.php">🛍️ Lihat Semua</a>
+            <a class="btn-primary" href="pemesanan/data_pemesanan.php"><i data-lucide="shopping-bag" class="lucide-ic"></i> Lihat Semua</a>
           </div>
         </div>
 
         <!-- Kelola Produk -->
         <div class="mgmt-card produk m3">
           <div class="mc-top">
-            <div class="mc-icon">🍰</div>
+            <div class="mc-icon"><i data-lucide="cake-slice" class="lucide-ic"></i></div>
             <div class="mc-count"><?= $s_produk['t'] ?? 0 ?></div>
           </div>
           <div class="mc-title">Kelola Produk</div>
           <div class="mc-desc">
             Tambah, edit, atau hapus menu produk kafe. Pantau stok dan kelola harga produk dengan mudah.
           </div>
-          <div class="mc-actions" style="margin-top:26px;">
-            <a class="btn-primary" href="produk/data_produk.php">🍰 Lihat Semua</a>
-            <a class="btn-add" href="produk/tambah_produk.php">➕ Tambah Produk</a>
+          <?php if($s_stok_bermasalah > 0): ?>
+            <div class="pending-tag"><i data-lucide="alert-triangle" class="lucide-ic"></i> <?= $s_stok_bermasalah ?> produk stok habis/menipis</div>
+          <?php endif; ?>
+          <div class="mc-actions" style="margin-top:18px;">
+            <a class="btn-primary" href="produk/data_produk.php"><i data-lucide="cake-slice" class="lucide-ic"></i> Lihat Semua</a>
+            <a class="btn-add" href="produk/tambah_produk.php"><i data-lucide="plus" class="lucide-ic"></i> Tambah Produk</a>
           </div>
         </div>
 
         <!-- Kelola Member -->
         <div class="mgmt-card member m4">
           <div class="mc-top">
-            <div class="mc-icon">👥</div>
+            <div class="mc-icon"><i data-lucide="users" class="lucide-ic"></i></div>
             <div class="mc-count"><?= $s_member['t'] ?? 0 ?></div>
           </div>
           <div class="mc-title">Kelola Member</div>
@@ -1550,8 +1729,8 @@ body::before{
             Kelola data pelanggan terdaftar, edit informasi, pantau poin loyalitas, dan tambah member baru.
           </div>
           <div class="mc-actions" style="margin-top:26px;">
-            <a class="btn-primary" href="member/data_member.php">👥 Lihat Semua</a>
-            <a class="btn-add" href="member/tambah_member.php">➕ Tambah Member</a>
+            <a class="btn-primary" href="member/data_member.php"><i data-lucide="users" class="lucide-ic"></i> Lihat Semua</a>
+            <a class="btn-add" href="member/tambah_member.php"><i data-lucide="plus" class="lucide-ic"></i> Tambah Member</a>
           </div>
         </div>
 
@@ -1560,33 +1739,33 @@ body::before{
 
       <!-- ─── QUICK ACCESS ─── -->
       <div class="section-hd">
-        <div class="sh-icon">⚡</div>
+        <div class="sh-icon"><i data-lucide="zap" class="lucide-ic"></i></div>
         <h2>Akses Cepat</h2>
         <div class="section-hd-line"></div>
       </div>
 
       <div class="quick-links">
         <a class="ql-item" href="index.php" target="_blank">
-          <span class="ql-icon">🏠</span>
+          <span class="ql-icon"><i data-lucide="home" class="lucide-ic"></i></span>
           <span>Beranda Website</span>
         </a>
         <a class="ql-item" href="pemesanan/menuu.php" target="_blank">
-          <span class="ql-icon">☕</span>
+          <span class="ql-icon"><i data-lucide="coffee" class="lucide-ic"></i></span>
           <span>Menu Kafe</span>
         </a>
         <a class="ql-item" href="booking/booking.php" target="_blank">
-          <span class="ql-icon">🗓️</span>
+          <span class="ql-icon"><i data-lucide="calendar-days" class="lucide-ic"></i></span>
           <span>Form Booking</span>
         </a>
         <a class="ql-item" href="auth/logout.php" onclick="return confirm('Yakin ingin keluar?')">
-          <span class="ql-icon">🚪</span>
+          <span class="ql-icon"><i data-lucide="log-out" class="lucide-ic"></i></span>
           <span>Logout</span>
         </a>
       </div>
 
       <!-- ─── RECENT ACTIVITY ─── -->
       <div class="section-hd">
-        <div class="sh-icon">🕐</div>
+        <div class="sh-icon"><i data-lucide="clock" class="lucide-ic"></i></div>
         <h2>Aktivitas Terbaru</h2>
         <div class="section-hd-line"></div>
       </div>
@@ -1597,10 +1776,10 @@ body::before{
         <div class="activity-card a1">
           <div class="ac-head">
             <div class="ac-head-left">
-              <span class="ac-head-icon">📋</span>
+              <span class="ac-head-icon"><i data-lucide="clipboard-list" class="lucide-ic"></i></span>
               <span class="ac-head-title">Booking Terbaru</span>
             </div>
-            <a class="ac-head-link" href="booking/admin_booking.php">Lihat Semua →</a>
+            <a class="ac-head-link" href="booking/admin_booking.php">Lihat Semua <i data-lucide="arrow-right" class="lucide-ic"></i></a>
           </div>
           <table class="ac-table">
             <thead>
@@ -1616,7 +1795,7 @@ body::before{
               if($rows > 0):
                 while($r = mysqli_fetch_assoc($q_booking)):
                   $sc = $r['status']==='Dikonfirmasi' ? 's-ok' : ($r['status']==='Dibatalkan' ? 's-batal' : 's-pending');
-                  $si = $r['status']==='Dikonfirmasi' ? '✅' : ($r['status']==='Dibatalkan' ? '🚫' : '⏳');
+                  $si = $r['status']==='Dikonfirmasi' ? '<i data-lucide="check-circle" class="lucide-ic"></i>' : ($r['status']==='Dibatalkan' ? '<i data-lucide="ban" class="lucide-ic"></i>' : '⏳');
               ?>
               <tr>
                 <td class="td-name"><?= htmlspecialchars($r['nama_pemesan']) ?></td>
@@ -1634,10 +1813,10 @@ body::before{
         <div class="activity-card a2">
           <div class="ac-head">
             <div class="ac-head-left">
-              <span class="ac-head-icon">🛍️</span>
+              <span class="ac-head-icon"><i data-lucide="shopping-bag" class="lucide-ic"></i></span>
               <span class="ac-head-title">Pemesanan Terbaru</span>
             </div>
-            <a class="ac-head-link" href="pemesanan/data_pemesanan.php">Lihat Semua →</a>
+            <a class="ac-head-link" href="pemesanan/data_pemesanan.php">Lihat Semua <i data-lucide="arrow-right" class="lucide-ic"></i></a>
           </div>
           <table class="ac-table">
             <thead>
@@ -1653,7 +1832,7 @@ body::before{
               if($rows2 > 0):
                 while($r2 = mysqli_fetch_assoc($q_pesanan)):
                   $pc = $r2['status_pembayaran']==='Lunas' ? 's-lunas' : 's-menunggu';
-                  $pi = $r2['status_pembayaran']==='Lunas' ? '✅' : '⏳';
+                  $pi = $r2['status_pembayaran']==='Lunas' ? '<i data-lucide="check-circle" class="lucide-ic"></i>' : '⏳';
               ?>
               <tr>
                 <td class="td-name"><?= htmlspecialchars($r2['nama_pemesan']) ?></td>
@@ -1671,13 +1850,13 @@ body::before{
         <div class="activity-card a3">
           <div class="ac-head">
             <div class="ac-head-left">
-              <span class="ac-head-icon">✉️</span>
+              <span class="ac-head-icon"><i data-lucide="mail" class="lucide-ic"></i></span>
               <span class="ac-head-title">Pesan Masuk</span>
               <?php if(($s_kontak['p'] ?? 0) > 0): ?>
                 <span class="sb-link-badge" style="position:relative;top:0;margin-left:6px;"><?= $s_kontak['p'] ?></span>
               <?php endif; ?>
             </div>
-            <a class="ac-head-link" href="kontak/data_kontak.php">Lihat Semua →</a>
+            <a class="ac-head-link" href="kontak/data_kontak.php">Lihat Semua <i data-lucide="arrow-right" class="lucide-ic"></i></a>
           </div>
           <table class="ac-table">
             <thead>
@@ -1693,9 +1872,9 @@ body::before{
               if($rows3 > 0):
                 while($r3 = mysqli_fetch_assoc($q_kontak)):
                   $kc = ($r3['kategori'] ?? 'Umum') === 'Bantuan Akun' ? 's-akun' : 's-umum';
-                  $ki = ($r3['kategori'] ?? 'Umum') === 'Bantuan Akun' ? '🔑 Bantuan Akun' : '💬 Umum';
+                  $ki = ($r3['kategori'] ?? 'Umum') === 'Bantuan Akun' ? '<i data-lucide="key" class="lucide-ic"></i> Bantuan Akun' : '<i data-lucide="message-circle" class="lucide-ic"></i> Umum';
                   $sc3 = $r3['status']==='Dibalas' ? 's-lunas' : ($r3['status']==='Sudah Dibaca' ? 's-umum' : 's-pending');
-                  $si3 = $r3['status']==='Dibalas' ? '✅' : ($r3['status']==='Sudah Dibaca' ? '🟣' : '🟡');
+                  $si3 = $r3['status']==='Dibalas' ? '<i data-lucide="check-circle" class="lucide-ic"></i>' : ($r3['status']==='Sudah Dibaca' ? '<i data-lucide="circle" class="lucide-ic lucide-fill" style="color:#a78bfa"></i>' : '<i data-lucide="circle" class="lucide-ic lucide-fill" style="color:#D4AF37"></i>');
               ?>
               <tr>
                 <td class="td-name"><?= htmlspecialchars($r3['nama']) ?></td>
@@ -1783,42 +1962,50 @@ function toggleSidebar(){
   const btn = document.getElementById('hamburgerBtn');
   const open = sb.classList.toggle('open');
   ov.classList.toggle('open', open);
-  btn.textContent = open ? '✕' : '☰';
+  btn.textContent = open ? '<i data-lucide="x" class="lucide-ic"></i>' : '<i data-lucide="menu" class="lucide-ic"></i>';
 }
 function closeSidebar(){
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sidebarOverlay').classList.remove('open');
-  document.getElementById('hamburgerBtn').textContent = '☰';
+  document.getElementById('hamburgerBtn').textContent = '<i data-lucide="menu" class="lucide-ic"></i>';
 }
 
 /* ── HERO MEDIA LAYOUT (wallpaper penuh / panel kiri) ── */
 (function(){
   const hero = document.getElementById('dashHero');
-  const heroMediaEl = document.getElementById('heroMedia');
-  if (!hero || !heroMediaEl) return; // belum ada video -> lewati, tampilan hero default
   const btns = document.querySelectorAll('.hmt-btn');
+  const videoFull = document.getElementById('heroVideoFull');
+  const videoHalf = document.getElementById('heroVideoHalf');
+  if (!hero || (!videoFull && !videoHalf)) return; // belum ada video -> lewati, tampilan hero default
 
   function setHeroLayout(mode){
     hero.classList.remove('media-full','media-half');
     hero.classList.add('media-' + mode);
     btns.forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
     localStorage.setItem('yolaz_hero_layout', mode);
+
+    // Mainkan hanya video yang sedang terlihat, jeda yang satunya
+    // (hemat CPU/RAM — penting untuk perangkat dengan spek terbatas).
+    if (mode === 'full') {
+      if (videoHalf) videoHalf.pause();
+      if (videoFull) videoFull.play().catch(()=>{});
+    } else {
+      if (videoFull) videoFull.pause();
+      if (videoHalf) videoHalf.play().catch(()=>{});
+    }
   }
 
   btns.forEach(b => b.addEventListener('click', () => setHeroLayout(b.dataset.mode)));
   setHeroLayout(localStorage.getItem('yolaz_hero_layout') || 'full');
 
   // Fallback: sebagian browser kadang mengabaikan atribut autoplay
-  // (mis. tab sempat di-background), jadi coba play() manual juga.
-  const heroVideoFallback = document.getElementById('heroVideo');
-  if (heroVideoFallback) {
-    heroVideoFallback.play().catch(()=>{});
-    document.addEventListener('visibilitychange', () => {
-      if (!document.hidden && heroVideoFallback.paused) {
-        heroVideoFallback.play().catch(()=>{});
-      }
-    });
-  }
+  // (mis. tab sempat di-background), jadi coba play() manual juga —
+  // tapi hanya untuk video yang sedang aktif/terlihat.
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    const activeVideo = hero.classList.contains('media-full') ? videoFull : videoHalf;
+    if (activeVideo && activeVideo.paused) activeVideo.play().catch(()=>{});
+  });
 })();
 
 /* ── MUSIC PLAYER (gaya Spotify) ── */
@@ -2040,8 +2227,12 @@ if (heroAudioEl){
   const modal = document.getElementById('seriusModalOverlay');
   setTimeout(() => { if (modal) modal.classList.add('show'); }, 500);
 
-  const heroVideoEl = document.getElementById('heroVideo');
-  if (heroVideoEl) heroVideoEl.play().catch(()=>{});
+  // Mainkan video sesuai mode panel yang sedang aktif (full/half)
+  const heroEl = document.getElementById('dashHero');
+  const heroVideoFullEl = document.getElementById('heroVideoFull');
+  const heroVideoHalfEl = document.getElementById('heroVideoHalf');
+  const activeHeroVideo = (heroEl && heroEl.classList.contains('media-half')) ? heroVideoHalfEl : heroVideoFullEl;
+  if (activeHeroVideo) activeHeroVideo.play().catch(()=>{});
   if (heroAudioEl) {
     heroAudioEl.play().catch(()=>{});
     // Tandai auto-play aktif supaya kunjungan berikutnya musik langsung
@@ -2056,5 +2247,8 @@ if (heroAudioEl){
 })();
 </script>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

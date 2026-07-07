@@ -4,19 +4,14 @@ require_once __DIR__.'/config/staff_guard.php';
 require_staff_login('auth/login.php', 'member/member.php');
 require_once 'config/koneksi.php';
 
-/* ── LEWATI MODE DASAR JIKA SUDAH PERNAH MASUK MODE SERIUS ──
-   Begitu admin/kasir pernah menekan "Mode Serius?" satu kali (ditandai
-   di dashboard.php), kunjungan berikutnya langsung ke dashboard penuh
-   tanpa mampir ke halaman ringkasan ini lagi. */
-if (!empty($_SESSION['user_id'])) {
-  $cek = mysqli_prepare($conn, "SELECT sudah_mode_serius FROM users WHERE id = ?");
-  mysqli_stmt_bind_param($cek, "i", $_SESSION['user_id']);
-  mysqli_stmt_execute($cek);
-  $row_cek = mysqli_fetch_assoc(mysqli_stmt_get_result($cek));
-  if (!empty($row_cek['sudah_mode_serius'])) {
-    header('Location: dashboard.php');
-    exit();
-  }
+/* ── LEWATI MODE DASAR JIKA DI SESI INI SUDAH PERNAH MASUK MODE SERIUS ──
+   Ditandai di session (bukan database) supaya tiap logout -> login ulang
+   dianggap kunjungan baru dan Mode Dasar tampil lagi. Tapi selama masih
+   dalam sesi login yang sama (pindah halaman lalu balik ke dashboard),
+   Mode Dasar tidak perlu tampil ulang. */
+if (!empty($_SESSION['sudah_mode_serius'])) {
+  header('Location: dashboard.php');
+  exit();
 }
 
 /* Statistik ringan saja — bukan panel kelola penuh */
@@ -33,6 +28,7 @@ else                 $sapaan = 'Selamat Malam';
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="assets/css/lucide-icons.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mode Dasar – YOLAZCAKE</title>
@@ -155,7 +151,7 @@ h1 span{
 <body>
 
 <div class="wrap">
-  <div class="badge-mode">🔒 Mode Dasar · Fitur Terbatas</div>
+  <div class="badge-mode"><i data-lucide="lock" class="lucide-ic"></i> Mode Dasar · Fitur Terbatas</div>
   <h1><span><?= $sapaan ?>, <?= htmlspecialchars($_SESSION['username']) ?></span></h1>
   <p class="sub">Kamu sedang berada di panel ringan. Beberapa fitur kelola disembunyikan
      dulu supaya tidak berantakan — cukup untuk lihat ringkasan cepat hari ini.</p>
@@ -166,9 +162,9 @@ h1 span{
     <div class="stat"><b><?= $s_kontak['t'] ?? 0 ?></b><span>Pesan Masuk</span></div>
   </div>
 
-  <div class="locked-note">🗝️ Fitur kelola penuh (produk, member, promo, dll) masih terkunci.</div>
+  <div class="locked-note"><i data-lucide="key-round" class="lucide-ic"></i> Fitur kelola penuh (produk, member, promo, dll) masih terkunci.</div>
 
-  <button class="btn-serius" onclick="masukModeSerius()">🔥 Mode Serius?</button>
+  <button class="btn-serius" onclick="masukModeSerius()"><i data-lucide="flame" class="lucide-ic"></i> Mode Serius?</button>
 
   <div class="footer-line">
     atau <a href="auth/logout.php" onclick="return confirm('Yakin ingin keluar?')">keluar dari akun</a>
@@ -180,5 +176,8 @@ function masukModeSerius(){
   window.location.href = 'dashboard.php?serius=1';
 }
 </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

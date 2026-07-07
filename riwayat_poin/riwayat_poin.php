@@ -102,6 +102,7 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,"SELECT SUM(CASE WHEN jenis='Masu
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Riwayat Poin – YOLAZCAKE</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -221,22 +222,22 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,"SELECT SUM(CASE WHEN jenis='Masu
 <div id="particles"></div>
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Riwayat Poin</h1>
     <p class="hero-sub">Pantau perolehan & penukaran poin member</p>
-    <div class="hero-divider"><span></span><span class="diamond">✦ ✦ ✦</span><span></span></div>
+    <div class="hero-divider"><span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span></div>
   </div>
 </div>
 
 <div class="page-wrapper">
-  <a href="../dashboard.php" class="btn-back">← Dashboard</a>
+  <a href="../dashboard.php" class="btn-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Dashboard</a>
 
   <div class="stats-row">
-    <div class="stat-card"><span class="stat-icon">⭐</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="star" class="lucide-ic lucide-fill"></i></span>
       <div><div class="stat-val"><?= number_format($stats['total_masuk']??0) ?></div><div class="stat-lbl">Total Poin Masuk</div></div></div>
-    <div class="stat-card"><span class="stat-icon">🎁</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="gift" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= number_format($stats['total_keluar']??0) ?></div><div class="stat-lbl">Total Poin Keluar</div></div></div>
-    <div class="stat-card"><span class="stat-icon">📋</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="clipboard-list" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= number_format($stats['total']??0) ?></div><div class="stat-lbl">Total Transaksi</div></div></div>
   </div>
 
@@ -245,13 +246,13 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,"SELECT SUM(CASE WHEN jenis='Masu
     <!-- TABLE -->
     <div class="table-card">
       <div class="card-header">
-        <span class="card-title">⭐ Log Poin</span>
+        <span class="card-title"><i data-lucide="star" class="lucide-ic lucide-fill"></i> Log Poin</span>
         <form method="GET" class="filter-row">
           <select name="member" class="filter-sel">
             <option value="">Semua Member</option>
             <?php mysqli_data_seek($members,0); while($m=mysqli_fetch_assoc($members)): ?>
             <option value="<?= $m['id_member'] ?>" <?= $filter_member==$m['id_member']?'selected':'' ?>>
-              <?= htmlspecialchars($m['nama']) ?> (<?= $m['poin'] ?> ⭐)
+              <?= htmlspecialchars($m['nama']) ?> (<?= $m['poin'] ?> <i data-lucide="star" class="lucide-ic lucide-fill"></i>)
             </option>
             <?php endwhile; ?>
           </select>
@@ -267,12 +268,12 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,"SELECT SUM(CASE WHEN jenis='Masu
         <tr>
           <td style="font-size:.78em;color:rgba(255,255,255,.5);white-space:nowrap;"><?= date('d M Y H:i',strtotime($d['created_at'])) ?></td>
           <td class="td-nama"><?= htmlspecialchars($d['nama']??'—') ?></td>
-          <td><?php if($d['jenis']==='Masuk'): ?><span class="badge-masuk">↑ Masuk</span>
-              <?php else: ?><span class="badge-keluar">↓ Keluar</span><?php endif; ?></td>
-          <td><span class="poin-val"><?= $d['jenis']==='Masuk'?'+':'-' ?><?= number_format($d['poin']) ?> ⭐</span></td>
+          <td><?php if($d['jenis']==='Masuk'): ?><span class="badge-masuk"><i data-lucide="arrow-up" class="lucide-ic"></i> Masuk</span>
+              <?php else: ?><span class="badge-keluar"><i data-lucide="arrow-down" class="lucide-ic"></i> Keluar</span><?php endif; ?></td>
+          <td><span class="poin-val"><?= $d['jenis']==='Masuk'?'+':'-' ?><?= number_format($d['poin']) ?> <i data-lucide="star" class="lucide-ic lucide-fill"></i></span></td>
           <td style="color:rgba(255,255,255,.6);font-size:.83em;"><?= htmlspecialchars($d['keterangan']??'—') ?></td>
           <td><a href="?hapus=<?= $d['id_riwayat'] ?>&<?= $filter_member?"member=$filter_member":'' ?>"
-               class="btn-hapus-sm" onclick="return confirm('Hapus entri ini? Poin member akan dikembalikan.')">🗑️</a></td>
+               class="btn-hapus-sm" onclick="return confirm('Hapus entri ini? Poin member akan dikembalikan.')"><i data-lucide="trash-2" class="lucide-ic"></i></a></td>
         </tr>
         <?php endwhile; else: ?>
         <tr><td colspan="6"><div class="empty-state">Belum ada riwayat poin</div></td></tr>
@@ -284,14 +285,14 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,"SELECT SUM(CASE WHEN jenis='Masu
 
     <!-- ADD FORM -->
     <div class="form-panel">
-      <h3>➕ Tambah Poin Manual</h3>
+      <h3><i data-lucide="plus" class="lucide-ic"></i> Tambah Poin Manual</h3>
       <form method="POST">
         <div class="form-group">
           <label>Member</label>
           <select name="id_member" class="inp" required>
             <option value="">-- Pilih Member --</option>
             <?php mysqli_data_seek($members,0); while($m=mysqli_fetch_assoc($members)): ?>
-            <option value="<?= $m['id_member'] ?>"><?= htmlspecialchars($m['nama']) ?> (<?= $m['poin'] ?> ⭐)</option>
+            <option value="<?= $m['id_member'] ?>"><?= htmlspecialchars($m['nama']) ?> (<?= $m['poin'] ?> <i data-lucide="star" class="lucide-ic lucide-fill"></i>)</option>
             <?php endwhile; ?>
           </select>
         </div>
@@ -300,11 +301,11 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,"SELECT SUM(CASE WHEN jenis='Masu
           <div class="jenis-row">
             <div>
               <input type="radio" name="jenis" id="jMasuk" value="Masuk" class="jenis-opt jenis-masuk" checked>
-              <label for="jMasuk" class="jenis-label jenis-label-masuk">⬆️ Masuk</label>
+              <label for="jMasuk" class="jenis-label jenis-label-masuk"><i data-lucide="arrow-up" class="lucide-ic"></i> Masuk</label>
             </div>
             <div>
               <input type="radio" name="jenis" id="jKeluar" value="Keluar" class="jenis-opt jenis-keluar">
-              <label for="jKeluar" class="jenis-label jenis-label-keluar">⬇️ Keluar</label>
+              <label for="jKeluar" class="jenis-label jenis-label-keluar"><i data-lucide="arrow-down" class="lucide-ic"></i> Keluar</label>
             </div>
           </div>
         </div>
@@ -316,7 +317,7 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,"SELECT SUM(CASE WHEN jenis='Masu
           <label>Keterangan</label>
           <input type="text" name="keterangan" placeholder="Contoh: Pembelian Americano x2">
         </div>
-        <button type="submit" name="tambah_poin" class="btn-submit">⭐ Simpan Poin</button>
+        <button type="submit" name="tambah_poin" class="btn-submit"><i data-lucide="star" class="lucide-ic lucide-fill"></i> Simpan Poin</button>
       </form>
     </div>
   </div>
@@ -334,5 +335,8 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,"SELECT SUM(CASE WHEN jenis='Masu
   }
 })();
 </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

@@ -70,6 +70,7 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Data Meja – YOLAZCAKE</title>
@@ -216,38 +217,38 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
 
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Manajemen Meja</h1>
     <p class="hero-sub">Kelola status dan kapasitas meja cafe</p>
-    <div class="hero-divider"><span></span><span class="diamond">✦ ✦ ✦</span><span></span></div>
+    <div class="hero-divider"><span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span></div>
   </div>
 </div>
 
 <div class="page-wrapper">
 
-  <a href="../dashboard.php" class="btn-back">← Dashboard</a>
+  <a href="../dashboard.php" class="btn-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Dashboard</a>
 
   <div class="top-bar">
-    <span class="section-eyebrow">✦ Daftar Meja</span>
+    <span class="section-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Daftar Meja</span>
     <a href="tambah_meja.php" class="btn-tambah">+ Tambah Meja</a>
   </div>
 
   <div class="stats-row">
-    <div class="stat-card"><span class="stat-icon">🪑</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="armchair" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= $stats['total'] ?></div><div class="stat-lbl">Total Meja</div></div></div>
-    <div class="stat-card"><span class="stat-icon">✅</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="check-circle" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= $stats['tersedia'] ?></div><div class="stat-lbl">Tersedia</div></div></div>
-    <div class="stat-card"><span class="stat-icon">🔴</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="circle" class="lucide-ic lucide-fill" style="color:#ef4444"></i></span>
       <div><div class="stat-val"><?= $stats['terisi'] ?></div><div class="stat-lbl">Terisi</div></div></div>
-    <div class="stat-card"><span class="stat-icon">📋</span>
+    <div class="stat-card"><span class="stat-icon"><i data-lucide="clipboard-list" class="lucide-ic"></i></span>
       <div><div class="stat-val"><?= $stats['dipesan'] ?></div><div class="stat-lbl">Dipesan</div></div></div>
   </div>
 
   <div class="meja-grid">
     <?php if(mysqli_num_rows($query) > 0): while($d = mysqli_fetch_assoc($query)): ?>
     <div class="meja-card">
-      <div class="meja-num">🪑 <?= htmlspecialchars($d['nomor_meja']) ?></div>
-      <div class="meja-cap">👤 Kapasitas: <?= $d['kapasitas'] ?> orang</div>
+      <div class="meja-num"><i data-lucide="armchair" class="lucide-ic"></i> <?= htmlspecialchars($d['nomor_meja']) ?></div>
+      <div class="meja-cap"><i data-lucide="user" class="lucide-ic"></i> Kapasitas: <?= $d['kapasitas'] ?> orang</div>
       <div class="meja-note"><?= $d['keterangan'] ? htmlspecialchars($d['keterangan']) : '<span style="opacity:.4">Tidak ada keterangan</span>' ?></div>
 
       <?php
@@ -271,13 +272,13 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
       </form>
 
       <div class="meja-actions">
-        <a href="edit_meja.php?id=<?= $d['id_meja'] ?>" class="btn-act btn-edit">✏️ Edit</a>
+        <a href="edit_meja.php?id=<?= $d['id_meja'] ?>" class="btn-act btn-edit"><i data-lucide="pencil" class="lucide-ic"></i> Edit</a>
         <a href="?hapus=<?= $d['id_meja'] ?>" class="btn-act btn-hapus"
-           onclick="return confirm('Yakin hapus meja <?= htmlspecialchars($d['nomor_meja']) ?>?')">🗑️ Hapus</a>
+           onclick="return confirm('Yakin hapus meja <?= htmlspecialchars($d['nomor_meja']) ?>?')"><i data-lucide="trash-2" class="lucide-ic"></i> Hapus</a>
       </div>
     </div>
     <?php endwhile; else: ?>
-    <div class="empty-state"><div class="es-icon">🪑</div><p>Belum ada data meja</p></div>
+    <div class="empty-state"><div class="es-icon"><i data-lucide="armchair" class="lucide-ic"></i></div><p>Belum ada data meja</p></div>
     <?php endif; ?>
   </div>
 
@@ -303,5 +304,8 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
   }
 })();
 </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

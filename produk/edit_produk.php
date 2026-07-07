@@ -83,6 +83,7 @@ if($produk && isset($_POST['update'])){
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Edit Produk – YOLAZCAKE</title>
@@ -443,30 +444,30 @@ if($produk && isset($_POST['update'])){
 <!-- HERO -->
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Edit Produk</h1>
     <p class="hero-sub">Perbarui informasi produk <?= htmlspecialchars($produk['nama_produk']); ?></p>
     <div class="hero-divider">
-      <span></span><span class="diamond">✦ ✦ ✦</span><span></span>
+      <span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span>
     </div>
   </div>
 </div>
 
 <div class="back-link">
-  <a href="data_produk.php">← Kembali ke Data Produk</a>
+  <a href="data_produk.php"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali ke Data Produk</a>
 </div>
 
 <div class="page-wrapper">
 
   <div class="top-bar">
     <div>
-      <div class="new-badge">✏️ Manajemen Produk</div>
+      <div class="new-badge"><i data-lucide="pencil" class="lucide-ic"></i> Manajemen Produk</div>
       <h2 class="section-title" style="margin-top:10px;">Form Edit Produk</h2>
     </div>
   </div>
 
   <div class="main-card">
-    <div class="gold-rule-h"><span>✦ ✦ ✦</span></div>
+    <div class="gold-rule-h"><span><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span></div>
 
     <form method="POST" enctype="multipart/form-data">
 
@@ -474,14 +475,14 @@ if($produk && isset($_POST['update'])){
 
         <?php if($error_msg): ?>
         <div style="background:rgba(255,80,80,.12);border:1px solid rgba(255,80,80,.4);color:#ffb3b3;padding:12px 16px;border-radius:12px;font-size:.85em;">
-          ⚠️ <?= htmlspecialchars($error_msg); ?>
+          <i data-lucide="alert-triangle" class="lucide-ic"></i> <?= htmlspecialchars($error_msg); ?>
         </div>
         <?php endif; ?>
 
         <!-- Nama Produk -->
         <div class="form-group">
           <label class="form-label">
-            <span class="lbl-icon">🎂</span> Nama Produk
+            <span class="lbl-icon"><i data-lucide="cake" class="lucide-ic"></i></span> Nama Produk
           </label>
           <input
             type="text"
@@ -495,7 +496,7 @@ if($produk && isset($_POST['update'])){
         <!-- Kategori -->
         <div class="form-group">
           <label class="form-label">
-            <span class="lbl-icon">🏷️</span> Kategori Produk
+            <span class="lbl-icon"><i data-lucide="tag" class="lucide-ic"></i></span> Kategori Produk
           </label>
           <select name="id_kategori" class="form-input">
             <option value="">— Tanpa Kategori (Lainnya) —</option>
@@ -514,7 +515,7 @@ if($produk && isset($_POST['update'])){
         <div class="form-row">
           <div class="form-group" style="animation-delay:.88s">
             <label class="form-label">
-              <span class="lbl-icon">💰</span> Harga (Rp)
+              <span class="lbl-icon"><i data-lucide="wallet" class="lucide-ic"></i></span> Harga (Rp)
             </label>
             <input
               type="number"
@@ -528,7 +529,7 @@ if($produk && isset($_POST['update'])){
           </div>
           <div class="form-group" style="animation-delay:1.01s">
             <label class="form-label">
-              <span class="lbl-icon">📦</span> Stok
+              <span class="lbl-icon"><i data-lucide="package" class="lucide-ic"></i></span> Stok
             </label>
             <input
               type="number"
@@ -545,7 +546,7 @@ if($produk && isset($_POST['update'])){
         <!-- Deskripsi -->
         <div class="form-group" style="animation-delay:1.14s">
           <label class="form-label">
-            <span class="lbl-icon">📝</span> Deskripsi Produk
+            <span class="lbl-icon"><i data-lucide="file-text" class="lucide-ic"></i></span> Deskripsi Produk
           </label>
           <textarea
             name="deskripsi"
@@ -559,7 +560,7 @@ if($produk && isset($_POST['update'])){
         <!-- Foto saat ini -->
         <div class="form-group" style="animation-delay:1.2s">
           <label class="form-label">
-            <span class="lbl-icon">🖼️</span> Foto Saat Ini
+            <span class="lbl-icon"><i data-lucide="image" class="lucide-ic"></i></span> Foto Saat Ini
           </label>
           <div class="current-photo-wrap">
             <img src="../assets/img/produk/<?= htmlspecialchars($produk['foto']); ?>" alt="<?= htmlspecialchars($produk['nama_produk']); ?>">
@@ -573,7 +574,7 @@ if($produk && isset($_POST['update'])){
         <!-- Ganti Foto -->
         <div class="form-group" style="animation-delay:1.27s">
           <label class="form-label">
-            <span class="lbl-icon">📸</span> Ganti Foto (Opsional)
+            <span class="lbl-icon"><i data-lucide="camera" class="lucide-ic"></i></span> Ganti Foto (Opsional)
           </label>
           <div class="file-upload-wrap" id="fileWrap">
             <input
@@ -582,7 +583,7 @@ if($produk && isset($_POST['update'])){
               id="fileInput"
               accept="image/*"
             >
-            <div class="file-upload-icon">🖼️</div>
+            <div class="file-upload-icon"><i data-lucide="image" class="lucide-ic"></i></div>
             <div class="file-upload-label">
               <strong>Klik untuk memilih foto baru</strong> atau seret &amp; lepas di sini<br>
               Format: JPG, PNG, WEBP · Maks. 5 MB
@@ -597,8 +598,8 @@ if($produk && isset($_POST['update'])){
       </div><!-- /.form-body -->
 
       <div class="btn-submit-wrap">
-        <a href="data_produk.php" class="btn-premium btn-cancel">✕ Batal</a>
-        <button type="submit" name="update" class="btn-premium btn-update">✦ Update Produk</button>
+        <a href="data_produk.php" class="btn-premium btn-cancel"><i data-lucide="x" class="lucide-ic"></i> Batal</a>
+        <button type="submit" name="update" class="btn-premium btn-update"><i data-lucide="sparkle" class="lucide-ic"></i> Update Produk</button>
       </div>
 
     </form>
@@ -681,5 +682,8 @@ if($produk && isset($_POST['update'])){
   });
 </script>
 
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>

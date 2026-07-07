@@ -95,6 +95,7 @@ mysqli_data_seek($query,0);
 <!DOCTYPE html>
 <html lang="id">
 <head>
+  <link rel="stylesheet" href="../assets/css/lucide-icons.css">
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kategori Produk – YOLAZCAKE</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -217,22 +218,22 @@ mysqli_data_seek($query,0);
 <div id="particles"></div>
 <div class="page-hero" id="pageHero">
   <div class="hero-inner">
-    <p class="hero-eyebrow">✦ YOLAZCAKE Sintang ✦</p>
+    <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>
     <h1>Kategori Produk</h1>
     <p class="hero-sub">Kelola pengelompokan menu cafe</p>
-    <div class="hero-divider"><span></span><span class="diamond">✦ ✦ ✦</span><span></span></div>
+    <div class="hero-divider"><span></span><span class="diamond"><i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i> <i data-lucide="sparkle" class="lucide-ic"></i></span><span></span></div>
   </div>
 </div>
 
 <div class="page-wrapper">
-  <a href="../dashboard.php" class="btn-back">← Dashboard</a>
+  <a href="../dashboard.php" class="btn-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Dashboard</a>
 
   <div class="main-grid">
 
     <!-- TABLE -->
     <div class="table-card">
       <div class="card-header">
-        <span class="card-title">🏷️ Daftar Kategori</span>
+        <span class="card-title"><i data-lucide="tag" class="lucide-ic"></i> Daftar Kategori</span>
         <span class="badge-count"><?= $total_kat ?> kategori</span>
       </div>
       <table>
@@ -240,16 +241,16 @@ mysqli_data_seek($query,0);
         <tbody>
         <?php if($total_kat > 0): while($d = mysqli_fetch_assoc($query)): ?>
         <tr>
-          <td class="td-icon"><?= $d['icon'] ?: '🍽️' ?></td>
+          <td class="td-icon"><?= $d['icon'] ?: '<i data-lucide="utensils" class="lucide-ic"></i>' ?></td>
           <td class="td-nama"><?= htmlspecialchars($d['nama_kategori']) ?></td>
           <td style="color:rgba(255,255,255,.55);font-size:.83em;"><?= $d['deskripsi'] ? htmlspecialchars($d['deskripsi']) : '-' ?></td>
-          <td><span class="badge-produk">🍽️ <?= $d['jml_produk'] ?></span></td>
+          <td><span class="badge-produk"><i data-lucide="utensils" class="lucide-ic"></i> <?= $d['jml_produk'] ?></span></td>
           <td>
             <div class="action-cell">
               <button class="btn-act btn-edit"
-                onclick="openEdit(<?= $d['id_kategori'] ?>,'<?= addslashes($d['nama_kategori']) ?>','<?= addslashes($d['deskripsi']) ?>','<?= $d['icon'] ?>')">✏️ Edit</button>
+                onclick="openEdit(<?= $d['id_kategori'] ?>,'<?= addslashes($d['nama_kategori']) ?>','<?= addslashes($d['deskripsi']) ?>','<?= $d['icon'] ?>')"><i data-lucide="pencil" class="lucide-ic"></i> Edit</button>
               <a href="?hapus=<?= $d['id_kategori'] ?>" class="btn-act btn-hapus"
-                 onclick="return confirm('Hapus kategori <?= htmlspecialchars($d['nama_kategori']) ?>? Produk terkait tidak akan dihapus.')">🗑️</a>
+                 onclick="return confirm('Hapus kategori <?= htmlspecialchars($d['nama_kategori']) ?>? Produk terkait tidak akan dihapus.')"><i data-lucide="trash-2" class="lucide-ic"></i></a>
             </div>
           </td>
         </tr>
@@ -262,7 +263,7 @@ mysqli_data_seek($query,0);
 
     <!-- ADD FORM -->
     <div class="form-panel">
-      <h3>➕ Tambah Kategori</h3>
+      <h3><i data-lucide="plus" class="lucide-ic"></i> Tambah Kategori</h3>
       <form method="POST">
         <div class="form-group">
           <label>Nama Kategori</label>
@@ -274,14 +275,14 @@ mysqli_data_seek($query,0);
         </div>
         <div class="form-group">
           <label>Icon Emoji</label>
-          <input type="text" name="icon" id="iconInput" placeholder="🍽️" maxlength="5">
+          <input type="text" name="icon" id="iconInput" placeholder="<i data-lucide="utensils" class="lucide-ic"></i>" maxlength="5">
           <div class="icon-row">
-            <?php foreach(['🥤','🍰','🎂','🍟','☕','🧁','🍜','🥪','🍹','🧃'] as $ic): ?>
+            <?php foreach(['<i data-lucide="cup-soda" class="lucide-ic"></i>','<i data-lucide="cake-slice" class="lucide-ic"></i>','<i data-lucide="cake" class="lucide-ic"></i>','<i data-lucide="utensils-crossed" class="lucide-ic"></i>','<i data-lucide="coffee" class="lucide-ic"></i>','<i data-lucide="cake-slice" class="lucide-ic"></i>','<i data-lucide="soup" class="lucide-ic"></i>','<i data-lucide="sandwich" class="lucide-ic"></i>','<i data-lucide="martini" class="lucide-ic"></i>','<i data-lucide="cup-soda" class="lucide-ic"></i>'] as $ic): ?>
             <button type="button" class="icon-btn" onclick="document.getElementById('iconInput').value='<?= $ic ?>'"><?= $ic ?></button>
             <?php endforeach; ?>
           </div>
         </div>
-        <button type="submit" name="tambah" class="btn-submit">✅ Simpan Kategori</button>
+        <button type="submit" name="tambah" class="btn-submit"><i data-lucide="check-circle" class="lucide-ic"></i> Simpan Kategori</button>
       </form>
     </div>
   </div>
@@ -290,8 +291,8 @@ mysqli_data_seek($query,0);
 <!-- EDIT MODAL -->
 <div class="modal-overlay" id="editModal">
   <div class="modal">
-    <button class="modal-close" onclick="closeEdit()">✕</button>
-    <h3>✏️ Edit Kategori</h3>
+    <button class="modal-close" onclick="closeEdit()"><i data-lucide="x" class="lucide-ic"></i></button>
+    <h3><i data-lucide="pencil" class="lucide-ic"></i> Edit Kategori</h3>
     <form method="POST">
       <input type="hidden" name="id_kategori" id="editId">
       <div class="form-group" style="margin-bottom:16px;">
@@ -306,7 +307,7 @@ mysqli_data_seek($query,0);
         <label>Icon</label>
         <input type="text" name="icon" id="editIcon" maxlength="5">
       </div>
-      <button type="submit" name="edit" class="btn-submit">💾 Simpan</button>
+      <button type="submit" name="edit" class="btn-submit"><i data-lucide="save" class="lucide-ic"></i> Simpan</button>
     </form>
   </div>
 </div>
@@ -333,5 +334,8 @@ document.getElementById('editModal').addEventListener('click',function(e){if(e.t
   }
 })();
 </script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>if(window.lucide){lucide.createIcons();}</script>
 </body>
 </html>
