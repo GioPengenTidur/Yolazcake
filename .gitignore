@@ -1,5 +1,4 @@
-# === Kredensial & konfigurasi sensitif — JANGAN pernah di-push ===
-config/koneksi.php
+# === Kredensial sensitif (API key & App Password asli) — JANGAN pernah di-push ===
 config/gemini_config.php
 config/mail_config.php
 
