@@ -458,14 +458,14 @@ $stmtItems->close();
 
   <!-- ITEM PESANAN -->
   <?php if(!empty($items)): ?>
-  <div class="detail-card" style="margin-top:20px;">
+  <div class="detail-card" style="margin-top:20px;padding:10px;">
     <div class="gold-rule"><span>✦ Item Pesanan ✦</span></div>
-    <table style="width:100%;border-collapse:collapse;color:#fff;">
+    <table style="width:100%;border:none;color:#fff;">
       <thead>
         <tr style="border-bottom:1px solid rgba(212,175,55,.3);">
-          <th style="text-align:left;padding:8px;font-size:.85em;opacity:.7;">Produk</th>
-          <th style="text-align:center;padding:8px;font-size:.85em;opacity:.7;">Qty</th>
-          <th style="text-align:right;padding:8px;font-size:.85em;opacity:.7;">Subtotal</th>
+          <th style="text-align:left;padding:8px;font-size:.85em;opacity:.7;width:10px;">Produk</th>
+          <th style="text-align:center;padding:8px;font-size:.85em;opacity:.7;width:10px;">Qty</th>
+          <th style="text-align:right;padding:8px;font-size:.85em;opacity:.7;width:10px;">Subtotal</th>
         </tr>
       </thead>
       <tbody>
