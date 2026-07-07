@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 06 Jul 2026 pada 17.00
+-- Waktu pembuatan: 07 Jul 2026 pada 09.05
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.1.25
 
@@ -59,7 +59,8 @@ INSERT INTO `booking` (`id_booking`, `id_member`, `id_user`, `nama_pemesan`, `no
 (15, NULL, NULL, 'anonim', '989898', '2026-06-30', '11:22:00', 2, 'tes aja', 'Dikonfirmasi', '2026-06-29 16:17:48', NULL),
 (18, NULL, NULL, 'anonim', '23', '2026-07-05', '19:24:00', 2, '', 'Dikonfirmasi', '2026-07-04 11:24:11', NULL),
 (19, NULL, 10, 'yoyon', '111111', '2026-07-06', '12:06:00', 2, '', 'Pending', '2026-07-04 19:04:03', NULL),
-(20, NULL, 10, 'yoyon', '0898866755', '2026-07-06', '18:16:00', 1, '', 'Pending', '2026-07-04 19:16:08', NULL);
+(20, NULL, 10, 'yoyon', '0898866755', '2026-07-06', '18:16:00', 1, '', 'Pending', '2026-07-04 19:16:08', NULL),
+(21, NULL, 5, 'yoyon', '12345555', '2026-07-08', '12:39:00', 1, '', 'Pending', '2026-07-07 04:39:38', NULL);
 
 -- --------------------------------------------------------
 
@@ -87,7 +88,8 @@ INSERT INTO `detail_pemesanan` (`id_detail`, `id_pemesanan`, `id_produk`, `jumla
 (15, 15, 12, 4, 60000.00),
 (16, 16, 12, 3, 45000.00),
 (17, 17, 12, 2, 30000.00),
-(18, 18, 12, 2, 30000.00);
+(18, 18, 12, 2, 30000.00),
+(19, 19, 12, 2, 30000.00);
 
 -- --------------------------------------------------------
 
@@ -103,6 +105,28 @@ CREATE TABLE `galeri` (
   `foto` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `ig_stats`
+--
+
+CREATE TABLE `ig_stats` (
+  `id` int(11) NOT NULL,
+  `followers` int(11) NOT NULL DEFAULT 0,
+  `following` int(11) NOT NULL DEFAULT 0,
+  `posts` int(11) NOT NULL DEFAULT 0,
+  `updated_by` varchar(100) DEFAULT NULL,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `ig_stats`
+--
+
+INSERT INTO `ig_stats` (`id`, `followers`, `following`, `posts`, `updated_by`, `updated_at`) VALUES
+(1, 5773, 74, 15, 'yoonskyy63@gmail.com', '2026-07-07 01:03:55');
 
 -- --------------------------------------------------------
 
@@ -262,7 +286,8 @@ INSERT INTO `pemesanan` (`id_pemesanan`, `kode_pesanan`, `id_member`, `id_user`,
 (15, 'ORD20260704211532', NULL, 10, '2026-07-04 21:15:32', 60000.00, NULL, 0.00, 19, 'QRIS', 'Lunas', 'Menunggu', 'yoyon', '111111', NULL),
 (16, 'ORD20260704211646', NULL, 10, '2026-07-04 21:16:46', 45000.00, NULL, 0.00, 20, 'QRIS', 'Lunas', 'Menunggu', 'yoyon', '0898866755', NULL),
 (17, 'ORD20260704211718', NULL, 10, '2026-07-04 21:17:18', 30000.00, NULL, 0.00, 20, 'QRIS', 'Lunas', 'Menunggu', 'yoyon', '0898866755', NULL),
-(18, 'ORD20260704212119', 6, 10, '2026-07-04 21:21:19', 30000.00, NULL, 0.00, 20, 'QRIS', 'Lunas', 'Menunggu', 'yoyon', '0898866755', NULL);
+(18, 'ORD20260704212119', 6, 10, '2026-07-04 21:21:19', 30000.00, NULL, 0.00, 20, 'QRIS', 'Lunas', 'Menunggu', 'yoyon', '0898866755', NULL),
+(19, 'ORD20260707064013', NULL, 5, '2026-07-07 06:40:13', 30000.00, NULL, 0.00, 21, 'QRIS', 'Lunas', 'Menunggu', 'yoyon', '12345555', NULL);
 
 -- --------------------------------------------------------
 
@@ -286,7 +311,7 @@ CREATE TABLE `produk` (
 --
 
 INSERT INTO `produk` (`id_produk`, `nama_produk`, `harga`, `deskripsi`, `foto`, `stok`, `created_at`, `id_kategori`) VALUES
-(12, 'Ayam Goreng', 15000.00, 'enak', 'img_6a48f54bd0c1b9.51715188.png', 50, '2026-07-04 11:58:03', 4);
+(12, 'Ayam Goreng', 15000.00, 'enak', 'img_6a48f54bd0c1b9.51715188.png', 48, '2026-07-04 11:58:03', 4);
 
 -- --------------------------------------------------------
 
@@ -338,6 +363,48 @@ CREATE TABLE `riwayat_poin` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `ulasan_produk`
+--
+
+CREATE TABLE `ulasan_produk` (
+  `id_ulasan` int(11) NOT NULL,
+  `id_produk` int(11) NOT NULL,
+  `id_user` int(11) DEFAULT NULL,
+  `nama_reviewer` varchar(100) NOT NULL,
+  `rating` tinyint(1) NOT NULL,
+  `komentar` text DEFAULT NULL,
+  `dibaca` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `ulasan_tempat`
+--
+
+CREATE TABLE `ulasan_tempat` (
+  `id_ulasan_tempat` int(11) NOT NULL,
+  `id_user` int(11) DEFAULT NULL,
+  `id_pemesanan` int(11) DEFAULT NULL,
+  `nama_reviewer` varchar(100) NOT NULL,
+  `rating_makanan` tinyint(1) NOT NULL,
+  `rating_tempat` tinyint(1) NOT NULL,
+  `komentar` text DEFAULT NULL,
+  `dibaca` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ;
+
+--
+-- Dumping data untuk tabel `ulasan_tempat`
+--
+
+INSERT INTO `ulasan_tempat` (`id_ulasan_tempat`, `id_user`, `id_pemesanan`, `nama_reviewer`, `rating_makanan`, `rating_tempat`, `komentar`, `dibaca`, `created_at`) VALUES
+(1, 8, NULL, 'wrkntnkintin@gmail.com', 5, 5, 'kerenn', 1, '2026-07-06 22:56:12');
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `users`
 --
 
@@ -363,9 +430,10 @@ INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `reset_otp`,
 (4, 'kasir2', NULL, '12345', 'kasir', NULL, NULL, 0),
 (5, 'pengunjung1', NULL, '12345', 'pengunjung', NULL, NULL, 0),
 (6, 'pengunjung2', NULL, '$2y$10$sxI0Hrs3vB8PsYnT05lUjeqGcoYXIAqnjC5uT.uEDCUyCiWH1ROZO', 'pengunjung', NULL, NULL, 0),
-(8, 'Yoonsky', 'wrkntnkintin@gmail.com', '$2y$10$Sux1Ehb1icWLQdEJQJGU4uw3zQtz5MT6ptsGfP9Lm40LT209AYz1i', 'admin', '827404', '2026-07-04 19:38:58', 0),
+(8, 'Yoonsky', 'wrkntnkintin@gmail.com', '$2y$10$Sux1Ehb1icWLQdEJQJGU4uw3zQtz5MT6ptsGfP9Lm40LT209AYz1i', 'admin', '827404', '2026-07-04 19:38:58', 1),
 (9, 'Gio', 'twendexo85@gmail.com', '$2y$10$kzXYcQEZvxD7L6FZzsv4nOEhVWJDU8Hr58tf7uPGmydJtoTFIcKo.', 'pengunjung', NULL, NULL, 0),
-(10, 'Tikus Kejepit', 'gionardoalenskii@gmail.com', '$2y$10$dIE2J2vUYSQHeLHw7fYUm.r3eykOFn7Z8dQmPI92absIeW36up5sK', 'pengunjung', NULL, NULL, 0);
+(10, 'Tikus Kejepit', 'gionardoalenskii@gmail.com', '$2y$10$dIE2J2vUYSQHeLHw7fYUm.r3eykOFn7Z8dQmPI92absIeW36up5sK', 'pengunjung', NULL, NULL, 0),
+(11, 'Testing12', 'testing23@gmail.com', '$2y$10$pYksjxQW7wcgf8sXSOVvROVaUYJuQg0boCPaKvZ.j9DyIs0Eg2HNO', 'pengunjung', NULL, NULL, 0);
 
 --
 -- Indexes for dumped tables
@@ -393,6 +461,12 @@ ALTER TABLE `detail_pemesanan`
 --
 ALTER TABLE `galeri`
   ADD PRIMARY KEY (`id_galeri`);
+
+--
+-- Indeks untuk tabel `ig_stats`
+--
+ALTER TABLE `ig_stats`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indeks untuk tabel `kategori`
@@ -467,6 +541,22 @@ ALTER TABLE `riwayat_poin`
   ADD KEY `fk_riwayat_member` (`id_member`);
 
 --
+-- Indeks untuk tabel `ulasan_produk`
+--
+ALTER TABLE `ulasan_produk`
+  ADD PRIMARY KEY (`id_ulasan`),
+  ADD KEY `fk_ulasanproduk_produk` (`id_produk`),
+  ADD KEY `fk_ulasanproduk_user` (`id_user`);
+
+--
+-- Indeks untuk tabel `ulasan_tempat`
+--
+ALTER TABLE `ulasan_tempat`
+  ADD PRIMARY KEY (`id_ulasan_tempat`),
+  ADD KEY `fk_ulasantempat_user` (`id_user`),
+  ADD KEY `fk_ulasantempat_pemesanan` (`id_pemesanan`);
+
+--
 -- Indeks untuk tabel `users`
 --
 ALTER TABLE `users`
@@ -481,19 +571,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT untuk tabel `booking`
 --
 ALTER TABLE `booking`
-  MODIFY `id_booking` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id_booking` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT untuk tabel `detail_pemesanan`
 --
 ALTER TABLE `detail_pemesanan`
-  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT untuk tabel `galeri`
 --
 ALTER TABLE `galeri`
   MODIFY `id_galeri` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `ig_stats`
+--
+ALTER TABLE `ig_stats`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `kategori`
@@ -529,7 +625,7 @@ ALTER TABLE `menu_highlight_foto`
 -- AUTO_INCREMENT untuk tabel `pemesanan`
 --
 ALTER TABLE `pemesanan`
-  MODIFY `id_pemesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_pemesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT untuk tabel `produk`
@@ -556,10 +652,22 @@ ALTER TABLE `riwayat_poin`
   MODIFY `id_riwayat` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `ulasan_produk`
+--
+ALTER TABLE `ulasan_produk`
+  MODIFY `id_ulasan` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `ulasan_tempat`
+--
+ALTER TABLE `ulasan_tempat`
+  MODIFY `id_ulasan_tempat` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
@@ -612,6 +720,20 @@ ALTER TABLE `promo_klaim`
 --
 ALTER TABLE `riwayat_poin`
   ADD CONSTRAINT `fk_riwayat_member` FOREIGN KEY (`id_member`) REFERENCES `member` (`id_member`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `ulasan_produk`
+--
+ALTER TABLE `ulasan_produk`
+  ADD CONSTRAINT `fk_ulasanproduk_produk` FOREIGN KEY (`id_produk`) REFERENCES `produk` (`id_produk`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_ulasanproduk_user` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Ketidakleluasaan untuk tabel `ulasan_tempat`
+--
+ALTER TABLE `ulasan_tempat`
+  ADD CONSTRAINT `fk_ulasantempat_pemesanan` FOREIGN KEY (`id_pemesanan`) REFERENCES `pemesanan` (`id_pemesanan`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_ulasantempat_user` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
