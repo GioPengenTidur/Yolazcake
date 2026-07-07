@@ -1,2 +1,18 @@
+# === Kredensial & konfigurasi sensitif — JANGAN pernah di-push ===
+config/koneksi.php
+config/gemini_config.php
 config/mail_config.php
+
+# Log & file debug
 mail_debug.log
+*.log
+
+# File OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Cache / temp
+*.tmp
+*.bak
