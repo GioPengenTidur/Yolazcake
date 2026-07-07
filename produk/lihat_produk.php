@@ -135,7 +135,7 @@ else { $stok_class='stok-ok'; $stok_label=$stok.' pcs tersedia'; }
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
           <div class="stok-badge <?= $stok_class ?>"><i data-lucide="package" class="lucide-ic"></i> <?= $stok_label ?></div>
           <div class="stok-badge" style="background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.3);color:#D4AF37;">
-            <?= htmlspecialchars($produk['kategori_icon'] ?? '<i data-lucide="utensils" class="lucide-ic"></i>') ?> <?= htmlspecialchars($produk['nama_kategori']) ?>
+            <?= $produk['kategori_icon'] ?: '<i data-lucide="utensils" class="lucide-ic"></i>' ?> <?= htmlspecialchars($produk['nama_kategori']) ?>
           </div>
         </div>
 
@@ -191,8 +191,11 @@ else { $stok_class='stok-ok'; $stok_label=$stok.' pcs tersedia'; }
 <script>
 <?php if ($sudah_login): ?>
 document.getElementById('starInput').addEventListener('click', function(e){
-  if (e.target.tagName !== 'SPAN') return;
-  const val = parseInt(e.target.dataset.val, 10);
+  // Pakai closest() karena setelah lucide.createIcons() jalan, <i data-lucide="star">
+  // berubah jadi <svg> di dalam <span>, jadi klik bisa kena svg/path, bukan span-nya.
+  const target = e.target.closest('span[data-val]');
+  if (!target || !this.contains(target)) return;
+  const val = parseInt(target.dataset.val, 10);
   this.dataset.value = val;
   [...this.children].forEach(s => s.classList.toggle('active', parseInt(s.dataset.val,10) <= val));
 });
@@ -220,13 +223,15 @@ document.getElementById('btnKirimUlasanProduk').addEventListener('click', functi
   .then(data => {
     msg.className = 'form-msg ' + (data.success ? 'ok' : 'err');
     msg.style.display = 'block';
-    msg.textContent = (data.success ? '<i data-lucide="check-circle" class="lucide-ic"></i> ' : '<i data-lucide="alert-triangle" class="lucide-ic"></i> ') + data.message;
+    msg.innerHTML = (data.success ? '<i data-lucide="check-circle" class="lucide-ic"></i> ' : '<i data-lucide="alert-triangle" class="lucide-ic"></i> ') + data.message;
+    if (window.lucide) lucide.createIcons();
     if (data.success) setTimeout(() => window.location.reload(), 1200);
     else { btn.disabled = false; btn.textContent = 'Kirim Ulasan'; }
   })
   .catch(() => {
     msg.className = 'form-msg err'; msg.style.display = 'block';
-    msg.textContent = '<i data-lucide="alert-triangle" class="lucide-ic"></i> Gagal terhubung ke server. Coba lagi.';
+    msg.innerHTML = '<i data-lucide="alert-triangle" class="lucide-ic"></i> Gagal terhubung ke server. Coba lagi.';
+    if (window.lucide) lucide.createIcons();
     btn.disabled = false; btn.textContent = 'Kirim Ulasan';
   });
 });

@@ -41,8 +41,8 @@ $sudahLoginUntukChat = isset($_SESSION['username']);
 
 // Kalau rating-fab lagi tampil (butuh login), chatbot-fab ditumpuk
 // di atasnya. Kalau tidak, chatbot-fab turun menempati posisi dasar.
-$chatFabBottomDesktop = $sudahLoginUntukChat ? 112 : 34;
-$chatFabBottomMobile  = $sudahLoginUntukChat ? 90 : 24;
+$chatFabBottomDesktop = $sudahLoginUntukChat ? 132 : 34;
+$chatFabBottomMobile  = $sudahLoginUntukChat ? 108 : 24;
 
 $iconMode  = defined('CHATBOT_FAB_ICON_MODE') ? CHATBOT_FAB_ICON_MODE : 'default';
 $iconGambar = $chatbotFabBase . (defined('CHATBOT_FAB_IMAGE') ? CHATBOT_FAB_IMAGE : '');
@@ -79,7 +79,8 @@ $iconGambar = $chatbotFabBase . (defined('CHATBOT_FAB_IMAGE') ? CHATBOT_FAB_IMAG
     animation:chatbotIconPulse 2.8s ease-in-out infinite;
   }
   .chatbot-fab-icon img{
-    width:100%; height:100%; object-fit:cover; border-radius:50%;
+    width:100%; height:100%; object-fit:cover; object-position:center;
+    border-radius:50%; transform:scale(1.55); transform-origin:center;
   }
   .chatbot-fab-badge{
     position:absolute; top:-3px; right:-3px; width:17px; height:17px;

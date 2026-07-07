@@ -433,7 +433,7 @@ $query = mysqli_query($conn,
             <td><span class="prod-name"><?= htmlspecialchars($data['nama_produk']); ?></span></td>
             <td>
               <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.3);color:#D4AF37;padding:4px 12px;border-radius:999px;font-size:.78em;white-space:nowrap;">
-                <?= htmlspecialchars($data['kategori_icon'] ?? '<i data-lucide="utensils" class="lucide-ic"></i>'); ?> <?= htmlspecialchars($data['nama_kategori']); ?>
+                <?= $data['kategori_icon'] ?: '<i data-lucide="utensils" class="lucide-ic"></i>'; ?> <?= htmlspecialchars($data['nama_kategori']); ?>
               </span>
             </td>
             <td><span class="prod-price">Rp <?= number_format($data['harga'],0,',','.'); ?></span></td>

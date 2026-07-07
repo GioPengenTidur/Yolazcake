@@ -156,8 +156,11 @@ $nama_default = $_SESSION['username'] ?? '';
   // Bintang interaktif untuk kedua kelompok rating
   document.querySelectorAll('.star-input').forEach(function(group){
     group.addEventListener('click', function(e){
-      if (e.target.tagName !== 'SPAN') return;
-      const val = parseInt(e.target.dataset.val, 10);
+      // Pakai closest() karena setelah lucide.createIcons() jalan, <i data-lucide="star">
+      // berubah jadi <svg> di dalam <span>, jadi klik bisa kena svg/path, bukan span-nya.
+      const target = e.target.closest('span[data-val]');
+      if (!target || !group.contains(target)) return;
+      const val = parseInt(target.dataset.val, 10);
       group.dataset.value = val;
       [...group.children].forEach(function(s){
         s.classList.toggle('active', parseInt(s.dataset.val,10) <= val);
@@ -196,7 +199,8 @@ $nama_default = $_SESSION['username'] ?? '';
     .then(data => {
       msg.className = 'form-msg ' + (data.success ? 'ok' : 'err');
       msg.style.display = 'block';
-      msg.textContent = (data.success ? '<i data-lucide="check-circle" class="lucide-ic"></i> ' : '<i data-lucide="alert-triangle" class="lucide-ic"></i> ') + data.message;
+      msg.innerHTML = (data.success ? '<i data-lucide="check-circle" class="lucide-ic"></i> ' : '<i data-lucide="alert-triangle" class="lucide-ic"></i> ') + data.message;
+      if (window.lucide) lucide.createIcons();
       if (data.success) {
         setTimeout(() => window.location.reload(), 1200);
       } else {
@@ -205,7 +209,8 @@ $nama_default = $_SESSION['username'] ?? '';
     })
     .catch(() => {
       msg.className = 'form-msg err'; msg.style.display='block';
-      msg.textContent = '<i data-lucide="alert-triangle" class="lucide-ic"></i> Gagal terhubung ke server. Coba lagi.';
+      msg.innerHTML = '<i data-lucide="alert-triangle" class="lucide-ic"></i> Gagal terhubung ke server. Coba lagi.';
+      if (window.lucide) lucide.createIcons();
       btn.disabled = false; btn.textContent = 'Kirim Ulasan';
     });
   });

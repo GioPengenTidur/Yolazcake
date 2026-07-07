@@ -451,7 +451,7 @@ if($stok <= 0){
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
           <div class="stok-badge <?= $stok_class; ?>"><i data-lucide="package" class="lucide-ic"></i> <?= $stok_label; ?></div>
           <div class="stok-badge" style="background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.3);color:#D4AF37;">
-            <?= htmlspecialchars($produk['kategori_icon'] ?? '<i data-lucide="utensils" class="lucide-ic"></i>'); ?> <?= htmlspecialchars($produk['nama_kategori']); ?>
+            <?= $produk['kategori_icon'] ?: '<i data-lucide="utensils" class="lucide-ic"></i>'; ?> <?= htmlspecialchars($produk['nama_kategori']); ?>
           </div>
         </div>
 

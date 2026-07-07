@@ -379,7 +379,8 @@ function openDetail(d){
   document.getElementById('mHp').textContent     = d.no_hp || '—';
   document.getElementById('mPesan').textContent  = d.pesan;
   document.getElementById('mTgl').textContent    = d.created_at;
-  document.getElementById('mKategori').textContent = (d.kategori === 'Bantuan Akun') ? '<i data-lucide="key" class="lucide-ic"></i> Bantuan Akun' : '<i data-lucide="message-circle" class="lucide-ic"></i> Umum';
+  document.getElementById('mKategori').innerHTML = (d.kategori === 'Bantuan Akun') ? '<i data-lucide="key" class="lucide-ic"></i> Bantuan Akun' : '<i data-lucide="message-circle" class="lucide-ic"></i> Umum';
+  if (window.lucide) lucide.createIcons();
   document.getElementById('mBtnHapus').href      = '?hapus='+d.id_kontak;
 
   const btnBalas = document.getElementById('mBtnBalas');
@@ -415,7 +416,8 @@ function bacaPesan(d){
   const noteEl = document.getElementById('mBacaStatus');
   noteEl.style.display = '';
   noteEl.className = 'baca-status-note pending';
-  noteEl.textContent = '<i data-lucide="mail" class="lucide-ic"></i> Mengirim notifikasi otomatis ke email pelanggan…';
+  noteEl.innerHTML = '<i data-lucide="mail" class="lucide-ic"></i> Mengirim notifikasi otomatis ke email pelanggan…';
+  if (window.lucide) lucide.createIcons();
 
   fetch('baca_kontak.php', {
     method: 'POST',
@@ -425,14 +427,16 @@ function bacaPesan(d){
   .then(res => res.json())
   .then(data => {
     noteEl.className = 'baca-status-note ' + (data.email_sent ? 'ok' : 'warn');
-    noteEl.textContent = (data.email_sent ? '<i data-lucide="check-circle" class="lucide-ic"></i> ' : '<i data-lucide="alert-triangle" class="lucide-ic"></i> ') + data.message;
+    noteEl.innerHTML = (data.email_sent ? '<i data-lucide="check-circle" class="lucide-ic"></i> ' : '<i data-lucide="alert-triangle" class="lucide-ic"></i> ') + data.message;
+    if (window.lucide) lucide.createIcons();
     d.status = 'Sudah Dibaca';
     currentDetail = d;
     updateRowStatus(d.id_kontak, 'Sudah Dibaca');
   })
   .catch(() => {
     noteEl.className = 'baca-status-note warn';
-    noteEl.textContent = '<i data-lucide="alert-triangle" class="lucide-ic"></i> Gagal terhubung ke server saat mengirim notifikasi.';
+    noteEl.innerHTML = '<i data-lucide="alert-triangle" class="lucide-ic"></i> Gagal terhubung ke server saat mengirim notifikasi.';
+    if (window.lucide) lucide.createIcons();
   });
 }
 
@@ -463,7 +467,8 @@ function bukaBalas(d){
 
   const sendBtn = document.getElementById('btnReplySend');
   sendBtn.disabled = false;
-  sendBtn.textContent = '<i data-lucide="send" class="lucide-ic"></i> Kirim Balasan';
+  sendBtn.innerHTML = '<i data-lucide="send" class="lucide-ic"></i> Kirim Balasan';
+  if (window.lucide) lucide.createIcons();
   if (!d.email) {
     showReplyError('Pelanggan ini tidak mencantumkan alamat email, balasan tidak bisa dikirim.');
     sendBtn.disabled = true;
@@ -509,13 +514,15 @@ function kirimBalasan(){
     } else {
       showReplyError(data.message || 'Gagal mengirim balasan.');
       btn.disabled = false;
-      btn.textContent = '<i data-lucide="send" class="lucide-ic"></i> Kirim Balasan';
+      btn.innerHTML = '<i data-lucide="send" class="lucide-ic"></i> Kirim Balasan';
+      if (window.lucide) lucide.createIcons();
     }
   })
   .catch(() => {
     showReplyError('Gagal terhubung ke server. Coba lagi.');
     btn.disabled = false;
-    btn.textContent = '<i data-lucide="send" class="lucide-ic"></i> Kirim Balasan';
+    btn.innerHTML = '<i data-lucide="send" class="lucide-ic"></i> Kirim Balasan';
+    if (window.lucide) lucide.createIcons();
   });
 }
 

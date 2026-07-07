@@ -897,7 +897,7 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
         $isAct = ($filter_kat === $kid);
       ?>
       <a href="?kat=<?= $kid ?>" class="filter-pill <?= $isAct ? 'active' : '' ?>">
-        <span class="pill-icon"><?= htmlspecialchars($k['icon'] ?? '<i data-lucide="cake-slice" class="lucide-ic"></i>') ?></span>
+        <span class="pill-icon"><?= $k['icon'] ?: '<i data-lucide="cake-slice" class="lucide-ic"></i>' ?></span>
         <?= htmlspecialchars($k['nama_kategori']) ?>
         <span class="pill-count"><?= $cnt ?></span>
       </a>
@@ -926,7 +926,7 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
     while($k = mysqli_fetch_assoc($kat_query)){
       if((int)$k['id_kategori'] === $filter_kat){
         $active_cat_name = htmlspecialchars($k['nama_kategori']);
-        $active_cat_icon = htmlspecialchars($k['icon'] ?? '<i data-lucide="cake-slice" class="lucide-ic"></i>');
+        $active_cat_icon = $k['icon'] ?: '<i data-lucide="cake-slice" class="lucide-ic"></i>';
         break;
       }
     }

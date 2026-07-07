@@ -275,9 +275,9 @@ mysqli_data_seek($query,0);
         </div>
         <div class="form-group">
           <label>Icon Emoji</label>
-          <input type="text" name="icon" id="iconInput" placeholder="<i data-lucide="utensils" class="lucide-ic"></i>" maxlength="5">
+          <input type="text" name="icon" id="iconInput" placeholder="🍽️" maxlength="5">
           <div class="icon-row">
-            <?php foreach(['<i data-lucide="cup-soda" class="lucide-ic"></i>','<i data-lucide="cake-slice" class="lucide-ic"></i>','<i data-lucide="cake" class="lucide-ic"></i>','<i data-lucide="utensils-crossed" class="lucide-ic"></i>','<i data-lucide="coffee" class="lucide-ic"></i>','<i data-lucide="cake-slice" class="lucide-ic"></i>','<i data-lucide="soup" class="lucide-ic"></i>','<i data-lucide="sandwich" class="lucide-ic"></i>','<i data-lucide="martini" class="lucide-ic"></i>','<i data-lucide="cup-soda" class="lucide-ic"></i>'] as $ic): ?>
+            <?php foreach(['🥤','🍩','🎂','🍽️','☕','🧁','🍲','🥪','🍸','🍹'] as $ic): ?>
             <button type="button" class="icon-btn" onclick="document.getElementById('iconInput').value='<?= $ic ?>'"><?= $ic ?></button>
             <?php endforeach; ?>
           </div>

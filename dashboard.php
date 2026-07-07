@@ -1962,12 +1962,14 @@ function toggleSidebar(){
   const btn = document.getElementById('hamburgerBtn');
   const open = sb.classList.toggle('open');
   ov.classList.toggle('open', open);
-  btn.textContent = open ? '<i data-lucide="x" class="lucide-ic"></i>' : '<i data-lucide="menu" class="lucide-ic"></i>';
+  btn.innerHTML = open ? '<i data-lucide="x" class="lucide-ic"></i>' : '<i data-lucide="menu" class="lucide-ic"></i>';
+  if (window.lucide) lucide.createIcons();
 }
 function closeSidebar(){
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sidebarOverlay').classList.remove('open');
-  document.getElementById('hamburgerBtn').textContent = '<i data-lucide="menu" class="lucide-ic"></i>';
+  document.getElementById('hamburgerBtn').innerHTML = '<i data-lucide="menu" class="lucide-ic"></i>';
+  if (window.lucide) lucide.createIcons();
 }
 
 /* ── HERO MEDIA LAYOUT (wallpaper penuh / panel kiri) ── */

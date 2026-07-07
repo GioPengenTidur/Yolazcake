@@ -14,5 +14,5 @@
                   contoh: 'assets/img/logo/chatbot-icon.png')
    ============================================================ */
 
-define('CHATBOT_FAB_ICON_MODE', 'default'); // 'default' atau 'gambar'
-define('CHATBOT_FAB_IMAGE', 'assets/img/logo/chatbot-icon.png');
+define('CHATBOT_FAB_ICON_MODE', 'gambar'); // 'default' atau 'gambar'
+define('CHATBOT_FAB_IMAGE', 'assets/img/logo/yola-ai-icon.png');

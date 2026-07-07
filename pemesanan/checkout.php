@@ -649,7 +649,7 @@ $total_bayar = $total - $diskon_nominal;
           <input
             type="text"
             name="kode_promo"
-            placeholder="<i data-lucide="sparkle" class="lucide-ic"></i> Punya kode promo?"
+            placeholder="Punya kode promo?"
             style="text-transform:uppercase;"
             value="<?= $promo_aktif ? htmlspecialchars($promo_aktif['kode_promo']) : '' ?>"
             <?= $promo_aktif ? 'readonly' : '' ?>

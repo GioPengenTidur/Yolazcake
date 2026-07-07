@@ -14,8 +14,54 @@ if(!$data){ header("Location: data_menu_foto.php"); exit(); }
 
 $labelSection = ['highlight'=>'Highlights Menu','unggulan'=>'Produk Unggulan'];
 
+// Peta foto bawaan (default) per section/kartu/slide — dipakai untuk fitur
+// "Hapus Foto" (mengembalikan slide ke foto asli, bukan menghapus barisnya,
+// karena struktur 1 kartu = 3 slide bersifat tetap mengikuti produk/menu.php).
+$fotoDefault = [
+    'highlight' => [
+        0 => ['assets/img/produk/Doughnut.jpeg', 'assets/img/produk/Tiramisu_Doughnut.jpeg', 'assets/img/produk/Matcha_Doughnut.jpeg'],
+        1 => ['assets/img/produk/Iced Palm Sugar Coffee Latte.jpeg', 'assets/img/produk/Coffee_Latte.jpeg', 'assets/img/produk/Coffee_Latte_2.jpeg'],
+        2 => ['assets/img/produk/Iced_Chocolate.jpeg', 'assets/img/produk/Matcha_Latte.jpeg', 'assets/img/produk/Lychee_Iced_Tea.jpeg'],
+        3 => ['assets/img/produk/Boutique_Lantai_2.jpeg', 'assets/img/produk/Boutique_Lantai_2_1.jpeg', 'assets/img/produk/Boutique_Lantai_2_2.jpeg'],
+    ],
+    'unggulan' => [
+        0 => ['assets/img/produk/Chocolate_Indulgence.jpeg', 'assets/img/produk/Klepon_Cake.jpeg', 'assets/img/produk/Red_Velvet_Cake.jpeg'],
+        1 => ['assets/img/produk/Iced_Palm_Sugar_Coffee_Latte.jpeg', 'assets/img/produk/Iced_Brown_Sugar_Coffee_Latte.jpeg', 'assets/img/produk/Matcha_Latte.jpeg'],
+        2 => ['assets/img/produk/Strawberry_Doughnut.jpeg', 'assets/img/produk/Classic_Chocolate_Doughnut.jpeg', 'assets/img/produk/Red_Velvet_Doughnut.jpeg'],
+        3 => ['assets/img/produk/Boutique_Collection.jpeg', 'assets/img/produk/Baju.jpeg', 'assets/img/produk/Celana.jpeg'],
+    ],
+];
+$fotoPathDefault = $fotoDefault[$data['section']][$data['card_index']][$data['slide_index']] ?? null;
+$isCustomFoto    = strpos($data['foto_path'], 'assets/img/menu_highlight/') === 0;
+
 $error = '';
-if($_SERVER['REQUEST_METHOD']==='POST'){
+
+// Aksi: kembalikan foto ke default (hapus foto custom yang pernah diupload)
+if($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['hapus_foto'])){
+    if($isCustomFoto){
+        $pathLama = "../".$data['foto_path'];
+        if(file_exists($pathLama)) unlink($pathLama);
+    }
+    if($fotoPathDefault){
+        $stmt3 = $conn->prepare("UPDATE menu_highlight_foto SET foto_path = ? WHERE id_foto = ?");
+        $stmt3->bind_param("si", $fotoPathDefault, $id);
+        $stmt3->execute();
+
+        include 'success_overlay.php';
+        tampilkan_sukses([
+            'mode'         => 'hapus',
+            'proses_judul' => 'Menghapus Foto…',
+            'proses_sub'   => 'Sedang mengembalikan foto ke tampilan default',
+            'sukses_judul' => 'Foto Berhasil Dihapus!',
+            'sukses_sub'   => 'Foto pada kartu "'.htmlspecialchars($data['nama_kartu']).'" ('.htmlspecialchars($data['label_slide'] ?? 'Slide').') dikembalikan ke foto default',
+            'redirect'     => 'data_menu_foto.php',
+            'tombol_label' => 'Lanjutkan ke Data Foto Menu',
+        ]);
+        exit;
+    }
+}
+
+if($_SERVER['REQUEST_METHOD']==='POST' && isset($_FILES['foto'])){
     if(!isset($_FILES['foto']) || $_FILES['foto']['error'] !== 0){
         $error = "Silakan pilih foto baru untuk diupload!";
     } else {
@@ -105,6 +151,13 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
     .btn-back:hover{transform:translateX(-3px);background:rgba(212,175,55,.2);}
     .alert-err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#fca5a5;
       padding:12px 16px;border-radius:10px;font-size:.85em;margin-bottom:20px;}
+    .btn-hapus{width:100%;padding:13px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35);
+      color:#fca5a5;font-size:.85em;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+      border-radius:12px;cursor:pointer;margin-top:12px;transition:background .3s,border-color .3s;}
+    .btn-hapus:hover{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.55);}
+    .btn-hapus:disabled{opacity:.4;cursor:not-allowed;}
+    .divider-or{display:flex;align-items:center;gap:10px;margin:22px 0 6px;color:rgba(255,255,255,.35);font-size:.72em;letter-spacing:1px;text-transform:uppercase;}
+    .divider-or::before,.divider-or::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.12);}
   </style>
 </head>
 <body>
@@ -132,6 +185,17 @@ if($_SERVER['REQUEST_METHOD']==='POST'){
       </div>
       <button type="submit" class="btn-submit"><i data-lucide="save" class="lucide-ic"></i> Simpan Perubahan</button>
     </form>
+
+    <?php if($fotoPathDefault): ?>
+    <div class="divider-or">atau</div>
+    <form method="POST" onsubmit="return confirm('Kembalikan foto kartu «<?= htmlspecialchars(addslashes($data['nama_kartu'])) ?>» (<?= htmlspecialchars($data['label_slide'] ?? ('Slide '.($data['slide_index']+1))) ?>) ke foto default? Foto custom yang pernah diupload akan dihapus.');">
+      <input type="hidden" name="hapus_foto" value="1">
+      <button type="submit" class="btn-hapus" <?= $isCustomFoto ? '' : 'disabled' ?>>
+        <i data-lucide="trash-2" class="lucide-ic"></i>
+        <?= $isCustomFoto ? 'Hapus Foto (Kembalikan ke Default)' : 'Sudah Memakai Foto Default' ?>
+      </button>
+    </form>
+    <?php endif; ?>
   </div>
 </div>
 

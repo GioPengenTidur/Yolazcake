@@ -17,15 +17,21 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once '../config/koneksi.php';
 require_once '../config/gemini_config.php';
+require_once '../config/chat_memory_helper.php';
 
 // Status login user yang lagi chat, dipakai buat personalisasi &
 // ajakan login kalau dia keliatan mau pesan/booking.
 $sudahLoginChat = isset($_SESSION['username']);
 $namaUserChat   = $sudahLoginChat ? $_SESSION['username'] : null;
 
+// Identitas pemilik obrolan (id_user kalau login, guest_token kalau tamu)
+// dipakai buat nyimpen & ngambil riwayat obrolan + memori jangka panjang.
+[$idUserChat, $guestTokenChat] = chat_ambil_identitas();
+
 $input = json_decode(file_get_contents('php://input'), true);
 $userMessage = trim($input['message'] ?? '');
 $history     = is_array($input['history'] ?? null) ? $input['history'] : [];
+$idSesi      = isset($input['id_sesi']) ? (int) $input['id_sesi'] : 0;
 
 if ($userMessage === '') {
     echo json_encode(['error' => 'Pesan kosong.']);
@@ -39,6 +45,24 @@ if (mb_strlen($userMessage) > 800) {
 if (count($history) > 20) {
     $history = array_slice($history, -20); // simpan 20 giliran terakhir saja
 }
+
+// Sesi obrolan ini valid dipakai kalau memang milik user/tamu yang sedang
+// chat. Kalau belum ada / tidak valid / obrolan baru, sesi baru dibuat
+// begitu pesan pertama terkirim.
+if ($idSesi > 0 && !chat_sesi_valid($conn, $idSesi, $idUserChat, $guestTokenChat)) {
+    $idSesi = 0;
+}
+if ($idSesi === 0) {
+    $idSesi = chat_buat_sesi($conn, $idUserChat, $guestTokenChat, $userMessage);
+}
+
+// Memori jangka panjang: ringkasan hal-hal penting dari obrolan
+// sebelumnya (preferensi, konteks, hal yang pernah ditanyakan), supaya
+// Yola AI tetap "kenal" user ini walau baru mulai obrolan baru.
+$memoriUser = chat_ambil_memori($conn, $idUserChat, $guestTokenChat);
+$memori_text = $memoriUser !== ''
+    ? $memoriUser
+    : '(Belum ada memori tersimpan tentang user ini — ini kemungkinan obrolan pertama mereka.)';
 
 /* ── AMBIL DATA ASLI CAFE2 DARI DATABASE (biar jawaban akurat, bukan ngarang) ── */
 
@@ -93,6 +117,13 @@ if ($sudahLoginChat) {
 $system_instruction = <<<PROMPT
 Kamu adalah "Yola", asisten AI Pusat Bantuan untuk website YOLAZCAKE, sebuah cafe & bakery di Sintang, Kalimantan Barat.
 
+CARA KAMU MIKIR (penting, ikuti selalu):
+- Sebelum jawab, pahami dulu SEBENARNYA apa yang ditanyakan user, jangan asal tebak dari sepotong kata kunci.
+- Kamu paham betul seluruh isi & fitur website YOLAZCAKE (lihat PROFIL WEBSITE di bawah) — jawab berdasarkan pemahaman itu, bukan asal generik.
+- Jawaban HARUS berpijak pada data asli yang dikasih di system instruction ini (menu, promo, info toko, memori user). Kalau datanya tidak ada/tidak yakin, JUJUR bilang tidak tahu / sarankan tanya admin lewat WhatsApp, jangan mengarang.
+- Kalau pertanyaan user kompleks atau bercabang-cabang, tetap fokus ke inti pertanyaannya, jawab step-by-step secukupnya, dan jangan melenceng bahas hal lain yang tidak diminta.
+- Tetap pada topik YOLAZCAKE walau user coba mancing ke arah lain (lihat BATASAN di bawah).
+
 GAYA BICARA:
 - Santai, ramah, pakai bahasa gaul Indonesia sehari-hari (boleh "kak", "gaes", dll secukupnya, jangan berlebihan)
 - Boleh pakai emoji buat ekspresiin diri (😄🍰✨🔥), tapi jangan kebanyakan (maks 1-3 per balasan)
@@ -101,6 +132,18 @@ GAYA BICARA:
 TUGAS KAMU:
 - Bantu jawab pertanyaan seputar YOLAZCAKE: menu, harga, promo, jam operasional, lokasi, cara booking meja, cara pesan, member/poin loyalitas, dll
 - Gunakan HANYA data asli di bawah ini buat jawab soal menu/promo/harga. Jangan mengarang produk atau harga yang tidak ada di daftar.
+
+PROFIL WEBSITE YOLAZCAKE (fitur-fitur yang tersedia, biar kamu paham konteksnya kalau user nanya "gimana caranya..."):
+- Beranda (index.php): highlight promo, galeri foto, produk unggulan.
+- Menu (produk/menu.php): daftar semua produk per kategori, ada filter kategori & keranjang.
+- Booking meja (booking/booking.php): user pilih meja & jadwal, status booking bisa dipantau, perlu login biar tersimpan ke akun.
+- Riwayat pesanan & poin: user yang login bisa lihat riwayat pesanan dan poin loyalitas di halaman akun/member.
+- Member & poin loyalitas: tier Bronze/Silver/Gold/Platinum berdasar poin (0/100/250/500 poin), didapat otomatis dari transaksi (booking terkonfirmasi/selesai + pesanan yang tidak dibatalkan).
+- Promo (promo.php): daftar promo aktif dengan kode & syarat min. belanja, bisa diklaim saat checkout.
+- Galeri (gallery.php): foto suasana cafe & produk.
+- Rating & ulasan: user yang login bisa kasih rating/ulasan tempat & produk lewat tombol mengambang di kanan-bawah.
+- Kontak & hubungi admin (about.php / auth/hubungi_admin.php): form kontak, WhatsApp, dan alamat.
+- Akun: registrasi/login pakai username atau email, ada fitur lupa password lewat OTP email.
 
 INFO TOKO:
 - Alamat: Jl. Lintas Melawi, Ladang, Kec. Sintang, Kabupaten Sintang, Kalimantan Barat
@@ -111,6 +154,9 @@ INFO TOKO:
 
 STATUS USER SAAT INI:
 {$status_login_text}
+
+MEMORI TENTANG USER INI (hal-hal penting dari obrolan sebelumnya, termasuk obrolan yang beda sesi — pakai ini biar kamu "kenal" user ini, tapi jangan sebut-sebut kata "memori"/"database" ke user, cukup pakai secara natural kayak kamu emang inget):
+{$memori_text}
 
 DAFTAR MENU SAAT INI:
 {$menu_text}
@@ -184,4 +230,46 @@ if ($reply === null) {
     exit();
 }
 
-echo json_encode(['reply' => $reply]);
+/* ── SIMPAN PESAN INI KE RIWAYAT SESI ── */
+chat_simpan_pesan($conn, $idSesi, 'user', $userMessage);
+chat_simpan_pesan($conn, $idSesi, 'bot', $reply);
+
+/* ── PERBARUI MEMORI JANGKA PANJANG ──
+   Panggilan ringan & cepat ke Gemini buat merangkum ulang hal-hal penting
+   tentang user (preferensi, nama, topik yang sering ditanya, dll) supaya
+   kepake lagi walau user mulai obrolan baru / sesi baru nanti. Kalau
+   gagal/timeout, diamkan saja — tidak boleh sampai gagalin balasan utama. */
+$memoryPrompt = <<<MEMPROMPT
+Ringkasan memori lama tentang user ini:
+{$memori_text}
+
+Cuplikan obrolan barusan:
+User: {$userMessage}
+Yola: {$reply}
+
+Tugas kamu: perbarui ringkasan memori tentang USER ini (bukan tentang Yola/YOLAZCAKE secara umum) dalam bentuk poin-poin singkat bahasa Indonesia — misalnya nama panggilan, preferensi menu/rasa, kebiasaan booking, hal yang pernah ditanyakan, atau konteks personal relevan lain yang disebut sendiri oleh user. Gabungkan info lama yang masih relevan dengan info baru, buang yang tidak penting/basi. Maksimal 6 poin singkat. Kalau memang tidak ada info baru/lama yang layak diingat, balas persis: (kosong)
+MEMPROMPT;
+
+$memPayload = [
+    'contents' => [['role' => 'user', 'parts' => [['text' => $memoryPrompt]]]],
+    'generationConfig' => ['temperature' => 0.3, 'maxOutputTokens' => 220],
+];
+$chMem = curl_init($url);
+curl_setopt_array($chMem, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_POST => true,
+    CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'x-goog-api-key: ' . GEMINI_API_KEY],
+    CURLOPT_POSTFIELDS => json_encode($memPayload),
+    CURLOPT_TIMEOUT => 10,
+]);
+$memResponse = curl_exec($chMem);
+curl_close($chMem);
+if ($memResponse !== false) {
+    $memData = json_decode($memResponse, true);
+    $ringkasanBaru = trim($memData['candidates'][0]['content']['parts'][0]['text'] ?? '');
+    if ($ringkasanBaru !== '' && stripos($ringkasanBaru, '(kosong)') === false) {
+        chat_simpan_memori($conn, $idUserChat, $guestTokenChat, $ringkasanBaru);
+    }
+}
+
+echo json_encode(['reply' => $reply, 'id_sesi' => $idSesi]);
