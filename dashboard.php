@@ -28,6 +28,23 @@ $s_ulasan_produk = $q_up ? mysqli_fetch_assoc($q_up) : ['t'=>0,'p'=>0];
 $q_ut = mysqli_query($conn,"SELECT COUNT(*) AS t, SUM(dibaca=0) AS p FROM ulasan_tempat");
 $s_ulasan_tempat = $q_ut ? mysqli_fetch_assoc($q_ut) : ['t'=>0,'p'=>0];
 
+/* ── PREDIKSI MEMBER CHURN: hitung member yg >=30 hari gak ada transaksi ──
+   Logika sama persis dgn prediksi_churn.php (ambang hari & sumber data
+   terakhir aktif dari pemesanan/booking), cuma disini cukup COUNT saja
+   supaya ringan buat ditampilkan di dashboard. */
+$ambang_churn_hari = 30;
+$q_churn = mysqli_query($conn,"
+  SELECT COUNT(*) AS berisiko FROM (
+    SELECT m.id_member,
+      GREATEST(
+        COALESCE((SELECT MAX(p.tanggal) FROM pemesanan p WHERE p.id_member = m.id_member), '1970-01-01 00:00:00'),
+        COALESCE((SELECT MAX(b.created_at) FROM booking b WHERE b.id_member = m.id_member), '1970-01-01 00:00:00')
+      ) AS terakhir_aktif
+    FROM member m
+  ) x WHERE x.terakhir_aktif <= (NOW() - INTERVAL $ambang_churn_hari DAY)
+");
+$s_churn = $q_churn ? mysqli_fetch_assoc($q_churn) : ['berisiko'=>0];
+
 /* Total produk yang butuh perhatian (habis + menipis) */
 $s_stok_bermasalah = (int)($s_produk['habis'] ?? 0) + (int)($s_produk['menipis'] ?? 0);
 
@@ -893,6 +910,7 @@ body::before{
 .mgmt-card.m2{animation:fadeUp .7s forwards .45s;}
 .mgmt-card.m3{animation:fadeUp .7s forwards .55s;}
 .mgmt-card.m4{animation:fadeUp .7s forwards .65s;}
+.mgmt-card.m5{animation:fadeUp .7s forwards .75s;}
 
 /* animated top border */
 .mgmt-card::before{
@@ -924,6 +942,7 @@ body::before{
 .mgmt-card.pemesanan{--mc-glow:rgba(238,42,123,.08);}
 .mgmt-card.produk{--mc-glow:rgba(138,43,226,.08);}
 .mgmt-card.member{--mc-glow:rgba(46,213,115,.08);}
+.mgmt-card.churn{--mc-glow:rgba(246,87,122,.1);}
 
 .mc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
 
@@ -1357,6 +1376,12 @@ body::before{
       <a class="sb-link" href="meja/data_meja.php">
         <span class="sb-link-icon"><i data-lucide="armchair" class="lucide-ic"></i></span> Meja
       </a>
+      <a class="sb-link" href="meja/qr_meja.php">
+        <span class="sb-link-icon"><i data-lucide="qr-code" class="lucide-ic"></i></span> QR Meja
+      </a>
+      <a class="sb-link" href="pemesanan/antrian_live.php">
+        <span class="sb-link-icon"><i data-lucide="radio" class="lucide-ic"></i></span> Live Antrian
+      </a>
       <a class="sb-link" href="kategori/data_kategori.php">
         <span class="sb-link-icon"><i data-lucide="tag" class="lucide-ic"></i></span> Kategori Produk
       </a>
@@ -1399,6 +1424,12 @@ body::before{
       <div class="sb-section-label">Admin</div>
       <a class="sb-link" href="user/data_user.php">
         <span class="sb-link-icon"><i data-lucide="lock-keyhole" class="lucide-ic"></i></span> Kelola Akun
+      </a>
+      <a class="sb-link" href="prediksi_churn.php">
+        <span class="sb-link-icon"><i data-lucide="user-x" class="lucide-ic"></i></span> Prediksi Member Churn
+        <?php if((int)($s_churn['berisiko'] ?? 0) > 0): ?>
+          <span class="sb-link-badge sb-link-badge-warn"><?= $s_churn['berisiko'] ?></span>
+        <?php endif; ?>
       </a>
       <?php endif; ?>
 
@@ -1733,6 +1764,26 @@ body::before{
             <a class="btn-add" href="member/tambah_member.php"><i data-lucide="plus" class="lucide-ic"></i> Tambah Member</a>
           </div>
         </div>
+
+        <?php if (($_SESSION['role'] ?? '') === 'admin'): ?>
+        <!-- Prediksi Member Churn -->
+        <div class="mgmt-card churn m5">
+          <div class="mc-top">
+            <div class="mc-icon"><i data-lucide="user-x" class="lucide-ic"></i></div>
+            <div class="mc-count"><?= (int)($s_churn['berisiko'] ?? 0) ?></div>
+          </div>
+          <div class="mc-title">Prediksi Member Churn</div>
+          <div class="mc-desc">
+            Deteksi member yang <?= $ambang_churn_hari ?>+ hari tidak bertransaksi, lengkap dengan insight AI dari Yola untuk strategi retensi.
+          </div>
+          <?php if((int)($s_churn['berisiko'] ?? 0) > 0): ?>
+            <div class="pending-tag"><i data-lucide="alert-triangle" class="lucide-ic"></i> <?= $s_churn['berisiko'] ?> member berisiko churn</div>
+          <?php endif; ?>
+          <div class="mc-actions" style="margin-top:18px;">
+            <a class="btn-primary" href="prediksi_churn.php"><i data-lucide="user-x" class="lucide-ic"></i> Lihat Prediksi</a>
+          </div>
+        </div>
+        <?php endif; ?>
 
       </div>
       <!-- end mgmt-grid -->

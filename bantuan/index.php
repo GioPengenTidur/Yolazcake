@@ -140,8 +140,38 @@ if ($sudahLogin) {
     .chat-head h1{font-family:'Playfair Display',serif;font-size:1.15em;font-weight:700;}
     .chat-head .sub{font-size:.72em;color:var(--muted);display:flex;align-items:center;gap:5px;margin-top:2px;}
     .dot-online{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;flex-shrink:0;}
+
+    /* ── Dropdown quick-access: fitur AI tambahan (resep & mood) ── */
+    .fitur-dropdown{position:relative;margin-left:auto;}
+    .fitur-toggle{
+      color:var(--muted);background:none;cursor:pointer;font-size:.78em;
+      font-family:'Inter',sans-serif;display:flex;align-items:center;gap:6px;
+      padding:7px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.1);
+      transition:.2s;
+    }
+    .fitur-toggle:hover,.fitur-toggle.open{color:#fff;background:rgba(255,255,255,.06);}
+    .fitur-toggle .chevron{transition:transform .2s;}
+    .fitur-toggle.open .chevron{transform:rotate(180deg);}
+    .fitur-menu{
+      position:absolute;top:calc(100% + 8px);right:0;min-width:230px;
+      background:rgba(20,12,38,.97);backdrop-filter:blur(20px);
+      border:1px solid rgba(212,175,55,.3);border-radius:14px;
+      box-shadow:0 20px 50px rgba(0,0,0,.5);padding:8px;
+      opacity:0;visibility:hidden;transform:translateY(-6px);
+      transition:.2s;z-index:30;
+    }
+    .fitur-menu.open{opacity:1;visibility:visible;transform:translateY(0);}
+    .fitur-menu a{
+      display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;
+      color:#EDE9FF;text-decoration:none;font-size:.82em;transition:.15s;
+    }
+    .fitur-menu a:hover{background:rgba(212,175,55,.14);}
+    .fitur-menu a .emoji{font-size:1.1em;}
+    .fitur-menu a .fm-desc{display:block;font-size:.82em;color:var(--muted);font-weight:400;margin-top:1px;}
+    .fitur-menu a .fm-title{font-weight:600;}
+
     .chat-back{
-      margin-left:auto;color:var(--muted);text-decoration:none;font-size:.78em;
+      margin-left:10px;color:var(--muted);text-decoration:none;font-size:.78em;
       display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:10px;
       border:1px solid rgba(255,255,255,.1);transition:.2s;
     }
@@ -266,6 +296,29 @@ if ($sudahLogin) {
       <div>
         <h1>Yola · Pusat Bantuan</h1>
         <div class="sub"><span class="dot-online"></span> Siap bantu soal YOLAZCAKE</div>
+      </div>
+      <div class="fitur-dropdown" id="fiturDropdown">
+        <button type="button" class="fitur-toggle" id="fiturToggle">
+          <i data-lucide="sparkles" class="lucide-ic" style="width:14px;height:14px;"></i>
+          Fitur Lain
+          <i data-lucide="chevron-down" class="lucide-ic chevron" style="width:13px;height:13px;"></i>
+        </button>
+        <div class="fitur-menu" id="fiturMenu">
+          <a href="resep_ai.php">
+            <span class="emoji">🍳</span>
+            <span>
+              <span class="fm-title">Resep dari Bahan Sisa</span>
+              <span class="fm-desc">Ide kreasi kue dari bahan yang kamu punya</span>
+            </span>
+          </a>
+          <a href="mood_menu.php">
+            <span class="emoji">✨</span>
+            <span>
+              <span class="fm-title">Cocokin Mood Kamu</span>
+              <span class="fm-desc">Rekomendasi menu sesuai mood & momen</span>
+            </span>
+          </a>
+        </div>
       </div>
       <a href="../index.php" class="chat-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali</a>
     </div>
@@ -460,6 +513,23 @@ function closeSidebarMobile() {
   sidebarOverlay.classList.remove('open');
 }
 if (sidebarToggle) sidebarToggle.addEventListener('click', openSidebarMobile);
+
+// Dropdown "Fitur Lain" (Resep & Mood)
+const fiturToggle = document.getElementById('fiturToggle');
+const fiturMenu    = document.getElementById('fiturMenu');
+if (fiturToggle && fiturMenu) {
+  fiturToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    fiturToggle.classList.toggle('open');
+    fiturMenu.classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#fiturDropdown')) {
+      fiturToggle.classList.remove('open');
+      fiturMenu.classList.remove('open');
+    }
+  });
+}
 if (sidebarOverlay) sidebarOverlay.addEventListener('click', closeSidebarMobile);
 if (newChatBtn) newChatBtn.addEventListener('click', () => { mulaiObrolanBaru(); closeSidebarMobile(); });
 

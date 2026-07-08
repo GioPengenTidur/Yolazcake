@@ -3,6 +3,29 @@ session_start();
 include '../config/koneksi.php';
 require_once '../config/ulasan_helper.php';
 
+// ── QR MEJA: kalau URL bawa ?meja=NOMOR (hasil scan QR di meja), simpan
+// nomor meja itu ke session supaya nempel terus sampai checkout, tanpa
+// pelanggan perlu input manual atau panggil pelayan. ──
+if (isset($_GET['meja'])) {
+    $nomor_meja_scan = trim($_GET['meja']);
+    $stmtMejaScan = $conn->prepare("SELECT id_meja, nomor_meja, status FROM meja WHERE nomor_meja = ?");
+    $stmtMejaScan->bind_param("s", $nomor_meja_scan);
+    $stmtMejaScan->execute();
+    $mejaScan = $stmtMejaScan->get_result()->fetch_assoc();
+    $stmtMejaScan->close();
+    if ($mejaScan && $mejaScan['status'] !== 'Tidak Aktif') {
+        $_SESSION['meja_aktif']    = $mejaScan['nomor_meja'];
+        $_SESSION['id_meja_aktif'] = $mejaScan['id_meja'];
+    }
+}
+// Tombol "batalkan/ganti meja" di banner
+if (isset($_GET['keluar_meja'])) {
+    unset($_SESSION['meja_aktif'], $_SESSION['id_meja_aktif']);
+    header("Location: menuu.php");
+    exit();
+}
+$meja_aktif = $_SESSION['meja_aktif'] ?? null;
+
 // Query produk dengan JOIN ke kategori
 $query = mysqli_query($conn,
     "SELECT p.*, COALESCE(k.nama_kategori, 'Lainnya') as nama_kategori, k.icon as kategori_icon
@@ -782,6 +805,26 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
   <a href="../index.php"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali ke Beranda</a>
 </div>
 
+<?php if ($meja_aktif): ?>
+<div style="position:relative;z-index:2;max-width:1100px;margin:18px auto 0;padding:0 32px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+              background:linear-gradient(135deg,rgba(110,250,188,.14),rgba(110,250,188,.05));
+              border:1px solid rgba(110,250,188,.35);border-radius:16px;padding:14px 22px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="width:38px;height:38px;border-radius:50%;background:rgba(110,250,188,.18);
+                    display:flex;align-items:center;justify-content:center;color:#6efabc;flex-shrink:0;">
+        <i data-lucide="armchair" class="lucide-ic"></i>
+      </span>
+      <div>
+        <div style="font-size:.7em;letter-spacing:1.5px;text-transform:uppercase;color:#6efabc;">Pesan Langsung dari Meja</div>
+        <div style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.15em;color:#fff;">Meja <?= htmlspecialchars($meja_aktif) ?></div>
+      </div>
+    </div>
+    <a href="?keluar_meja=1" style="font-size:.75em;color:rgba(255,255,255,.55);text-decoration:underline;">Bukan meja kamu? Ganti/batalkan</a>
+  </div>
+</div>
+<?php endif; ?>
+
 <!-- ═══════════ PAGE WRAPPER ═══════════ -->
 <div class="page-wrapper">
 
@@ -793,6 +836,9 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
     </div>
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
       <span class="badge-live"><span class="blip"></span>Menu Tersedia</span>
+      <a href="lacak.php" class="btn-premium" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#fff;">
+        <i data-lucide="map-pin" class="lucide-ic"></i> Lacak Pesanan
+      </a>
       <a href="keranjang.php" class="btn-premium btn-green">
         <i data-lucide="shopping-cart" class="lucide-ic"></i> Keranjang
         <?php if($total_keranjang > 0): ?>

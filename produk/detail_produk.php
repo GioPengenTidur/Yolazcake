@@ -4,9 +4,12 @@ require_once __DIR__.'/../config/staff_guard.php';
 require_staff_login();
 include '../config/koneksi.php';
 require_once '../config/ulasan_helper.php';
+require_once __DIR__.'/../config/csrf_helper.php';
+$csrf = csrf_token();
 
 // Moderasi: admin bisa menghapus ulasan langsung dari halaman ini
 if (isset($_GET['hapus_ulasan'])) {
+    csrf_verify_or_die($_GET['csrf'] ?? null, 'detail_produk.php?id='.(int)($_GET['id'] ?? 0));
     $idUlasan = (int)$_GET['hapus_ulasan'];
     $stmtHapus = $conn->prepare("DELETE FROM ulasan_produk WHERE id_ulasan=?");
     $stmtHapus->bind_param("i", $idUlasan);
@@ -466,7 +469,7 @@ if($stok <= 0){
 
         <div class="detail-actions">
           <a href="edit_produk.php?id=<?= $produk['id_produk']; ?>" class="btn-premium btn-edit"><i data-lucide="pencil" class="lucide-ic"></i> Edit Produk</a>
-          <a href="hapus.php?id=<?= $produk['id_produk']; ?>"
+          <a href="hapus.php?id=<?= $produk['id_produk']; ?>&csrf=<?= urlencode($csrf); ?>"
              class="btn-premium btn-hapus"
              onclick="return confirm('Yakin ingin menghapus produk ini?')"><i data-lucide="trash-2" class="lucide-ic"></i> Hapus</a>
           <a href="data_produk.php" class="btn-premium btn-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali</a>
@@ -501,7 +504,7 @@ if($stok <= 0){
         <?php if (!empty($u['komentar'])): ?>
           <div class="review-item-text"><?= nl2br(htmlspecialchars($u['komentar'])) ?></div>
         <?php endif; ?>
-        <a href="?id=<?= $id ?>&hapus_ulasan=<?= $u['id_ulasan'] ?>" class="review-item-del"
+        <a href="?id=<?= $id ?>&hapus_ulasan=<?= $u['id_ulasan'] ?>&csrf=<?= urlencode($csrf) ?>" class="review-item-del"
            onclick="return confirm('Hapus ulasan ini?')"><i data-lucide="trash-2" class="lucide-ic"></i> Hapus Ulasan</a>
       </div>
     <?php endforeach; else: ?>

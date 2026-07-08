@@ -15,6 +15,11 @@ if (($_SESSION['role'] ?? '') !== 'admin') {
     respond_json(false, 'Hanya admin yang bisa melakukan aksi ini.');
 }
 
+require_once __DIR__.'/../config/csrf_helper.php';
+if (!csrf_is_valid($_POST['csrf'] ?? null)) {
+    respond_json(false, 'Token keamanan tidak valid. Silakan muat ulang halaman dan coba lagi.');
+}
+
 require_once '../config/koneksi.php';
 
 $id = (int) ($_POST['id'] ?? 0);

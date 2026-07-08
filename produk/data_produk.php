@@ -3,6 +3,8 @@ session_start();
 require_once __DIR__.'/../config/staff_guard.php';
 require_staff_login();
 include '../config/koneksi.php';
+require_once __DIR__.'/../config/csrf_helper.php';
+$csrf = csrf_token();
 
 $query = mysqli_query($conn,
     "SELECT p.*, COALESCE(k.nama_kategori, 'Lainnya') AS nama_kategori, k.icon AS kategori_icon
@@ -442,7 +444,7 @@ $query = mysqli_query($conn,
               <div class="action-wrap">
                 <a href="detail_produk.php?id=<?= $data['id_produk']; ?>" class="btn-act btn-detail"><i data-lucide="search" class="lucide-ic"></i> Detail</a>
                 <a href="edit_produk.php?id=<?= $data['id_produk']; ?>" class="btn-act btn-edit"><i data-lucide="pencil" class="lucide-ic"></i> Edit</a>
-                <a href="hapus.php?id=<?= $data['id_produk']; ?>"
+                <a href="hapus.php?id=<?= $data['id_produk']; ?>&csrf=<?= urlencode($csrf); ?>"
                    class="btn-act btn-hapus"
                    onclick="return confirm('Yakin ingin menghapus produk ini?')"><i data-lucide="trash-2" class="lucide-ic"></i> Hapus</a>
               </div>

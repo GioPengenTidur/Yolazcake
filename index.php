@@ -19,7 +19,7 @@ session_start();
 <body>
 
 <?php
-// ==================== PREMIUM ENTRY ANIMATION ====================
+// ==================== ENTRY ANIMATION ====================
 // Overlay ini hanya boleh tampil jika user SUDAH LOGIN dan memulai
 // sesi baru di tab/browser (bukan sekadar pindah halaman, refresh,
 // atau pindah tab lalu kembali). Logikanya dijalankan lewat

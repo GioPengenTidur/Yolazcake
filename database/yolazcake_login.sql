@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 07 Jul 2026 pada 22.29
+-- Waktu pembuatan: 08 Jul 2026 pada 23.26
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.1.25
 
@@ -50,7 +50,6 @@ INSERT INTO `booking` (`id_booking`, `id_member`, `id_user`, `nama_pemesan`, `no
 (1, NULL, NULL, 'yoonskyy', '0898866755', '2026-06-01', '04:08:00', 1, 'Weenakk poll', 'Dikonfirmasi', '2026-06-16 19:06:54', NULL),
 (2, NULL, NULL, 'yoyon', '0844278423', '2026-06-16', '02:21:00', 1, 'g ada', 'Dibatalkan', '2026-06-16 19:19:49', NULL),
 (3, NULL, NULL, 'tes', '12423423', '2026-06-16', '01:58:00', 2, '222', 'Dibatalkan', '2026-06-16 19:22:19', NULL),
-(4, NULL, NULL, 'd', '12', '2026-06-17', '10:03:00', 1, '11', 'Pending', '2026-06-16 19:32:02', NULL),
 (5, NULL, NULL, '12', '23', '2026-06-17', '10:36:00', 1, '', 'Dibatalkan', '2026-06-16 19:32:33', NULL),
 (7, NULL, NULL, 'df', '865644', '2026-06-17', '19:36:00', 1, '', 'Dikonfirmasi', '2026-06-16 19:33:11', NULL),
 (9, NULL, NULL, 'lol', '456777', '2026-06-17', '20:36:00', 1, '', 'Dibatalkan', '2026-06-16 19:33:47', NULL),
@@ -58,9 +57,9 @@ INSERT INTO `booking` (`id_booking`, `id_member`, `id_user`, `nama_pemesan`, `no
 (14, NULL, NULL, 'anonim', '989898', '2026-06-30', '11:22:00', 2, 'tes aja', 'Dibatalkan', '2026-06-29 16:17:14', 2),
 (15, NULL, NULL, 'anonim', '989898', '2026-06-30', '11:22:00', 2, 'tes aja', 'Dikonfirmasi', '2026-06-29 16:17:48', NULL),
 (18, NULL, NULL, 'anonim', '23', '2026-07-05', '19:24:00', 2, '', 'Dikonfirmasi', '2026-07-04 11:24:11', NULL),
-(19, NULL, NULL, 'yoyon', '111111', '2026-07-06', '12:06:00', 2, '', 'Pending', '2026-07-04 19:04:03', NULL),
-(20, NULL, NULL, 'yoyon', '0898866755', '2026-07-06', '18:16:00', 1, '', 'Pending', '2026-07-04 19:16:08', NULL),
-(21, NULL, 5, 'yoyon', '12345555', '2026-07-08', '12:39:00', 1, '', 'Pending', '2026-07-07 04:39:38', NULL);
+(19, NULL, NULL, 'yoyon', '111111', '2026-07-06', '12:06:00', 2, '', 'Dibatalkan', '2026-07-04 19:04:03', NULL),
+(20, NULL, NULL, 'yoyon', '0898866755', '2026-07-06', '18:16:00', 1, '', 'Dibatalkan', '2026-07-04 19:16:08', NULL),
+(21, NULL, 5, 'yoyon', '12345555', '2026-07-08', '12:39:00', 1, '', 'Dibatalkan', '2026-07-07 04:39:38', NULL);
 
 -- --------------------------------------------------------
 
@@ -81,7 +80,7 @@ CREATE TABLE `chat_memori` (
 --
 
 INSERT INTO `chat_memori` (`id_memori`, `id_user`, `guest_token`, `ringkasan`, `diperbarui_pada`) VALUES
-(1, 1, NULL, '*   Nama pengguna/ID: y', '2026-07-08 03:18:20');
+(1, 1, NULL, '*   Nama panggilan: Kak Yoon', '2026-07-09 03:14:18');
 
 -- --------------------------------------------------------
 
@@ -97,6 +96,14 @@ CREATE TABLE `chat_pesan` (
   `dibuat_pada` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data untuk tabel `chat_pesan`
+--
+
+INSERT INTO `chat_pesan` (`id_pesan`, `id_sesi`, `peran`, `isi`, `dibuat_pada`) VALUES
+(13, 5, 'user', 'hai', '2026-07-08 18:51:10'),
+(14, 5, 'bot', 'Hai juga! 👋 Ada yang bisa Yola bantu seputar YOLAZCAKE? 😄', '2026-07-08 18:51:10');
+
 -- --------------------------------------------------------
 
 --
@@ -111,6 +118,13 @@ CREATE TABLE `chat_sesi` (
   `dibuat_pada` datetime NOT NULL DEFAULT current_timestamp(),
   `diperbarui_pada` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `chat_sesi`
+--
+
+INSERT INTO `chat_sesi` (`id_sesi`, `id_user`, `guest_token`, `judul`, `dibuat_pada`, `diperbarui_pada`) VALUES
+(5, NULL, '7614504d088869bc8f02c4f9e38ed54eb2f18c8c', 'hai', '2026-07-08 18:51:09', '2026-07-08 18:51:10');
 
 -- --------------------------------------------------------
 
@@ -139,7 +153,9 @@ INSERT INTO `detail_pemesanan` (`id_detail`, `id_pemesanan`, `id_produk`, `jumla
 (16, 16, 12, 3, 45000.00),
 (17, 17, 12, 2, 30000.00),
 (18, 18, 12, 2, 30000.00),
-(19, 19, 12, 2, 30000.00);
+(19, 19, 12, 2, 30000.00),
+(20, 20, 12, 1, 15000.00),
+(21, 21, 12, 2, 30000.00);
 
 -- --------------------------------------------------------
 
@@ -268,6 +284,9 @@ CREATE TABLE `member` (
   `no_hp` varchar(20) DEFAULT NULL,
   `alamat` text DEFAULT NULL,
   `poin` int(11) DEFAULT 0,
+  `streak_saat_ini` int(11) NOT NULL DEFAULT 0,
+  `streak_terbaik` int(11) NOT NULL DEFAULT 0,
+  `checkin_terakhir` date DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -275,11 +294,44 @@ CREATE TABLE `member` (
 -- Dumping data untuk tabel `member`
 --
 
-INSERT INTO `member` (`id_member`, `id_user`, `nama`, `email`, `no_hp`, `alamat`, `poin`, `created_at`) VALUES
-(2, NULL, 'Amba', 'kangkung@gmail.com', '089129817656', 'ngawi', 9, '2026-06-09 15:38:36'),
-(3, NULL, 'tes', 'gionardoalenski@itbss.ac.id', '0891298263633', 'ITBSS', 10, '2026-06-14 17:06:14'),
-(5, 9, 'GioNa', 'twendexo85@gmail.com', '11111111111', 'Sintang', 100, '2026-07-04 15:19:42'),
-(6, NULL, 'gionardoalenskii@gmail.com', 'gionardoalenskii@gmail.com', '', '', 0, '2026-07-04 19:21:19');
+INSERT INTO `member` (`id_member`, `id_user`, `nama`, `email`, `no_hp`, `alamat`, `poin`, `streak_saat_ini`, `streak_terbaik`, `checkin_terakhir`, `created_at`) VALUES
+(2, NULL, 'Amba', 'kangkung@gmail.com', '089129817656', 'ngawi', 9, 0, 0, NULL, '2026-06-09 15:38:36'),
+(3, NULL, 'tes', 'gionardoalenski@itbss.ac.id', '0891298263633', 'ITBSS', 11, 0, 0, NULL, '2026-06-14 17:06:14'),
+(5, 9, 'GioNa', 'twendexo85@gmail.com', '11111111111', 'Sintang', 99, 1, 1, '2026-07-08', '2026-07-04 15:19:42'),
+(6, NULL, 'gionardoalenskii@gmail.com', 'gionardoalenskii@gmail.com', '', '', 0, 0, 0, NULL, '2026-07-04 19:21:19');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `member_badge`
+--
+
+CREATE TABLE `member_badge` (
+  `id_badge_diraih` int(11) NOT NULL,
+  `id_member` int(11) NOT NULL,
+  `kode_badge` varchar(40) NOT NULL,
+  `earned_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `member_checkin`
+--
+
+CREATE TABLE `member_checkin` (
+  `id_checkin` int(11) NOT NULL,
+  `id_member` int(11) NOT NULL,
+  `tanggal` date NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `member_checkin`
+--
+
+INSERT INTO `member_checkin` (`id_checkin`, `id_member`, `tanggal`, `created_at`) VALUES
+(1, 5, '2026-07-08', '2026-07-07 21:49:45');
 
 -- --------------------------------------------------------
 
@@ -330,6 +382,30 @@ INSERT INTO `menu_highlight_foto` (`id_foto`, `section`, `card_index`, `slide_in
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `notifikasi_member`
+--
+
+CREATE TABLE `notifikasi_member` (
+  `id_notif` int(11) NOT NULL,
+  `id_member` int(11) NOT NULL,
+  `tipe` varchar(30) NOT NULL,
+  `judul` varchar(150) NOT NULL,
+  `pesan` varchar(255) NOT NULL,
+  `link` varchar(150) DEFAULT NULL,
+  `is_read` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `notifikasi_member`
+--
+
+INSERT INTO `notifikasi_member` (`id_notif`, `id_member`, `tipe`, `judul`, `pesan`, `link`, `is_read`, `created_at`) VALUES
+(1, 3, 'kado_poin', 'Kado Poin Diterima! 🎁', 'Kamu dapet kado 1 poin dari GioNa! Pesannya: \"tes\"', '../member/member.php', 0, '2026-07-07 22:00:28');
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `pemesanan`
 --
 
@@ -356,18 +432,42 @@ CREATE TABLE `pemesanan` (
 --
 
 INSERT INTO `pemesanan` (`id_pemesanan`, `kode_pesanan`, `id_member`, `id_user`, `tanggal`, `total_harga`, `kode_promo`, `diskon_nominal`, `id_booking`, `metode_pembayaran`, `status_pembayaran`, `status_pesanan`, `nama_pemesan`, `no_hp`, `nomor_meja`) VALUES
-(4, 'ORD20260617190835', NULL, NULL, '2026-06-17 19:08:35', 79000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Menunggu', '12', '0898866755', NULL),
-(5, 'ORD20260617192710', NULL, NULL, '2026-06-17 19:27:10', 18000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Menunggu', 'yoyon', '23', NULL),
-(6, 'ORD20260618050138', NULL, NULL, '2026-06-18 05:01:38', 18000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Menunggu', 'sasxadsad', '0891298263633', NULL),
-(11, 'ORD20260704172724', NULL, NULL, '2026-07-04 17:27:24', 60000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Menunggu', 'GioNA', '12345555', NULL),
+(4, 'ORD20260617190835', NULL, NULL, '2026-06-17 19:08:35', 79000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Selesai', '12', '0898866755', NULL),
+(5, 'ORD20260617192710', NULL, NULL, '2026-06-17 19:27:10', 18000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Dibatalkan', 'yoyon', '23', NULL),
+(6, 'ORD20260618050138', NULL, NULL, '2026-06-18 05:01:38', 18000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Dibatalkan', 'sasxadsad', '0891298263633', NULL),
+(11, 'ORD20260704172724', NULL, NULL, '2026-07-04 17:27:24', 60000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Dibatalkan', 'GioNA', '12345555', NULL),
 (12, 'ORD20260704173003', NULL, NULL, '2026-07-04 17:30:03', 120000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Selesai', 'GioNA', '12345555', NULL),
-(13, 'ORD20260704174054', NULL, NULL, '2026-07-04 17:40:54', 105000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Menunggu', 'GioNA', '12345555', NULL),
-(14, 'ORD20260704210432', NULL, NULL, '2026-07-04 21:04:32', 135000.00, NULL, 0.00, 19, 'QRIS', 'Lunas', 'Menunggu', 'yoyon', '111111', NULL),
-(15, 'ORD20260704211532', NULL, NULL, '2026-07-04 21:15:32', 60000.00, NULL, 0.00, 19, 'QRIS', 'Lunas', 'Menunggu', 'yoyon', '111111', NULL),
-(16, 'ORD20260704211646', NULL, NULL, '2026-07-04 21:16:46', 45000.00, NULL, 0.00, 20, 'QRIS', 'Lunas', 'Menunggu', 'yoyon', '0898866755', NULL),
-(17, 'ORD20260704211718', NULL, NULL, '2026-07-04 21:17:18', 30000.00, NULL, 0.00, 20, 'QRIS', 'Lunas', 'Menunggu', 'yoyon', '0898866755', NULL),
-(18, 'ORD20260704212119', 6, NULL, '2026-07-04 21:21:19', 30000.00, NULL, 0.00, 20, 'QRIS', 'Lunas', 'Menunggu', 'yoyon', '0898866755', NULL),
-(19, 'ORD20260707064013', NULL, 5, '2026-07-07 06:40:13', 30000.00, NULL, 0.00, 21, 'QRIS', 'Lunas', 'Menunggu', 'yoyon', '12345555', NULL);
+(13, 'ORD20260704174054', NULL, NULL, '2026-07-04 17:40:54', 105000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Dibatalkan', 'GioNA', '12345555', NULL),
+(14, 'ORD20260704210432', NULL, NULL, '2026-07-04 21:04:32', 135000.00, NULL, 0.00, 19, 'QRIS', 'Lunas', 'Dibatalkan', 'yoyon', '111111', NULL),
+(15, 'ORD20260704211532', NULL, NULL, '2026-07-04 21:15:32', 60000.00, NULL, 0.00, 19, 'QRIS', 'Lunas', 'Dibatalkan', 'yoyon', '111111', NULL),
+(16, 'ORD20260704211646', NULL, NULL, '2026-07-04 21:16:46', 45000.00, NULL, 0.00, 20, 'QRIS', 'Lunas', 'Dibatalkan', 'yoyon', '0898866755', NULL),
+(17, 'ORD20260704211718', NULL, NULL, '2026-07-04 21:17:18', 30000.00, NULL, 0.00, 20, 'QRIS', 'Lunas', 'Dibatalkan', 'yoyon', '0898866755', NULL),
+(18, 'ORD20260704212119', 6, NULL, '2026-07-04 21:21:19', 30000.00, NULL, 0.00, 20, 'QRIS', 'Lunas', 'Dibatalkan', 'yoyon', '0898866755', NULL),
+(19, 'ORD20260707064013', NULL, 5, '2026-07-07 06:40:13', 30000.00, NULL, 0.00, 21, 'QRIS', 'Lunas', 'Dibatalkan', 'yoyon', '12345555', NULL),
+(20, 'ORD20260708143014', NULL, 1, '2026-07-08 14:30:14', 15000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Dibatalkan', 'yoyon', '0898866755', 'M01'),
+(21, 'ORD20260708143334', NULL, 1, '2026-07-08 14:33:34', 30000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Dibatalkan', 'yoyon', '0898866755', 'M01');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `poin_transfer`
+--
+
+CREATE TABLE `poin_transfer` (
+  `id_transfer` int(11) NOT NULL,
+  `id_pengirim` int(11) NOT NULL,
+  `id_penerima` int(11) NOT NULL,
+  `poin` int(11) NOT NULL,
+  `pesan` varchar(150) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `poin_transfer`
+--
+
+INSERT INTO `poin_transfer` (`id_transfer`, `id_pengirim`, `id_penerima`, `poin`, `pesan`, `created_at`) VALUES
+(1, 5, 3, 1, 'tes', '2026-07-07 22:00:28');
 
 -- --------------------------------------------------------
 
@@ -391,7 +491,7 @@ CREATE TABLE `produk` (
 --
 
 INSERT INTO `produk` (`id_produk`, `nama_produk`, `harga`, `deskripsi`, `foto`, `stok`, `created_at`, `id_kategori`) VALUES
-(12, 'Ayam Goreng', 15000.00, 'enak', 'img_6a48f54bd0c1b9.51715188.png', 48, '2026-07-04 11:58:03', 4);
+(12, 'Ayam Goreng', 15000.00, 'enak', 'img_6a48f54bd0c1b9.51715188.png', 45, '2026-07-04 11:58:03', 4);
 
 -- --------------------------------------------------------
 
@@ -439,6 +539,58 @@ CREATE TABLE `riwayat_poin` (
   `keterangan` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `riwayat_poin`
+--
+
+INSERT INTO `riwayat_poin` (`id_riwayat`, `id_member`, `jenis`, `poin`, `keterangan`, `created_at`) VALUES
+(1, 5, 'Keluar', 1, 'Kado poin untuk tes — \"tes\"', '2026-07-07 22:00:28'),
+(2, 3, 'Masuk', 1, 'Kado poin dari GioNa — \"tes\"', '2026-07-07 22:00:28');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `split_bill`
+--
+
+CREATE TABLE `split_bill` (
+  `id_split` int(11) NOT NULL,
+  `id_pemesanan` int(11) NOT NULL,
+  `token` varchar(40) NOT NULL,
+  `jumlah_orang` int(11) NOT NULL,
+  `nominal_per_orang` decimal(10,2) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `split_bill`
+--
+
+INSERT INTO `split_bill` (`id_split`, `id_pemesanan`, `token`, `jumlah_orang`, `nominal_per_orang`, `created_at`) VALUES
+(1, 21, 'ed8acd02c1ee9e4b6881c733b3a41648f8c07536', 2, 15000.00, '2026-07-08 12:34:16');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `split_bill_bayar`
+--
+
+CREATE TABLE `split_bill_bayar` (
+  `id_bayar` int(11) NOT NULL,
+  `id_split` int(11) NOT NULL,
+  `nama_peserta` varchar(60) NOT NULL,
+  `status_bayar` enum('Belum','Sudah') NOT NULL DEFAULT 'Belum',
+  `dibayar_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `split_bill_bayar`
+--
+
+INSERT INTO `split_bill_bayar` (`id_bayar`, `id_split`, `nama_peserta`, `status_bayar`, `dibayar_at`) VALUES
+(1, 1, 'Peserta 1', 'Belum', NULL),
+(2, 1, 'Peserta 2', 'Belum', NULL);
 
 -- --------------------------------------------------------
 
@@ -496,6 +648,7 @@ CREATE TABLE `users` (
   `role` enum('admin','kasir','pengunjung') DEFAULT 'pengunjung',
   `reset_otp` varchar(6) DEFAULT NULL,
   `reset_otp_expires_at` datetime DEFAULT NULL,
+  `reset_otp_attempts` tinyint(3) UNSIGNED NOT NULL DEFAULT 0,
   `sudah_mode_serius` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -503,14 +656,14 @@ CREATE TABLE `users` (
 -- Dumping data untuk tabel `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `reset_otp`, `reset_otp_expires_at`, `sudah_mode_serius`) VALUES
-(1, 'admin', 'yoonskyy63@gmail.com', '$2y$10$yt3h70JgHXAuj76M2xjmCe3dJkkIMVY7Y90zJCwvYwQm6YnIYrfpK', 'admin', NULL, NULL, 1),
-(2, 'admin2', NULL, '12345', 'admin', NULL, NULL, 0),
-(3, 'kasir1', NULL, '12345', 'kasir', NULL, NULL, 0),
-(4, 'kasir2', NULL, '12345', 'kasir', NULL, NULL, 0),
-(5, 'pengunjung1', NULL, '12345', 'pengunjung', NULL, NULL, 0),
-(6, 'pengunjung2', NULL, '$2y$10$sxI0Hrs3vB8PsYnT05lUjeqGcoYXIAqnjC5uT.uEDCUyCiWH1ROZO', 'pengunjung', NULL, NULL, 0),
-(9, 'Gio', 'twendexo85@gmail.com', '$2y$10$54LKGHtR2c/ktfTXrmYuRutIDv3cV9NtmQM3eFI7xPhKhJYdfCD8C', 'pengunjung', NULL, NULL, 0);
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `reset_otp`, `reset_otp_expires_at`, `reset_otp_attempts`, `sudah_mode_serius`) VALUES
+(1, 'admin', 'yoonskyy63@gmail.com', '$2y$10$yt3h70JgHXAuj76M2xjmCe3dJkkIMVY7Y90zJCwvYwQm6YnIYrfpK', 'admin', NULL, NULL, 0, 1),
+(2, 'admin2', NULL, '12345', 'admin', NULL, NULL, 0, 0),
+(3, 'kasir1', NULL, '12345', 'kasir', NULL, NULL, 0, 0),
+(4, 'kasir2', NULL, '12345', 'kasir', NULL, NULL, 0, 0),
+(5, 'pengunjung1', NULL, '12345', 'pengunjung', NULL, NULL, 0, 0),
+(6, 'pengunjung2', NULL, '$2y$10$sxI0Hrs3vB8PsYnT05lUjeqGcoYXIAqnjC5uT.uEDCUyCiWH1ROZO', 'pengunjung', NULL, NULL, 0, 0),
+(9, 'Gio', 'twendexo85@gmail.com', '$2y$10$54LKGHtR2c/ktfTXrmYuRutIDv3cV9NtmQM3eFI7xPhKhJYdfCD8C', 'pengunjung', NULL, NULL, 0, 0);
 
 --
 -- Indexes for dumped tables
@@ -595,10 +748,33 @@ ALTER TABLE `member`
   ADD UNIQUE KEY `id_user` (`id_user`);
 
 --
+-- Indeks untuk tabel `member_badge`
+--
+ALTER TABLE `member_badge`
+  ADD PRIMARY KEY (`id_badge_diraih`),
+  ADD UNIQUE KEY `uniq_member_badge` (`id_member`,`kode_badge`),
+  ADD KEY `id_member` (`id_member`);
+
+--
+-- Indeks untuk tabel `member_checkin`
+--
+ALTER TABLE `member_checkin`
+  ADD PRIMARY KEY (`id_checkin`),
+  ADD UNIQUE KEY `uniq_member_tanggal` (`id_member`,`tanggal`),
+  ADD KEY `id_member` (`id_member`);
+
+--
 -- Indeks untuk tabel `menu_highlight_foto`
 --
 ALTER TABLE `menu_highlight_foto`
   ADD PRIMARY KEY (`id_foto`);
+
+--
+-- Indeks untuk tabel `notifikasi_member`
+--
+ALTER TABLE `notifikasi_member`
+  ADD PRIMARY KEY (`id_notif`),
+  ADD KEY `id_member` (`id_member`);
 
 --
 -- Indeks untuk tabel `pemesanan`
@@ -609,6 +785,14 @@ ALTER TABLE `pemesanan`
   ADD KEY `fk_member` (`id_member`),
   ADD KEY `fk_pemesanan_booking` (`id_booking`),
   ADD KEY `id_user` (`id_user`);
+
+--
+-- Indeks untuk tabel `poin_transfer`
+--
+ALTER TABLE `poin_transfer`
+  ADD PRIMARY KEY (`id_transfer`),
+  ADD KEY `id_pengirim` (`id_pengirim`),
+  ADD KEY `id_penerima` (`id_penerima`);
 
 --
 -- Indeks untuk tabel `produk`
@@ -639,6 +823,21 @@ ALTER TABLE `promo_klaim`
 ALTER TABLE `riwayat_poin`
   ADD PRIMARY KEY (`id_riwayat`),
   ADD KEY `fk_riwayat_member` (`id_member`);
+
+--
+-- Indeks untuk tabel `split_bill`
+--
+ALTER TABLE `split_bill`
+  ADD PRIMARY KEY (`id_split`),
+  ADD UNIQUE KEY `token` (`token`),
+  ADD KEY `id_pemesanan` (`id_pemesanan`);
+
+--
+-- Indeks untuk tabel `split_bill_bayar`
+--
+ALTER TABLE `split_bill_bayar`
+  ADD PRIMARY KEY (`id_bayar`),
+  ADD KEY `id_split` (`id_split`);
 
 --
 -- Indeks untuk tabel `ulasan_produk`
@@ -683,19 +882,19 @@ ALTER TABLE `chat_memori`
 -- AUTO_INCREMENT untuk tabel `chat_pesan`
 --
 ALTER TABLE `chat_pesan`
-  MODIFY `id_pesan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_pesan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT untuk tabel `chat_sesi`
 --
 ALTER TABLE `chat_sesi`
-  MODIFY `id_sesi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_sesi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT untuk tabel `detail_pemesanan`
 --
 ALTER TABLE `detail_pemesanan`
-  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT untuk tabel `galeri`
@@ -734,16 +933,40 @@ ALTER TABLE `member`
   MODIFY `id_member` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT untuk tabel `member_badge`
+--
+ALTER TABLE `member_badge`
+  MODIFY `id_badge_diraih` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT untuk tabel `member_checkin`
+--
+ALTER TABLE `member_checkin`
+  MODIFY `id_checkin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT untuk tabel `menu_highlight_foto`
 --
 ALTER TABLE `menu_highlight_foto`
   MODIFY `id_foto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
+-- AUTO_INCREMENT untuk tabel `notifikasi_member`
+--
+ALTER TABLE `notifikasi_member`
+  MODIFY `id_notif` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT untuk tabel `pemesanan`
 --
 ALTER TABLE `pemesanan`
-  MODIFY `id_pemesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id_pemesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT untuk tabel `poin_transfer`
+--
+ALTER TABLE `poin_transfer`
+  MODIFY `id_transfer` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `produk`
@@ -767,7 +990,19 @@ ALTER TABLE `promo_klaim`
 -- AUTO_INCREMENT untuk tabel `riwayat_poin`
 --
 ALTER TABLE `riwayat_poin`
-  MODIFY `id_riwayat` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_riwayat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT untuk tabel `split_bill`
+--
+ALTER TABLE `split_bill`
+  MODIFY `id_split` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT untuk tabel `split_bill_bayar`
+--
+ALTER TABLE `split_bill_bayar`
+  MODIFY `id_bayar` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `ulasan_produk`
@@ -813,12 +1048,37 @@ ALTER TABLE `member`
   ADD CONSTRAINT `fk_member_user` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE SET NULL;
 
 --
+-- Ketidakleluasaan untuk tabel `member_badge`
+--
+ALTER TABLE `member_badge`
+  ADD CONSTRAINT `fk_badge_member` FOREIGN KEY (`id_member`) REFERENCES `member` (`id_member`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `member_checkin`
+--
+ALTER TABLE `member_checkin`
+  ADD CONSTRAINT `fk_checkin_member` FOREIGN KEY (`id_member`) REFERENCES `member` (`id_member`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `notifikasi_member`
+--
+ALTER TABLE `notifikasi_member`
+  ADD CONSTRAINT `fk_notif_member` FOREIGN KEY (`id_member`) REFERENCES `member` (`id_member`) ON DELETE CASCADE;
+
+--
 -- Ketidakleluasaan untuk tabel `pemesanan`
 --
 ALTER TABLE `pemesanan`
   ADD CONSTRAINT `fk_member` FOREIGN KEY (`id_member`) REFERENCES `member` (`id_member`),
   ADD CONSTRAINT `fk_pemesanan_booking` FOREIGN KEY (`id_booking`) REFERENCES `booking` (`id_booking`),
   ADD CONSTRAINT `fk_pemesanan_user` FOREIGN KEY (`id_user`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Ketidakleluasaan untuk tabel `poin_transfer`
+--
+ALTER TABLE `poin_transfer`
+  ADD CONSTRAINT `fk_transfer_penerima` FOREIGN KEY (`id_penerima`) REFERENCES `member` (`id_member`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_transfer_pengirim` FOREIGN KEY (`id_pengirim`) REFERENCES `member` (`id_member`) ON DELETE CASCADE;
 
 --
 -- Ketidakleluasaan untuk tabel `produk`
@@ -838,6 +1098,18 @@ ALTER TABLE `promo_klaim`
 --
 ALTER TABLE `riwayat_poin`
   ADD CONSTRAINT `fk_riwayat_member` FOREIGN KEY (`id_member`) REFERENCES `member` (`id_member`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `split_bill`
+--
+ALTER TABLE `split_bill`
+  ADD CONSTRAINT `fk_split_bill_pemesanan` FOREIGN KEY (`id_pemesanan`) REFERENCES `pemesanan` (`id_pemesanan`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `split_bill_bayar`
+--
+ALTER TABLE `split_bill_bayar`
+  ADD CONSTRAINT `fk_split_bayar_split` FOREIGN KEY (`id_split`) REFERENCES `split_bill` (`id_split`) ON DELETE CASCADE;
 
 --
 -- Ketidakleluasaan untuk tabel `ulasan_produk`

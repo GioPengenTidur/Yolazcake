@@ -24,6 +24,7 @@ foreach($_SESSION['keranjang'] as $id_produk => $jumlah){
 }
 $stmtProduk->close();
 $ada_booking = isset($_SESSION['id_booking']) && $_SESSION['id_booking'];
+$meja_aktif  = $_SESSION['meja_aktif'] ?? null; // dari scan QR meja
 
 // ── KODE PROMO ──
 $promo_error = null;
@@ -713,6 +714,14 @@ $total_bayar = $total - $diskon_nominal;
 
         <form action="qris.php" method="POST" id="checkoutForm">
           <div class="form-wrap">
+
+            <?php if($meja_aktif): ?>
+            <div class="booking-notice" style="border-color:rgba(110,250,188,.35);background:rgba(110,250,188,.08);">
+              <div class="icon" style="color:#6efabc;"><i data-lucide="armchair" class="lucide-ic"></i></div>
+              <p>Pesanan ini otomatis untuk <strong>Meja <?= htmlspecialchars($meja_aktif) ?></strong> (hasil scan QR). Nggak perlu panggil pelayan, pesanan langsung masuk ke dapur.</p>
+            </div>
+            <input type="hidden" name="nomor_meja" value="<?= htmlspecialchars($meja_aktif) ?>">
+            <?php endif; ?>
 
             <?php if($ada_booking): ?>
             <!-- SUDAH ADA BOOKING -->

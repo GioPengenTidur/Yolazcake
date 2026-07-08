@@ -3,6 +3,8 @@ session_start();
 require_once __DIR__.'/../config/staff_guard.php';
 require_staff_login();
 require_once '../config/koneksi.php';
+require_once __DIR__.'/../config/csrf_helper.php';
+$csrf = csrf_token();
 
 $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
 ?>
@@ -451,15 +453,15 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
           <td>
             <div class="action-cell">
               <?php if ($status == 'Pending') : ?>
-                <a href="ubah_status.php?id=<?= $data['id_booking']; ?>&status=Dikonfirmasi"
+                <a href="ubah_status.php?id=<?= $data['id_booking']; ?>&status=Dikonfirmasi&csrf=<?= urlencode($csrf); ?>"
                    class="btn-act btn-konfirmasi"
                    onclick="return confirm('Konfirmasi booking ini?')"><i data-lucide="check-circle" class="lucide-ic"></i> Konfirmasi</a>
 
-                <a href="ubah_status.php?id=<?= $data['id_booking']; ?>&status=Dibatalkan"
+                <a href="ubah_status.php?id=<?= $data['id_booking']; ?>&status=Dibatalkan&csrf=<?= urlencode($csrf); ?>"
                    class="btn-act btn-batalkan"
                    onclick="return confirm('Batalkan booking ini?')"><i data-lucide="ban" class="lucide-ic"></i> Batalkan</a>
 
-                <a href="hapus_booking.php?id=<?= $data['id_booking']; ?>"
+                <a href="hapus_booking.php?id=<?= $data['id_booking']; ?>&csrf=<?= urlencode($csrf); ?>"
                    class="btn-act btn-hapus"
                    onclick="return confirm('Yakin ingin menghapus data booking ini?')"><i data-lucide="trash-2" class="lucide-ic"></i> Hapus</a>
               <?php else : ?>

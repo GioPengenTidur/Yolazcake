@@ -34,7 +34,7 @@ if (!$user) {
 $otp        = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 $expiresAt  = date('Y-m-d H:i:s', time() + (OTP_EXPIRE_MINUTES * 60));
 
-$upd = $conn->prepare("UPDATE users SET reset_otp = ?, reset_otp_expires_at = ? WHERE id = ?");
+$upd = $conn->prepare("UPDATE users SET reset_otp = ?, reset_otp_expires_at = ?, reset_otp_attempts = 0 WHERE id = ?");
 $upd->bind_param("ssi", $otp, $expiresAt, $user['id']);
 $upd->execute();
 

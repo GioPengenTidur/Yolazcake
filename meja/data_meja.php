@@ -230,7 +230,12 @@ $stats = mysqli_fetch_assoc(mysqli_query($conn,
 
   <div class="top-bar">
     <span class="section-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> Daftar Meja</span>
-    <a href="tambah_meja.php" class="btn-tambah">+ Tambah Meja</a>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="qr_meja.php" class="btn-tambah" style="background:linear-gradient(135deg,#6efabc,#2fae7a);box-shadow:0 6px 22px rgba(110,250,188,.35);color:#0a2e1e;">
+        <i data-lucide="qr-code" class="lucide-ic"></i> QR Meja
+      </a>
+      <a href="tambah_meja.php" class="btn-tambah">+ Tambah Meja</a>
+    </div>
   </div>
 
   <div class="stats-row">

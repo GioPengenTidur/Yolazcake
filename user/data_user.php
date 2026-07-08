@@ -9,6 +9,8 @@ if(($_SESSION['role'] ?? '') !== 'admin'){
     exit();
 }
 require_once '../config/koneksi.php';
+require_once __DIR__.'/../config/csrf_helper.php';
+$csrf = csrf_token();
 
 $query = mysqli_query($conn, "SELECT * FROM users ORDER BY id DESC");
 
@@ -828,6 +830,7 @@ $role_options = [
 </div>
 
 <script>
+  const CSRF_TOKEN = <?= json_encode($csrf); ?>;
   (function(){
     const hero = document.getElementById('pageHero');
     const colors = ['#D4AF37','#FFE4B5','#E8A0BF','#fff','#f9ce34','#b8860b'];
@@ -1092,7 +1095,7 @@ $role_options = [
     fetch('ubah_role.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
-      body: new URLSearchParams({ id, role: newRole })
+      body: new URLSearchParams({ id, role: newRole, csrf: CSRF_TOKEN })
     })
       .then(res => res.json())
       .then(data => {
@@ -1129,7 +1132,7 @@ $role_options = [
     fetch('hapus_user.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
-      body: new URLSearchParams({ id })
+      body: new URLSearchParams({ id, csrf: CSRF_TOKEN })
     })
       .then(res => res.json())
       .then(data => {

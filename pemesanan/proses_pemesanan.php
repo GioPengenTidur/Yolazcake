@@ -11,6 +11,7 @@ if (!isset($_SESSION['keranjang']) || empty($_SESSION['keranjang'])) {
 
 $nama_pemesan = $_SESSION['nama_pemesan'] ?? 'Pelanggan';
 $no_hp        = $_SESSION['no_hp'] ?? '-';
+$nomor_meja   = $_SESSION['nomor_meja_checkout'] ?? ($_SESSION['meja_aktif'] ?? null); // dari QR meja
 
 $id_booking     = $_SESSION['id_booking'] ?? null;
 $id_booking_sql = $id_booking ? "'$id_booking'" : "NULL";
@@ -91,12 +92,12 @@ try {
     $stmtInsert = $conn->prepare("
         INSERT INTO pemesanan
         (kode_pesanan, id_member, id_user, id_booking, tanggal, total_harga,
-         kode_promo, diskon_nominal, nama_pemesan, no_hp, metode_pembayaran, status_pembayaran, status_pesanan)
+         kode_promo, diskon_nominal, nama_pemesan, no_hp, nomor_meja, metode_pembayaran, status_pembayaran, status_pesanan)
         VALUES
-        (?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, 'QRIS', 'Lunas', 'Menunggu')
+        (?, NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'QRIS', 'Lunas', 'Menunggu')
     ");
     $stmtInsert->bind_param(
-        "siisdsdss",
+        "siisdsdsss",
         $kode_pesanan,
         $id_user_param,
         $id_booking_param,
@@ -105,12 +106,23 @@ try {
         $kode_promo_dipakai,
         $diskon_nominal,
         $nama_pemesan,
-        $no_hp
+        $no_hp,
+        $nomor_meja
     );
     $stmtInsert->execute();
     $stmtInsert->close();
 
     $id_pemesanan = mysqli_insert_id($conn);
+
+    // QR Meja: begitu pesanan masuk, tandai meja jadi "Terisi" otomatis
+    // (kecuali memang lagi non-aktif) supaya admin/kasir lihat status
+    // real-time di dashboard tanpa perlu update manual.
+    if ($nomor_meja) {
+        $stmtMejaTerisi = $conn->prepare("UPDATE meja SET status='Terisi' WHERE nomor_meja=? AND status != 'Tidak Aktif'");
+        $stmtMejaTerisi->bind_param("s", $nomor_meja);
+        $stmtMejaTerisi->execute();
+        $stmtMejaTerisi->close();
+    }
 
     // Pesanan ini sudah tercatat (dengan id_user) -> baru sekarang cek
     // status member, supaya pesanan yang baru saja dibuat ini ikut
@@ -184,6 +196,9 @@ $_SESSION['riwayat_belanja_total'] = $total_harga;
 
 unset($_SESSION['keranjang']);
 unset($_SESSION['checkout_promo']);
+unset($_SESSION['nomor_meja_checkout']);
+// $_SESSION['meja_aktif'] SENGAJA tidak dihapus supaya kalau pelanggan mau
+// pesan lagi dari meja yang sama, tidak perlu scan ulang QR-nya.
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -754,6 +769,12 @@ unset($_SESSION['checkout_promo']);
       <div class="info-label">📱 No. HP</div>
       <div class="info-val"><?= htmlspecialchars($no_hp) ?></div>
     </div>
+    <?php if($nomor_meja): ?>
+    <div class="info-row">
+      <div class="info-label">🪑 Meja</div>
+      <div class="info-val">Meja <?= htmlspecialchars($nomor_meja) ?></div>
+    </div>
+    <?php endif; ?>
     <div class="info-row">
       <div class="info-label">📅 Tanggal</div>
       <div class="info-val"><?= date('d M Y, H:i', strtotime($tanggal)) ?> WIB</div>
@@ -829,45 +850,110 @@ unset($_SESSION['checkout_promo']);
   </div>
   <?php endif; ?>
 
-  <!-- STATUS TIMELINE -->
+  <!-- STATUS TIMELINE (LIVE, auto-update tiap beberapa detik) -->
   <div class="timeline">
-    <div class="timeline-title">📍 Status Pesanan Anda</div>
-    <div class="timeline-steps">
-      <div class="tl-step">
+    <div class="timeline-title">📍 Status Pesanan Anda <span id="liveBlip" style="display:inline-flex;align-items:center;gap:5px;font-size:.6em;color:#6efabc;font-weight:600;letter-spacing:1px;text-transform:uppercase;vertical-align:middle;"><span style="width:6px;height:6px;border-radius:50%;background:#6efabc;animation:pulseBadge 1.6s ease-in-out infinite;"></span> Live</span></div>
+    <div class="timeline-steps" id="timelineSteps" data-status="Menunggu">
+      <div class="tl-step" data-step="terima">
         <div class="tl-dot done">✅</div>
         <div class="tl-lbl">Pesanan<br>Diterima</div>
       </div>
       <div class="tl-connector"></div>
-      <div class="tl-step">
+      <div class="tl-step" data-step="bayar">
         <div class="tl-dot done">💳</div>
         <div class="tl-lbl">Pembayaran<br>Lunas</div>
       </div>
       <div class="tl-connector"></div>
-      <div class="tl-step">
-        <div class="tl-dot active">⏳</div>
-        <div class="tl-lbl active-lbl">Sedang<br>Diproses</div>
+      <div class="tl-step" data-step="Diproses">
+        <div class="tl-dot pending">⏳</div>
+        <div class="tl-lbl">Sedang<br>Diproses</div>
       </div>
       <div class="tl-connector"></div>
-      <div class="tl-step">
+      <div class="tl-step" data-step="Siap Diambil">
         <div class="tl-dot pending">📦</div>
         <div class="tl-lbl">Siap<br>Diambil</div>
       </div>
       <div class="tl-connector"></div>
-      <div class="tl-step">
+      <div class="tl-step" data-step="Selesai">
         <div class="tl-dot pending">🎉</div>
         <div class="tl-lbl">Selesai</div>
       </div>
     </div>
+    <p id="timelineNote" style="text-align:center;font-size:.78em;color:rgba(255,255,255,.45);margin-top:14px;">Halaman ini memperbarui status secara otomatis, nggak perlu refresh.</p>
+  </div>
+
+  <!-- SPLIT BILL / PATUNGAN -->
+  <div class="timeline" style="margin-top:18px;">
+    <div class="timeline-title">👥 Patungan / Split Bill</div>
+    <p style="font-size:.85em;color:rgba(255,255,255,.6);margin:6px 0 16px;">Pesan rame-rame? Buat link patungan biar tiap orang bisa lihat & tandai bagiannya sendiri sudah dibayar.</p>
+    <form action="split_bill_buat.php" method="POST" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <input type="hidden" name="id_pemesanan" value="<?= (int)$id_pemesanan ?>">
+      <input type="hidden" name="kode_pesanan" value="<?= htmlspecialchars($kode_pesanan) ?>">
+      <label style="font-size:.82em;color:rgba(255,255,255,.65);">Jumlah orang:</label>
+      <input type="number" name="jumlah_orang" min="2" max="10" value="2" required
+             style="width:80px;padding:9px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;">
+      <button type="submit" class="btn-premium btn-gold" style="padding:11px 22px;font-size:.78em;">✨ Buat Link Split Bill</button>
+    </form>
   </div>
 
   <!-- ACTION BUTTONS -->
   <div class="actions">
     <a href="../index.php" class="btn-premium btn-gold">🏠 Kembali ke Beranda</a>
     <a href="invoice_pdf.php?id=<?= $id_pemesanan ?>&kode=<?= urlencode($kode_pesanan) ?>" target="_blank" class="btn-premium btn-invoice">📄 Unduh Invoice PDF</a>
+    <a href="lacak.php?id=<?= (int)$id_pemesanan ?>&kode=<?= urlencode($kode_pesanan) ?>" class="btn-premium btn-outline">📍 Lacak Pesanan</a>
     <a href="menuu.php" class="btn-premium btn-outline">🎂 Pesan Lagi</a>
   </div>
 
 </div>
+
+<script>
+(function(){
+  const idPesanan = <?= (int)$id_pemesanan ?>;
+  const kodePesanan = <?= json_encode($kode_pesanan) ?>;
+  const wrap = document.getElementById('timelineSteps');
+  const note = document.getElementById('timelineNote');
+
+  function applyStatus(status){
+    wrap.dataset.status = status;
+    const order = ['Menunggu','Diproses','Siap Diambil','Selesai'];
+    const idx = order.indexOf(status);
+    wrap.querySelectorAll('[data-step]').forEach(step=>{
+      const key = step.dataset.step;
+      const dot = step.querySelector('.tl-dot');
+      const lbl = step.querySelector('.tl-lbl');
+      if(key === 'terima' || key === 'bayar'){ return; } // selalu done
+      const stepIdx = order.indexOf(key);
+      dot.classList.remove('done','active','pending');
+      lbl.classList.remove('active-lbl');
+      if(status === 'Dibatalkan'){
+        dot.classList.add('pending'); dot.textContent = '✖️';
+        return;
+      }
+      if(stepIdx < idx || status === 'Selesai'){
+        dot.classList.add('done'); dot.textContent = '✅';
+      } else if(stepIdx === idx){
+        dot.classList.add('active'); lbl.classList.add('active-lbl');
+      } else {
+        dot.classList.add('pending');
+      }
+    });
+    if(status === 'Selesai'){ note.textContent = '🎉 Pesanan sudah selesai. Terima kasih sudah mampir!'; }
+    if(status === 'Dibatalkan'){ note.textContent = 'Pesanan ini dibatalkan. Hubungi kami lewat WA kalau ada pertanyaan.'; }
+  }
+
+  function poll(){
+    fetch('status_ajax.php?id='+idPesanan+'&kode='+encodeURIComponent(kodePesanan))
+      .then(r=>r.json())
+      .then(data=>{
+        if(data && data.status_pesanan){ applyStatus(data.status_pesanan); }
+      })
+      .catch(()=>{});
+  }
+  poll();
+  setInterval(poll, 6000);
+})();
+</script>
+
 
 <!-- FOOTER -->
 <div class="site-footer">

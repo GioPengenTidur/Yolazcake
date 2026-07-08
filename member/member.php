@@ -8,6 +8,7 @@ if(!isset($_SESSION['username'])){
 
 require_once '../config/koneksi.php';
 require_once '../config/member_helper.php';
+require_once '../config/gamifikasi_helper.php';
 
 $member = get_current_member($conn);
 
@@ -69,6 +70,17 @@ $reward_milestones = [
     ['poin' => 250, 'icon' => '<i data-lucide="croissant" class="lucide-ic"></i>', 'nama' => 'Gratis Croissant'],
     ['poin' => 500, 'icon' => '<i data-lucide="cake" class="lucide-ic"></i>', 'nama' => 'Gratis Cake'],
 ];
+
+// Data gamifikasi: streak checkin & notifikasi in-app (kado poin, badge baru).
+// Dibungkus try-catch supaya kalau migration_gamifikasi.sql belum diimport,
+// dashboard member tetap tampil (fitur gamifikasi saja yang nonaktif sementara).
+try {
+    $streak_info      = gamif_get_streak_info($conn, $member);
+    $notif_belum_baca = gamif_jumlah_notif_belum_dibaca($conn, (int) $member['id_member']);
+} catch (Throwable $e) {
+    $streak_info      = ['streak_saat_ini' => 0, 'streak_terbaik' => 0, 'sudah_checkin' => false, 'badges' => [], 'tanggal_checkin' => []];
+    $notif_belum_baca = 0;
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -717,6 +729,61 @@ body.light .dropdown a, body.light .dropdown p { color: #333; }
 .section-card.d2 { animation: fadeUp 0.8s forwards 1.35s; }
 .section-card.d3 { animation: fadeUp 0.8s forwards 1.5s; }
 .section-card.d4 { animation: fadeUp 0.8s forwards 1.65s; }
+.section-card.d5 { animation: fadeUp 0.8s forwards 1.8s; }
+
+/* ═══════════════════════════════════════════
+   GAMIFIKASI SECTION (Kado Poin & Streak)
+═══════════════════════════════════════════ */
+.gamif-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;
+}
+.gamif-card {
+  position: relative; border-radius: 20px; padding: 26px 22px;
+  border: 1px solid var(--glass-border); background: rgba(255,255,255,0.03);
+  text-decoration: none; color: var(--text); display: block;
+  transition: transform 0.25s, border-color 0.25s, background 0.25s;
+  overflow: hidden;
+}
+.gamif-card:hover { transform: translateY(-4px); border-color: rgba(212,175,55,0.4); background: rgba(255,255,255,0.06); }
+.gamif-card-icon {
+  width: 48px; height: 48px; border-radius: 14px; margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.gamif-card.kado .gamif-card-icon { background: linear-gradient(135deg, rgba(212,175,55,0.22), rgba(238,42,123,0.14)); color: var(--gold); }
+.gamif-card.streak .gamif-card-icon { background: linear-gradient(135deg, rgba(255,122,61,0.22), rgba(212,175,55,0.14)); color: #FF7A3D; }
+.gamif-card-title { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.05em; margin-bottom: 6px; }
+.gamif-card-desc { font-size: 0.82em; color: var(--text-muted); line-height: 1.5; }
+.gamif-card-badge {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 14px;
+  font-size: 0.75em; font-weight: 700; padding: 5px 12px; border-radius: 999px;
+  background: rgba(255,122,61,0.15); color: #FFB088;
+}
+@media (max-width: 640px) { .gamif-grid { grid-template-columns: 1fr; } }
+
+/* ═══════════════════════════════════════════
+   NOTIFICATION BELL
+═══════════════════════════════════════════ */
+.notif-wrap { position: relative; }
+.notif-dot {
+  position: absolute; top: 6px; right: 6px; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--rose); border: 2px solid var(--bg1); display: none;
+}
+.notif-dot.show { display: block; }
+.notif-dropdown {
+  position: absolute; top: 54px; right: 0; width: 320px; max-height: 400px; overflow-y: auto;
+  background: rgba(13,5,32,0.97); backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border); border-radius: 18px; padding: 10px;
+  opacity: 0; transform: translateY(-10px) scale(0.97); pointer-events: none;
+  transition: 0.25s; z-index: 50; box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+}
+.notif-dropdown.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.notif-item { padding: 12px 14px; border-radius: 12px; margin-bottom: 4px; }
+.notif-item:not(.unread) { opacity: 0.6; }
+.notif-item.unread { background: rgba(212,175,55,0.08); }
+.notif-title { font-size: 0.85em; font-weight: 700; margin-bottom: 3px; }
+.notif-msg { font-size: 0.78em; color: var(--text-muted); line-height: 1.4; }
+.notif-time { font-size: 0.68em; color: rgba(255,255,255,0.35); margin-top: 4px; }
+.notif-empty { padding: 24px 14px; text-align: center; color: var(--text-muted); font-size: 0.85em; }
 
 .section-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -1047,6 +1114,15 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
   </div>
 
   <div class="nav-right">
+    <div class="notif-wrap">
+      <button class="nav-btn" id="notifBtn" onclick="toggleNotif()" title="Notifikasi">
+        <i data-lucide="bell" class="lucide-ic"></i>
+        <span class="notif-dot <?= $notif_belum_baca > 0 ? 'show' : '' ?>" id="notifDot"></span>
+      </button>
+      <div class="notif-dropdown" id="notifDropdown">
+        <div id="notifList" class="notif-empty">Memuat notifikasi...</div>
+      </div>
+    </div>
     <button class="nav-btn" id="darkBtn" onclick="toggleDark()" title="Toggle theme"><svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><line x1="12" y1="2" x2="12" y2="4.5"></line><line x1="12" y1="19.5" x2="12" y2="22"></line><line x1="4.2" y1="4.2" x2="5.9" y2="5.9"></line><line x1="18.1" y1="18.1" x2="19.8" y2="19.8"></line><line x1="2" y1="12" x2="4.5" y2="12"></line><line x1="19.5" y1="12" x2="22" y2="12"></line><line x1="4.2" y1="19.8" x2="5.9" y2="18.1"></line><line x1="18.1" y1="5.9" x2="19.8" y2="4.2"></line></svg><svg class="icon-moon" viewBox="0 0 24 24" fill="currentColor"><path d="M20.84 14.4a9 9 0 0 1-11.24-11.24 1 1 0 0 0-1.3-1.22A10.07 10.07 0 0 0 2 12.1 10 10 0 0 0 12 22a10.07 10.07 0 0 0 9.06-6.3 1 1 0 0 0-1.22-1.3z"></path><circle cx="18.5" cy="5.5" r="1.1"></circle><circle cx="20.5" cy="9" r="0.6"></circle></svg></button>
     <button class="nav-btn" id="hamburger" onclick="toggleMenu()" title="Menu"><i data-lucide="menu" class="lucide-ic icon-menu"></i><i data-lucide="x" class="lucide-ic icon-close"></i></button>
   </div>
@@ -1244,6 +1320,27 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
     </div>
   </div>
 
+  <!-- GAMIFIKASI SECTION -->
+  <div class="section-card d5">
+    <div class="section-header">
+      <div class="section-icon"><i data-lucide="sparkles" class="lucide-ic"></i></div>
+      <div class="section-title">Gamifikasi Member</div>
+    </div>
+    <div class="gamif-grid">
+      <a href="kado_poin.php" class="gamif-card kado">
+        <div class="gamif-card-icon"><i data-lucide="gift" class="lucide-ic"></i></div>
+        <div class="gamif-card-title">Kado Poin</div>
+        <div class="gamif-card-desc">Kirim poinmu ke teman sesama member, bikin dia kaget dapat notifikasi kado!</div>
+      </a>
+      <a href="streak.php" class="gamif-card streak">
+        <div class="gamif-card-icon"><i data-lucide="flame" class="lucide-ic"></i></div>
+        <div class="gamif-card-title">Streak & Badge</div>
+        <div class="gamif-card-desc">Checkin tiap hari biar streak nggak putus dan buka badge eksklusif.</div>
+        <div class="gamif-card-badge"><i data-lucide="flame" class="lucide-ic"></i> <?= $streak_info['streak_saat_ini'] ?> hari berturut-turut</div>
+      </a>
+    </div>
+  </div>
+
   <!-- HISTORY SECTION -->
   <div class="section-card d4">
     <div class="section-header">
@@ -1352,6 +1449,49 @@ function showToast(msg){
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2800);
 }
+
+/* ══ NOTIFIKASI (KADO POIN, BADGE BARU) ══ */
+function renderNotif(data){
+  const list = document.getElementById('notifList');
+  const dot  = document.getElementById('notifDot');
+  if(!data.success || !data.notifikasi.length){
+    list.innerHTML = '<div class="notif-empty"><i data-lucide="bell-off" class="lucide-ic"></i><br>Belum ada notifikasi.</div>';
+    if(window.lucide) lucide.createIcons();
+    return;
+  }
+  list.innerHTML = data.notifikasi.map(n => `
+    <div class="notif-item ${n.is_read ? '' : 'unread'}">
+      <div class="notif-title">${n.judul}</div>
+      <div class="notif-msg">${n.pesan}</div>
+      <div class="notif-time">${n.waktu}</div>
+    </div>
+  `).join('');
+  dot.classList.toggle('show', data.belum_dibaca > 0);
+}
+
+function toggleNotif(){
+  const dd = document.getElementById('notifDropdown');
+  const opening = !dd.classList.contains('show');
+  dd.classList.toggle('show');
+  if(opening){
+    fetch('notifikasi_ajax.php?action=list').then(r => r.json()).then(data => {
+      renderNotif(data);
+      if(data.belum_dibaca > 0){
+        fetch('notifikasi_ajax.php?action=mark_read').then(() => {
+          document.getElementById('notifDot').classList.remove('show');
+        });
+      }
+    });
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const dd  = document.getElementById('notifDropdown');
+  const btn = document.getElementById('notifBtn');
+  if (dd && !dd.contains(e.target) && !btn.contains(e.target)){
+    dd.classList.remove('show');
+  }
+});
 
 /* ══ NAVBAR HAMBURGER ══ */
 function toggleMenu(){

@@ -10,6 +10,9 @@ if(isset($_POST['no_hp'])){
     $_SESSION['no_hp'] = $_POST['no_hp'];
 }
 $_SESSION['id_booking'] = $_POST['id_booking'] ?? ($_SESSION['id_booking'] ?? null);
+if (isset($_POST['nomor_meja'])) {
+    $_SESSION['nomor_meja_checkout'] = $_POST['nomor_meja'];
+}
 
 $nama    = $_SESSION['nama_pemesan'] ?? '';
 $no_hp   = $_SESSION['no_hp'] ?? '';
@@ -39,6 +42,7 @@ if(!empty($_SESSION['checkout_promo'])){
     }
 }
 $total_keranjang = $subtotal_keranjang - $diskon_nominal;
+$nomor_meja_qris = $_SESSION['nomor_meja_checkout'] ?? ($_SESSION['meja_aktif'] ?? null);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -427,6 +431,13 @@ $total_keranjang = $subtotal_keranjang - $diskon_nominal;
       <div class="info-label">Nomor WhatsApp</div>
       <div class="info-name"><?= htmlspecialchars($no_hp) ?></div>
       <div class="info-hp">Konfirmasi pesanan via WA</div>
+    </div>
+    <?php endif; ?>
+    <?php if($nomor_meja_qris): ?>
+    <div class="info-divider"></div>
+    <div class="info-text">
+      <div class="info-label">Meja</div>
+      <div class="info-name">Meja <?= htmlspecialchars($nomor_meja_qris) ?></div>
     </div>
     <?php endif; ?>
   </div>

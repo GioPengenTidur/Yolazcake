@@ -3,6 +3,8 @@ session_start();
 require_once __DIR__.'/../config/staff_guard.php';
 require_staff_login();
 include '../config/koneksi.php';
+require_once __DIR__.'/../config/csrf_helper.php';
+$csrf = csrf_token();
 
 $query = mysqli_query($conn,
 "SELECT * FROM pemesanan
@@ -610,7 +612,7 @@ if(!$query){ die(mysqli_error($conn)); }
               <a class="btn-aksi btn-detail" href="detail_pemesanan.php?id=<?= $data['id_pemesanan'] ?>">🔍 Detail</a>
               <a class="btn-aksi btn-invoice" href="invoice_pdf.php?id=<?= $data['id_pemesanan'] ?>" target="_blank">🧾 Invoice</a>
               <a class="btn-aksi btn-edit" href="edit_pemesanan.php?id=<?= $data['id_pemesanan'] ?>">✏️ Edit</a>
-              <a class="btn-aksi btn-hapus" href="hapus_pemesanan.php?id=<?= $data['id_pemesanan'] ?>" onclick="return confirm('Yakin ingin hapus pesanan ini?')">🗑️ Hapus</a>
+              <a class="btn-aksi btn-hapus" href="hapus_pemesanan.php?id=<?= $data['id_pemesanan'] ?>&csrf=<?= urlencode($csrf) ?>" onclick="return confirm('Yakin ingin hapus pesanan ini?')">🗑️ Hapus</a>
             </div>
           </td>
         </tr>

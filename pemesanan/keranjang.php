@@ -453,6 +453,20 @@ unset($_SESSION['checkout_error']);
 <!-- ═══════════════ PAGE WRAPPER ═══════════════ -->
 <div class="page-wrapper">
 
+  <?php if(!empty($_SESSION['meja_aktif'])): ?>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+              background:linear-gradient(135deg,rgba(110,250,188,.14),rgba(110,250,188,.05));
+              border:1px solid rgba(110,250,188,.35);border-radius:16px;padding:14px 22px;margin-bottom:20px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="width:36px;height:36px;border-radius:50%;background:rgba(110,250,188,.18);
+                    display:flex;align-items:center;justify-content:center;color:#6efabc;flex-shrink:0;">
+        <i data-lucide="armchair" class="lucide-ic"></i>
+      </span>
+      <div style="font-size:.85em;">Pesanan ini otomatis untuk <strong>Meja <?= htmlspecialchars($_SESSION['meja_aktif']) ?></strong></div>
+    </div>
+  </div>
+  <?php endif; ?>
+
   <?php if($checkout_error): ?>
   <div style="background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.35);color:#ff8080;padding:14px 20px;border-radius:14px;margin-bottom:20px;font-size:.85em;line-height:1.6;">
     <i data-lucide="alert-triangle" class="lucide-ic"></i> <?= htmlspecialchars($checkout_error) ?>

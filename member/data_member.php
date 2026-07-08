@@ -3,6 +3,8 @@ session_start();
 require_once __DIR__.'/../config/staff_guard.php';
 require_staff_login();
 include '../config/koneksi.php';
+require_once __DIR__.'/../config/csrf_helper.php';
+$csrf = csrf_token();
 
 $query = mysqli_query($conn, "SELECT * FROM member ORDER BY id_member DESC");
 ?>
@@ -405,7 +407,7 @@ $query = mysqli_query($conn, "SELECT * FROM member ORDER BY id_member DESC");
             <div class="action-cell">
               <a href="detail_member.php?id=<?= $data['id_member']; ?>" class="btn-act btn-detail"><i data-lucide="search" class="lucide-ic"></i> Detail</a>
               <a href="edit_member.php?id=<?= $data['id_member']; ?>" class="btn-act btn-edit"><i data-lucide="pencil" class="lucide-ic"></i> Edit</a>
-              <a href="hapus_member.php?id=<?= $data['id_member']; ?>"
+              <a href="hapus_member.php?id=<?= $data['id_member']; ?>&csrf=<?= urlencode($csrf); ?>"
                  class="btn-act btn-hapus"
                  onclick="return confirm('Yakin ingin menghapus member <?= htmlspecialchars($data['nama']); ?>?')"><i data-lucide="trash-2" class="lucide-ic"></i> Hapus</a>
             </div>

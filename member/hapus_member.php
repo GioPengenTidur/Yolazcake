@@ -2,6 +2,8 @@
 session_start();
 require_once __DIR__.'/../config/staff_guard.php';
 require_staff_login();
+require_once __DIR__.'/../config/csrf_helper.php';
+csrf_verify_or_die($_GET['csrf'] ?? null, 'data_member.php');
 include '../config/koneksi.php';
 include 'success_overlay.php';
 
