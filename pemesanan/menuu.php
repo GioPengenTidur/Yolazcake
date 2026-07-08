@@ -864,7 +864,7 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
   <!-- STATS BAR -->
   <div class="stats-bar">
     <div class="stat-pill">
-      <span class="stat-icon"><i data-lucide="cake" class="lucide-ic"></i></span>
+      <span class="stat-icon"><i data-lucide="utensils-crossed" class="lucide-ic"></i></span>
       <div>
         <div class="stat-val"><?= $total_produk ?></div>
         <div class="stat-lbl">Total Menu</div>
@@ -943,7 +943,7 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
         $isAct = ($filter_kat === $kid);
       ?>
       <a href="?kat=<?= $kid ?>" class="filter-pill <?= $isAct ? 'active' : '' ?>">
-        <span class="pill-icon"><?= $k['icon'] ?: '<i data-lucide="cake-slice" class="lucide-ic"></i>' ?></span>
+        <span class="pill-icon"><i data-lucide="<?= htmlspecialchars($k['icon'] ?: 'cake-slice') ?>" class="lucide-ic"></i></span>
         <?= htmlspecialchars($k['nama_kategori']) ?>
         <span class="pill-count"><?= $cnt ?></span>
       </a>
@@ -966,17 +966,18 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
 
   // Nama & icon kategori aktif
   $active_cat_name = 'Semua Menu';
-  $active_cat_icon = '<i data-lucide="utensils" class="lucide-ic"></i>';
+  $active_cat_icon_slug = 'utensils';
   if($filter_kat && $kat_query){
     mysqli_data_seek($kat_query,0);
     while($k = mysqli_fetch_assoc($kat_query)){
       if((int)$k['id_kategori'] === $filter_kat){
         $active_cat_name = htmlspecialchars($k['nama_kategori']);
-        $active_cat_icon = $k['icon'] ?: '<i data-lucide="cake-slice" class="lucide-ic"></i>';
+        $active_cat_icon_slug = $k['icon'] ?: 'cake-slice';
         break;
       }
     }
   }
+  $active_cat_icon = '<i data-lucide="'.htmlspecialchars($active_cat_icon_slug).'" class="lucide-ic"></i>';
   ?>
 
   <!-- ACTIVE CATEGORY HEADER -->

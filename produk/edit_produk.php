@@ -503,7 +503,7 @@ if($produk && isset($_POST['update'])){
             <?php if($kategori_list && mysqli_num_rows($kategori_list) > 0): mysqli_data_seek($kategori_list, 0); ?>
               <?php while($kat = mysqli_fetch_assoc($kategori_list)): ?>
                 <option value="<?= (int)$kat['id_kategori']; ?>" <?= ((int)($produk['id_kategori'] ?? 0) === (int)$kat['id_kategori']) ? 'selected' : ''; ?>>
-                  <?= htmlspecialchars($kat['icon'] ? $kat['icon'].' ' : '').htmlspecialchars($kat['nama_kategori']); ?>
+                  <?= htmlspecialchars($kat['nama_kategori']); ?>
                 </option>
               <?php endwhile; ?>
             <?php endif; ?>

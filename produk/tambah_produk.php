@@ -449,7 +449,7 @@ if(isset($_POST['simpan'])){
             <?php if($kategori_list && mysqli_num_rows($kategori_list) > 0): mysqli_data_seek($kategori_list, 0); ?>
               <?php while($kat = mysqli_fetch_assoc($kategori_list)): ?>
                 <option value="<?= (int)$kat['id_kategori']; ?>" <?= (isset($_POST['id_kategori']) && (int)$_POST['id_kategori'] === (int)$kat['id_kategori']) ? 'selected' : ''; ?>>
-                  <?= htmlspecialchars($kat['icon'] ? $kat['icon'].' ' : '').htmlspecialchars($kat['nama_kategori']); ?>
+                  <?= htmlspecialchars($kat['nama_kategori']); ?>
                 </option>
               <?php endwhile; ?>
             <?php endif; ?>

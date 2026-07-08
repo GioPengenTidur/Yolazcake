@@ -190,7 +190,9 @@ mysqli_data_seek($query,0);
     input[type=text]::placeholder,textarea::placeholder{color:rgba(255,255,255,.3);}
     .icon-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
     .icon-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;
-      padding:8px 12px;font-size:1.3em;cursor:pointer;transition:transform .2s,border-color .2s;}
+      padding:8px 12px;cursor:pointer;transition:transform .2s,border-color .2s;
+      display:flex;align-items:center;justify-content:center;}
+    .icon-btn .lucide-ic{width:20px;height:20px;color:#D4AF37;pointer-events:none;}
     .icon-btn:hover{transform:scale(1.2);border-color:#D4AF37;}
     .btn-submit{width:100%;padding:12px;background:linear-gradient(135deg,#D4AF37 0%,#b8860b 50%,#D4AF37 100%);
       background-size:200%;animation:goldSlide 3s linear infinite;color:#1e0e3a;font-weight:700;
@@ -241,7 +243,7 @@ mysqli_data_seek($query,0);
         <tbody>
         <?php if($total_kat > 0): while($d = mysqli_fetch_assoc($query)): ?>
         <tr>
-          <td class="td-icon"><?= $d['icon'] ?: '<i data-lucide="utensils" class="lucide-ic"></i>' ?></td>
+          <td class="td-icon"><i data-lucide="<?= htmlspecialchars($d['icon'] ?: 'utensils') ?>" class="lucide-ic"></i></td>
           <td class="td-nama"><?= htmlspecialchars($d['nama_kategori']) ?></td>
           <td style="color:rgba(255,255,255,.55);font-size:.83em;"><?= $d['deskripsi'] ? htmlspecialchars($d['deskripsi']) : '-' ?></td>
           <td><span class="badge-produk"><i data-lucide="utensils" class="lucide-ic"></i> <?= $d['jml_produk'] ?></span></td>
@@ -274,11 +276,11 @@ mysqli_data_seek($query,0);
           <textarea name="deskripsi" placeholder="Deskripsi singkat..." rows="3"></textarea>
         </div>
         <div class="form-group">
-          <label>Icon Emoji</label>
-          <input type="text" name="icon" id="iconInput" placeholder="🍽️" maxlength="5">
+          <label>Icon (Lucide)</label>
+          <input type="text" name="icon" id="iconInput" placeholder="utensils" maxlength="30">
           <div class="icon-row">
-            <?php foreach(['🥤','🍩','🎂','🍽️','☕','🧁','🍲','🥪','🍸','🍹'] as $ic): ?>
-            <button type="button" class="icon-btn" onclick="document.getElementById('iconInput').value='<?= $ic ?>'"><?= $ic ?></button>
+            <?php foreach(['cup-soda','donut','cake-slice','utensils','coffee','cookie','soup','sandwich','martini','wine'] as $ic): ?>
+            <button type="button" class="icon-btn" onclick="document.getElementById('iconInput').value='<?= $ic ?>'"><i data-lucide="<?= $ic ?>" class="lucide-ic"></i></button>
             <?php endforeach; ?>
           </div>
         </div>
@@ -304,8 +306,8 @@ mysqli_data_seek($query,0);
         <textarea name="deskripsi" id="editDesk" rows="3"></textarea>
       </div>
       <div class="form-group" style="margin-bottom:20px;">
-        <label>Icon</label>
-        <input type="text" name="icon" id="editIcon" maxlength="5">
+        <label>Icon (Lucide)</label>
+        <input type="text" name="icon" id="editIcon" maxlength="30">
       </div>
       <button type="submit" name="edit" class="btn-submit"><i data-lucide="save" class="lucide-ic"></i> Simpan</button>
     </form>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 08 Jul 2026 pada 23.26
+-- Waktu pembuatan: 08 Jul 2026 pada 23.52
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.1.25
 
@@ -204,7 +204,7 @@ CREATE TABLE `kategori` (
   `id_kategori` int(11) NOT NULL,
   `nama_kategori` varchar(100) NOT NULL,
   `deskripsi` text DEFAULT NULL,
-  `icon` varchar(10) DEFAULT NULL
+  `icon` varchar(30) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -212,10 +212,10 @@ CREATE TABLE `kategori` (
 --
 
 INSERT INTO `kategori` (`id_kategori`, `nama_kategori`, `deskripsi`, `icon`) VALUES
-(1, 'Minuman', 'Kopi, teh, dan minuman segar', '🥤'),
-(2, 'Kue & Pastry', 'Kue, croissant, dan dessert', '🍰'),
-(3, 'Makanan Berat', 'Nasi, pasta, dan makanan utama', '🍜'),
-(4, 'Snack', 'Camilan dan makanan ringan', '🍟');
+(1, 'Minuman', 'Kopi, teh, dan minuman segar', 'cup-soda'),
+(2, 'Kue & Pastry', 'Kue, croissant, dan dessert', 'cup-soda'),
+(3, 'Makanan Berat', 'Nasi, pasta, dan makanan utama', 'cup-soda'),
+(4, 'Snack', 'Camilan dan makanan ringan', 'cup-soda');
 
 -- --------------------------------------------------------
 
