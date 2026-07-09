@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 08 Jul 2026 pada 23.52
+-- Waktu pembuatan: 09 Jul 2026 pada 21.14
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.1.25
 
@@ -528,6 +528,28 @@ CREATE TABLE `promo_klaim` (
 -- --------------------------------------------------------
 
 --
+-- Struktur dari tabel `remember_tokens`
+--
+
+CREATE TABLE `remember_tokens` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `selector` varchar(24) NOT NULL,
+  `hashed_validator` varchar(255) NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `remember_tokens`
+--
+
+INSERT INTO `remember_tokens` (`id`, `user_id`, `selector`, `hashed_validator`, `expires_at`, `created_at`) VALUES
+(6, 1, 'a9c65f474b54e15b53', 'e5cfd1a6ff2ebee4214481143ec11c5dec4bc854d46f164b0d4f4465d175954e', '2026-08-08 21:06:41', '2026-07-10 02:06:41');
+
+-- --------------------------------------------------------
+
+--
 -- Struktur dari tabel `riwayat_poin`
 --
 
@@ -644,6 +666,8 @@ CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(50) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
+  `google_id` varchar(64) DEFAULT NULL,
+  `foto_profil` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `role` enum('admin','kasir','pengunjung') DEFAULT 'pengunjung',
   `reset_otp` varchar(6) DEFAULT NULL,
@@ -656,14 +680,14 @@ CREATE TABLE `users` (
 -- Dumping data untuk tabel `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `role`, `reset_otp`, `reset_otp_expires_at`, `reset_otp_attempts`, `sudah_mode_serius`) VALUES
-(1, 'admin', 'yoonskyy63@gmail.com', '$2y$10$yt3h70JgHXAuj76M2xjmCe3dJkkIMVY7Y90zJCwvYwQm6YnIYrfpK', 'admin', NULL, NULL, 0, 1),
-(2, 'admin2', NULL, '12345', 'admin', NULL, NULL, 0, 0),
-(3, 'kasir1', NULL, '12345', 'kasir', NULL, NULL, 0, 0),
-(4, 'kasir2', NULL, '12345', 'kasir', NULL, NULL, 0, 0),
-(5, 'pengunjung1', NULL, '12345', 'pengunjung', NULL, NULL, 0, 0),
-(6, 'pengunjung2', NULL, '$2y$10$sxI0Hrs3vB8PsYnT05lUjeqGcoYXIAqnjC5uT.uEDCUyCiWH1ROZO', 'pengunjung', NULL, NULL, 0, 0),
-(9, 'Gio', 'twendexo85@gmail.com', '$2y$10$54LKGHtR2c/ktfTXrmYuRutIDv3cV9NtmQM3eFI7xPhKhJYdfCD8C', 'pengunjung', NULL, NULL, 0, 0);
+INSERT INTO `users` (`id`, `username`, `email`, `google_id`, `foto_profil`, `password`, `role`, `reset_otp`, `reset_otp_expires_at`, `reset_otp_attempts`, `sudah_mode_serius`) VALUES
+(1, 'admin', 'yoonskyy63@gmail.com', '106241950173413702945', 'https://lh3.googleusercontent.com/a/ACg8ocImR-Osdg6U-skM2sX5bbgSvxj5OyNfatkKeqFjmP_qrTVrAU_d=s96-c', '$2y$10$yt3h70JgHXAuj76M2xjmCe3dJkkIMVY7Y90zJCwvYwQm6YnIYrfpK', 'admin', NULL, NULL, 0, 1),
+(2, 'admin2', NULL, NULL, NULL, '12345', 'admin', NULL, NULL, 0, 0),
+(3, 'kasir1', NULL, NULL, NULL, '12345', 'kasir', NULL, NULL, 0, 0),
+(4, 'kasir2', NULL, NULL, NULL, '12345', 'kasir', NULL, NULL, 0, 0),
+(5, 'pengunjung1', NULL, NULL, NULL, '12345', 'pengunjung', NULL, NULL, 0, 0),
+(6, 'pengunjung2', NULL, NULL, NULL, '$2y$10$sxI0Hrs3vB8PsYnT05lUjeqGcoYXIAqnjC5uT.uEDCUyCiWH1ROZO', 'pengunjung', NULL, NULL, 0, 0),
+(9, 'Gio', 'twendexo85@gmail.com', '106294359954775208708', 'https://lh3.googleusercontent.com/a-/ALV-UjVuMUvNm7Vr6sASjrwxBAOUxi8hUUoxwW4oex55WipvsrifrZX3c6j5pCFx3PSfZ9zgk7p6RJC_CPPJjemIHXW648ta-4gGiYdNG4o_n6jumSsvJKY992iBpyW4ZtzmPGDKEuol81lrC-LA203C9bMe-e_hPERbK9J6P3M5Nu0-cKNAreK9me4ywxQzPLBOdRBjJAux4tv5LVjZjMy8Pp', '$2y$10$54LKGHtR2c/ktfTXrmYuRutIDv3cV9NtmQM3eFI7xPhKhJYdfCD8C', 'pengunjung', NULL, NULL, 0, 0);
 
 --
 -- Indexes for dumped tables
@@ -818,6 +842,14 @@ ALTER TABLE `promo_klaim`
   ADD KEY `fk_klaim_member` (`id_member`);
 
 --
+-- Indeks untuk tabel `remember_tokens`
+--
+ALTER TABLE `remember_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `selector` (`selector`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indeks untuk tabel `riwayat_poin`
 --
 ALTER TABLE `riwayat_poin`
@@ -860,7 +892,8 @@ ALTER TABLE `ulasan_tempat`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `google_id` (`google_id`);
 
 --
 -- AUTO_INCREMENT untuk tabel yang dibuang
@@ -987,6 +1020,12 @@ ALTER TABLE `promo_klaim`
   MODIFY `id_klaim` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT untuk tabel `remember_tokens`
+--
+ALTER TABLE `remember_tokens`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
 -- AUTO_INCREMENT untuk tabel `riwayat_poin`
 --
 ALTER TABLE `riwayat_poin`
@@ -1092,6 +1131,12 @@ ALTER TABLE `produk`
 ALTER TABLE `promo_klaim`
   ADD CONSTRAINT `fk_klaim_member` FOREIGN KEY (`id_member`) REFERENCES `member` (`id_member`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_klaim_promo` FOREIGN KEY (`id_promo`) REFERENCES `promo` (`id_promo`) ON DELETE CASCADE;
+
+--
+-- Ketidakleluasaan untuk tabel `remember_tokens`
+--
+ALTER TABLE `remember_tokens`
+  ADD CONSTRAINT `remember_tokens_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 
 --
 -- Ketidakleluasaan untuk tabel `riwayat_poin`
