@@ -4,6 +4,7 @@ config/groq_config.php
 config/mistral_config.php
 config/mail_config.php
 config/cerebras_config_CAFE_config.php
+config/google_config.php
 
 # Log & file debug
 mail_debug.log

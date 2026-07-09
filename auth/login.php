@@ -531,6 +531,116 @@ $registerLinkQs = $carryQuery ? ('?' . http_build_query($carryQuery)) : '';
     }
     .notice-msg.show { display: block; }
 
+    /* ── Remember me checkbox ── */
+    .remember-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .remember-row input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      border-radius: 5px;
+      background: rgba(255,255,255,0.07);
+      cursor: pointer;
+      position: relative;
+      transition: background 0.25s, border-color 0.25s;
+    }
+    .remember-row input[type="checkbox"]:hover {
+      border-color: rgba(212,175,55,0.6);
+    }
+    .remember-row input[type="checkbox"]:checked {
+      background: linear-gradient(135deg, #D4AF37, #b8922a);
+      border-color: #D4AF37;
+    }
+    .remember-row input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      left: 5px; top: 1px;
+      width: 5px; height: 9px;
+      border: solid #1e0e0a;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+    .remember-row label {
+      font-size: 0.85em;
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    /* ── "Welcome Back" text above submit button ── */
+    .welcome-back-text {
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15em;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      background: linear-gradient(135deg, #fff 30%, #D4AF37 70%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── "or continue with" divider ── */
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 22px 0 2px;
+      opacity: 0;
+      animation: fadeUp 0.8s forwards 1.25s;
+    }
+    .or-divider::before,
+    .or-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.14);
+    }
+    .or-divider span {
+      font-size: 0.72em;
+      color: rgba(255,255,255,0.42);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* ── Google button ── */
+    .btn-google {
+      width: 100%;
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 13px 20px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 14px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.92em;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      opacity: 0;
+      animation: fadeUp 0.8s forwards 1.35s;
+      transition: background 0.25s, border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    }
+    .btn-google:hover {
+      background: rgba(255,255,255,0.13);
+      border-color: rgba(255,255,255,0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    }
+    .btn-google:active { transform: translateY(0); }
+    .btn-google svg { width: 19px; height: 19px; flex-shrink: 0; }
+
     /* ── Footer link ── */
     .login-footer {
       margin-top: 24px;
@@ -785,12 +895,31 @@ $registerLinkQs = $carryQuery ? ('?' . http_build_query($carryQuery)) : '';
           </div>
         </div>
 
+        <div class="remember-row">
+          <input type="checkbox" id="rememberMe" name="remember_me" value="1">
+          <label for="rememberMe">Ingat saya (Remember Me)</label>
+        </div>
+
+        <div class="welcome-back-text">Welcome Back</div>
+
         <button type="submit" class="btn-login" id="btnLogin">
           <span class="btn-text">Masuk</span>
           <span class="btn-icon"><i data-lucide="arrow-right" class="lucide-ic"></i></span>
         </button>
 
       </form>
+
+      <div class="or-divider"><span>or continue with</span></div>
+
+      <a href="google_login.php<?= $carryRedirect ? '?redirect=' . urlencode($carryRedirect) : '' ?>" class="btn-google" id="btnGoogle">
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+          <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+          <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+          <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+        </svg>
+        <span>Masuk dengan Google</span>
+      </a>
 
       <div class="login-footer">
         Belum punya akun? <a href="register.php<?= $registerLinkQs ?>">Buat Akun</a>
@@ -909,6 +1038,7 @@ $registerLinkQs = $carryQuery ? ('?' . http_build_query($carryQuery)) : '';
 
       const u = usernameInput.value.trim();
       const p = passwordInput.value;
+      const remember = document.getElementById('rememberMe')?.checked ? '1' : '';
 
       if (!u || !p) {
         errorMsg.classList.add('show');
@@ -931,7 +1061,7 @@ $registerLinkQs = $carryQuery ? ('?' . http_build_query($carryQuery)) : '';
             'Content-Type': 'application/x-www-form-urlencoded',
             'X-Requested-With': 'XMLHttpRequest'
           },
-          body: new URLSearchParams({ username: u, password: p, redirect: document.getElementById('redirectInput').value })
+          body: new URLSearchParams({ username: u, password: p, redirect: document.getElementById('redirectInput').value, remember_me: remember })
         });
         const data = await res.json();
 

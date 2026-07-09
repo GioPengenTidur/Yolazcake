@@ -2,9 +2,11 @@
 
 session_start();
 include "../config/koneksi.php";
+require_once "../config/remember_me_helper.php";
 
-$username = trim($_POST['username'] ?? '');
-$password = $_POST['password'] ?? '';
+$username   = trim($_POST['username'] ?? '');
+$password   = $_POST['password'] ?? '';
+$rememberMe = !empty($_POST['remember_me']);
 
 // Deteksi apakah request datang dari AJAX (fetch) atau submit form biasa
 $is_ajax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
@@ -58,6 +60,12 @@ if ($valid) {
     $_SESSION['role'] = $user['role'] ?? 'pengunjung';
     $_SESSION['email'] = $user['email'] ?? null;
     $_SESSION['user_id'] = $user['id'] ?? null;
+
+    // "Ingat saya" dicentang -> buat token persisten supaya sesi tetap
+    // hidup walau browser ditutup, sampai REMEMBER_ME_DAYS terlewati.
+    if ($rememberMe && !empty($user['id'])) {
+        remember_me_create($conn, (int) $user['id']);
+    }
 
     // Semua role (termasuk admin/kasir) mendarat di halaman utama dulu
     // setelah login, sama seperti pengunjung biasa. Untuk masuk ke panel,

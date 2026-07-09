@@ -1,5 +1,20 @@
 <?php
 session_start();
+
+// Belum login di sesi ini? Cek dulu apakah ada cookie "Ingat saya" yang
+// masih valid. TIDAK langsung login-kan — cuma disiapkan datanya, lalu
+// user diminta konfirmasi lewat popup ("Lanjutkan sebagai ... / Ganti Akun")
+// supaya kalau device dipakai orang lain, tidak otomatis nyelonong masuk.
+if (!isset($_SESSION['username'])) {
+    require_once __DIR__ . '/config/koneksi.php';
+    require_once __DIR__ . '/config/remember_me_helper.php';
+    $__yzRememberedUser = remember_me_check($conn);
+    if ($__yzRememberedUser) {
+        $_SESSION['pending_remember_user'] = $__yzRememberedUser;
+    } else {
+        unset($_SESSION['pending_remember_user']);
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -17,6 +32,104 @@ session_start();
 <link rel="stylesheet" href="css/intro-animation.css">
 </head>
 <body>
+
+<?php if (isset($_SESSION['pending_remember_user'])):
+    $__yzRU = $_SESSION['pending_remember_user'];
+    $__yzRUName = htmlspecialchars($__yzRU['username'], ENT_QUOTES);
+    $__yzRUPhoto = $__yzRU['foto_profil'] ?? null;
+    $__yzRUInitial = strtoupper(substr($__yzRU['username'], 0, 1));
+?>
+<style>
+  .yz-rm-overlay {
+    position: fixed; inset: 0; z-index: 99999;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(10,6,4,0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 20px;
+    animation: yzRmFadeIn 0.35s ease both;
+  }
+  @keyframes yzRmFadeIn { from { opacity:0; } to { opacity:1; } }
+  @keyframes yzRmPopIn {
+    from { opacity:0; transform: translateY(14px) scale(0.96); }
+    to   { opacity:1; transform: translateY(0) scale(1); }
+  }
+  .yz-rm-card {
+    width: 100%; max-width: 380px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 24px;
+    padding: 36px 30px 28px;
+    text-align: center;
+    box-shadow: 0 30px 90px rgba(0,0,0,0.5), 0 0 50px rgba(212,175,55,0.14);
+    animation: yzRmPopIn 0.4s cubic-bezier(.2,.8,.2,1) both;
+  }
+  .yz-rm-avatar {
+    width: 78px; height: 78px; margin: 0 auto 18px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 1.9em; font-weight: 700;
+    color: #1e0e0a;
+    background: linear-gradient(135deg, #D4AF37, #b8922a);
+    box-shadow: 0 0 0 3px rgba(212,175,55,0.22), 0 10px 30px rgba(212,175,55,0.25);
+    overflow: hidden;
+  }
+  .yz-rm-avatar img { width:100%; height:100%; object-fit:cover; }
+  .yz-rm-eyebrow {
+    font-size: 0.7em; letter-spacing: 2px; text-transform: uppercase;
+    color: rgba(255,255,255,0.42); margin-bottom: 8px;
+  }
+  .yz-rm-title {
+    font-family: 'Playfair Display', serif; font-size: 1.35em; font-weight: 600;
+    color: #fff; margin-bottom: 6px;
+  }
+  .yz-rm-title span { color: #D4AF37; }
+  .yz-rm-sub {
+    font-size: 0.86em; color: rgba(255,255,255,0.55);
+    line-height: 1.6; margin-bottom: 26px;
+  }
+  .yz-rm-btn {
+    width: 100%; display: flex; align-items: center; justify-content: center; gap: 9px;
+    padding: 13px 20px; border-radius: 14px;
+    text-decoration: none; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.92em;
+    cursor: pointer; border: none; transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  }
+  .yz-rm-btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+  .yz-rm-btn-primary {
+    background: linear-gradient(135deg, #D4AF37, #b8922a);
+    color: #1e0e0a;
+    box-shadow: 0 10px 26px rgba(212,175,55,0.28);
+    margin-bottom: 10px;
+  }
+  .yz-rm-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(212,175,55,0.38); }
+  .yz-rm-btn-secondary {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.16);
+    color: rgba(255,255,255,0.75);
+  }
+  .yz-rm-btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.28); }
+</style>
+<div class="yz-rm-overlay" role="dialog" aria-modal="true" aria-labelledby="yzRmTitle">
+  <div class="yz-rm-card">
+    <div class="yz-rm-avatar">
+      <?php if ($__yzRUPhoto): ?>
+        <img src="<?= htmlspecialchars($__yzRUPhoto, ENT_QUOTES) ?>" alt="<?= $__yzRUName ?>">
+      <?php else: ?>
+        <?= $__yzRUInitial ?>
+      <?php endif; ?>
+    </div>
+    <div class="yz-rm-eyebrow">Selamat Datang Kembali</div>
+    <div class="yz-rm-title" id="yzRmTitle">Masuk sebagai <span><?= $__yzRUName ?></span>?</div>
+    <p class="yz-rm-sub">Perangkat ini punya sesi tersimpan dari login sebelumnya. Lanjutkan, atau ganti ke akun lain.</p>
+    <a href="auth/confirm_remember.php" class="yz-rm-btn yz-rm-btn-primary">
+      <i data-lucide="log-in"></i> Lanjutkan sebagai <?= $__yzRUName ?>
+    </a>
+    <a href="auth/switch_account.php" class="yz-rm-btn yz-rm-btn-secondary">
+      <i data-lucide="repeat"></i> Ganti Akun
+    </a>
+  </div>
+</div>
+<?php endif; ?>
 
 <?php
 // ==================== ENTRY ANIMATION ====================
