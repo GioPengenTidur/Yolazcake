@@ -8,7 +8,7 @@
   /* Primary Colors - Café Theme */
   --landing-cream: #FAF8F5;
   --landing-beige: #EDE5D8;
-  --landing-coffee: #5C4033;
+  --landing-coffee: #c48f75;
   --landing-gold: #C9A961;
   --landing-brown-light: #8B7355;
   
@@ -1195,10 +1195,6 @@ body.dark .product-name {
     grid-template-columns: repeat(2, 1fr);
     gap: 6rem;
   }
-}
-
-.cb-column {
-  /* animation will be triggered by JS */
 }
 
 /* CB Header */
