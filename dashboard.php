@@ -28,6 +28,19 @@ $s_ulasan_produk = $q_up ? mysqli_fetch_assoc($q_up) : ['t'=>0,'p'=>0];
 $q_ut = mysqli_query($conn,"SELECT COUNT(*) AS t, SUM(dibaca=0) AS p FROM ulasan_tempat");
 $s_ulasan_tempat = $q_ut ? mysqli_fetch_assoc($q_ut) : ['t'=>0,'p'=>0];
 
+/* Klaim Reward menunggu diverifikasi kasir. Butuh tabel reward_klaim
+   (lihat database/migration_reward_dan_bonus_badge.sql) -- dibungkus
+   try/catch (BUKAN cuma cek return value) karena mysqli di PHP 8.1+
+   defaultnya "exception mode": query ke tabel yang belum ada akan
+   melempar mysqli_sql_exception, bukan cuma mengembalikan false. */
+$s_reward = ['t'=>0,'p'=>0];
+try {
+    $q_reward = mysqli_query($conn,"SELECT COUNT(*) AS t, SUM(status='Menunggu') AS p FROM reward_klaim");
+    if ($q_reward) $s_reward = mysqli_fetch_assoc($q_reward);
+} catch (Throwable $e) {
+    // Migrasi reward_klaim belum diimport -> badge sidebar cuma disembunyikan, dashboard tetap jalan.
+}
+
 /* ── PREDIKSI MEMBER CHURN: hitung member yg >=30 hari gak ada transaksi ──
    Logika sama persis dgn prediksi_churn.php (ambang hari & sumber data
    terakhir aktif dari pemesanan/booking), cuma disini cukup COUNT saja
@@ -1387,6 +1400,12 @@ body::before{
       </a>
       <a class="sb-link" href="riwayat_poin/riwayat_poin.php">
         <span class="sb-link-icon"><i data-lucide="star" class="lucide-ic lucide-fill"></i></span> Riwayat Poin
+      </a>
+      <a class="sb-link" href="reward/verifikasi_reward.php">
+        <span class="sb-link-icon"><i data-lucide="gift" class="lucide-ic"></i></span> Klaim Reward
+        <?php if(($s_reward['p'] ?? 0) > 0): ?>
+          <span class="sb-link-badge"><?= (int)$s_reward['p'] ?></span>
+        <?php endif; ?>
       </a>
       <a class="sb-link" href="kontak/data_kontak.php">
         <span class="sb-link-icon"><i data-lucide="mail" class="lucide-ic"></i></span> Pesan Kontak

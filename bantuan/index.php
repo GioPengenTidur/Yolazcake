@@ -133,9 +133,12 @@ if ($sudahLogin) {
       display:flex;align-items:center;justify-content:center;font-size:1.3em;
       box-shadow:0 4px 14px rgba(0,0,0,.35);
     }
-    .chat-avatar img{
+    /* Zoom ikon video Yola AI: ubah angka scale() di bawah buat zoom in/out */
+    .chat-avatar video{
       width:100%;height:100%;object-fit:cover;object-position:center;
-      transform:scale(1.55);transform-origin:center;
+      transform:scale(3.0);transform-origin:center;
+      pointer-events:none;
+      background:var(--purple);
     }
     .chat-head h1{font-family:'Playfair Display',serif;font-size:1.15em;font-weight:700;}
     .chat-head .sub{font-size:.72em;color:var(--muted);display:flex;align-items:center;gap:5px;margin-top:2px;}
@@ -166,7 +169,13 @@ if ($sudahLogin) {
       color:#EDE9FF;text-decoration:none;font-size:.82em;transition:.15s;
     }
     .fitur-menu a:hover{background:rgba(212,175,55,.14);}
-    .fitur-menu a .emoji{font-size:1.1em;}
+    .fitur-menu a .fm-icon{
+      width:34px;height:34px;border-radius:10px;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,rgba(212,175,55,.18),rgba(238,42,123,.14));
+      color:#FFE9B8;
+    }
+    .fitur-menu a .fm-icon .lucide-ic{width:17px;height:17px;}
     .fitur-menu a .fm-desc{display:block;font-size:.82em;color:var(--muted);font-weight:400;margin-top:1px;}
     .fitur-menu a .fm-title{font-weight:600;}
 
@@ -292,7 +301,7 @@ if ($sudahLogin) {
   <div class="chat-wrap">
     <div class="chat-head">
       <button class="sidebar-toggle" id="sidebarToggle" aria-label="Riwayat obrolan"><i data-lucide="menu" class="lucide-ic"></i></button>
-      <div class="chat-avatar"><img src="../assets/img/logo/yola-ai-icon.png" alt="Yola AI"></div>
+      <div class="chat-avatar"><video src="../assets/video/YolazAI.mp4" poster="../assets/img/logo/yola-ai-icon.png" preload="auto" autoplay loop muted playsinline disablepictureinpicture aria-label="Yola AI"></video></div>
       <div>
         <h1>Yola · Pusat Bantuan</h1>
         <div class="sub"><span class="dot-online"></span> Siap bantu soal YOLAZCAKE</div>
@@ -305,14 +314,14 @@ if ($sudahLogin) {
         </button>
         <div class="fitur-menu" id="fiturMenu">
           <a href="resep_ai.php">
-            <span class="emoji">🍳</span>
+            <span class="fm-icon"><i data-lucide="chef-hat" class="lucide-ic"></i></span>
             <span>
               <span class="fm-title">Resep dari Bahan Sisa</span>
               <span class="fm-desc">Ide kreasi kue dari bahan yang kamu punya</span>
             </span>
           </a>
           <a href="mood_menu.php">
-            <span class="emoji">✨</span>
+            <span class="fm-icon"><i data-lucide="smile" class="lucide-ic"></i></span>
             <span>
               <span class="fm-title">Cocokin Mood Kamu</span>
               <span class="fm-desc">Rekomendasi menu sesuai mood & momen</span>

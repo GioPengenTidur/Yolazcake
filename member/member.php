@@ -9,6 +9,7 @@ if(!isset($_SESSION['username'])){
 require_once '../config/koneksi.php';
 require_once '../config/member_helper.php';
 require_once '../config/gamifikasi_helper.php';
+require_once '../config/reward_helper.php';
 
 $member = get_current_member($conn);
 
@@ -27,13 +28,34 @@ if ($member === null) {
 $poin   = (int) ($member['poin'] ?? 0);
 $tier   = get_member_tier($poin);
 
-// Bulan bergabung dihitung dari tanggal member terdaftar
-$bulan_bergabung = 0;
+// Lama bergabung dihitung dari tanggal member terdaftar. Kalau belum
+// sampai 1 bulan, tampilkan dalam HARI supaya nggak selalu kebaca "0"
+// buat member yang baru gabung minggu ini.
+$bulan_bergabung      = 0;
+$hari_bergabung       = 0;
+$satuan_bergabung     = 'Bulan';
+$lama_bergabung_angka = 0;
+$label_bergabung      = 'Baru Bergabung';
 if (!empty($member['created_at'])) {
     $joined = new DateTime($member['created_at']);
     $now    = new DateTime();
     $diff   = $joined->diff($now);
     $bulan_bergabung = ($diff->y * 12) + $diff->m;
+    $hari_bergabung  = (int) $diff->days;
+
+    if ($bulan_bergabung >= 1) {
+        $satuan_bergabung     = 'Bulan';
+        $lama_bergabung_angka = $bulan_bergabung;
+        $label_bergabung      = $bulan_bergabung.' Bulan Lalu';
+    } elseif ($hari_bergabung >= 1) {
+        $satuan_bergabung     = 'Hari';
+        $lama_bergabung_angka = $hari_bergabung;
+        $label_bergabung      = $hari_bergabung.' Hari Lalu';
+    } else {
+        $satuan_bergabung     = 'Hari';
+        $lama_bergabung_angka = 0;
+        $label_bergabung      = 'Baru Gabung Hari Ini';
+    }
 }
 
 // Poin masuk/keluar bulan ini (dari riwayat_poin, kalau ada)
@@ -64,12 +86,9 @@ if ($resPromo) {
     }
 }
 
-$reward_milestones = [
-    ['poin' => 100, 'icon' => '<i data-lucide="gift" class="lucide-ic"></i>', 'nama' => 'Diskon 5%'],
-    ['poin' => 200, 'icon' => '<i data-lucide="coffee" class="lucide-ic"></i>', 'nama' => 'Gratis Kopi'],
-    ['poin' => 250, 'icon' => '<i data-lucide="croissant" class="lucide-ic"></i>', 'nama' => 'Gratis Croissant'],
-    ['poin' => 500, 'icon' => '<i data-lucide="cake" class="lucide-ic"></i>', 'nama' => 'Gratis Cake'],
-];
+// Milestone reward diambil dari config/reward_helper.php supaya konsisten
+// dengan halaman klaim_reward.php (satu sumber data, gak dobel-dobel).
+$reward_milestones = REWARD_MILESTONES;
 
 // Data gamifikasi: streak checkin & notifikasi in-app (kado poin, badge baru).
 // Dibungkus try-catch supaya kalau migration_gamifikasi.sql belum diimport,
@@ -77,9 +96,22 @@ $reward_milestones = [
 try {
     $streak_info      = gamif_get_streak_info($conn, $member);
     $notif_belum_baca = gamif_jumlah_notif_belum_dibaca($conn, (int) $member['id_member']);
+
+    // Cek & cairkan bonus poin berkala per badge (kalau ada yang jatuh tempo),
+    // baru ambil jadwal terbaru buat ditampilkan.
+    $bonus_baru_cair = gamif_proses_bonus_badge($conn, (int) $member['id_member']);
+    if (!empty($bonus_baru_cair)) {
+        // poin barusan nambah, refresh biar kartu poin di dashboard akurat
+        $member['poin'] = (int) ($member['poin'] ?? 0) + array_sum(array_column($bonus_baru_cair, 'poin'));
+        $poin = (int) $member['poin'];
+        $tier = get_member_tier($poin);
+    }
+    $jadwal_bonus_badge = gamif_get_jadwal_bonus_badge($conn, (int) $member['id_member']);
 } catch (Throwable $e) {
-    $streak_info      = ['streak_saat_ini' => 0, 'streak_terbaik' => 0, 'sudah_checkin' => false, 'badges' => [], 'tanggal_checkin' => []];
-    $notif_belum_baca = 0;
+    $streak_info         = ['streak_saat_ini' => 0, 'streak_terbaik' => 0, 'sudah_checkin' => false, 'badges' => [], 'tanggal_checkin' => []];
+    $notif_belum_baca    = 0;
+    $bonus_baru_cair     = [];
+    $jadwal_bonus_badge  = [];
 }
 ?>
 <!DOCTYPE html>
@@ -760,6 +792,39 @@ body.light .dropdown a, body.light .dropdown p { color: #333; }
 }
 @media (max-width: 640px) { .gamif-grid { grid-template-columns: 1fr; } }
 
+/* ─── JADWAL BONUS POIN PER BADGE ─── */
+.bonus-jadwal-wrap { margin-top: 18px; }
+.bonus-jadwal-title {
+  font-size: 0.78em; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+}
+.bonus-jadwal-list { display: flex; flex-direction: column; gap: 10px; }
+.bonus-jadwal-item {
+  display: flex; align-items: center; gap: 14px; padding: 12px 16px;
+  border-radius: 14px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.03);
+}
+.bonus-jadwal-icon {
+  flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, rgba(212,175,55,0.25), rgba(255,122,61,0.18)); color: var(--gold);
+}
+.bonus-jadwal-info { flex: 1; min-width: 0; }
+.bonus-jadwal-nama { font-size: 0.85em; font-weight: 700; }
+.bonus-jadwal-waktu { font-size: 0.76em; color: var(--text-muted); margin-top: 2px; }
+.bonus-jadwal-poin {
+  flex-shrink: 0; font-size: 0.78em; font-weight: 700; padding: 5px 12px; border-radius: 999px;
+  background: rgba(46,204,113,0.15); color: #6EE7A0;
+}
+.bonus-jadwal-item.siap { border-color: rgba(46,204,113,0.4); background: rgba(46,204,113,0.06); }
+.bonus-jadwal-empty {
+  display: flex; align-items: flex-start; gap: 10px; padding: 14px 16px;
+  border-radius: 14px; border: 1px dashed var(--glass-border); background: rgba(255,255,255,0.03);
+  font-size: 0.82em; color: var(--text-muted); line-height: 1.6;
+}
+.bonus-jadwal-empty i { flex-shrink: 0; margin-top: 2px; color: var(--gold); }
+.bonus-jadwal-empty a { color: var(--gold); }
+.bonus-jadwal-empty strong { color: var(--text); }
+
 /* ═══════════════════════════════════════════
    NOTIFICATION BELL
 ═══════════════════════════════════════════ */
@@ -963,9 +1028,21 @@ body.light .promo-box { background: rgba(0,0,0,0.03); border-color: rgba(238,42,
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(212,175,55,0.18);
   border-radius: 16px; padding: 22px 16px; text-align: center;
-  transition: border-color 0.35s, box-shadow 0.35s, transform 0.3s; cursor: default;
+  transition: border-color 0.35s, box-shadow 0.35s, transform 0.3s; cursor: pointer;
   position: relative; overflow: hidden;
+  display: block; text-decoration: none; color: inherit;
 }
+.reward-icon i.lucide-ic { width: 30px; height: 30px; color: var(--gold, #D4AF37); }
+.btn-klaim-reward {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-top: 16px; padding: 13px; border-radius: 14px;
+  font-weight: 700; font-size: 0.82em; letter-spacing: 0.5px; text-transform: uppercase;
+  text-decoration: none; color: #1e0e3a;
+  background: linear-gradient(135deg,#D4AF37 0%,#b8860b 50%,#D4AF37 100%);
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+.btn-klaim-reward:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(212,175,55,0.35); }
+.btn-klaim-reward i { width: 16px; height: 16px; }
 body.light .reward-box { background: rgba(0,0,0,0.03); }
 .reward-box.unlocked { border-color: rgba(212,175,55,0.35); }
 .reward-box.locked { opacity: 0.55; }
@@ -1214,8 +1291,8 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
     </div>
     <div class="stat-card stat-card-3">
       <div class="stat-icon-wrap"><i data-lucide="calendar" class="lucide-ic"></i></div>
-      <div class="stat-val" data-count="<?= $bulan_bergabung ?>"><?= $bulan_bergabung ?></div>
-      <div class="stat-lbl">Bulan Bergabung</div>
+      <div class="stat-val" data-count="<?= $lama_bergabung_angka ?>"><?= $lama_bergabung_angka ?></div>
+      <div class="stat-lbl"><?= $satuan_bergabung ?> Bergabung</div>
     </div>
   </div>
 
@@ -1239,7 +1316,7 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
       <div class="status-box">
         <span class="sb-icon"><i data-lucide="calendar-days" class="lucide-ic"></i></span>
         <h3>Bergabung</h3>
-        <p><?= $bulan_bergabung ?> Bulan Lalu</p>
+        <p><?= htmlspecialchars($label_bergabung) ?></p>
       </div>
     </div>
   </div>
@@ -1310,21 +1387,22 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
     </div>
     <div class="reward-grid">
       <?php foreach ($reward_milestones as $r): $unlocked = $poin >= $r['poin']; ?>
-      <div class="reward-box <?= $unlocked ? 'unlocked' : 'locked' ?>">
+      <a href="klaim_reward.php" class="reward-box <?= $unlocked ? 'unlocked' : 'locked' ?>">
         <?php if (!$unlocked): ?><span class="lock-overlay"><i data-lucide="lock" class="lucide-ic"></i></span><?php endif; ?>
-        <div class="reward-icon"><?= $r['icon'] ?></div>
+        <div class="reward-icon"><i data-lucide="<?= htmlspecialchars($r['icon']) ?>" class="lucide-ic"></i></div>
         <div class="reward-poin"><?= $r['poin'] ?> Poin</div>
         <div class="reward-name"><?= htmlspecialchars($r['nama']) ?></div>
-      </div>
+      </a>
       <?php endforeach; ?>
     </div>
+    <a href="klaim_reward.php" class="btn-klaim-reward"><i data-lucide="gift" class="lucide-ic"></i> Klaim Reward</a>
   </div>
 
   <!-- GAMIFIKASI SECTION -->
   <div class="section-card d5">
     <div class="section-header">
       <div class="section-icon"><i data-lucide="sparkles" class="lucide-ic"></i></div>
-      <div class="section-title">Gamifikasi Member</div>
+      <div class="section-title">Poin Loyalitas</div>
     </div>
     <div class="gamif-grid">
       <a href="kado_poin.php" class="gamif-card kado">
@@ -1338,6 +1416,35 @@ body.light .footer { border-top-color: rgba(0,0,0,0.07); }
         <div class="gamif-card-desc">Checkin tiap hari biar streak nggak putus dan buka badge eksklusif.</div>
         <div class="gamif-card-badge"><i data-lucide="flame" class="lucide-ic"></i> <?= $streak_info['streak_saat_ini'] ?> hari berturut-turut</div>
       </a>
+    </div>
+
+    <div class="bonus-jadwal-wrap">
+      <div class="bonus-jadwal-title"><i data-lucide="calendar-clock" class="lucide-ic"></i> Jadwal Bonus Poin Badge</div>
+      <?php if (!empty($jadwal_bonus_badge)): ?>
+      <div class="bonus-jadwal-list">
+        <?php foreach ($jadwal_bonus_badge as $j): ?>
+        <div class="bonus-jadwal-item <?= $j['siap'] ? 'siap' : '' ?>">
+          <div class="bonus-jadwal-icon"><i data-lucide="<?= htmlspecialchars($j['icon']) ?>" class="lucide-ic"></i></div>
+          <div class="bonus-jadwal-info">
+            <div class="bonus-jadwal-nama"><?= htmlspecialchars($j['nama']) ?></div>
+            <div class="bonus-jadwal-waktu">
+              <?php if ($j['siap']): ?>
+                Siap dicairkan, refresh halaman ini ya!
+              <?php else: ?>
+                Cair setiap <?= $j['interval_hari'] ?> hari · berikutnya <?= $j['next_at']->format('d M Y, H:i') ?>
+              <?php endif; ?>
+            </div>
+          </div>
+          <div class="bonus-jadwal-poin">+<?= $j['poin'] ?> Poin</div>
+        </div>
+        <?php endforeach; ?>
+      </div>
+      <?php else: ?>
+      <div class="bonus-jadwal-empty">
+        <i data-lucide="info" class="lucide-ic"></i>
+        Belum ada jadwal bonus. Badge ini beda dari tier Bronze/Silver — didapat dari checkin harian, bukan poin. Checkin 3 hari berturut-turut untuk badge pertama.
+      </div>
+      <?php endif; ?>
     </div>
   </div>
 
@@ -1412,6 +1519,18 @@ window.addEventListener('load', () => {
     if(glow){ glow.style.right = (100 - pct) + '%'; }
   }, 1400);
 });
+
+/* ══ TOAST BONUS BADGE YANG BARU CAIR ══ */
+<?php if (!empty($bonus_baru_cair)): ?>
+window.addEventListener('load', () => {
+  const bonusList = <?= json_encode($bonus_baru_cair) ?>;
+  bonusList.forEach((b, i) => {
+    setTimeout(() => {
+      showToast('Bonus +' + b.poin + ' poin dari badge "' + b.badge + '" udah masuk!');
+    }, 1800 + (i * 3000));
+  });
+});
+<?php endif; ?>
 
 /* ══ COPY PROMO CODE ══ */
 /* Helper: ganti isi elemen dengan markup icon lucide lalu render ulang jadi SVG.

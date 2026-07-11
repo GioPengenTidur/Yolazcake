@@ -54,7 +54,8 @@ $sudahLogin = isset($_SESSION['username']);
       display:flex;align-items:center;justify-content:center;
       box-shadow:0 4px 14px rgba(0,0,0,.35);
     }
-    .head-icon img{width:100%;height:100%;object-fit:cover;object-position:center;transform:scale(1.55);}
+    .head-icon img,
+    .head-icon video{width:100%;height:100%;object-fit:cover;object-position:center;transform:scale(3.0);pointer-events:none;background:var(--purple);}
     .head h1{font-family:'Playfair Display',serif;font-size:1.15em;font-weight:700;}
     .head .sub{font-size:.72em;color:var(--muted);margin-top:2px;}
     .back-link{
@@ -126,7 +127,7 @@ $sudahLogin = isset($_SESSION['username']);
 
 <div class="wrap">
   <div class="head">
-    <div class="head-icon"><img src="../assets/img/logo/yola-ai-icon.png" alt="Yola AI"></div>
+    <div class="head-icon"><video src="../assets/video/YolazAI.mp4" poster="../assets/img/logo/yola-ai-icon.png" preload="auto" autoplay loop muted playsinline disablepictureinpicture aria-label="Yola AI"></video></div>
     <div>
       <h1>Cocokin Mood Kamu</h1>
       <div class="sub">2 pertanyaan, Yola carikan menu yang pas ✨</div>

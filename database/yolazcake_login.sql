@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 09 Jul 2026 pada 21.14
+-- Waktu pembuatan: 11 Jul 2026 pada 21.44
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.1.25
 
@@ -80,7 +80,7 @@ CREATE TABLE `chat_memori` (
 --
 
 INSERT INTO `chat_memori` (`id_memori`, `id_user`, `guest_token`, `ringkasan`, `diperbarui_pada`) VALUES
-(1, 1, NULL, '*   Nama panggilan: Kak Yoon', '2026-07-09 03:14:18');
+(1, 1, NULL, '- Username: yoonss', '2026-07-12 02:36:14');
 
 -- --------------------------------------------------------
 
@@ -102,7 +102,9 @@ CREATE TABLE `chat_pesan` (
 
 INSERT INTO `chat_pesan` (`id_pesan`, `id_sesi`, `peran`, `isi`, `dibuat_pada`) VALUES
 (13, 5, 'user', 'hai', '2026-07-08 18:51:10'),
-(14, 5, 'bot', 'Hai juga! 👋 Ada yang bisa Yola bantu seputar YOLAZCAKE? 😄', '2026-07-08 18:51:10');
+(14, 5, 'bot', 'Hai juga! 👋 Ada yang bisa Yola bantu seputar YOLAZCAKE? 😄', '2026-07-08 18:51:10'),
+(23, 9, 'user', 'Ada promo apa sekarang?', '2026-07-12 02:36:12'),
+(24, 9, 'bot', 'Hai kak yoonsskyy63! 👋\n\nUntuk saat ini, YOLAZCAKE lagi belum ada promo aktif nih. Tapi jangan khawatir, kami bakal update terus kalau ada promo seru lainnya. Pantengin aja halaman [promo.php](promo.php) di website kami ya! ✨', '2026-07-12 02:36:12');
 
 -- --------------------------------------------------------
 
@@ -124,7 +126,8 @@ CREATE TABLE `chat_sesi` (
 --
 
 INSERT INTO `chat_sesi` (`id_sesi`, `id_user`, `guest_token`, `judul`, `dibuat_pada`, `diperbarui_pada`) VALUES
-(5, NULL, '7614504d088869bc8f02c4f9e38ed54eb2f18c8c', 'hai', '2026-07-08 18:51:09', '2026-07-08 18:51:10');
+(5, NULL, '7614504d088869bc8f02c4f9e38ed54eb2f18c8c', 'hai', '2026-07-08 18:51:09', '2026-07-08 18:51:10'),
+(9, 1, NULL, 'Ada promo apa sekarang?', '2026-07-12 02:36:10', '2026-07-12 02:36:12');
 
 -- --------------------------------------------------------
 
@@ -155,7 +158,8 @@ INSERT INTO `detail_pemesanan` (`id_detail`, `id_pemesanan`, `id_produk`, `jumla
 (18, 18, 12, 2, 30000.00),
 (19, 19, 12, 2, 30000.00),
 (20, 20, 12, 1, 15000.00),
-(21, 21, 12, 2, 30000.00);
+(21, 21, 12, 2, 30000.00),
+(22, 22, 12, 1, 15000.00);
 
 -- --------------------------------------------------------
 
@@ -295,9 +299,9 @@ CREATE TABLE `member` (
 --
 
 INSERT INTO `member` (`id_member`, `id_user`, `nama`, `email`, `no_hp`, `alamat`, `poin`, `streak_saat_ini`, `streak_terbaik`, `checkin_terakhir`, `created_at`) VALUES
-(2, NULL, 'Amba', 'kangkung@gmail.com', '089129817656', 'ngawi', 9, 0, 0, NULL, '2026-06-09 15:38:36'),
+(2, NULL, 'Amba', 'kangkung@gmail.com', '089129817656', 'ngawi', 29, 0, 0, NULL, '2026-06-09 15:38:36'),
 (3, NULL, 'tes', 'gionardoalenski@itbss.ac.id', '0891298263633', 'ITBSS', 11, 0, 0, NULL, '2026-06-14 17:06:14'),
-(5, 9, 'GioNa', 'twendexo85@gmail.com', '11111111111', 'Sintang', 99, 1, 1, '2026-07-08', '2026-07-04 15:19:42'),
+(5, 9, 'GioNa', 'twendexo85@gmail.com', '11111111111', 'Sintang', 595, 3, 3, '2026-07-12', '2026-07-04 15:19:42'),
 (6, NULL, 'gionardoalenskii@gmail.com', 'gionardoalenskii@gmail.com', '', '', 0, 0, 0, NULL, '2026-07-04 19:21:19');
 
 -- --------------------------------------------------------
@@ -310,8 +314,16 @@ CREATE TABLE `member_badge` (
   `id_badge_diraih` int(11) NOT NULL,
   `id_member` int(11) NOT NULL,
   `kode_badge` varchar(40) NOT NULL,
-  `earned_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `earned_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `bonus_terakhir` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `member_badge`
+--
+
+INSERT INTO `member_badge` (`id_badge_diraih`, `id_member`, `kode_badge`, `earned_at`, `bonus_terakhir`) VALUES
+(1, 5, 'streak_3', '2026-07-11 18:28:10', '2026-07-11 18:28:40');
 
 -- --------------------------------------------------------
 
@@ -331,7 +343,9 @@ CREATE TABLE `member_checkin` (
 --
 
 INSERT INTO `member_checkin` (`id_checkin`, `id_member`, `tanggal`, `created_at`) VALUES
-(1, 5, '2026-07-08', '2026-07-07 21:49:45');
+(1, 5, '2026-07-08', '2026-07-07 21:49:45'),
+(2, 5, '2026-07-11', '2026-07-11 14:08:33'),
+(3, 5, '2026-07-12', '2026-07-11 17:03:09');
 
 -- --------------------------------------------------------
 
@@ -401,7 +415,10 @@ CREATE TABLE `notifikasi_member` (
 --
 
 INSERT INTO `notifikasi_member` (`id_notif`, `id_member`, `tipe`, `judul`, `pesan`, `link`, `is_read`, `created_at`) VALUES
-(1, 3, 'kado_poin', 'Kado Poin Diterima! 🎁', 'Kamu dapet kado 1 poin dari GioNa! Pesannya: \"tes\"', '../member/member.php', 0, '2026-07-07 22:00:28');
+(1, 3, 'kado_poin', 'Kado Poin Diterima! 🎁', 'Kamu dapet kado 1 poin dari GioNa! Pesannya: \"tes\"', '../member/member.php', 0, '2026-07-07 22:00:28'),
+(2, 5, 'klaim_reward', 'Reward Diklaim! 🎁', 'Kamu berhasil klaim \"Diskon 5%\". Tunjukkan kode YLZ-3A5328 ke kasir buat ambil rewardnya.', '../member/klaim_reward.php', 1, '2026-07-11 18:18:22'),
+(3, 5, 'bonus_badge', 'Bonus Poin Badge! 🎉', 'Badge \"Pelanggan Setia\" kamu ngasih bonus +15 poin. Terus pertahankan streak-nya ya!', '../member/streak.php', 1, '2026-07-11 18:28:40'),
+(4, 2, 'kado_poin', 'Kado Poin Diterima! 🎁', 'Kamu dapet kado 20 poin dari GioNa! Pesannya: \"nih oleh oleh wak\"', '../member/member.php', 0, '2026-07-11 18:29:38');
 
 -- --------------------------------------------------------
 
@@ -445,7 +462,8 @@ INSERT INTO `pemesanan` (`id_pemesanan`, `kode_pesanan`, `id_member`, `id_user`,
 (18, 'ORD20260704212119', 6, NULL, '2026-07-04 21:21:19', 30000.00, NULL, 0.00, 20, 'QRIS', 'Lunas', 'Dibatalkan', 'yoyon', '0898866755', NULL),
 (19, 'ORD20260707064013', NULL, 5, '2026-07-07 06:40:13', 30000.00, NULL, 0.00, 21, 'QRIS', 'Lunas', 'Dibatalkan', 'yoyon', '12345555', NULL),
 (20, 'ORD20260708143014', NULL, 1, '2026-07-08 14:30:14', 15000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Dibatalkan', 'yoyon', '0898866755', 'M01'),
-(21, 'ORD20260708143334', NULL, 1, '2026-07-08 14:33:34', 30000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Dibatalkan', 'yoyon', '0898866755', 'M01');
+(21, 'ORD20260708143334', NULL, 1, '2026-07-08 14:33:34', 30000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Dibatalkan', 'yoyon', '0898866755', 'M01'),
+(22, 'ORD20260711211223', NULL, 1, '2026-07-11 21:12:23', 15000.00, NULL, 0.00, NULL, 'QRIS', 'Lunas', 'Menunggu', 'yoyon', '0898866755', NULL);
 
 -- --------------------------------------------------------
 
@@ -467,7 +485,8 @@ CREATE TABLE `poin_transfer` (
 --
 
 INSERT INTO `poin_transfer` (`id_transfer`, `id_pengirim`, `id_penerima`, `poin`, `pesan`, `created_at`) VALUES
-(1, 5, 3, 1, 'tes', '2026-07-07 22:00:28');
+(1, 5, 3, 1, 'tes', '2026-07-07 22:00:28'),
+(2, 5, 2, 20, 'nih oleh oleh wak', '2026-07-11 18:29:38');
 
 -- --------------------------------------------------------
 
@@ -491,7 +510,7 @@ CREATE TABLE `produk` (
 --
 
 INSERT INTO `produk` (`id_produk`, `nama_produk`, `harga`, `deskripsi`, `foto`, `stok`, `created_at`, `id_kategori`) VALUES
-(12, 'Ayam Goreng', 15000.00, 'enak', 'img_6a48f54bd0c1b9.51715188.png', 45, '2026-07-04 11:58:03', 4);
+(12, 'Ayam Goreng', 15000.00, 'enak', 'img_6a48f54bd0c1b9.51715188.png', 44, '2026-07-04 11:58:03', 4);
 
 -- --------------------------------------------------------
 
@@ -545,7 +564,30 @@ CREATE TABLE `remember_tokens` (
 --
 
 INSERT INTO `remember_tokens` (`id`, `user_id`, `selector`, `hashed_validator`, `expires_at`, `created_at`) VALUES
-(6, 1, 'a9c65f474b54e15b53', 'e5cfd1a6ff2ebee4214481143ec11c5dec4bc854d46f164b0d4f4465d175954e', '2026-08-08 21:06:41', '2026-07-10 02:06:41');
+(11, 1, 'fcae5332e3ce225f3a', 'b5ac17e262bf79b26173e2a7dfa49d4840c20b7ede12dd0723d8d6d8994f5105', '2026-08-10 21:08:01', '2026-07-12 02:08:01');
+
+-- --------------------------------------------------------
+
+--
+-- Struktur dari tabel `reward_klaim`
+--
+
+CREATE TABLE `reward_klaim` (
+  `id_klaim` int(11) NOT NULL,
+  `id_member` int(11) NOT NULL,
+  `nama_reward` varchar(100) NOT NULL,
+  `poin_terpakai` int(11) NOT NULL,
+  `kode_redeem` varchar(20) NOT NULL,
+  `status` enum('Menunggu','Selesai') NOT NULL DEFAULT 'Menunggu',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `reward_klaim`
+--
+
+INSERT INTO `reward_klaim` (`id_klaim`, `id_member`, `nama_reward`, `poin_terpakai`, `kode_redeem`, `status`, `created_at`) VALUES
+(1, 5, 'Diskon 5%', 100, 'YLZ-3A5328', 'Selesai', '2026-07-11 18:18:22');
 
 -- --------------------------------------------------------
 
@@ -568,7 +610,12 @@ CREATE TABLE `riwayat_poin` (
 
 INSERT INTO `riwayat_poin` (`id_riwayat`, `id_member`, `jenis`, `poin`, `keterangan`, `created_at`) VALUES
 (1, 5, 'Keluar', 1, 'Kado poin untuk tes — \"tes\"', '2026-07-07 22:00:28'),
-(2, 3, 'Masuk', 1, 'Kado poin dari GioNa — \"tes\"', '2026-07-07 22:00:28');
+(2, 3, 'Masuk', 1, 'Kado poin dari GioNa — \"tes\"', '2026-07-07 22:00:28'),
+(3, 5, 'Masuk', 300, '', '2026-07-11 18:17:19'),
+(4, 5, 'Keluar', 100, 'Klaim reward \"Diskon 5%\" (kode YLZ-3A5328)', '2026-07-11 18:18:22'),
+(5, 5, 'Masuk', 15, 'Bonus poin berkala badge \"Pelanggan Setia\"', '2026-07-11 18:28:40'),
+(6, 5, 'Keluar', 20, 'Kado poin untuk Amba — \"nih oleh oleh wak\"', '2026-07-11 18:29:38'),
+(7, 2, 'Masuk', 20, 'Kado poin dari GioNa — \"nih oleh oleh wak\"', '2026-07-11 18:29:38');
 
 -- --------------------------------------------------------
 
@@ -681,7 +728,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `google_id`, `foto_profil`, `password`, `role`, `reset_otp`, `reset_otp_expires_at`, `reset_otp_attempts`, `sudah_mode_serius`) VALUES
-(1, 'admin', 'yoonskyy63@gmail.com', '106241950173413702945', 'https://lh3.googleusercontent.com/a/ACg8ocImR-Osdg6U-skM2sX5bbgSvxj5OyNfatkKeqFjmP_qrTVrAU_d=s96-c', '$2y$10$yt3h70JgHXAuj76M2xjmCe3dJkkIMVY7Y90zJCwvYwQm6YnIYrfpK', 'admin', NULL, NULL, 0, 1),
+(1, 'admin', 'yoonskyy63@gmail.com', '106241950173413702945', 'https://lh3.googleusercontent.com/a/ACg8ocImR-Osdg6U-skM2sX5bbgSvxj5OyNfatkKeqFjmP_qrTVrAU_d=s96-c', '$2y$10$yt3h70JgHXAuj76M2xjmCe3dJkkIMVY7Y90zJCwvYwQm6YnIYrfpK', 'admin', '830913', '2026-07-10 05:44:30', 0, 1),
 (2, 'admin2', NULL, NULL, NULL, '12345', 'admin', NULL, NULL, 0, 0),
 (3, 'kasir1', NULL, NULL, NULL, '12345', 'kasir', NULL, NULL, 0, 0),
 (4, 'kasir2', NULL, NULL, NULL, '12345', 'kasir', NULL, NULL, 0, 0),
@@ -850,6 +897,14 @@ ALTER TABLE `remember_tokens`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- Indeks untuk tabel `reward_klaim`
+--
+ALTER TABLE `reward_klaim`
+  ADD PRIMARY KEY (`id_klaim`),
+  ADD UNIQUE KEY `uniq_kode_redeem` (`kode_redeem`),
+  ADD KEY `idx_reward_klaim_member` (`id_member`);
+
+--
 -- Indeks untuk tabel `riwayat_poin`
 --
 ALTER TABLE `riwayat_poin`
@@ -915,19 +970,19 @@ ALTER TABLE `chat_memori`
 -- AUTO_INCREMENT untuk tabel `chat_pesan`
 --
 ALTER TABLE `chat_pesan`
-  MODIFY `id_pesan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_pesan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT untuk tabel `chat_sesi`
 --
 ALTER TABLE `chat_sesi`
-  MODIFY `id_sesi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_sesi` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT untuk tabel `detail_pemesanan`
 --
 ALTER TABLE `detail_pemesanan`
-  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id_detail` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT untuk tabel `galeri`
@@ -969,13 +1024,13 @@ ALTER TABLE `member`
 -- AUTO_INCREMENT untuk tabel `member_badge`
 --
 ALTER TABLE `member_badge`
-  MODIFY `id_badge_diraih` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_badge_diraih` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `member_checkin`
 --
 ALTER TABLE `member_checkin`
-  MODIFY `id_checkin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_checkin` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT untuk tabel `menu_highlight_foto`
@@ -987,19 +1042,19 @@ ALTER TABLE `menu_highlight_foto`
 -- AUTO_INCREMENT untuk tabel `notifikasi_member`
 --
 ALTER TABLE `notifikasi_member`
-  MODIFY `id_notif` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_notif` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT untuk tabel `pemesanan`
 --
 ALTER TABLE `pemesanan`
-  MODIFY `id_pemesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id_pemesanan` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT untuk tabel `poin_transfer`
 --
 ALTER TABLE `poin_transfer`
-  MODIFY `id_transfer` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_transfer` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT untuk tabel `produk`
@@ -1023,13 +1078,19 @@ ALTER TABLE `promo_klaim`
 -- AUTO_INCREMENT untuk tabel `remember_tokens`
 --
 ALTER TABLE `remember_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- AUTO_INCREMENT untuk tabel `reward_klaim`
+--
+ALTER TABLE `reward_klaim`
+  MODIFY `id_klaim` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT untuk tabel `riwayat_poin`
 --
 ALTER TABLE `riwayat_poin`
-  MODIFY `id_riwayat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_riwayat` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT untuk tabel `split_bill`

@@ -183,6 +183,134 @@ function gamif_transfer_poin(mysqli $conn, array $pengirim, int $id_penerima, in
 }
 
 /* =========================================================================
+ * BONUS POIN BERKALA PER BADGE (mingguan/bulanan)
+ * -------------------------------------------------------------------------
+ * Tiap badge streak yang sudah diraih member dapat "gaji" poin berkala.
+ * Aturannya: pangkat rendah -> jeda lebih lama, bonus lebih kecil.
+ *            pangkat tinggi -> jeda lebih cepat, bonus lebih besar (tapi
+ *            tetap dijaga supaya tidak kebesaran).
+ * Butuh kolom `bonus_terakhir` (TIMESTAMP NULL) di tabel member_badge --
+ * lihat database/migration_badge_bonus.sql.
+ * ========================================================================= */
+
+const GAMIF_BONUS_BADGE = [
+    // kode_badge  => [interval_hari, poin_bonus]
+    'streak_3'  => ['interval_hari' => 30, 'poin' => 15], // Pelanggan Setia  -> bonus bulanan, paling kecil
+    'streak_7'  => ['interval_hari' => 21, 'poin' => 25], // Sahabat YOLAZCAKE
+    'streak_14' => ['interval_hari' => 14, 'poin' => 40], // Penggemar Berat
+    'streak_30' => ['interval_hari' => 7,  'poin' => 60], // Legenda Cafe     -> bonus mingguan, paling besar
+];
+
+/**
+ * Cek semua badge milik member, kasih bonus poin kalau jadwalnya sudah
+ * jatuh tempo (earned_at / bonus_terakhir + interval_hari <= sekarang).
+ * Dipanggil tiap member buka halaman member (bukan cron), jadi ini "lazy check".
+ * Return list bonus yang baru saja dikasih: [['badge'=>, 'poin'=>], ...]
+ */
+function gamif_proses_bonus_badge(mysqli $conn, int $id_member): array
+{
+    $diberikan = [];
+    try {
+        $stmt = $conn->prepare("SELECT id_badge_diraih, kode_badge, earned_at, bonus_terakhir FROM member_badge WHERE id_member=?");
+        $stmt->bind_param("i", $id_member);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $rows = [];
+        while ($row = $res->fetch_assoc()) $rows[] = $row;
+        $stmt->close();
+
+        foreach ($rows as $row) {
+            $kode = $row['kode_badge'];
+            if (!isset(GAMIF_BONUS_BADGE[$kode])) continue;
+
+            $cfg          = GAMIF_BONUS_BADGE[$kode];
+            $acuanWaktu   = $row['bonus_terakhir'] ?: $row['earned_at'];
+            $jatuhTempo   = strtotime($acuanWaktu) + ($cfg['interval_hari'] * 86400);
+
+            if (time() < $jatuhTempo) continue; // belum jatuh tempo
+
+            $poin = (int) $cfg['poin'];
+
+            $stmtUpd = $conn->prepare("UPDATE member SET poin = poin + ? WHERE id_member=?");
+            $stmtUpd->bind_param("ii", $poin, $id_member);
+            $stmtUpd->execute();
+            $stmtUpd->close();
+
+            $stmtBadge = $conn->prepare("UPDATE member_badge SET bonus_terakhir = NOW() WHERE id_badge_diraih=?");
+            $stmtBadge->bind_param("i", $row['id_badge_diraih']);
+            $stmtBadge->execute();
+            $stmtBadge->close();
+
+            $namaBadge = $kode;
+            foreach (GAMIF_BADGE_LIST as $b) {
+                if ($b['kode'] === $kode) { $namaBadge = $b['nama']; break; }
+            }
+
+            $ket = "Bonus poin berkala badge \"$namaBadge\"";
+            $stmtRiwayat = $conn->prepare("INSERT INTO riwayat_poin (id_member, jenis, poin, keterangan) VALUES (?, 'Masuk', ?, ?)");
+            $stmtRiwayat->bind_param("iis", $id_member, $poin, $ket);
+            $stmtRiwayat->execute();
+            $stmtRiwayat->close();
+
+            gamif_kirim_notifikasi(
+                $conn, $id_member, 'bonus_badge',
+                "Bonus Poin Badge! 🎉",
+                'Badge "'.$namaBadge.'" kamu ngasih bonus +'.$poin.' poin. Terus pertahankan streak-nya ya!',
+                '../member/streak.php'
+            );
+
+            $diberikan[] = ['badge' => $namaBadge, 'poin' => $poin];
+        }
+    } catch (Throwable $e) {
+        // Kolom bonus_terakhir / migration_badge_bonus.sql mungkin belum diimport.
+        // Jangan gagalkan halaman member cuma gara-gara fitur bonus ini.
+    }
+    return $diberikan;
+}
+
+/**
+ * Ambil jadwal bonus poin per badge milik member, buat ditampilkan di
+ * halaman member (kapan & berapa bonus berikutnya cair).
+ * Return: [['nama'=>, 'icon'=>, 'poin'=>, 'interval_hari'=>, 'next_at'=>DateTime, 'siap'=>bool], ...]
+ */
+function gamif_get_jadwal_bonus_badge(mysqli $conn, int $id_member): array
+{
+    $jadwal = [];
+    try {
+        $stmt = $conn->prepare("SELECT kode_badge, earned_at, bonus_terakhir FROM member_badge WHERE id_member=?");
+        $stmt->bind_param("i", $id_member);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        while ($row = $res->fetch_assoc()) {
+            $kode = $row['kode_badge'];
+            if (!isset(GAMIF_BONUS_BADGE[$kode])) continue;
+            $cfg = GAMIF_BONUS_BADGE[$kode];
+
+            $namaBadge = $kode; $iconBadge = 'award';
+            foreach (GAMIF_BADGE_LIST as $b) {
+                if ($b['kode'] === $kode) { $namaBadge = $b['nama']; $iconBadge = $b['icon']; break; }
+            }
+
+            $acuanWaktu = $row['bonus_terakhir'] ?: $row['earned_at'];
+            $nextTs     = strtotime($acuanWaktu) + ($cfg['interval_hari'] * 86400);
+
+            $jadwal[] = [
+                'nama'          => $namaBadge,
+                'icon'          => $iconBadge,
+                'poin'          => $cfg['poin'],
+                'interval_hari' => $cfg['interval_hari'],
+                'next_at'       => (new DateTime())->setTimestamp($nextTs),
+                'siap'          => time() >= $nextTs,
+            ];
+        }
+        $stmt->close();
+    } catch (Throwable $e) {
+        // Belum ada kolom bonus_terakhir -> kembalikan kosong, halaman tetap jalan.
+    }
+    return $jadwal;
+}
+
+/* =========================================================================
  * STREAK & BADGE
  * ========================================================================= */
 

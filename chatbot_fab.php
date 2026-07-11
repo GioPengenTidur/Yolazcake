@@ -46,6 +46,8 @@ $chatFabBottomMobile  = $sudahLoginUntukChat ? 108 : 24;
 
 $iconMode  = defined('CHATBOT_FAB_ICON_MODE') ? CHATBOT_FAB_ICON_MODE : 'default';
 $iconGambar = $chatbotFabBase . (defined('CHATBOT_FAB_IMAGE') ? CHATBOT_FAB_IMAGE : '');
+$iconVideo = $chatbotFabBase . (defined('CHATBOT_FAB_VIDEO') ? CHATBOT_FAB_VIDEO : '');
+$iconVideoZoom = defined('CHATBOT_FAB_VIDEO_ZOOM') ? CHATBOT_FAB_VIDEO_ZOOM : 1.35;
 ?>
 <style>
   .chatbot-fab-wrap{
@@ -76,11 +78,16 @@ $iconGambar = $chatbotFabBase . (defined('CHATBOT_FAB_IMAGE') ? CHATBOT_FAB_IMAG
   .chatbot-fab-icon{
     position:relative; z-index:2; width:30px; height:30px;
     display:flex; align-items:center; justify-content:center;
-    animation:chatbotIconPulse 2.8s ease-in-out infinite;
   }
-  .chatbot-fab-icon img{
+  .chatbot-fab-icon img,
+  .chatbot-fab-icon video{
     width:100%; height:100%; object-fit:cover; object-position:center;
     border-radius:50%; transform:scale(1.55); transform-origin:center;
+  }
+  .chatbot-fab-icon video{
+    transform:scale(<?= htmlspecialchars($iconVideoZoom) ?>);
+    pointer-events:none;
+    background:#2d1560; /* fallback warna brand, bukan hitam, selama video belum siap tampil */
   }
   .chatbot-fab-badge{
     position:absolute; top:-3px; right:-3px; width:17px; height:17px;
@@ -110,7 +117,6 @@ $iconGambar = $chatbotFabBase . (defined('CHATBOT_FAB_IMAGE') ? CHATBOT_FAB_IMAG
   @keyframes chatbotPulseRing{0%{transform:scale(.9);opacity:.7}70%{transform:scale(1.6);opacity:0}100%{transform:scale(1.6);opacity:0}}
   @keyframes chatbotSparkleFloat{0%{transform:translateY(0) scale(0);opacity:0}30%{opacity:1}100%{transform:translateY(-46px) scale(1);opacity:0}}
   @keyframes chatbotFloatBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-  @keyframes chatbotIconPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
   @keyframes chatbotBadgePulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.18);opacity:.85}}
 
   @media (max-width:768px){
@@ -130,7 +136,9 @@ $iconGambar = $chatbotFabBase . (defined('CHATBOT_FAB_IMAGE') ? CHATBOT_FAB_IMAG
     <span class="chatbot-fab-ring"></span>
     <span class="chatbot-fab-ring ring-delay"></span>
     <span class="chatbot-fab-icon">
-      <?php if ($iconMode === 'gambar' && !empty($iconGambar)): ?>
+      <?php if ($iconMode === 'video' && !empty($iconVideo)): ?>
+        <video src="<?= htmlspecialchars($iconVideo) ?>" poster="<?= htmlspecialchars($iconGambar) ?>" preload="auto" autoplay loop muted playsinline disablepictureinpicture aria-label="Yola AI"></video>
+      <?php elseif ($iconMode === 'gambar' && !empty($iconGambar)): ?>
         <img src="<?= htmlspecialchars($iconGambar) ?>" alt="Yola AI">
       <?php else: ?>
         <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

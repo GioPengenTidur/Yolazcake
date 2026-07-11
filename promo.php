@@ -52,58 +52,106 @@ $last_order_total  = $is_logged_in ? (float) ($_SESSION['riwayat_belanja_total']
 // setelah checkout, jadi total pesanan terakhir tetap dihitung).
 $belanja_relevan   = max($cart_total, $last_order_total);
 $alasan_gagal      = [];
+$checklist_member  = []; // tampilan syarat khusus buat yang SUDAH jadi member (beda dari yang belum)
 
 // Cek status member lebih dulu (bisa null kalau belum menyentuh syarat
 // minimal transaksi -> lihat config/member_helper.php)
 $member = $is_logged_in ? get_current_member($conn) : null;
 
-if (!$promo_is_real) {
-    $alasan_gagal[] = 'Promo dengan kode tersebut tidak ditemukan atau sudah tidak aktif.';
-}
-if (!$is_logged_in) {
-    $alasan_gagal[] = 'Kamu harus login terlebih dahulu supaya poin bonus bisa masuk ke akun member kamu.';
-} elseif ($member === null) {
-    $alasan_gagal[] = 'Poin bonus promo cuma buat member. Booking/pesan online dulu sampai total '.MEMBER_MIN_VISITS.'x transaksi supaya otomatis jadi member.';
-}
-if ($is_logged_in && $min_belanja > 0 && $belanja_relevan < $min_belanja) {
-    $alasan_gagal[] = 'Belanja kamu baru Rp'.number_format($belanja_relevan,0,',','.').
-                       ', minimal belanja untuk promo ini adalah Rp'.number_format($min_belanja,0,',','.').'.';
-}
-
-$syarat_terpenuhi = empty($alasan_gagal);
-$sudah_diklaim    = false;
-
-if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
+// Cek status klaim lebih awal juga, supaya bisa dipakai buat nentuin
+// tampilan checklist DAN buat nentuin apakah syaratnya "terpenuhi".
+$sudah_diklaim = false;
+if ($is_logged_in && $promo_is_real && $member) {
     $stmtCek = $conn->prepare("SELECT id_klaim FROM promo_klaim WHERE id_promo = ? AND id_member = ? LIMIT 1");
     $stmtCek->bind_param("ii", $promo['id_promo'], $member['id_member']);
     $stmtCek->execute();
     $sudah_diklaim = (bool) $stmtCek->get_result()->fetch_assoc();
     $stmtCek->close();
+}
 
-    if (!$sudah_diklaim) {
-        // Catat klaim, tambahkan poin bonus, dan catat di riwayat poin
-        $stmtKlaim = $conn->prepare("INSERT INTO promo_klaim (id_promo, id_member) VALUES (?, ?)");
-        $stmtKlaim->bind_param("ii", $promo['id_promo'], $member['id_member']);
+if (!$promo_is_real) {
+    $alasan_gagal[] = 'Promo dengan kode tersebut tidak ditemukan atau sudah tidak aktif.';
+}
 
-        if ($stmtKlaim->execute()) {
-            $bonus = (int) ($promo['poin_bonus'] ?? 0);
-            if ($bonus > 0) {
-                $stmtPoin = $conn->prepare("UPDATE member SET poin = poin + ? WHERE id_member = ?");
-                $stmtPoin->bind_param("ii", $bonus, $member['id_member']);
-                $stmtPoin->execute();
-                $stmtPoin->close();
+if (!$is_logged_in) {
+    // Belum login -> tampilan lama, tidak diubah.
+    $alasan_gagal[] = 'Kamu harus login terlebih dahulu supaya poin bonus bisa masuk ke akun member kamu.';
+} elseif ($member === null) {
+    // Sudah login tapi belum jadi member -> tampilan lama, tidak diubah.
+    $alasan_gagal[] = 'Poin bonus promo cuma buat member. Booking/pesan online dulu sampai total '.MEMBER_MIN_VISITS.'x transaksi supaya otomatis jadi member.';
+} else {
+    // Sudah jadi member -> tampilan checklist baru, terpisah dari yang di atas.
+    // No 1: status klaim
+    $checklist_member[] = [
+        'ok'    => !$sudah_diklaim,
+        'label' => $sudah_diklaim
+            ? 'Maaf, kamu sudah pernah mengklaim promo ini sebelumnya. Nantikan terus update promo baru dari admin, ya!'
+            : 'Kamu belum pernah mengklaim promo ini — masih bisa diambil.',
+    ];
+    // No 2: minimal belanja (dibiarkan seperti semula, cuma kata-katanya dirapikan)
+    $syarat_belanja_ok = !($min_belanja > 0 && $belanja_relevan < $min_belanja);
+    $checklist_member[] = [
+        'ok'    => $syarat_belanja_ok,
+        'label' => $syarat_belanja_ok
+            ? 'Minimal belanja Rp'.number_format($min_belanja,0,',','.').' sudah terpenuhi.'
+            : 'Belanjamu baru Rp'.number_format($belanja_relevan,0,',','.').', minimal belanja untuk promo ini Rp'.number_format($min_belanja,0,',','.').'.',
+    ];
 
-                $ket = "Klaim promo ".$promo['kode_promo'];
-                $stmtRiwayat = $conn->prepare("INSERT INTO riwayat_poin (id_member, jenis, poin, keterangan) VALUES (?, 'Masuk', ?, ?)");
-                $stmtRiwayat->bind_param("iis", $member['id_member'], $bonus, $ket);
-                $stmtRiwayat->execute();
-                $stmtRiwayat->close();
-            }
-            // refresh data member supaya poin yang ditampilkan sudah terbaru
-            $member['poin'] = ($member['poin'] ?? 0) + $bonus;
-        }
-        $stmtKlaim->close();
+    if ($sudah_diklaim) {
+        $alasan_gagal[] = 'Kamu sudah pernah mengklaim promo ini sebelumnya.';
+    } elseif (!$syarat_belanja_ok) {
+        $alasan_gagal[] = 'Minimal belanja belum terpenuhi.';
     }
+}
+
+$syarat_terpenuhi = empty($alasan_gagal);
+
+if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member && !$sudah_diklaim) {
+    // Catat klaim, tambahkan poin bonus, dan catat di riwayat poin
+    $stmtKlaim = $conn->prepare("INSERT INTO promo_klaim (id_promo, id_member) VALUES (?, ?)");
+    $stmtKlaim->bind_param("ii", $promo['id_promo'], $member['id_member']);
+
+    if ($stmtKlaim->execute()) {
+        $bonus = (int) ($promo['poin_bonus'] ?? 0);
+        if ($bonus > 0) {
+            $stmtPoin = $conn->prepare("UPDATE member SET poin = poin + ? WHERE id_member = ?");
+            $stmtPoin->bind_param("ii", $bonus, $member['id_member']);
+            $stmtPoin->execute();
+            $stmtPoin->close();
+
+            $ket = "Klaim promo ".$promo['kode_promo'];
+            $stmtRiwayat = $conn->prepare("INSERT INTO riwayat_poin (id_member, jenis, poin, keterangan) VALUES (?, 'Masuk', ?, ?)");
+            $stmtRiwayat->bind_param("iis", $member['id_member'], $bonus, $ket);
+            $stmtRiwayat->execute();
+            $stmtRiwayat->close();
+        }
+        // refresh data member supaya poin yang ditampilkan sudah terbaru
+        $member['poin'] = ($member['poin'] ?? 0) + $bonus;
+        $sudah_diklaim = true;
+    }
+    $stmtKlaim->close();
+}
+
+// Kalau member ini sudah pernah klaim promo yang lagi dibuka, cek apakah
+// admin sudah bikin promo lain yang masih aktif dan belum dia klaim.
+// Kalau ada, kasih tahu lewat pop up + auto-refresh ke promo terbaru.
+$ada_promo_baru = false;
+if ($sudah_diklaim && $member) {
+    $stmtBaru = $conn->prepare(
+        "SELECT p.id_promo FROM promo p
+         WHERE p.status='Aktif' AND p.id_promo != ?
+           AND (p.tanggal_mulai IS NULL OR p.tanggal_mulai <= CURDATE())
+           AND (p.tanggal_selesai IS NULL OR p.tanggal_selesai >= CURDATE())
+           AND NOT EXISTS (
+               SELECT 1 FROM promo_klaim k
+               WHERE k.id_promo = p.id_promo AND k.id_member = ?
+           )
+         ORDER BY p.id_promo DESC LIMIT 1"
+    );
+    $stmtBaru->bind_param("ii", $promo['id_promo'], $member['id_member']);
+    $stmtBaru->execute();
+    $ada_promo_baru = (bool) $stmtBaru->get_result()->fetch_assoc();
+    $stmtBaru->close();
 }
 ?>
 <!DOCTYPE html>
@@ -635,6 +683,45 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
 
   .step-text p { font-size:0.82em; color:var(--muted); line-height:1.55; }
 
+  /* ─── CHECKLIST KHUSUS MEMBER ─── */
+  .checklist-item.is-done {
+    border-color:rgba(46,204,113,0.35); background:rgba(46,204,113,0.07);
+  }
+  .checklist-item.is-pending {
+    border-color:rgba(212,175,55,0.35); background:rgba(212,175,55,0.06);
+  }
+  .checklist-item.is-done .checklist-mark {
+    background:linear-gradient(135deg,#2ecc71,#1a9c53);
+    box-shadow:0 4px 12px rgba(46,204,113,0.35);
+  }
+  .checklist-item.is-pending .checklist-mark {
+    background:linear-gradient(135deg,#D4AF37,#b8860b);
+    box-shadow:0 4px 12px rgba(212,175,55,0.35);
+  }
+  .checklist-mark { width:38px; height:38px; }
+  .checklist-item.is-done .step-text p { color:var(--text,#fff); }
+
+  /* ─── POP UP PROMO BARU ─── */
+  .promo-baru-overlay {
+    position:fixed; inset:0; background:rgba(10,4,24,0.72);
+    backdrop-filter:blur(6px); z-index:999;
+    display:flex; align-items:center; justify-content:center;
+    animation:cardReveal 0.4s forwards;
+  }
+  .promo-baru-box {
+    background:var(--card-bg,#1e0e3a); border:1px solid rgba(212,175,55,0.4);
+    border-radius:22px; padding:38px 32px; max-width:360px; text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  }
+  .promo-baru-icon {
+    width:44px; height:44px; color:#D4AF37; margin-bottom:14px;
+  }
+  .promo-baru-box h3 {
+    font-family:'Playfair Display',serif; font-size:1.3em; color:var(--text,#fff); margin-bottom:10px;
+  }
+  .promo-baru-box p { font-size:0.88em; color:var(--muted); line-height:1.6; }
+  .promo-baru-box #promoBaruTimer { color:#D4AF37; font-weight:700; }
+
   /* ─── CTA BUTTONS ─── */
   .cta-row {
     display:flex; gap:14px; justify-content:center; flex-wrap:wrap;
@@ -757,6 +844,9 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
     <?php if ($syarat_terpenuhi): ?>
       <h1>Promo Berhasil!</h1>
       <p class="hero-sub">Kode eksklusif Anda sudah siap digunakan <i data-lucide="party-popper" class="lucide-ic"></i></p>
+    <?php elseif ($member !== null && $sudah_diklaim): ?>
+      <h1>Promo Ini Sudah Kamu Ambil</h1>
+      <p class="hero-sub">Nantikan promo baru dari admin ya <i data-lucide="clock" class="lucide-ic"></i></p>
     <?php else: ?>
       <h1>Syarat Belum Terpenuhi</h1>
       <p class="hero-sub">Lengkapi dulu syaratnya untuk mengambil promo ini</p>
@@ -777,12 +867,36 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
   </div>
 
   <div class="headline-card">
-    <h1>Belum Bisa Diambil</h1>
-    <p class="sub-text">
-      Promo ini punya syarat yang harus dipenuhi dulu sebelum bisa kamu ambil:
-    </p>
+    <?php if ($member !== null): ?>
+      <h1>Cek Status Syarat Kamu</h1>
+      <p class="sub-text">Ini progress kamu buat promo ini — yang sudah tercentang berarti sudah beres:</p>
+    <?php else: ?>
+      <h1>Belum Bisa Diambil</h1>
+      <p class="sub-text">
+        Promo ini punya syarat yang harus dipenuhi dulu sebelum bisa kamu ambil:
+      </p>
+    <?php endif; ?>
   </div>
 
+  <?php if ($member !== null): ?>
+  <!-- Tampilan khusus MEMBER: checklist, beda dari tampilan belum-login/belum-jadi-member -->
+  <div class="steps-card checklist-card">
+    <div class="section-title"><i data-lucide="clipboard-check" class="lucide-ic"></i> Status Syarat Promo</div>
+    <div class="steps-list">
+      <?php foreach ($checklist_member as $item): ?>
+      <div class="step-item checklist-item <?= $item['ok'] ? 'is-done' : 'is-pending' ?>">
+        <div class="step-num checklist-mark">
+          <i data-lucide="<?= $item['ok'] ? 'check' : 'clock' ?>" class="lucide-ic"></i>
+        </div>
+        <div class="step-text">
+          <p><?= htmlspecialchars($item['label']) ?></p>
+        </div>
+      </div>
+      <?php endforeach; ?>
+    </div>
+  </div>
+  <?php else: ?>
+  <!-- Tampilan LAMA: buat yang belum login / belum jadi member, tidak diubah -->
   <div class="steps-card">
     <div class="section-title"><i data-lucide="clipboard-list" class="lucide-ic"></i> Yang Perlu Dilengkapi</div>
     <div class="steps-list">
@@ -796,6 +910,31 @@ if ($syarat_terpenuhi && $is_logged_in && $promo_is_real && $member) {
       <?php endforeach; ?>
     </div>
   </div>
+  <?php endif; ?>
+
+  <?php if ($ada_promo_baru): ?>
+  <div class="promo-baru-overlay" id="promoBaruOverlay">
+    <div class="promo-baru-box">
+      <i data-lucide="sparkles" class="lucide-ic promo-baru-icon"></i>
+      <h3>Ada Promo Baru!</h3>
+      <p>Admin baru aja bikin promo baru buat kamu. Halaman bakal refresh otomatis dalam <span id="promoBaruTimer">3</span> detik...</p>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var sisa = 3;
+      var el = document.getElementById('promoBaruTimer');
+      var t = setInterval(function () {
+        sisa--;
+        if (el) el.textContent = sisa;
+        if (sisa <= 0) {
+          clearInterval(t);
+          window.location.href = 'promo.php';
+        }
+      }, 1000);
+    })();
+  </script>
+  <?php endif; ?>
 
   <div class="cta-row">
     <a href="produk/menu.php#Product" class="btn-primary"><i data-lucide="shopping-bag" class="lucide-ic"></i> Lihat Produk</a>

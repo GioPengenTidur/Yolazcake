@@ -312,6 +312,15 @@ $nomor_meja_qris = $_SESSION['nomor_meja_checkout'] ?? ($_SESSION['meja_aktif'] 
       border:2px solid rgba(212,175,55,.2);
       background:#fff;padding:10px;
     }
+    .qr-fallback{
+      width:260px;height:260px;object-fit:contain;
+      border-radius:16px;
+      border:2px solid rgba(212,175,55,.2);
+      background:rgba(255,255,255,.1);
+      display:flex;align-items:center;justify-content:center;
+      color:#D4AF37;
+    }
+    .qr-fallback .lucide-ic{width:64px;height:64px;}
 
     /* Scan animation ring */
     .qr-scan-line{
@@ -473,9 +482,9 @@ $nomor_meja_qris = $_SESSION['nomor_meja_checkout'] ?? ($_SESSION['meja_aktif'] 
       <div class="qr-corner-bl"></div>
       <div class="qr-corner-br"></div>
       <div class="qr-scan-line"></div>
-      <img src="../assets/img/image.png"
+      <img src="../assets/img/BarcodeDummy.jpeg"
            alt="QRIS YOLAZCAKE"
-           onerror="this.style.padding='24px';this.style.fontSize='5em';this.outerHTML='<div style=\'width:260px;height:260px;background:rgba(255,255,255,.1);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:5em;\'><i data-lucide="smartphone" class="lucide-ic"></i></div>'">
+           onerror="this.onerror=null; this.replaceWith(Object.assign(document.createElement('div'), {className:'qr-fallback', innerHTML:'<i data-lucide=&quot;smartphone&quot; class=&quot;lucide-ic&quot;></i>'})); if(window.lucide){lucide.createIcons();}">
     </div>
 
     <div class="qris-note">

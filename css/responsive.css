@@ -263,6 +263,21 @@
     font-size: 0.9rem !important;
   }
 
+  /* AKUN (nama/email bisa panjang, jangan sampai nabrak logo & hamburger) */
+  .nav-right { flex: 1; min-width: 0; justify-content: flex-end; }
+  .account-dropdown { min-width: 0; max-width: 150px; }
+  .account-btn {
+    max-width: 100%;
+    padding: 8px 14px !important;
+    font-size: 0.82rem !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
   /* DROPDOWN */
   .dropdown { width: 200px; right: 10px; }
 }
@@ -283,6 +298,22 @@
   .nav-left h2 { font-size: 0.9em; }
   .login-btn { padding: 6px 12px !important; font-size: 0.8rem !important; }
   .dropdown { width: 180px; right: 8px; }
+
+  /* AKUN (nama/email bisa panjang, jangan sampai nabrak logo & hamburger) */
+  .nav-right { flex: 1; min-width: 0; justify-content: flex-end; }
+  .account-dropdown { min-width: 0; max-width: 118px; }
+  .account-btn {
+    max-width: 100%;
+    padding: 6px 12px !important;
+    font-size: 0.75rem !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .account-menu { min-width: 160px; }
 
   /* HERO */
   .hero-section { min-height: auto !important; }
