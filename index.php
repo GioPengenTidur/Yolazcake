@@ -435,6 +435,10 @@ Login
   <span class="stat-sparkle" style="width:5px;height:5px;left:60%;top:30%;background:rgba(212,175,55,0.5);position:absolute;border-radius:50%;animation:floatDot 8s linear infinite 2s;"></span>
   <span class="stat-sparkle" style="width:3px;height:3px;left:80%;top:70%;background:rgba(255,228,181,0.6);position:absolute;border-radius:50%;animation:floatDot 6s linear infinite 0.5s;"></span>
   <div class="stats-bg-pattern"></div>
+  <!-- Floating ambient orbs, same signature purple treatment as about.php & status.php -->
+  <div class="stats-orb stats-orb-1"></div>
+  <div class="stats-orb stats-orb-2"></div>
+  <div class="stats-orb stats-orb-3"></div>
   <div class="stats-container">
     <div class="stats-grid">
       <div class="stat-item fade-up">
@@ -514,7 +518,6 @@ Login
           <img src="https://images.unsplash.com/photo-1586788680434-30d324b2d46f?w=400&h=500&fit=crop" 
                alt="Signature Red Velvet">
           <span class="product-badge">Best Seller</span>
-          <button class="quick-add" aria-label="Lihat Detail">View Detail</button>
         </div>
         <div class="product-info">
           <div class="product-rating">
@@ -534,7 +537,6 @@ Login
           <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&h=500&fit=crop" 
                alt="Croissant Almond">
           <span class="product-badge badge-popular">Popular</span>
-          <button class="quick-add" aria-label="Lihat Detail">View Detail</button>
         </div>
         <div class="product-info">
           <div class="product-rating">
@@ -554,7 +556,6 @@ Login
           <img src="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&h=500&fit=crop" 
                alt="Tiramisu Classic">
           <span class="product-badge badge-chef">Chef's Choice</span>
-          <button class="quick-add" aria-label="Lihat Detail">View Detail</button>
         </div>
         <div class="product-info">
           <div class="product-rating">
@@ -574,7 +575,6 @@ Login
           <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=500&fit=crop" 
                alt="Chocolate Truffle">
           <span class="product-badge badge-premium">Premium</span>
-          <button class="quick-add" aria-label="Lihat Detail">View Detail</button>
         </div>
         <div class="product-info">
           <div class="product-rating">
