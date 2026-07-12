@@ -627,43 +627,43 @@ Login
         <div class="cb-items">
           <div class="cb-item">
             <div class="cb-item-image">
-              <img src="https://images.unsplash.com/photo-1497636577773-f1231844b336?w=300&h=300&fit=crop" 
-                   alt="Single Origin Ethiopia">
+              <img src="assets/img/produk/Buttersotch_Sea_Salt_Latte.png" 
+                   alt="Buttersotch Sea Salt Latte">
             </div>
             <div class="cb-item-info">
               <div class="cb-item-header">
-                <h4 class="cb-item-name">Single Origin Ethiopia</h4>
-                <span class="cb-item-price">Rp 42.000</span>
+                <h4 class="cb-item-name">Buttersotch Sea Salt Latte</h4>
+                <span class="cb-item-price">Rp 28.000</span>
               </div>
-              <p class="cb-item-desc">Fruity notes with hints of blueberry and chocolate</p>
+              <p class="cb-item-desc">Creamy butterscotch balanced with a delicate touch of sea salt</p>
             </div>
           </div>
 
           <div class="cb-item">
             <div class="cb-item-image">
-              <img src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=300&h=300&fit=crop" 
-                   alt="House Blend Espresso">
+              <img src="assets/img/produk/Iced_Brown_Sugar_Coffee_Latte.jpeg" 
+                   alt="Iced Brown Sugar Coffee Latte">
             </div>
             <div class="cb-item-info">
               <div class="cb-item-header">
-                <h4 class="cb-item-name">House Blend Espresso</h4>
-                <span class="cb-item-price">Rp 35.000</span>
+                <h4 class="cb-item-name">Brown Sugar Coffee Latte</h4>
+                <span class="cb-item-price">Rp 28.000</span>
               </div>
-              <p class="cb-item-desc">Rich, full-bodied with caramel finish</p>
+              <p class="cb-item-desc">Bold espresso balanced with sweet brown sugar and fresh milk</p>
             </div>
           </div>
 
           <div class="cb-item">
             <div class="cb-item-image">
-              <img src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=300&h=300&fit=crop" 
-                   alt="Cold Brew Signature">
+              <img src="assets/img/produk/Cappuccino.png" 
+                   alt="Cappuccino">
             </div>
             <div class="cb-item-info">
               <div class="cb-item-header">
-                <h4 class="cb-item-name">Cold Brew Signature</h4>
-                <span class="cb-item-price">Rp 48.000</span>
+                <h4 class="cb-item-name">Cappuccino</h4>
+                <span class="cb-item-price">Rp 28.000</span>
               </div>
-              <p class="cb-item-desc">Smooth, low acidity, 24-hour steeped</p>
+              <p class="cb-item-desc">A perfect balance of espresso, steamed milk, and soft foam</p>
             </div>
           </div>
         </div>
