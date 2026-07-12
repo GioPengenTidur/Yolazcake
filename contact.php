@@ -646,7 +646,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
       letter-spacing: 1.5px;
       text-transform: uppercase;
       color: rgba(255,255,255,0.5);
-      margin-bottom: 7px;
+      margin-top: 7px;
     }
 
     .form-field input,
