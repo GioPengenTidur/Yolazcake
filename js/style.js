@@ -52,6 +52,27 @@ document.querySelectorAll(".dropdown p").forEach(item => {
 
 });
 
+// ==================== SCROLL-ADAPTIVE NAVBAR ====================
+// Di atas halaman: nav translucent, nyatu sama hero.
+// Discroll dikit: solidify jadi dark-glass pill (lihat #yzNav / #yzNav.nav-scrolled di style.css)
+(function(){
+  var yzNav = document.getElementById("yzNav");
+  if(!yzNav) return;
+
+  var SCROLL_TRIGGER = 60;
+
+  function updateNavScroll(){
+    if(window.scrollY > SCROLL_TRIGGER){
+      yzNav.classList.add("nav-scrolled");
+    }else{
+      yzNav.classList.remove("nav-scrolled");
+    }
+  }
+
+  window.addEventListener("scroll", updateNavScroll, { passive:true });
+  updateNavScroll(); // set state awal (misal reload di posisi scroll)
+})();
+
 const els = document.querySelectorAll('.fade');
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {

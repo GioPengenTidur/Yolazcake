@@ -1435,4 +1435,194 @@ body.dark .dark-btn .icon-moon{
 .team-card:hover img,
 .story-card:hover img {
     transform: scale(1.08);
+}/* =============================================================
+   NAVBAR REDESIGN — Dark Glass + Aurora Border + Scroll-Adaptive
+   Scope: #yzNav (ID selector -> always overrides legacy nav{}
+   rules above, no matter cascade order). Dipakai di 5 halaman
+   utama: index, about, gallery, contact, produk/menu.
+   Toggle class ".nav-scrolled" dikontrol via js/style.js.
+   ============================================================= */
+
+#yzNav{
+  position:fixed;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:100%;
+  max-width:1400px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:20px 40px;
+  border-radius:0 0 28px 28px;
+
+  background:linear-gradient(135deg, rgba(30,14,58,0.38), rgba(45,21,96,0.32));
+  backdrop-filter:blur(8px) saturate(140%);
+  -webkit-backdrop-filter:blur(8px) saturate(140%);
+
+  border:1px solid rgba(212,175,55,0.08);
+  box-shadow:none;
+
+  z-index:9999;
+
+  transition:top .5s cubic-bezier(.4,0,.2,1),
+             width .5s cubic-bezier(.4,0,.2,1),
+             max-width .5s cubic-bezier(.4,0,.2,1),
+             padding .5s cubic-bezier(.4,0,.2,1),
+             border-radius .5s cubic-bezier(.4,0,.2,1),
+             background .5s ease,
+             box-shadow .5s ease,
+             border-color .5s ease;
+}
+
+#yzNav.nav-scrolled{
+  top:15px;
+  width:92%;
+  max-width:1200px;
+  padding:12px 25px;
+  border-radius:60px;
+
+  background:linear-gradient(135deg, rgba(30,14,58,0.85), rgba(45,21,96,0.85));
+  backdrop-filter:blur(18px) saturate(160%);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);
+
+  border:1px solid rgba(212,175,55,0.25);
+  box-shadow:0 10px 32px rgba(0,0,0,0.4), 0 0 24px rgba(212,175,55,0.06);
+}
+
+/* Aurora spinning border ring (teknik sama kayak .photo-card::before di galeri) */
+#yzNav::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  padding:1px;
+
+  background:linear-gradient(135deg, rgba(212,175,55,0.85), rgba(232,160,191,0.75), rgba(200,162,200,0.75), rgba(212,175,55,0.85));
+  background-size:300% 300%;
+
+  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask-composite:exclude;
+
+  opacity:0.35;
+  animation:navAuroraSpin 7s linear infinite;
+  pointer-events:none;
+  transition:opacity .5s ease;
+  z-index:1;
+}
+
+#yzNav.nav-scrolled::before{
+  opacity:1;
+}
+
+@keyframes navAuroraSpin{
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
+
+/* konten nav di atas ring aurora */
+#yzNav .nav-left,
+#yzNav .main-nav,
+#yzNav .nav-right{
+  position:relative;
+  z-index:2;
+}
+
+/* dropdown (menu popout mobile) HARUS tetap position:absolute -
+   jangan disamakan dengan yang di atas, karena dropdown ini
+   display:flex dari sononya (cuma disembunyikan lewat opacity:0),
+   jadi kalau position-nya jadi relative dia ikut kehitung tinggi
+   di layout flex nav walau gak keliatan -> nav jadi raksasa. */
+#yzNav .dropdown{
+  z-index:2;
+}
+
+/* FIX: rule .main-nav versi lama (baris ~580) masih nyisain
+   position:absolute; left:50%; transform:translateX(-50%);
+   yang bikin menu tengah numpuk ke tengah nav TOTAL (nabrak
+   nav-right pas tombol account/login lebar, misal "admin ▾").
+   Netralin di sini biar main-nav ikut alur flex nav biasa
+   (nav-left | main-nav | nav-right, justify-content:space-between). */
+#yzNav .main-nav{
+  position:static;
+  left:auto;
+  transform:none;
+}
+
+/* ---- teks & ikon di atas dark glass ---- */
+#yzNav .main-nav li{
+  color:#f3ead9;
+}
+#yzNav .main-nav li:hover{
+  background:rgba(255,255,255,0.08);
+  color:#fff;
+}
+#yzNav .main-nav .active{
+  color:var(--gold);
+  border-bottom:2px solid var(--gold);
+}
+
+#yzNav .hamburger,
+#yzNav .dark-btn{
+  color:#f3ead9;
+}
+
+#yzNav .dark-btn{
+  border-color:rgba(212,175,55,0.35);
+  background:rgba(212,175,55,0.08);
+}
+
+/* login button - sebelumnya gak punya background sama sekali */
+#yzNav .login-btn{
+  background:linear-gradient(135deg, var(--gold), #FFE9A8);
+  color:#1e0e3a;
+  font-weight:700;
+}
+#yzNav .login-btn:hover{
+  box-shadow:0 4px 18px rgba(212,175,55,0.5);
+  transform:translateY(-2px);
+}
+
+/* dropdown menu mobile -> dark glass biar konsisten */
+#dropdown{
+  background:linear-gradient(160deg, rgba(30,14,58,0.96), rgba(45,21,96,0.96));
+  border:1px solid rgba(212,175,55,0.25);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+#dropdown p{
+  color:#f3ead9;
+}
+#dropdown p:hover{
+  color:var(--gold);
+}
+
+/* account dropdown menu -> dark glass */
+#yzNav .account-menu{
+  background:linear-gradient(160deg, rgba(30,14,58,0.97), rgba(45,21,96,0.97));
+  border:1px solid rgba(212,175,55,0.2);
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+#yzNav .account-menu a{
+  color:#f3ead9;
+}
+#yzNav .account-menu a:hover{
+  background:rgba(212,175,55,0.12);
+  color:var(--gold);
+}
+
+/* ring gold tipis di logo, biar pop di dark glass */
+#yzNav .nav-left img{
+  border:2px solid rgba(212,175,55,0.4);
+  box-shadow:0 0 10px rgba(212,175,55,0.25);
+}
+
+@media (max-width:768px){
+  #yzNav{ padding:14px 20px; }
+  #yzNav.nav-scrolled{ padding:10px 18px; }
 }

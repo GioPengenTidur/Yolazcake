@@ -1443,6 +1443,15 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
   animation: pulseDot 2s ease-in-out infinite;
 }
 
+.booking-status-badge.closed {
+  background: rgba(248,113,113,0.15);
+  border-color: rgba(248,113,113,0.4);
+  color: #fca5a5;
+}
+.booking-status-badge.closed .booking-status-dot {
+  background: #f87171;
+}
+
 @keyframes pulseDot {
   0%, 100% { transform: scale(1); opacity: 1; }
   50%       { transform: scale(1.5); opacity: 0.6; }
@@ -1560,7 +1569,7 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
 <body>
 
 <!-- NAVBAR -->
-<nav>
+<nav id="yzNav">
   <div class="nav-left">
     <img src="../assets/img/Yolazcake.png" alt="YOLAZCAKE Logo">
     <h2>YOLAZCAKE</h2>
@@ -1968,9 +1977,9 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
 
         <div class="booking-card-top">
           <span class="booking-card-logo"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE</span>
-          <span class="booking-status-badge">
-            <span class="booking-status-dot"></span>
-            Tersedia Hari Ini
+          <span class="booking-status-badge" id="bookingStatusBadge">
+            <span class="booking-status-dot" id="bookingStatusDot"></span>
+            <span id="bookingStatusText">Tersedia Hari Ini</span>
           </span>
         </div>
 
@@ -1984,7 +1993,7 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
             </div>
             <div class="booking-field">
               <div class="booking-field-label">Jam</div>
-              <div class="booking-field-value">10:00 – 21:00</div>
+              <div class="booking-field-value">08:00 – 22:00</div>
             </div>
           </div>
           <div class="booking-field">
@@ -1994,10 +2003,10 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
           <div class="booking-field">
             <div class="booking-field-label">Pilih Meja</div>
             <div class="booking-table-chips">
-              <span class="booking-table-chip selected">Window Seat</span>
-              <span class="booking-table-chip">Indoor VIP</span>
-              <span class="booking-table-chip">Outdoor</span>
-              <span class="booking-table-chip">Rooftop</span>
+              <span class="booking-table-chip selected">Lantai 1</span>
+              <span class="booking-table-chip">Lantai 2</span>
+              <span class="booking-table-chip">Lantai 3</span>
+              <span class="booking-table-chip">Ruang VIP</span>
             </div>
           </div>
         </div>
@@ -2298,6 +2307,24 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
     el.textContent = days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
   }
 
+  function setBookingStatus(){
+    const badge = document.getElementById('bookingStatusBadge');
+    const text  = document.getElementById('bookingStatusText');
+    if(!badge || !text) return;
+    const now = new Date();
+    const jamBuka  = 8;  // 08:00
+    const jamTutup = 22; // 22:00
+    const totalMenit = now.getHours() * 60 + now.getMinutes();
+    const bukaSekarang = totalMenit >= jamBuka * 60 && totalMenit < jamTutup * 60;
+    if (bukaSekarang) {
+      badge.classList.remove('closed');
+      text.textContent = 'Tersedia Hari Ini';
+    } else {
+      badge.classList.add('closed');
+      text.textContent = 'Tidak Tersedia';
+    }
+  }
+
   function initChips(){
     document.querySelectorAll('.booking-table-chip').forEach(chip => {
       chip.addEventListener('click', function(){
@@ -2311,13 +2338,17 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
     document.addEventListener('DOMContentLoaded', () => {
       initBookingParticles();
       setBookingDate();
+      setBookingStatus();
       initChips();
     });
   } else {
     initBookingParticles();
     setBookingDate();
+    setBookingStatus();
     initChips();
   }
+  // cek ulang tiap menit biar status ngikutin jam beneran, bukan cuma sekali pas load
+  setInterval(setBookingStatus, 60000);
 })();
 
 </script>

@@ -213,7 +213,7 @@ $__yzUsername = isset($_SESSION['username']) ? htmlspecialchars($_SESSION['usern
 })();
 </script>
 
-<nav>
+<nav id="yzNav">
   <!-- LEFT: LOGO + NAMA -->
   <div class="nav-left">
     <img src="assets/img/Yolazcake.png" alt="YOLAZCAKE Logo">
