@@ -273,7 +273,13 @@ document.querySelectorAll('.cb-item').forEach(item => {
   item.addEventListener('mouseleave', function() {
     const name = this.querySelector('.cb-item-name');
     if (name) {
-      name.style.color = '#2D2420';
+      if(darkMode){
+        name.style.color = '#eee';
+      }
+      else{
+        name.style.color = '#2D2420';
+      }
+      
     }
   });
 });
