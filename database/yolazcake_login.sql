@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 11 Jul 2026 pada 21.44
+-- Waktu pembuatan: 12 Jul 2026 pada 23.22
 -- Versi server: 10.4.32-MariaDB
 -- Versi PHP: 8.1.25
 
@@ -175,6 +175,24 @@ CREATE TABLE `galeri` (
   `foto` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data untuk tabel `galeri`
+--
+
+INSERT INTO `galeri` (`id_galeri`, `judul`, `deskripsi`, `kategori`, `foto`, `created_at`) VALUES
+(6, 'Display Kue & Pastry', 'Memperlihatkan Kue & Pastry yang Fresh', 'kue', 'img_6a53105e9df2d2.52827614.png', '2026-07-11 20:56:14'),
+(7, 'Display Kue & Pastry', 'Memperlihatkan Kue & Pastry yang Fresh', 'kue', 'img_6a531079a414e9.90158121.png', '2026-07-11 20:56:41'),
+(8, 'Display Kue & Pastry', 'Memperlihatkan Kue & Pastry yang Fresh', 'kue', 'img_6a53108cb1fc77.45845286.png', '2026-07-11 20:57:00'),
+(9, 'Display Kue & Pastry', 'Memperlihatkan Kue & Pastry yang Fresh', 'kue', 'img_6a531301d47260.76152471.png', '2026-07-11 21:07:29'),
+(10, 'Interior Cafe', '', 'interior', 'img_6a5320ff405d05.40484956.png', '2026-07-11 22:07:11'),
+(11, 'Interior Cafe', '', 'interior', 'img_6a532225629b62.39020621.png', '2026-07-11 22:12:05'),
+(12, 'Interior Cafe', '', 'interior', 'img_6a5322c0c37c38.07897900.png', '2026-07-11 22:14:40'),
+(15, 'Brown Sugar Coffee Latte', '', 'coffee', 'img_6a5324a3cdc7c4.57217821.jpeg', '2026-07-11 22:22:43'),
+(16, 'Cappuccino', '', 'coffee', 'img_6a5381978ce270.32880343.png', '2026-07-11 22:23:39'),
+(19, 'Moccachino', '', 'coffee', 'img_6a5373f5c745d4.74225580.png', '2026-07-12 04:01:09'),
+(20, 'Buttersotch Sea Salt Latte', '', 'coffee', 'img_6a53756c9871a6.61468844.png', '2026-07-12 04:07:24'),
+(21, 'Brown Sugar Coffee Latte', '', 'coffee', 'img_6a537c457819a6.56362634.jpeg', '2026-07-12 04:36:37');
 
 -- --------------------------------------------------------
 
@@ -564,7 +582,8 @@ CREATE TABLE `remember_tokens` (
 --
 
 INSERT INTO `remember_tokens` (`id`, `user_id`, `selector`, `hashed_validator`, `expires_at`, `created_at`) VALUES
-(11, 1, 'fcae5332e3ce225f3a', 'b5ac17e262bf79b26173e2a7dfa49d4840c20b7ede12dd0723d8d6d8994f5105', '2026-08-10 21:08:01', '2026-07-12 02:08:01');
+(14, 1, '0ca59fb293fe8171ff', 'a4c0eff1bd9d5c6e14c4268a2872bd13af95ff4a76b7678461a2d30f9cc158c6', '2026-08-11 05:47:44', '2026-07-12 10:47:44'),
+(15, 5, 'a234b8c37259b3f105', '7754013f3edeec7f2b045e95aa5ece7f263aaf5f0273f12f09c54734890f6db4', '2026-08-11 18:59:15', '2026-07-12 23:59:15');
 
 -- --------------------------------------------------------
 
@@ -988,7 +1007,7 @@ ALTER TABLE `detail_pemesanan`
 -- AUTO_INCREMENT untuk tabel `galeri`
 --
 ALTER TABLE `galeri`
-  MODIFY `id_galeri` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_galeri` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT untuk tabel `ig_stats`
@@ -1078,7 +1097,7 @@ ALTER TABLE `promo_klaim`
 -- AUTO_INCREMENT untuk tabel `remember_tokens`
 --
 ALTER TABLE `remember_tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT untuk tabel `reward_klaim`

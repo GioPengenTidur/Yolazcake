@@ -100,7 +100,9 @@ if ($sudahLogin) {
       .app-shell{max-width:640px;}
       .chat-sidebar{
         position:fixed;top:0;left:0;height:100%;width:78vw;max-width:300px;
-        z-index:50;border-radius:0 20px 20px 0;transform:translateX(-105%);
+        z-index:50;border-radius:0 20px 20px 0;
+        animation:none;opacity:1;
+        transform:translateX(-105%);
         transition:transform .3s ease;
       }
       .chat-sidebar.open{transform:translateX(0);}
@@ -284,6 +286,25 @@ if ($sudahLogin) {
       .chat-wrap{height:92vh;border-radius:20px;}
       .msg{max-width:88%;}
     }
+
+    /* ── Header chat-head kepenuhan di layar HP: toggle+avatar+judul+
+       fitur+kembali gak muat sebaris, jadi dirapiin & teks non-esensial
+       disembunyiin, ikonnya tetap ada ── */
+    @media (max-width:560px){
+      body{padding:10px;}
+      .app-shell{gap:0;}
+      .chat-head{padding:12px 12px;gap:8px;}
+      .chat-avatar{width:38px;height:38px;border-radius:11px;}
+      .chat-head h1{font-size:.98em;}
+      .chat-head .sub{font-size:.66em;}
+      .fitur-toggle{padding:7px 9px;}
+      .fitur-toggle .btn-txt{display:none;}
+      .fitur-menu{right:-12px;min-width:210px;}
+      .chat-back{padding:7px 9px;margin-left:4px;}
+      .chat-back .btn-txt{display:none;}
+      .quick-chips{padding:0 12px 12px;gap:6px;}
+      .chat-input-bar{padding:12px;}
+    }
   </style>
 </head>
 <body>
@@ -309,7 +330,7 @@ if ($sudahLogin) {
       <div class="fitur-dropdown" id="fiturDropdown">
         <button type="button" class="fitur-toggle" id="fiturToggle">
           <i data-lucide="sparkles" class="lucide-ic" style="width:14px;height:14px;"></i>
-          Fitur Lain
+          <span class="btn-txt">Fitur Lain</span>
           <i data-lucide="chevron-down" class="lucide-ic chevron" style="width:13px;height:13px;"></i>
         </button>
         <div class="fitur-menu" id="fiturMenu">
@@ -329,7 +350,7 @@ if ($sudahLogin) {
           </a>
         </div>
       </div>
-      <a href="../index.php" class="chat-back"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali</a>
+      <a href="../index.php" class="chat-back"><i data-lucide="arrow-left" class="lucide-ic"></i> <span class="btn-txt">Kembali</span></a>
     </div>
 
     <div class="chat-body" id="chatBody">

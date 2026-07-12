@@ -652,7 +652,7 @@ session_start();
 <body>
 
 <!-- NAVBAR -->
-<nav>
+<nav id="yzNav">
   <div class="nav-left">
     <img src="assets/img/Yolazcake.png" alt="YOLAZCAKE Logo">
   </div>

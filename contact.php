@@ -366,6 +366,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
       letter-spacing: 0.5px;
     }
 
+    .hours-badge.closed {
+      background: linear-gradient(135deg, #f87171, #fecaca);
+      color: #7f1d1d;
+    }
+
     .day-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -797,7 +802,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
 <body>
 
 <!-- NAVBAR (unchanged) -->
-<nav>
+<nav id="yzNav">
   <div class="nav-left">
     <img src="assets/img/Yolazcake.png" alt="YOLAZCAKE Logo">
     <h2>YOLAZCAKE</h2>
@@ -891,7 +896,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
         <h3>Jam Operasional</h3>
       </div>
       <div class="loc-card-body">
-        <div class="hours-badge"><i data-lucide="circle" class="lucide-ic lucide-fill" style="color:#22c55e"></i> Buka Setiap Hari</div>
+        <div class="hours-badge" id="hoursBadge"><i data-lucide="circle" class="lucide-ic lucide-fill" id="hoursBadgeIcon" style="color:#22c55e"></i> <span id="hoursBadgeText">Buka Sekarang</span></div>
         <div class="day-grid">
           <div class="day-chip">
             <span class="day-label">Senin – Minggu</span>
@@ -1097,6 +1102,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
     );
     window.open(`https://wa.me/6281578157888?text=${msg}`, '_blank');
   }
+  /* --- Indikator jam operasional real-time (cuma buat cafe utama, Boutique Lt.2 tetap statis) --- */
+  function setHoursStatus(){
+    const badge = document.getElementById('hoursBadge');
+    const icon  = document.getElementById('hoursBadgeIcon');
+    const text  = document.getElementById('hoursBadgeText');
+    if(!badge || !text) return;
+    const now = new Date();
+    const jamBuka  = 8;  // 08:00
+    const jamTutup = 22; // 22:00
+    const totalMenit = now.getHours() * 60 + now.getMinutes();
+    const bukaSekarang = totalMenit >= jamBuka * 60 && totalMenit < jamTutup * 60;
+    if (bukaSekarang) {
+      badge.classList.remove('closed');
+      text.textContent = 'Buka Sekarang';
+      if(icon) icon.style.color = '#22c55e';
+    } else {
+      badge.classList.add('closed');
+      text.textContent = 'Tutup Sekarang';
+      if(icon) icon.style.color = '#7f1d1d';
+    }
+  }
+  setHoursStatus();
+  setInterval(setHoursStatus, 60000);
 
 </script>
 

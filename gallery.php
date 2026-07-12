@@ -826,6 +826,7 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
       .photo-card.small      { grid-column: span 2; grid-row: span 3; }
       .photo-card.hero-wide  { grid-column: span 6; grid-row: span 3; }
       .photo-card.sq         { grid-column: span 3; grid-row: span 3; }
+      .photo-card.hero       { grid-column: span 6; grid-row: span 4; }
     }
 
     @media (max-width: 700px) {
@@ -842,6 +843,7 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
       .photo-card.wide,
       .photo-card.wide-tall,
       .photo-card.hero-wide { grid-column: span 4; grid-row: span 2; }
+      .photo-card.hero       { grid-column: span 4; grid-row: span 3; }
       #gallery-section { padding-bottom: 50px; }
       #Rating { padding: 60px 20px; }
       .gallery-hero { height: 300px; }
@@ -865,7 +867,7 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
 <body>
 
 <!-- NAVBAR -->
-<nav>
+<nav id="yzNav">
   <div class="nav-left">
     <img src="assets/img/Yolazcake.png" alt="YOLAZCAKE Logo">
     <h2>YOLAZCAKE</h2>
