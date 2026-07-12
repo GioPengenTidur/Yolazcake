@@ -429,6 +429,7 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
     .photo-card.small         { grid-column: span 3; grid-row: span 3; }
     .photo-card.hero-wide     { grid-column: span 7; grid-row: span 3; }
     .photo-card.sq            { grid-column: span 4; grid-row: span 3; }
+    .photo-card.hero          { grid-column: span 8; grid-row: span 5; }
 
     /* ---- PHOTO CARD base ---- */
     .photo-card {
@@ -502,9 +503,11 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
       height: 100%;
       object-fit: cover;
       display: block;
+      transform: scale(1.15) translateY(var(--py, 0px));
       transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform;
     }
-    .photo-card:hover img { transform: scale(1.08); }
+    .photo-card:hover img { transform: scale(1.22) translateY(var(--py, 0px)); }
 
     /* Abstract overlay texture for premium collage feel */
     .photo-card .card-overlay {
@@ -561,6 +564,31 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
     .card-label p {
       color: rgba(255,255,255,0.75);
       font-size: 0.78em;
+    }
+    /* Compact caption for smaller cards — avoid cramped text */
+    .photo-card.small .card-label,
+    .photo-card.sq .card-label {
+      padding: 34px 14px 14px;
+    }
+    .photo-card.small .card-label h3,
+    .photo-card.sq .card-label h3 {
+      font-size: 0.88em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .photo-card.small .card-label p,
+    .photo-card.sq .card-label p {
+      display: none;
+    }
+    .photo-card.hero .card-label {
+      padding: 70px 26px 26px;
+    }
+    .photo-card.hero .card-label h3 {
+      font-size: 1.4em;
+    }
+    .photo-card.hero .card-label p {
+      font-size: 0.9em;
     }
 
     /* ---- LIGHTBOX ---- */
@@ -625,6 +653,8 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
       color: #fff;
       font-size: 1.5em;
       width: 44px; height: 44px;
+      padding: 0;
+      box-sizing: border-box;
       border-radius: 50%;
       cursor: pointer;
       display: flex;
@@ -648,13 +678,15 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
     .lightbox-arrow {
       position: absolute;
       top: 50%;
-      transform: translateY(-50%);
+      transform: translateY(calc(-50% - 40px));
       z-index: 10;
       background: rgba(255,255,255,0.1);
       border: none;
       color: #fff;
       font-size: 1.8em;
       width: 52px; height: 52px;
+      padding: 0;
+      box-sizing: border-box;
       border-radius: 50%;
       cursor: pointer;
       backdrop-filter: blur(6px);
@@ -663,7 +695,7 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
       justify-content: center;
       transition: background 0.3s, transform 0.3s;
     }
-    .lightbox-arrow:hover { background: rgba(212,175,55,0.4); transform: translateY(-50%) scale(1.12); }
+    .lightbox-arrow:hover { background: rgba(212,175,55,0.4); transform: translateY(calc(-50% - 40px)) scale(1.12); }
     .lightbox-arrow.prev { left: 20px; }
     .lightbox-arrow.next { right: 20px; }
 
@@ -939,7 +971,7 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
     <?php
       $size_classes = ['wide-tall','tall','sq','small','wide','sq','small','tall','sq','sq','wide','sq'];
       foreach ($galeri_all as $i => $g):
-        $sz = $size_classes[$i % count($size_classes)];
+        $sz = ($i === 0) ? 'hero' : $size_classes[$i % count($size_classes)];
         $img_src = 'assets/img/galeri/' . htmlspecialchars($g['foto']);
         $fallback = 'assets/img/image.png';
     ?>
@@ -1025,6 +1057,35 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
     }
   })();
 
+  /* ---- SUBTLE PARALLAX ON GALLERY CARDS ---- */
+  (function(){
+    const cards = document.querySelectorAll('.photo-card');
+    if (!cards.length) return;
+    let ticking = false;
+
+    function updateParallax(){
+      const vh = window.innerHeight;
+      cards.forEach(card => {
+        if (card.style.display === 'none') return;
+        const rect = card.getBoundingClientRect();
+        if (rect.bottom < -100 || rect.top > vh + 100) return; // skip offscreen cards
+        const centerOffset = (rect.top + rect.height / 2) - vh / 2;
+        const py = Math.max(-16, Math.min(16, centerOffset * 0.04));
+        card.style.setProperty('--py', py.toFixed(1) + 'px');
+      });
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    updateParallax();
+  })();
+
   /* ---- FILTER TABS ---- */
   const filterBtns  = document.querySelectorAll('.filter-btn');
   const photoCards  = document.querySelectorAll('.photo-card');
@@ -1039,16 +1100,22 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
         const show = filter === 'all' || card.dataset.category === filter;
         card.style.transition = 'opacity 0.4s, transform 0.4s';
         if(show){
-          setTimeout(() => {
-            card.style.opacity = '1';
-            card.style.transform = '';
-            card.style.pointerEvents = '';
-          }, delay);
+          card.style.display = '';
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              card.style.opacity = '1';
+              card.style.transform = '';
+              card.style.pointerEvents = '';
+            }, delay);
+          });
           delay += 60;
         } else {
           card.style.opacity = '0';
           card.style.transform = 'scale(0.88)';
           card.style.pointerEvents = 'none';
+          setTimeout(() => {
+            card.style.display = 'none';
+          }, 400);
         }
       });
     });

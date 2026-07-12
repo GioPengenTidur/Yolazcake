@@ -816,13 +816,17 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
     }
 
     .product-tag-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
+      display: grid;
+      grid-template-columns: repeat(2, max-content);
+      justify-content: start;
+      gap: 8px 10px;
       margin-top: 14px;
     }
 
     .product-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
       background: linear-gradient(135deg, rgba(212,175,55,0.2), rgba(212,175,55,0.08));
       border: 1px solid rgba(212,175,55,0.4);
       color: #D4AF37;
@@ -1650,6 +1654,11 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
       <div class="menu-card-body">
         <h3>Donut</h3>
         <p>Donat homemade dengan bahan premium terpilih, lembut dan lezat.</p>
+        <div class="product-tag-row">
+          <span class="product-tag"><i data-lucide="donut" class="lucide-ic"></i> Aneka Rasa</span>
+          <span class="product-tag"><i data-lucide="heart" class="lucide-ic"></i> Homemade</span>
+          <span class="product-tag"><i data-lucide="sparkles" class="lucide-ic"></i> Premium</span>
+        </div>
       </div>
     </div>
 
@@ -1676,6 +1685,11 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
       <div class="menu-card-body">
         <h3>Specialty Coffee</h3>
         <p>Espresso, Latte Art, Cold Brew — diseduh dengan biji kopi pilihan.</p>
+        <div class="product-tag-row">
+          <span class="product-tag"><i data-lucide="coffee" class="lucide-ic"></i> Espresso</span>
+          <span class="product-tag"><i data-lucide="bean" class="lucide-ic"></i> Cold Brew</span>
+          <span class="product-tag"><i data-lucide="sparkles" class="lucide-ic"></i> Latte Art</span>
+        </div>
       </div>
     </div>
 
@@ -1702,6 +1716,11 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
       <div class="menu-card-body">
         <h3>Dessert &amp; Minuman</h3>
         <p>Non-coffee &amp; Signature Drink untuk menemani hari spesialmu.</p>
+        <div class="product-tag-row">
+          <span class="product-tag"><i data-lucide="ice-cream-cone" class="lucide-ic"></i> Dessert</span>
+          <span class="product-tag"><i data-lucide="cup-soda" class="lucide-ic"></i> Non-Coffee</span>
+          <span class="product-tag"><i data-lucide="sparkles" class="lucide-ic"></i> Signature</span>
+        </div>
       </div>
     </div>
 
@@ -1728,6 +1747,11 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
       <div class="menu-card-body">
         <h3>Boutique Lantai 2</h3>
         <p>Pakaian modern &amp; aesthetic — kurasi koleksi fashion terkini.</p>
+        <div class="product-tag-row">
+          <span class="product-tag"><i data-lucide="shirt" class="lucide-ic"></i> Fashion</span>
+          <span class="product-tag"><i data-lucide="paintbrush" class="lucide-ic"></i> Style</span>
+          <span class="product-tag"><i data-lucide="sparkles" class="lucide-ic"></i> Aesthetic</span>
+        </div>
       </div>
     </div>
 
