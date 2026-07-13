@@ -1813,7 +1813,7 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
       </div>
       <div class="product-card-body">
         <h3>Trio Cake</h3>
-        <p>Chocolate Indulgence, Klepon Cake, Red Velvet — trio terbaik kami.</p>
+        <p>Chocolate Indulgence, Klepon Cake, Red Velvet — Trio terbaik kami.</p>
         <div class="product-tag-row">
           <span class="product-tag"><i data-lucide="cake" class="lucide-ic"></i> Custom</span>
           <span class="product-tag"><i data-lucide="candy" class="lucide-ic"></i> Premium</span>
