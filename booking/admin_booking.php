@@ -179,7 +179,7 @@ $query = mysqli_query($conn, "SELECT * FROM booking ORDER BY created_at DESC");
       flex-shrink:0;
     }
 
-    .stat-icon { font-size:1.5em; }
+    .stat-icon { font-size:1.5em; color: white;}
     .stat-val { font-family:'Playfair Display',serif; font-size:1.7em; font-weight:700; color:#D4AF37; line-height:1; }
     .stat-lbl { font-size:0.75em; color:rgba(255,255,255,0.5); margin-top:2px; letter-spacing:0.5px; }
 
