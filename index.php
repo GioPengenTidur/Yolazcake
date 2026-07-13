@@ -528,14 +528,14 @@ Login
           </div>
           <p class="product-category">Cake</p>
           <h3 class="product-name">Trio Cake</h3>
-          <p class="product-price">Rp 28.000 - Rp 30.000 per slices</p>
+          <p class="product-price">Rp 28.000 - Rp 30.000</p>
         </div>
       </div>
 
       <div class="product-card fade-up" style="animation-delay: 0.1s;">
         <div class="product-image">
-          <img src="assets/img/doksli/Croissant_Almond.png" 
-               alt="Croissant Almond">
+          <img src="assets/img/doksli/Cheesecake_Ubi_Ungu.png" 
+               alt="Cheesecake">
           <span class="product-badge badge-popular">Popular</span>
         </div>
         <div class="product-info">
@@ -545,16 +545,16 @@ Login
             </svg>
             <span>4.8</span>
           </div>
-          <p class="product-category">Pastry</p>
-          <h3 class="product-name">Croissant Almond</h3>
-          <p class="product-price">Rp 45.000</p>
+          <p class="product-category">Dessert</p>
+          <h3 class="product-name">Cheesecake Ubi Ungu</h3>
+          <p class="product-price">Rp 30.000</p>
         </div>
       </div>
 
       <div class="product-card fade-up" style="animation-delay: 0.2s;">
         <div class="product-image">
-          <img src="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400&h=500&fit=crop" 
-               alt="Tiramisu Classic">
+          <img src="assets/img/doksli/Bolu_Gulung_Ketan_Hitam.png" 
+               alt="Bolu Gulung Ketan Hitam">
           <span class="product-badge badge-chef">Chef's Choice</span>
         </div>
         <div class="product-info">
@@ -564,15 +564,15 @@ Login
             </svg>
             <span>4.9</span>
           </div>
-          <p class="product-category">Dessert</p>
-          <h3 class="product-name">Tiramisu Classic</h3>
-          <p class="product-price">Rp 68.000</p>
+          <p class="product-category">Cake</p>
+          <h3 class="product-name">Bolu Gulung Ketan Hitam</h3>
+          <p class="product-price">Rp 35.000</p>
         </div>
       </div>
 
       <div class="product-card fade-up" style="animation-delay: 0.3s;">
         <div class="product-image">
-          <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&h=500&fit=crop" 
+          <img src="assets/img/doksli/Doughnut.jpeg" 
                alt="Chocolate Truffle">
           <span class="product-badge badge-premium">Premium</span>
         </div>
@@ -583,9 +583,9 @@ Login
             </svg>
             <span>5.0</span>
           </div>
-          <p class="product-category">Cake</p>
-          <h3 class="product-name">Chocolate Truffle</h3>
-          <p class="product-price">Rp 320.000</p>
+          <p class="product-category">Pastry</p>
+          <h3 class="product-name">Donat</h3>
+          <p class="product-price">Rp 40.000 / Box</p>
         </div>
       </div>
     </div>
@@ -796,32 +796,32 @@ Login
       <!-- Fashion Grid -->
       <div class="boutique-images fade-in-right">
         <div class="fashion-item fashion-large">
-          <img src="https://images.unsplash.com/photo-1551489186-cf8726f514f8?w=400&h=600&fit=crop" 
-               alt="Silk Blouse Collection">
+          <img src="assets/img/doksli/Boutique_Collection.jpeg" 
+               alt="Boutique Collection">
           <div class="fashion-overlay">
-            <p class="fashion-category">Tops</p>
-            <h4 class="fashion-name">Silk Blouse Collection</h4>
-            <p class="fashion-price">From Rp 450.000</p>
+            <p class="fashion-category">Boutique Collection</p>
+            <h4 class="fashion-name">Dresses, Jackets, Shirts, Pants, Skirts, Tops</h4>
+            <p class="fashion-price">From Rp 45.000</p>
           </div>
         </div>
 
         <div class="fashion-item fashion-small">
-          <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=400&h=600&fit=crop" 
-               alt="Linen Summer Dress">
+          <img src="assets/img/doksli/Jacket_Crop_Casual.png" 
+               alt="Jacket Crop Casual">
           <div class="fashion-overlay">
-            <p class="fashion-category">Dresses</p>
-            <h4 class="fashion-name">Linen Summer Dress</h4>
-            <p class="fashion-price">From Rp 680.000</p>
+            <p class="fashion-category">Jackets</p>
+            <h4 class="fashion-name">Jaket Crop Casual</h4>
+            <p class="fashion-price">From Rp 60.000</p>
           </div>
         </div>
 
         <div class="fashion-item fashion-small">
-          <img src="https://images.unsplash.com/photo-1539008835657-9e8e9680c956?w=400&h=600&fit=crop" 
-               alt="Elegant Evening Wear">
+          <img src="assets/img/doksli/Celana.jpeg" 
+               alt="Celana Jeans">
           <div class="fashion-overlay">
-            <p class="fashion-category">Special Occasion</p>
-            <h4 class="fashion-name">Elegant Evening Wear</h4>
-            <p class="fashion-price">From Rp 1.200.000</p>
+            <p class="fashion-category">Celana</p>
+            <h4 class="fashion-name">Celana Jeans</h4>
+            <p class="fashion-price">From Rp 50.000</p>
           </div>
         </div>
       </div>
