@@ -1020,7 +1020,7 @@ $filter_kat = isset($_GET['kat']) ? (int)$_GET['kat'] : 0;
         <span class="stok-badge <?= $sc ?>"><?= $sl ?></span>
         <?php if(!empty($p['nama_kategori'])): ?>
         <div class="card-cat-tag">
-          <?= htmlspecialchars($p['kategori_icon'] ?? '') ?>
+          <i data-lucide="<?= htmlspecialchars($p['kategori_icon'] ?: 'tag') ?>" class="lucide-ic"></i>
           <?= htmlspecialchars($p['nama_kategori']) ?>
         </div>
         <?php endif; ?>

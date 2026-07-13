@@ -653,9 +653,10 @@ session_start();
 
 <!-- NAVBAR -->
 <nav id="yzNav">
-  <div class="nav-left">
-    <img src="assets/img/Yolazcake.png" alt="YOLAZCAKE Logo">
-  </div>
+ <div class="nav-left">
+  <img src="assets/img/Yolazcake.png" alt="YOLAZCAKE Logo">
+  <h2>YOLAZCAKE</h2>
+</div>
   <ul class="main-nav">
     <li onclick="window.location.href='index.php'">Home</li>
     <li onclick="window.location.href='produk/menu.php'">Menu</li>
