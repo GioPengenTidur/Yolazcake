@@ -515,8 +515,8 @@ Login
     <div class="products-grid">
       <div class="product-card fade-up">
         <div class="product-image">
-          <img src="https://images.unsplash.com/photo-1586788680434-30d324b2d46f?w=400&h=500&fit=crop" 
-               alt="Signature Red Velvet">
+          <img src="assets/img/doksli/Trio_Cake.png" 
+               alt="Trio Cake">
           <span class="product-badge">Best Seller</span>
         </div>
         <div class="product-info">
@@ -527,14 +527,14 @@ Login
             <span>4.9</span>
           </div>
           <p class="product-category">Cake</p>
-          <h3 class="product-name">Signature Red Velvet</h3>
-          <p class="product-price">Rp 285.000</p>
+          <h3 class="product-name">Trio Cake</h3>
+          <p class="product-price">Rp 28.000 - Rp 30.000 per slices</p>
         </div>
       </div>
 
       <div class="product-card fade-up" style="animation-delay: 0.1s;">
         <div class="product-image">
-          <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=400&h=500&fit=crop" 
+          <img src="assets/img/doksli/Croissant_Almond.png" 
                alt="Croissant Almond">
           <span class="product-badge badge-popular">Popular</span>
         </div>
@@ -627,7 +627,7 @@ Login
         <div class="cb-items">
           <div class="cb-item">
             <div class="cb-item-image">
-              <img src="assets/img/produk/Buttersotch_Sea_Salt_Latte.png" 
+              <img src="assets/img/doksli/Buttersotch_Sea_Salt_Latte.png" 
                    alt="Buttersotch Sea Salt Latte">
             </div>
             <div class="cb-item-info">
@@ -641,7 +641,7 @@ Login
 
           <div class="cb-item">
             <div class="cb-item-image">
-              <img src="assets/img/produk/Iced_Brown_Sugar_Coffee_Latte.jpeg" 
+              <img src="assets/img/doksli/Brown_Sugar_Coffee_Latte.jpeg" 
                    alt="Iced Brown Sugar Coffee Latte">
             </div>
             <div class="cb-item-info">
@@ -655,7 +655,7 @@ Login
 
           <div class="cb-item">
             <div class="cb-item-image">
-              <img src="assets/img/produk/Cappuccino.png" 
+              <img src="assets/img/doksli/Cappuccino.png" 
                    alt="Cappuccino">
             </div>
             <div class="cb-item-info">
@@ -691,21 +691,21 @@ Login
         <div class="cb-items">
           <div class="cb-item">
             <div class="cb-item-image">
-              <img src="assets/img/produk/Classic_Chocolate_Doughnut.jpeg" 
-                   alt="Donut Cokelat Klasik">
+              <img src="assets/img/doksli/Classic_Chocolate_Doughnut.jpeg" 
+                   alt="Donut Coklat Klasik">
             </div>
             <div class="cb-item-info">
               <div class="cb-item-header">
                 <h4 class="cb-item-name">Donut Cokelat Klasik</h4>
                 <span class="cb-item-price">Rp 8.000</span>
               </div>
-              <p class="cb-item-desc">Traditional 48-hour fermented bread</p>
+              <p class="cb-item-desc">Soft, freshly baked donut combined with a generous dusting of chocolate glaze, creating a classic flavor that stands the test of time</p>
             </div>
           </div>
 
           <div class="cb-item">
             <div class="cb-item-image">
-              <img src="assets/img/produk/Red_Bean_Bread.png" 
+              <img src="assets/img/doksli/Red_Bean_Bread.png" 
                    alt="Roti Kacang Merah">
             </div>
             <div class="cb-item-info">
@@ -713,13 +713,13 @@ Login
                 <h4 class="cb-item-name">Roti Kacang Merah</h4>
                 <span class="cb-item-price">Rp 15.000</span>
               </div>
-              <p class="cb-item-desc">Flaky layers with Belgian chocolate</p>
+              <p class="cb-item-desc">Soft, freshly baked bread filled with sweet red bean paste, finished with a delightful texture in every bite</p>
             </div>
           </div>
 
           <div class="cb-item">
             <div class="cb-item-image">
-              <img src="assets/img/produk/Cheese_Milk_Bread.png" 
+              <img src="assets/img/doksli/Cheese_Milk_Bread.png" 
                    alt="Roti Keju Susu">
             </div>
             <div class="cb-item-info">
@@ -727,7 +727,7 @@ Login
                 <h4 class="cb-item-name">Roti Keju Susu</h4>
                 <span class="cb-item-price">Rp 15.000</span>
               </div>
-              <p class="cb-item-desc">Buttery pastry with seasonal fruits</p>
+              <p class="cb-item-desc">Soft, freshly baked bread combined with cheese and premium milk, creating a savory, sweet, and delicious taste</p>
             </div>
           </div>
         </div>
