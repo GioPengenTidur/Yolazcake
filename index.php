@@ -691,13 +691,13 @@ Login
         <div class="cb-items">
           <div class="cb-item">
             <div class="cb-item-image">
-              <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=300&h=300&fit=crop" 
-                   alt="Sourdough Loaf">
+              <img src="assets/img/produk/Classic_Chocolate_Doughnut.jpeg" 
+                   alt="Donut Cokelat Klasik">
             </div>
             <div class="cb-item-info">
               <div class="cb-item-header">
-                <h4 class="cb-item-name">Sourdough Loaf</h4>
-                <span class="cb-item-price">Rp 55.000</span>
+                <h4 class="cb-item-name">Donut Cokelat Klasik</h4>
+                <span class="cb-item-price">Rp 8.000</span>
               </div>
               <p class="cb-item-desc">Traditional 48-hour fermented bread</p>
             </div>
@@ -705,13 +705,13 @@ Login
 
           <div class="cb-item">
             <div class="cb-item-image">
-              <img src="https://images.unsplash.com/photo-1623334044303-241021148842?w=300&h=300&fit=crop" 
-                   alt="Pain au Chocolat">
+              <img src="assets/img/produk/Red_Bean_Bread.png" 
+                   alt="Roti Kacang Merah">
             </div>
             <div class="cb-item-info">
               <div class="cb-item-header">
-                <h4 class="cb-item-name">Pain au Chocolat</h4>
-                <span class="cb-item-price">Rp 38.000</span>
+                <h4 class="cb-item-name">Roti Kacang Merah</h4>
+                <span class="cb-item-price">Rp 15.000</span>
               </div>
               <p class="cb-item-desc">Flaky layers with Belgian chocolate</p>
             </div>
@@ -719,13 +719,13 @@ Login
 
           <div class="cb-item">
             <div class="cb-item-image">
-              <img src="https://images.unsplash.com/photo-1608198093002-ad4e005f4a63?w=300&h=300&fit=crop" 
-                   alt="Danish Pastry">
+              <img src="assets/img/produk/Cheese_Milk_Bread.png" 
+                   alt="Roti Keju Susu">
             </div>
             <div class="cb-item-info">
               <div class="cb-item-header">
-                <h4 class="cb-item-name">Danish Pastry</h4>
-                <span class="cb-item-price">Rp 42.000</span>
+                <h4 class="cb-item-name">Roti Keju Susu</h4>
+                <span class="cb-item-price">Rp 15.000</span>
               </div>
               <p class="cb-item-desc">Buttery pastry with seasonal fruits</p>
             </div>
