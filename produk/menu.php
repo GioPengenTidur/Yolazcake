@@ -448,6 +448,7 @@ $fotoUnggulan  = ambil_foto_menu_section($conn, 'unggulan');
     .menu-card-body {
       padding: 22px 24px 24px;
       position: relative;
+      place-self: center;
     }
 
     .menu-card-body::before {
