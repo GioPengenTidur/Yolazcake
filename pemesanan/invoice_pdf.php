@@ -1,7 +1,6 @@
 <?php
 /**
  * invoice_pdf.php
- * -----------------------------------------------------------------------
  * Cetak invoice/struk pesanan sebagai PDF asli (bukan sekadar print-preview
  * browser), dipakai dari 2 tempat:
  *   1. Halaman sukses checkout pelanggan (proses_pemesanan.php) -- akses

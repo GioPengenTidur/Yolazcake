@@ -7,9 +7,6 @@
  *   - Streak      : checkin harian berturut-turut
  *   - Badge       : lencana yang dibuka otomatis dari streak
  *   - Notifikasi  : notifikasi in-app sederhana untuk member
- *
- * Butuh tabel dari database/migration_gamifikasi.sql sudah diimport.
- * Selalu require_once bareng config/koneksi.php & config/member_helper.php.
  */
 
 // Daftar badge streak yang bisa diraih member. Urut dari syarat terkecil.

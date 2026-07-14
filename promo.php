@@ -1122,11 +1122,7 @@ if ($sudah_diklaim && $member) {
     });
   }
 
-  /* ── Account Dropdown ──
-     Sebelumnya dropdown ini hanya mengandalkan CSS :hover, yang di layar
-     sentuh butuh tap pertama untuk memicu "hover" dan tap kedua baru
-     benar-benar mengklik (tampak "tidak respon, harus berkali-kali tekan").
-     Sekarang pakai toggle class via klik supaya konsisten di HP maupun desktop. */
+  /* ── Account Dropdown ──*/
   function toggleAccountMenu(e){
     if (e) e.stopPropagation();
     const menu = document.getElementById('accountMenu');

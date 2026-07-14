@@ -1,7 +1,7 @@
 <?php
 /**
  * invoice_pdf_helper.php
- * -----------------------------------------------------------------------
+ * 
  * Generator PDF invoice/struk pemesanan, dibangun di atas FPDF (vendor/fpdf,
  * di-vendor manual persis seperti PHPMailer di project ini -- tanpa
  * composer). Tampilannya disesuaikan seaslinya mungkin dengan tema

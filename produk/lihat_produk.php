@@ -113,7 +113,7 @@ else { $stok_class='stok-ok'; $stok_label=$stok.' pcs tersedia'; }
   <h1><?= htmlspecialchars($produk['nama_produk']) ?></h1>
 </div></div>
 
-<div class="back-link"><a href="menu.php"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali ke Menu</a></div>
+<div class="back-link"><a href="../pemesanan/menuu.php"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali ke Menu</a></div>
 
 <div class="page-wrapper">
 
@@ -142,7 +142,7 @@ else { $stok_class='stok-ok'; $stok_label=$stok.' pcs tersedia'; }
         <div class="detail-desc-text"><?= nl2br(htmlspecialchars($produk['deskripsi'])) ?></div>
 
         <?php if ($stok > 0): ?>
-        <a href="menuu.php" class="btn-add"><i data-lucide="shopping-cart" class="lucide-ic"></i> Pesan di Menu</a>
+        <a href="../pemesanan/menuu.php" class="btn-add"><i data-lucide="shopping-cart" class="lucide-ic"></i> Pesan di Menu</a>
         <?php endif; ?>
       </div>
     </div>

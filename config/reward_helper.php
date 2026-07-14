@@ -1,7 +1,6 @@
 <?php
 /**
  * reward_helper.php
- * -----------------------------------------------------------------------
  * Fungsi untuk fitur klaim reward milestone poin member YOLAZCAKE.
  * Reward ditukar pakai poin (poin member dikurangi sesuai syarat reward).
  * Butuh tabel reward_klaim dari database/migration_reward_dan_bonus_badge.sql.

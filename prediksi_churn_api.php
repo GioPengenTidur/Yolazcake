@@ -1,13 +1,11 @@
 <?php
 /**
  * prediksi_churn_api.php
- * -----------------------------------------------------------------------
  * Endpoint buat fitur "Prediksi Member Berisiko" (prediksi_churn.php).
  * Ambil data member yang berisiko churn dari database, kirim ke Gemini
  * buat dianalisis & dikasih saran tindakan konkret ke admin.
  *
  * Request  (GET, dipanggil dari halaman admin, butuh login role admin)
- * Response (JSON): { "insight": "..." } atau { "error": "..." }
  */
 
 header('Content-Type: application/json');

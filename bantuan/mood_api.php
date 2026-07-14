@@ -6,9 +6,6 @@
  * User jawab 2 pertanyaan singkat (mood rasa + konteks momen), Yola AI
  * kasih 2-3 rekomendasi menu SPESIFIK dari data produk asli di database
  * (bukan ngarang), sesuai mood & konteks yang dipilih.
- *
- * Request  (POST, JSON): { "mood": "...", "konteks": "..." }
- * Response (JSON):       { "rekomendasi": "..." } atau { "error": "..." }
  */
 
 header('Content-Type: application/json');

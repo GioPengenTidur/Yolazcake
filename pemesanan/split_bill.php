@@ -46,6 +46,8 @@ if (!$split) { die('Split bill tidak ditemukan atau link salah.'); }
     .page-hero p{font-size:.85em;color:rgba(255,255,255,.6);margin-top:8px;}
 
     .wrap{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:28px 18px 90px;}
+    .back-link{display:inline-flex;gap:8px;align-items:center;color:var(--gold);text-decoration:none;
+      font-size:.82em;margin-bottom:20px;border:1px solid rgba(212,175,55,.3);padding:8px 18px;border-radius:999px;}
     .card{background:rgba(255,255,255,.06);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.1);
       border-radius:20px;padding:24px;margin-bottom:18px;opacity:0;animation:fadeUp .6s forwards;}
 
@@ -114,6 +116,8 @@ if (!$split) { die('Split bill tidak ditemukan atau link salah.'); }
 </div>
 
 <div class="wrap">
+  <a href="menuu.php" class="back-link"><i data-lucide="arrow-left" class="lucide-ic"></i> Kembali ke Menu</a>
+
   <div class="card">
     <div class="top-row">
       <div>

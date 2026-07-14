@@ -24,10 +24,6 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
 
-    /* ============================================================
-       GALLERY PREMIUM — Full redesign matching menu.php aesthetic
-    ============================================================ */
-
     /* ---- HERO BANNER (same as before, unchanged) ---- */
     .gallery-hero {
       position: relative;
@@ -196,9 +192,7 @@ while ($gr = mysqli_fetch_assoc($galeri_query)) {
       background: none;
     }
 
-    /* ============================================================
-       UNIFIED GALLERY SECTION — premium light with live effects
-    ============================================================ */
+    /*  UNIFIED GALLERY SECTION — light with live effects */
     #gallery-section {
       background: linear-gradient(160deg, #EEF6FF 0%, #DFF0FF 55%, #EBF0FF 100%);
       position: relative;

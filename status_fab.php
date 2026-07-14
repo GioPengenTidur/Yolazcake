@@ -1,22 +1,10 @@
 <?php
 /* ============================================================
    FLOATING STATUS BUTTON — cek status booking & pesanan
-   ------------------------------------------------------------
-   Include file ini di HALAMAN INI SAJA:
-     index.php, produk/menu.php, gallery.php, about.php, contact.php
 
    - HANYA muncul kalau user sudah booking ATAU sudah pesan
      (dicek dari $_SESSION['id_booking'] / $_SESSION['no_hp']).
-   - Self-contained: CSS & JS ada di file ini sendiri, jadi TIDAK
-     bergantung pada landing.css (yang cuma di-load index.php).
-     Ini penyebab utama kenapa sebelumnya cuma muncul teks polos
-     di halaman selain index.
-
-   Cara pakai di file yang ada di sub-folder (mis. produk/menu.php):
-     <?php $statusFabBase = '../'; include '../status_fab.php'; ?>
-
-   Cara pakai di file yang ada di root (index.php, gallery.php, dll):
-     <?php include 'status_fab.php'; ?>
+     
    ============================================================ */
 
 if (session_status() === PHP_SESSION_NONE) {

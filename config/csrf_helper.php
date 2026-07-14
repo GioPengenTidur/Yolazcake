@@ -2,14 +2,7 @@
 /**
  * Helper CSRF sederhana berbasis session.
  * Wajib dipanggil session_start() dulu sebelum include file ini.
- *
- * Cara pakai:
- * - Di halaman yang menampilkan link/form aksi (hapus, ubah status, dll):
- *     require_once __DIR__.'/../config/csrf_helper.php';
- *     $csrf = csrf_token();
- *   lalu tempel &csrf=<?= urlencode($csrf) ?> di query string link,
- *   atau tempel sebagai field/param tersembunyi untuk request POST/fetch.
- *
+
  * - Di file proses yang menjalankan aksinya:
  *     require_once __DIR__.'/../config/csrf_helper.php';
  *     csrf_verify_or_die($_GET['csrf'] ?? null, 'admin_booking.php');   // untuk aksi via link (redirect balik)

@@ -1,26 +1,4 @@
 <?php
-/**
- * Helper "Remember Me" berbasis cookie selector/validator.
- * Wajib session_start() + include koneksi.php ($conn) dulu sebelum pakai ini.
- *
- * Cara pakai:
- * - Saat login berhasil & checkbox "Ingat saya" dicentang:
- *     require_once __DIR__.'/remember_me_helper.php';
- *     remember_me_create($conn, $user['id']);
- *
- * - Di halaman yang jadi "pintu masuk" utama (mis. index.php), sebelum
- *   dianggap belum login, cek dulu apakah ada cookie valid (TIDAK auto-login
- *   langsung — cuma dapat data usernya, lalu app yang munculkan konfirmasi
- *   "Lanjutkan sebagai ... / Ganti Akun"):
- *     require_once __DIR__.'/remember_me_helper.php';
- *     if (!isset($_SESSION['username'])) {
- *         $user = remember_me_check($conn); // null kalau tidak ada/valid
- *     }
- *
- * - Saat logout:
- *     require_once __DIR__.'/remember_me_helper.php';
- *     remember_me_forget($conn);
- */
 
 define('REMEMBER_ME_COOKIE', 'yolazcake_remember');
 define('REMEMBER_ME_DAYS', 30);

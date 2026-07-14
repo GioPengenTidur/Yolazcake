@@ -1,10 +1,6 @@
 <?php
 /* ============================================================
    FLOATING CHATBOT BUTTON — akses Yola AI (Pusat Bantuan)
-   ------------------------------------------------------------
-   Include file ini HANYA di 5 halaman ini (sama seperti rating_fab
-   & status_fab), TEPAT SETELAH include rating_fab.php:
-     index.php, produk/menu.php, gallery.php, about.php, contact.php
 
    - SELALU muncul, baik user sudah login maupun belum (beda
      dengan rating_fab yang cuma muncul kalau sudah login),
@@ -14,17 +10,7 @@
          PERSIS DI ATAS rating-fab.
        * Kalau rating-fab tidak tampil (user belum login) ->
          menempati posisi dasar yang sama dengan rating-fab.
-   - Ikon bisa diatur lewat config/chatbot_fab_config.php:
-       'default' -> sparkle gradient ala Gemini (biru-ungu-pink)
-       'gambar'  -> pakai logo/gambar sendiri
-   - Self-contained: CSS & JS ada di file ini sendiri, mengikuti
-     pola rating_fab.php / status_fab.php.
 
-   Cara pakai di file yang ada di sub-folder (mis. produk/menu.php):
-     <?php $chatbotFabBase = '../'; include '../chatbot_fab.php'; ?>
-
-   Cara pakai di file yang ada di root (index.php, gallery.php, dll):
-     <?php include 'chatbot_fab.php'; ?>
    ============================================================ */
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -165,7 +151,7 @@ $iconVideoZoom = defined('CHATBOT_FAB_VIDEO_ZOOM') ? CHATBOT_FAB_VIDEO_ZOOM : 1.
   const btn  = document.getElementById('chatbotFabBtn');
   if(!wrap || !btn) return;
 
-  /* sparkle premium di sekitar tombol, warna senada gradient Gemini */
+  /* sparkle di sekitar tombol, warna senada gradient Gemini */
   const colors = ['#4C8DF6','#9168F1','#F6577A','#fff','#C9A8FF'];
   function spawnSparkle(){
     const s = document.createElement('span');

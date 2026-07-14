@@ -8,13 +8,6 @@
  *  - Ulasan Tempat   (tabel `ulasan_tempat`)  -> rating umum "enak &
  *    nyamannya tempat + makanan", dipakai di popup setelah checkout
  *    dan halaman ulasan/tempat.php.
- *
- * Cara pakai: require_once __DIR__.'/ulasan_helper.php'; (sesuaikan path)
- */
-
-/**
- * Ringkasan rating produk: rata-rata & jumlah ulasan.
- * Return: ['avg' => float, 'jumlah' => int]
  */
 function get_ringkasan_rating_produk(mysqli $conn, int $id_produk): array {
     $stmt = $conn->prepare(

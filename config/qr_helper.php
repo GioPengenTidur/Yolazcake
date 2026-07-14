@@ -1,7 +1,6 @@
 <?php
 /**
  * qr_helper.php
- * -----------------------------------------------------------------------
  * Helper kecil buat fitur QR Meja & Split Bill:
  *  - base_app_url()   -> menebak URL dasar aplikasi (skema+host+path
  *                        sampai folder CAFE2), dipakai untuk generate

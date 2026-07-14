@@ -1,18 +1,11 @@
 <?php
 /**
  * promo_helper.php
- * -----------------------------------------------------------------------
  * Validasi kode promo dan hitung nominal diskonnya terhadap subtotal
  * keranjang. Dipakai bersama di checkout.php, qris.php, dan
  * proses_pemesanan.php supaya aturan promo (aktif, tanggal berlaku,
  * min_belanja) selalu konsisten dan divalidasi ulang di server -- bukan
  * cuma percaya session/klien.
- *
- * Cara pakai:
- *      require_once __DIR__.'/promo_helper.php';
- *      $hasil = cek_promo($conn, $kode, $subtotal);
- *      if ($hasil['ok']) { ... $hasil['promo'], $hasil['diskon_nominal'] ... }
- *      else { ... $hasil['pesan'] ... }
  */
 
 function cek_promo(mysqli $conn, string $kode, float $subtotal): array {

@@ -46,9 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
 
   <style>
 
-    /* =============================================
-       PREMIUM CONTACT PAGE — scoped styles only
-    ============================================= */
+    /*scoped styles only*/
 
     /* --- Hero Banner --- */
     .contact-hero {
@@ -139,9 +137,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
     z-index: 2;
     margin-top: 22px;
     display: flex;
-    justify-content: center;   /* Tambahkan */
+    justify-content: center;   
     align-items: center;
-    width: 100%;               /* Tambahkan */
+    width: 100%;               
     gap: 12px;
     opacity: 0;
     animation: fadeSlideDown 0.9s forwards 1.1s;
@@ -194,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
       pointer-events: none;
     }
 
-    /* Premium section heading */
+    /* section heading */
     .section-label {
       display: flex;
       flex-direction: column;
@@ -414,7 +412,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
       z-index: 2;
     }
 
-    /* Instagram premium card */
+    /* Instagram card */
     .ig-premium-card {
       border-radius: 28px;
       overflow: hidden;
@@ -575,7 +573,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
       transform: translateY(-2px);
     }
 
-    /* WA Form premium */
+    /* WA Form  */
     .wa-premium-card {
       border-radius: 28px;
       overflow: hidden;
@@ -841,7 +839,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
   </div>
 </nav>
 
-<!-- ========== PREMIUM HERO BANNER ========== -->
+<!-- ========== HERO BANNER ========== -->
 <div class="contact-hero" id="contactHero">
   <!-- Sparkle dots injected via JS -->
   <div class="contact-hero-inner">
@@ -932,7 +930,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['kirim_kontak'])) {
 
   <div class="socmed-layout">
 
-    <!-- INSTAGRAM PREMIUM -->
+    <!-- INSTAGRAM -->
     <div class="ig-premium-card fade">
       <div class="ig-banner">
         <div class="ig-avatar-wrap">

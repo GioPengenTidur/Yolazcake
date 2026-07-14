@@ -3,9 +3,8 @@
  * cerebras_config_example.php
  * -----------------------------------------------------------------------
  * Template config buat DevBot Project Scanner (tools internal), pakai
- * Cerebras API (bukan Gemini). Copy file ini jadi
- * "cerebras_config_CAFE_config.php" di folder yang sama, lalu isi API key
- * kamu sendiri di bawah.
+ * Cerebras API, lalu isi API key
+ * sendiri di bawah.
  *
  * Cara dapat API key: daftar gratis di https://cloud.cerebras.ai/ ->
  * bagian API Keys -> Create API Key.

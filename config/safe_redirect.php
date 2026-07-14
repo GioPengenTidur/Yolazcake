@@ -1,7 +1,6 @@
 <?php
 /**
  * safe_redirect.php
- * -----------------------------------------------------------------------
  * Helper kecil buat memvalidasi parameter "redirect" yang dikirim lewat
  * form login/register (mis. supaya user yang tadinya mau booking meja
  * otomatis balik ke booking.php setelah login/daftar berhasil).

@@ -1,7 +1,7 @@
 <?php
 /* ============================================================
    KONFIGURASI IKON CHATBOT FLOATING BUTTON (Yola AI)
-   ------------------------------------------------------------
+
    Ubah nilai CHATBOT_FAB_ICON_MODE buat ganti tampilan ikon
    tombol chatbot mengambang tanpa perlu utak-atik chatbot_fab.php.
 

@@ -11,8 +11,6 @@
  * Style yang didukung: header bar (emas), judul band (ungu tua), baris
  * data selang-seling, format Rupiah untuk kolom uang, dan baris ringkasan
  * total di bagian bawah.
- *
- * Cara pakai singkat, lihat pemesanan/export_excel.php.
  */
 
 class SimpleXlsxWriter

@@ -434,7 +434,7 @@ session_start();
       margin: 0 auto;
     }
 
-    /* Premium team card */
+    /* team card */
     .team-card {
       border-radius: 28px;
       overflow: hidden;
@@ -691,7 +691,7 @@ session_start();
   </div>
 </nav>
 
-<!-- ========== PREMIUM HERO BANNER ========== -->
+<!-- ========== HERO BANNER ========== -->
 <div class="about-hero" id="aboutHero">
   <div class="about-hero-inner">
     <p class="hero-eyebrow"><i data-lucide="sparkle" class="lucide-ic"></i> YOLAZCAKE Sintang <i data-lucide="sparkle" class="lucide-ic"></i></p>

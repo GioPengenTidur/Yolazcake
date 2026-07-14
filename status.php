@@ -203,7 +203,7 @@ function badge_bayar($status) {
     padding:4px 12px;border-radius:999px;
   }
 
-  /* ===== STATUS BADGES (reused convention) ===== */
+  /* ===== STATUS BADGES ===== */
   .status-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:999px;font-size:.78em;font-weight:600;letter-spacing:.5px;white-space:nowrap;}
   .status-menunggu{background:rgba(255,180,50,.15);border:1px solid rgba(255,180,50,.35);color:#ffb432;}
   .status-diproses{background:rgba(99,149,250,.15);border:1px solid rgba(99,149,250,.35);color:#6395fa;}

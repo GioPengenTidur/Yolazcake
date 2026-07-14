@@ -9,9 +9,6 @@
  *   ?aksi=daftar                -> daftar sesi obrolan milik user/tamu ini
  *   ?aksi=ambil&id_sesi=X       -> semua pesan dalam satu sesi
  *   ?aksi=hapus&id_sesi=X       -> hapus satu sesi obrolan
- *
- * Semua respons JSON. Identitas pemilik (login/tamu) sama seperti yang
- * dipakai di chatbot_api.php, lihat config/chat_memory_helper.php.
  */
 
 header('Content-Type: application/json');

@@ -1,7 +1,7 @@
 <?php
 /**
  * Callback yang dipanggil Google setelah user menyetujui/menolak login.
- * Tugas: tukar "code" jadi access token, ambil profil, cari/buat user,
+ * tukar "code" jadi access token, ambil profil, cari/buat user,
  * lalu login-kan dan redirect balik ke index.php (atau tujuan semula).
  */
 session_start();

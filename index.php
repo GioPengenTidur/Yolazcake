@@ -1007,7 +1007,7 @@ Login
       </div>
 
       <div class="gallery-item fade-up" onclick="openLightbox(1)">
-        <img src="https://images.unsplash.com/photo-1486427944544-d2c6e14c8fe1?w=400&h=400&fit=crop" 
+        <img src="assets/img/galeri/img_6a531079a414e9.90158121.png" 
              alt="Artisan coffee preparation">
         <div class="gallery-overlay">
           <span>View</span>

@@ -1,11 +1,10 @@
 <?php
-/*******************************************************************************
+/*
 * FPDF                                                                         *
 *                                                                              *
 * Version: 1.9                                                                 *
 * Date:    2026-05-31                                                          *
-* Author:  Olivier Plathey                                                     *
-*******************************************************************************/
+* Author:  Olivier Plathey                                                     */
 
 class FPDF
 {
@@ -68,9 +67,7 @@ protected $metadata;           // document properties
 protected $CreationDate;       // document creation date
 protected $PDFVersion;         // PDF version number
 
-/*******************************************************************************
-*                               Public methods                                 *
-*******************************************************************************/
+/*                             Public methods                                 */
 
 public function __construct($orientation='P', $unit='mm', $size='A4')
 {

@@ -1,21 +1,12 @@
 <?php
 /* ============================================================
    FLOATING RATING BUTTON — akses Rating Tempat & Makanan
-   ------------------------------------------------------------
-   Include file ini HANYA di 5 halaman ini:
-     index.php, produk/menu.php, gallery.php, about.php, contact.php
 
    - HANYA muncul kalau user SUDAH LOGIN ($_SESSION['username']).
-   - Self-contained: CSS & JS ada di file ini sendiri, jadi TIDAK
-     bergantung pada landing.css (mengikuti pola status_fab.php).
+
    - Diposisikan di kanan-bawah supaya tidak bentrok dengan
      status-fab (booking/pesanan) yang ada di kiri-bawah.
 
-   Cara pakai di file yang ada di sub-folder (mis. produk/menu.php):
-     <?php $ratingFabBase = '../'; include '../rating_fab.php'; ?>
-
-   Cara pakai di file yang ada di root (index.php, gallery.php, dll):
-     <?php include 'rating_fab.php'; ?>
    ============================================================ */
 
 if (session_status() === PHP_SESSION_NONE) {
@@ -111,7 +102,7 @@ if ($sudahLogin):
   const btn  = document.getElementById('ratingFabBtn');
   if(!wrap || !btn) return;
 
-  /* sparkle premium di sekitar tombol */
+  /* sparkle di sekitar tombol */
   const colors = ['#D4AF37','#FFE4B5','#E8A0BF','#fff','#f9ce34'];
   function spawnSparkle(){
     const s = document.createElement('span');

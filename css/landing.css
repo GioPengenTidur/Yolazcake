@@ -1,8 +1,6 @@
 /* ==================== LANDING PAGE STYLES ==================== */
 /* Converted from Next.js/React/Tailwind to vanilla CSS */
 
-/* Font Imports are in the HTML head */
-
 /* ==================== CSS Variables ==================== */
 :root {
   /* Primary Colors - Café Theme */
@@ -2080,6 +2078,8 @@ body.dark .gallery-section {
   justify-content: center;
   width: 3rem;
   height: 3rem;
+  padding: 0;
+  box-sizing: border-box;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
   color: white;

@@ -1,24 +1,16 @@
 <?php
 /**
  * member_helper.php
- * -----------------------------------------------------------------------
  * Menghubungkan akun login (tabel `users`, session) dengan data member
  * loyalti (tabel `member`) supaya poin & data member selalu sinkron
  * dengan database, bukan angka statis di halaman.
  *
- * ATURAN MEMBER (per migrasi database/migration_member_otomatis.sql):
+ * ATURAN MEMBER:
  * User TIDAK langsung jadi member begitu daftar akun / login. Member baru
  * didaftarkan otomatis setelah akun tersebut menyentuh minimal
  * MEMBER_MIN_VISITS transaksi (gabungan booking yang dikonfirmasi/selesai
  * + pesanan online yang tidak dibatalkan). Admin tetap bisa menambahkan
  * member manual kapan saja lewat panel admin (untuk pelanggan walk-in).
- *
- * Cara pakai (di halaman yang butuh data member, setelah session_start()
- * dan include koneksi.php):
- *
- *      require_once __DIR__.'/member_helper.php'; // sesuaikan path relatif
- *      $member = get_current_member($conn);
- *
  * $member berisi seluruh kolom tabel `member` untuk user yang sedang
  * login, ATAU null kalau belum layak/belum jadi member. Kalau null,
  * pakai get_visit_count() untuk tahu progres menuju member.

@@ -38,7 +38,7 @@ try {
     $q_reward = mysqli_query($conn,"SELECT COUNT(*) AS t, SUM(status='Menunggu') AS p FROM reward_klaim");
     if ($q_reward) $s_reward = mysqli_fetch_assoc($q_reward);
 } catch (Throwable $e) {
-    // Migrasi reward_klaim belum diimport -> badge sidebar cuma disembunyikan, dashboard tetap jalan.
+
 }
 
 /* ── PREDIKSI MEMBER CHURN: hitung member yg >=30 hari gak ada transaksi ──
@@ -162,7 +162,7 @@ $hero_video = $hero_video_full;
 $hero_audio = null;
 $audio_name = 'Musik Latar';
 
-// ─── Spotify premium player — eksklusif untuk email tertentu ───
+// ─── Spotify player — eksklusif untuk email tertentu ───
 // Widget Spotify hanya dirender kalau email akun yang sedang login cocok.
 // Admin lain (email berbeda) tetap dapat music-player lokal biasa di bawah.
 $spotify_owner_email   = 'yoonskyy63@gmail.com';
@@ -809,7 +809,7 @@ body::before{
 .mp-autoplay input:checked + .mp-autoplay-track .mp-autoplay-thumb{transform:translateX(15px);}
 .mp-autoplay-label{font-size:.68em;color:var(--muted);letter-spacing:.3px;white-space:nowrap;}
 
-/* ── SPOTIFY PREMIUM PLAYER (eksklusif) ── */
+/* ── SPOTIFY PLAYER (eksklusif) ── */
 .spotify-premium{
   position:relative;overflow:hidden;
   background:var(--glass);backdrop-filter:blur(20px);

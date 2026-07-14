@@ -5,9 +5,6 @@
  * Endpoint buat fitur "Resep Kreasi Yola AI" (bantuan/resep_ai.php).
  * User kasih daftar bahan yang mereka punya, Yola AI kasih 1-2 ide kreasi
  * kue/minuman sederhana ala YOLAZCAKE yang bisa dibuat dari bahan itu.
- *
- * Request  (POST, JSON): { "bahan": "telur, susu, tepung..." }
- * Response (JSON):       { "resep": "..." } atau { "error": "..." }
  */
 
 header('Content-Type: application/json');

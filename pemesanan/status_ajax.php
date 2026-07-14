@@ -1,7 +1,6 @@
 <?php
 /**
  * status_ajax.php
- * -----------------------------------------------------------------------
  * Endpoint publik buat polling status pesanan secara real-time (dipakai di
  * halaman sukses checkout & halaman lacak.php). Sengaja butuh KOMBINASI
  * id_pemesanan + kode_pesanan (bukan cuma id) supaya orang lain nggak bisa

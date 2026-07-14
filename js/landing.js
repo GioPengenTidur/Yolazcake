@@ -1,5 +1,4 @@
 /* ==================== LANDING PAGE JAVASCRIPT ==================== */
-/* Converted from Next.js/React to vanilla JavaScript */
 
 // ==================== INITIALIZATION ====================
 document.addEventListener('DOMContentLoaded', function() {
@@ -131,7 +130,7 @@ const galleryImages = [
     alt: "Cafe interior with warm lighting"
   },
   {
-    src: "https://images.unsplash.com/photo-1486427944544-d2c6e14c8fe1?w=1200&h=1200&fit=crop",
+    src: "assets/img/galeri/img_6a531079a414e9.90158121.png",
     alt: "Artisan coffee preparation"
   },
   {

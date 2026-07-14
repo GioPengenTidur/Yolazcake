@@ -1,7 +1,6 @@
 <?php
 /**
  * export_excel.php
- * -----------------------------------------------------------------------
  * Export "Laporan Penjualan" (isi tabel data_pemesanan.php) ke file Excel
  * (.xlsx) asli -- dibangun manual lewat config/xlsx_helper.php, tanpa
  * dependency composer, konsisten dengan gaya vendoring PHPMailer di

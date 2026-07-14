@@ -1,18 +1,13 @@
 <?php
 /**
  * ig_stats_helper.php
- * -----------------------------------------------------------------------
+ * 
  * Statistik Instagram (followers/following/posts) di-update MANUAL oleh
  * admin lewat instagram/ig_stats.php (tidak tarik data live dari IG --
  * supaya tidak pernah error/down karena API/rate-limit/perubahan pihak
  * ketiga). Halaman publik (contact.php) tinggal baca 1 baris ini, jadi
  * begitu admin ubah angkanya, halaman publik ikut berubah otomatis
  * tanpa perlu edit kode.
- *
- * Cara pakai:
- *      require_once __DIR__.'/ig_stats_helper.php';
- *      $ig = ambil_ig_stats($conn);
- *      echo format_angka_ig($ig['followers']); // "1,2 rb"
  */
 
 function ambil_ig_stats(mysqli $conn): array {

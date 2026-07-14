@@ -1,7 +1,6 @@
 <?php
 /**
  * split_bill_ajax.php
- * -----------------------------------------------------------------------
  * Endpoint publik (nggak butuh login) buat halaman split_bill.php. Akses
  * dikontrol pakai `token` (susah ditebak, 40 karakter random) -- siapa
  * saja yang punya link bisa toggle status bayar & ganti nama peserta,
