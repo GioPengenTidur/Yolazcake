@@ -585,6 +585,8 @@ $role_options = [
 
     .status-text { font-family:'Playfair Display', serif; font-size:1.15em; font-weight:600; color:#fff; text-align:center; }
     .status-sub { font-size:0.82em; color:rgba(255,255,255,0.55); text-align:center; margin-top:-8px; }
+  
+    .lucide-icon{color:white;}
   </style>
 </head>
 <body>
@@ -641,28 +643,28 @@ $role_options = [
   <!-- stats -->
   <div class="stats-row">
     <div class="stat-card">
-      <span class="stat-icon"><i data-lucide="user" class="lucide-ic"></i></span>
+      <span class="stat-icon"><i data-lucide="user" class="lucide-icon"></i></span>
       <div>
         <div class="stat-val"><?= $total_user; ?></div>
         <div class="stat-lbl">Total Akun</div>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon"><i data-lucide="crown" class="lucide-ic"></i></span>
+      <span class="stat-icon"><i data-lucide="crown" class="lucide-icon"></i></span>
       <div>
         <div class="stat-val"><?= $total_admin; ?></div>
         <div class="stat-lbl">Admin</div>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon"><i data-lucide="user-round" class="lucide-ic"></i>‍<i data-lucide="chef-hat" class="lucide-ic"></i></span>
+      <span class="stat-icon"><i data-lucide="user-round" class="lucide-icon"></i>‍<i data-lucide="chef-hat" class="lucide-icon"></i></span>
       <div>
         <div class="stat-val"><?= $total_kasir; ?></div>
         <div class="stat-lbl">Kasir</div>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon"><i data-lucide="eye" class="lucide-ic"></i></span>
+      <span class="stat-icon"><i data-lucide="eye" class="lucide-icon"></i></span>
       <div>
         <div class="stat-val"><?= $total_pengunjung; ?></div>
         <div class="stat-lbl">Pengunjung</div>

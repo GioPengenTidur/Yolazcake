@@ -316,6 +316,10 @@ $query = mysqli_query($conn, "SELECT * FROM member ORDER BY id_member DESC");
       .page-wrapper { padding:24px 16px 60px; }
       .action-cell { flex-direction:column; }
     }
+
+    .lucide-table-icons{
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -353,21 +357,21 @@ $query = mysqli_query($conn, "SELECT * FROM member ORDER BY id_member DESC");
   ?>
   <div class="stats-row">
     <div class="stat-card">
-      <span class="stat-icon"><i data-lucide="users" class="lucide-ic"></i></span>
+      <span class="stat-icon"><i data-lucide="users" class="lucide-table-icons"></i></span>
       <div>
         <div class="stat-val"><?= $total_member; ?></div>
         <div class="stat-lbl">Total Member</div>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon"><i data-lucide="star" class="lucide-ic lucide-fill"></i></span>
+      <span class="stat-icon"><i data-lucide="star" class="lucide-table-icons lucide-fill"></i></span>
       <div>
         <div class="stat-val"><?= number_format($total_poin); ?></div>
         <div class="stat-lbl">Total Poin Beredar</div>
       </div>
     </div>
     <div class="stat-card">
-      <span class="stat-icon"><i data-lucide="trophy" class="lucide-ic"></i></span>
+      <span class="stat-icon"><i data-lucide="trophy" class="lucide-table-icons"></i></span>
       <div>
         <div class="stat-val"><?= $total_member > 0 ? number_format($total_poin/$total_member,0) : 0; ?></div>
         <div class="stat-lbl">Rata-rata Poin/Member</div>
